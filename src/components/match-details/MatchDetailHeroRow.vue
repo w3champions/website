@@ -21,23 +21,23 @@
       <match-highlights
         :left="true"
         :not-color-winner="notColorWinner"
-        :experience="scoresOfWinner.expGained"
-        :hero-kills="scoresOfWinner.heroesKilled"
-        :items-collected="scoresOfWinner.itemsObtained"
-        :hero-kills-opponent="scoresOfLoser.heroesKilled"
-        :experience-opponent="scoresOfLoser.expGained"
-        :items-collected-opponent="scoresOfLoser.itemsObtained"
+        :experience="scoresOfWinner?.expGained ?? 0"
+        :hero-kills="scoresOfWinner?.heroesKilled ?? 0"
+        :items-collected="scoresOfWinner?.itemsObtained ?? 0"
+        :hero-kills-opponent="scoresOfLoser?.heroesKilled ?? 0"
+        :experience-opponent="scoresOfLoser?.expGained ?? 0"
+        :items-collected-opponent="scoresOfLoser?.itemsObtained ?? 0"
       />
     </v-col>
     <v-col cols="2">
       <match-highlights
         :not-color-winner="notColorWinner"
-        :experience="scoresOfLoser.expGained"
-        :hero-kills="scoresOfLoser.heroesKilled"
-        :items-collected="scoresOfLoser.itemsObtained"
-        :hero-kills-opponent="scoresOfWinner.heroesKilled"
-        :experience-opponent="scoresOfWinner.expGained"
-        :items-collected-opponent="scoresOfWinner.itemsObtained"
+        :experience="scoresOfLoser?.expGained ?? 0"
+        :hero-kills="scoresOfLoser?.heroesKilled ?? 0"
+        :items-collected="scoresOfLoser?.itemsObtained ?? 0"
+        :hero-kills-opponent="scoresOfWinner?.heroesKilled ?? 0"
+        :experience-opponent="scoresOfWinner?.expGained ?? 0"
+        :items-collected-opponent="scoresOfWinner?.itemsObtained ?? 0"
       />
     </v-col>
     <v-col cols="1">

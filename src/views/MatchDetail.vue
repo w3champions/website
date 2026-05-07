@@ -8,7 +8,8 @@
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
                 <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-                  <div>{{ $t(`gatewayNames.${gateWay}`) }}</div>
+                  <!-- We only ever have Europe gateway now, so hidden unless this changes -->
+                  <!-- <div>{{ $t(`gatewayNames.${gateWay}`) }}</div> -->
                   <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
                 </v-card-subtitle>
                 <host-icon
@@ -113,6 +114,15 @@
               />
             </v-col>
           </v-row>
+          <match-head-to-head
+            v-if="isCompleteGame && isOneVsOne"
+            :player-battle-tag="playerBattleTag"
+            :opponent-battle-tag="opponentBattleTag"
+            :current-match-id="matchId"
+            :season="season"
+            :gateway="match.gateWay"
+            :match-is-f-f-a="matchIsFFA"
+          />
           <v-row v-if="isCompleteGame && matchIsFFA" class="mb-3">
             <v-col cols="2" />
             <v-col>
@@ -163,6 +173,7 @@ import { Gateways } from "@/store/ranking/types";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
+import MatchHeadToHead from "@/components/match-details/MatchHeadToHead.vue";
 import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import _keyBy from "lodash/keyBy";
@@ -177,6 +188,7 @@ export default defineComponent({
     TeamMatchInfo,
     HostIcon,
     DownloadReplayIcon,
+    MatchHeadToHead,
   },
   props: {
     matchId: {
@@ -197,6 +209,19 @@ export default defineComponent({
 
     const matchIsFFA = computed<boolean>(() => {
       return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
+    });
+
+    const isOneVsOne = computed<boolean>(() => {
+      const teams = match.value?.teams;
+      return teams?.length === 2 && teams.every((t) => t.players?.length === 1);
+    });
+
+    const playerBattleTag = computed<string>(() => {
+      return match.value?.teams?.[0]?.players?.[0]?.battleTag ?? "";
+    });
+
+    const opponentBattleTag = computed<string>(() => {
+      return match.value?.teams?.[1]?.players?.[0]?.battleTag ?? "";
     });
 
     const isJubileeGame = computed<boolean>(() => {
@@ -220,14 +245,105 @@ export default defineComponent({
       return playerScores ?? [];
     });
 
+    // Helpers for matching player names/battleTags across data sources (team data vs score data)
+    // Normalizes strings for case-insensitive comparison
+    const normalize = (value?: string): string => (value ?? "").trim().toLowerCase();
+    // Strips the discriminator (#number) from a BattleTag to match players who only have the character name
+    const stripTag = (value?: string): string => normalize(value).split("#", 1)[0];
+
+    // Determines if a player from team data matches a score record
+    // Tries multiple matching strategies since score battleTags may be localized names or incomplete
+    function isDirectPlayerScoreMatch(player: PlayerInTeam, score: PlayerScore): boolean {
+      const battleTag = normalize(player.battleTag);
+      const inviteName = normalize(player.inviteName);
+      const displayName = normalize(player.name);
+      const battleTagName = stripTag(player.battleTag);
+      const inviteNameTag = stripTag(player.inviteName);
+      const scoreTag = normalize(score.battleTag);
+      const scoreTagName = stripTag(score.battleTag);
+
+      // Match strategies in priority order:
+      // 1. Exact BattleTag match
+      // 2. Score matches player's invite name
+      // 3. Score matches player's display name
+      // 4. Score matches BattleTag without discriminator (#number)
+      // 5. Score matches invite name without discriminator
+      // 6. Score matches display name without discriminator
+      return scoreTag === battleTag ||
+          !!(inviteName && scoreTag === inviteName) ||
+          !!(displayName && scoreTag === displayName) ||
+          !!(battleTagName && scoreTagName === battleTagName) ||
+          !!(inviteNameTag && scoreTagName === inviteNameTag) ||
+          !!(displayName && scoreTagName === displayName);
+    }
+
+    // Resolves which score data teamIndex corresponds to each displayed team.
+    // This is necessary because match.teams (displayed order) may not align with playerScores.teamIndex (server order).
+    // Uses a voting system: each player in a team votes for the score teamIndex they match, then picks the most common vote.
+    // Falls back to assigning remaining unused score indexes for teams with no direct matches (e.g. FFA with mismatched names).
+    const resolvedTeamIndexes = computed<Array<number | undefined>>(() => {
+      const teams = match.value.teams ?? [];
+
+      // Find the score teamIndex for a specific player by matching against all scores
+      const directMatchTeamIndexForPlayer = (player: PlayerInTeam): number | undefined => {
+        const score = playerScores.value.find((candidate) => isDirectPlayerScoreMatch(player, candidate));
+
+        return score?.teamIndex;
+      };
+
+      // For each team, determine its likely score teamIndex via voting from matched players
+      const resolvedIndexes: Array<number | undefined> = teams.map((team) => {
+        const matchedIndexes = team.players
+          .map((player) => directMatchTeamIndexForPlayer(player))
+          .filter((index): index is number => index !== undefined);
+
+        // If no players in this team match any score, return undefined for fallback handling
+        if (matchedIndexes.length === 0) return undefined;
+
+        // Count votes: which score teamIndex do players map to most often?
+        const counts = new Map<number, number>();
+        matchedIndexes.forEach((index) => {
+          counts.set(index, (counts.get(index) ?? 0) + 1);
+        });
+
+        // Pick the teamIndex with the most votes
+        let bestIndex: number | undefined;
+        let bestCount = -1;
+        counts.forEach((count, index) => {
+          if (count > bestCount) {
+            bestCount = count;
+            bestIndex = index;
+          }
+        });
+
+        return bestIndex;
+      });
+
+      // Fallback: assign remaining score teamIndexes to teams that didn't resolve via direct matching
+      const uniqueScoreTeamIndexes = [...new Set(playerScores.value.map((score) => score.teamIndex))];
+      const usedIndexes = new Set(resolvedIndexes.filter((index): index is number => index !== undefined));
+
+      resolvedIndexes.forEach((index, teamIndex) => {
+        if (index !== undefined) return; // Already resolved, skip
+
+        const nextAvailableIndex = uniqueScoreTeamIndexes.find((candidate) => !usedIndexes.has(candidate));
+        if (nextAvailableIndex === undefined) return; // No more indexes to assign
+
+        resolvedIndexes[teamIndex] = nextAvailableIndex;
+        usedIndexes.add(nextAvailableIndex);
+      });
+
+      return resolvedIndexes;
+    });
+
     const scoresOfWinners = computed<PlayerScore[]>(() => {
       const winningTeam = match.value.teams[0];
-      return getPlayerScores(winningTeam);
+      return getPlayerScores(winningTeam, resolvedTeamIndexes.value[0]);
     });
 
     const scoresOfLosers = computed<PlayerScore[]>(() => {
       const losingTeam = match.value.teams[1];
-      return getPlayerScores(losingTeam);
+      return getPlayerScores(losingTeam, resolvedTeamIndexes.value[1]);
     });
 
     const ffaWinner = computed<PlayerScore>(() => playerScores.value.find(
@@ -276,18 +392,54 @@ export default defineComponent({
       }
     });
 
-    function getPlayerScores(team: Team): PlayerScore[] {
-      return team.players.map((p: PlayerInTeam) => {
-        const playerInTeamBattleTag = p.battleTag.toLowerCase();
-        const score = playerScores.value.find((score) => score.battleTag.toLowerCase() === playerInTeamBattleTag) || // Check exact match
-          playerScores.value.find((score) => score.battleTag.toLowerCase().includes(playerInTeamBattleTag.split("#", 1)[0])) || // Check without tag numbers
-          playerScores.value.find((score) => score.battleTag === p.inviteName); // Check inviteName match
+    // Maps displayed team players to their corresponding score records using a two-pass strategy:
+    // Pass 1: Match players with direct name/tag matches
+    // Pass 2: If unmatched player count equals remaining score count, assign by elimination
+    // This handles cases where some scores have localized/incorrect names (e.g. Chinese characters instead of BattleTag)
+    function getPlayerScores(team: Team, teamIndex?: number): PlayerScore[] {
+      // Restrict to scores for this team if teamIndex is known, otherwise search all scores
+      const teamScores = teamIndex === undefined
+        ? playerScores.value
+        : playerScores.value.filter((score) => score.teamIndex === teamIndex);
+      const usedScores = new Set<number>();
+      const mappedScores: Array<PlayerScore | undefined> = new Array(team.players.length).fill(undefined);
 
-        return {
-          ...score ?? {} as PlayerScore,
-          battleTag: p.battleTag, // Use the battleTag from the Match (PlayerInTeam) record, since it is sometimes incorrect on the PlayerScore record
-        };
+      // Find the first unused score that matches a player
+      function findDirectMatch(player: PlayerInTeam): number {
+        return teamScores.findIndex((score, scoreIndex) => {
+          if (usedScores.has(scoreIndex)) return false; // Don't reuse scores
+          return isDirectPlayerScoreMatch(player, score);
+        });
+      }
+
+      // Pass 1: Assign confident matches
+      team.players.forEach((player, playerIndex) => {
+        const scoreIndex = findDirectMatch(player);
+        if (scoreIndex === -1) return; // No match found
+
+        usedScores.add(scoreIndex);
+        mappedScores[playerIndex] = teamScores[scoreIndex];
       });
+
+      // Pass 2: Assign remaining scores to unmatched players by elimination
+      const unmatchedPlayerIndexes: number[] = [];
+      mappedScores.forEach((score, playerIndex) => {
+        if (!score) unmatchedPlayerIndexes.push(playerIndex);
+      });
+
+      const remainingScores = teamScores.filter((_, scoreIndex) => !usedScores.has(scoreIndex));
+
+      // Only use elimination if counts align (prevents misassignment when data is corrupted)
+      if (remainingScores.length === unmatchedPlayerIndexes.length) {
+        unmatchedPlayerIndexes.forEach((playerIndex, index) => {
+          mappedScores[playerIndex] = remainingScores[index];
+        });
+      }
+
+      return team.players.map((player, playerIndex) => ({
+        ...mappedScores[playerIndex] ?? {} as PlayerScore,
+        battleTag: player.battleTag, // Use the battleTag from the Match (PlayerInTeam) record, since it is sometimes incorrect on the PlayerScore record
+      }));
     }
 
     watch(toRef(props, "matchId"), init, { immediate: true });
@@ -317,6 +469,7 @@ export default defineComponent({
       season,
       match,
       matchIsFFA,
+      isOneVsOne,
       gameNumber,
       matchDuration,
       playedDate,
@@ -328,7 +481,9 @@ export default defineComponent({
       ffaLoser3,
       rowLabels,
       ffaPlayers,
-      battleTagToName
+      battleTagToName,
+      playerBattleTag,
+      opponentBattleTag,
     };
   },
 });

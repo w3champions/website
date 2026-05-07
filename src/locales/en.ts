@@ -485,6 +485,15 @@ const en = {
     warden: "Warden",
   },
 
+  components_matchdetails_matchheadtohead: {
+    headToHead: "Head-to-Head History",
+    gamesPlayed: "games played",
+    last50: "Last 50 games",
+    noGames: "No matches between these players",
+    loadMore: "Load more",
+    noMoreMatches: "No more matches found",
+  },
+
   matchStatuses: {
     onGoing: "Now Playing",
     past: "Finished",
