@@ -50,10 +50,12 @@ export default defineComponent({
 
     const bucketOptions = computed<number[]>(() => {
       const buckets = [...new Set(props.mmrOptions)].sort((a, b) => a - b);
+      const hasZeroBucket = buckets.includes(0);
+      const firstNonZeroIndex = buckets.findIndex((bucket) => bucket > 0);
+      const hasNextBucketAfterFirstNonZero = firstNonZeroIndex >= 0 && firstNonZeroIndex + 1 < buckets.length;
 
-      // The backend's 1000 bucket represents <=1200, so omit it from the slider UI.
-      if (buckets.includes(0) && buckets.includes(1000) && buckets.includes(1200)) {
-        return buckets.filter((bucket) => bucket !== 1000);
+      if (hasZeroBucket && hasNextBucketAfterFirstNonZero) {
+        return buckets.filter((_, index) => index !== firstNonZeroIndex);
       }
 
       return buckets;
