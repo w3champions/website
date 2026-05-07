@@ -32,7 +32,7 @@
       <!-- Previous matches -->
       <v-row v-if="timeline.length > 0" justify="center" class="mt-5 mb-2">
         <v-col cols="10" lg="6" class="h2h-content">
-          <div class="match-list-scroll">
+          <div ref="scrollBox" class="match-list-scroll">
             <template v-for="entry in timeline" :key="entry.season">
               <div class="season-header">
                 {{ $t("views_rankings.season") }} {{ entry.season }}
@@ -90,7 +90,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, PropType } from "vue";
+import { computed, defineComponent, nextTick, onMounted, ref, watch, PropType } from "vue";
+import { useRouter } from "vue-router";
 import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
@@ -107,6 +108,20 @@ interface H2HStats {
   wins: number;
   losses: number;
   totalGames: number;
+}
+
+interface PairCache {
+  matchesBySeason: Map<number, Match[]>;
+  emptySeasons: Set<number>;
+  oldestLoadedSeason: number;
+  consecutiveEmpty: number;
+  exhausted: boolean;
+}
+
+const globalSeasonCache = new Map<string, PairCache>();
+
+function getPairKey(a: string, b: string): string {
+  return [a, b].sort().join("|");
 }
 
 export default defineComponent({
@@ -139,13 +154,54 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router = useRouter();
     const h2hMatches = ref<Match[]>([]);
     const loading = ref(false);
     const loadingMore = ref(false);
     const hasData = ref(false);
-    const seasonCache = new Map<number, Match[]>();
     const consecutiveEmpty = ref(0);
     const oldestLoadedSeason = ref(0);
+    const emptySeasons = ref<number[]>([]);
+    const exhausted = ref(false);
+    const scrollBox = ref<HTMLElement | null>(null);
+
+    function scrollHighlightIntoView() {
+      nextTick(() => {
+        const el = scrollBox.value?.querySelector(".current-match");
+        (el as HTMLElement | null)?.scrollIntoView({ block: "nearest" });
+      });
+    }
+
+    const pairKey = computed(() => getPairKey(props.playerBattleTag, props.opponentBattleTag));
+
+    function getOrCreatePairCache(): PairCache {
+      let cache = globalSeasonCache.get(pairKey.value);
+      if (!cache) {
+        cache = {
+          matchesBySeason: new Map(),
+          emptySeasons: new Set(),
+          oldestLoadedSeason: 0,
+          consecutiveEmpty: 0,
+          exhausted: false,
+        };
+        globalSeasonCache.set(pairKey.value, cache);
+      }
+      return cache;
+    }
+
+    function rebuildFromCache(cache: PairCache) {
+      const seasonsDesc = Array.from(cache.matchesBySeason.keys()).sort((a, b) => b - a);
+      const allMatches: Match[] = [];
+      for (const season of seasonsDesc) {
+        allMatches.push(...(cache.matchesBySeason.get(season) || []));
+      }
+      h2hMatches.value = allMatches;
+      emptySeasons.value = Array.from(cache.emptySeasons);
+      oldestLoadedSeason.value = cache.oldestLoadedSeason;
+      consecutiveEmpty.value = cache.consecutiveEmpty;
+      exhausted.value = cache.exhausted;
+      hasData.value = allMatches.length > 1;
+    }
 
     const isCapped = computed(() => h2hMatches.value.length >= MatchService.pageSize);
 
@@ -176,7 +232,9 @@ export default defineComponent({
     }
 
     async function fetchSeason(season: number): Promise<Match[]> {
-      if (seasonCache.has(season)) return seasonCache.get(season)!;
+      const cache = getOrCreatePairCache();
+      if (cache.matchesBySeason.has(season)) return cache.matchesBySeason.get(season)!;
+      if (cache.emptySeasons.has(season)) return [];
       const response = await MatchService.retrievePlayerMatches(
         0,
         props.playerBattleTag,
@@ -187,12 +245,22 @@ export default defineComponent({
         props.gateway,
         season,
       );
-      seasonCache.set(season, response.matches);
+      if (response.matches.length === 0) {
+        cache.emptySeasons.add(season);
+      } else {
+        cache.matchesBySeason.set(season, response.matches);
+      }
       return response.matches;
     }
 
     onMounted(async () => {
       await rankingStore.retrieveSeasons();
+      const cache = getOrCreatePairCache();
+      if (cache.matchesBySeason.size > 0 || cache.emptySeasons.size > 0) {
+        rebuildFromCache(cache);
+        scrollHighlightIntoView();
+        return;
+      }
       loading.value = true;
       const prevSeason = Math.max(1, currentSeason.value - 1);
       const [current, previous] = await Promise.all([
@@ -201,15 +269,16 @@ export default defineComponent({
       ]);
       h2hMatches.value = [...current, ...previous];
       oldestLoadedSeason.value = prevSeason;
+      cache.oldestLoadedSeason = prevSeason;
       hasData.value = h2hMatches.value.length > 1;
       loading.value = false;
+      scrollHighlightIntoView();
     });
 
-    const emptySeasons = ref<number[]>([]);
-
-    const exhausted = ref(false);
+    watch(() => props.currentMatchId, () => scrollHighlightIntoView());
 
     async function loadMore() {
+      const cache = getOrCreatePairCache();
       loadingMore.value = true;
       while (nextSeasonToLoad.value >= 1 && consecutiveEmpty.value < 2) {
         const season = nextSeasonToLoad.value;
@@ -222,17 +291,20 @@ export default defineComponent({
           h2hMatches.value = [...h2hMatches.value, ...matches];
         }
         oldestLoadedSeason.value = season;
+        cache.oldestLoadedSeason = season;
+        cache.consecutiveEmpty = consecutiveEmpty.value;
         if (matches.length > 0) break;
       }
       if (consecutiveEmpty.value >= 2 || nextSeasonToLoad.value < 1) {
         exhausted.value = true;
+        cache.exhausted = true;
       }
       loadingMore.value = false;
     }
 
     function goToMatch(matchId: string) {
       if (matchId === props.currentMatchId) return;
-      window.location.href = `/match/${matchId}`;
+      router.push({ path: `/match/${matchId}` });
     }
 
     function isCurrentMatch(matchId: string): boolean {
@@ -324,6 +396,7 @@ export default defineComponent({
       opponentName,
       stats,
       recentFormStrings,
+      scrollBox,
       formatDuration,
       getDurationBarWidth,
       formatTimeAgo,
@@ -344,13 +417,12 @@ export default defineComponent({
 
 .season-header {
   position: sticky;
-  top: -8px;
+  top: 0;
   background-color: rgb(var(--v-theme-surface));
   z-index: 1;
   margin-left: -8px;
   margin-right: -20px;
   padding: 8px 8px 6px;
-  border-bottom: 1px solid rgb(var(--v-theme-primary));
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -360,7 +432,7 @@ export default defineComponent({
 .match-list-scroll {
   max-height: 400px;
   overflow-y: auto;
-  padding: 8px 20px 8px 8px;
+  padding: 0 20px 8px 8px;
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--v-theme-on-surface), 0.15) transparent;
   background-color: rgba(var(--v-theme-on-surface), 0.03);
@@ -374,6 +446,7 @@ export default defineComponent({
   border-radius: 4px;
   padding-left: 4px;
   padding-right: 4px;
+  border-left: 2px solid transparent;
   transition: background-color 0.15s;
 
   &:hover {
