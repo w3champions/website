@@ -111,19 +111,19 @@ export default defineComponent({
     const goldComparison = computed<TranslateResult>(() => {
       return comparison(
         props.resourceScoreOpponent
-          .map((s) => s.goldCollected)
+          .map((s) => s?.goldCollected ?? 0)
           .reduce((a, b) => a + b, 0),
-        props.resourceScore.map((s) => s.goldCollected).reduce((a, b) => a + b, 0)
+        props.resourceScore.map((s) => s?.goldCollected ?? 0).reduce((a, b) => a + b, 0)
       );
     });
 
     const woodComparison = computed<TranslateResult>(() => {
       return comparison(
         props.resourceScoreOpponent
-          .map((s) => s.lumberCollected)
+          .map((s) => s?.lumberCollected ?? 0)
           .reduce((a, b) => a + b, 0),
         props.resourceScore
-          .map((s) => s.lumberCollected)
+          .map((s) => s?.lumberCollected ?? 0)
           .reduce((a, b) => a + b, 0)
       );
     });
@@ -131,10 +131,10 @@ export default defineComponent({
     const upkeepComparison = computed<TranslateResult>(() => {
       return comparison(
         props.resourceScore
-          .map((s) => s.goldUpkeepLost)
+          .map((s) => s?.goldUpkeepLost ?? 0)
           .reduce((a, b) => a + b, 0),
         props.resourceScoreOpponent
-          .map((s) => s.goldUpkeepLost)
+          .map((s) => s?.goldUpkeepLost ?? 0)
           .reduce((a, b) => a + b, 0)
       );
     });
@@ -142,27 +142,27 @@ export default defineComponent({
     const armyComparison = computed<TranslateResult>(() => {
       return comparison(
         props.unitScoreOpponent
-          .map((s) => s.largestArmy)
+          .map((s) => s?.largestArmy ?? 0)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.largestArmy).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s?.largestArmy ?? 0).reduce((a, b) => a + b, 0)
       );
     });
 
     const unitsKilledComparison = computed<TranslateResult>(() => {
       return comparison(
         props.unitScoreOpponent
-          .map((s) => s.unitsKilled)
+          .map((s) => s?.unitsKilled ?? 0)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.unitsKilled).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s?.unitsKilled ?? 0).reduce((a, b) => a + b, 0)
       );
     });
 
     const unitsProducedComparison = computed<TranslateResult>(() => {
       return comparison(
         props.unitScoreOpponent
-          .map((s) => s.unitsProduced)
+          .map((s) => s?.unitsProduced ?? 0)
           .reduce((a, b) => a + b, 0),
-        props.unitScore.map((s) => s.unitsProduced).reduce((a, b) => a + b, 0)
+        props.unitScore.map((s) => s?.unitsProduced ?? 0).reduce((a, b) => a + b, 0)
       );
     });
 

@@ -43,8 +43,8 @@ export default defineComponent({
   },
   setup(props) {
     function getArray(): number[] {
-      return props.object
-        .map((o: UnitOrResourceScore) => o[props.value as keyof UnitOrResourceScore])
+      return (props.object ?? [])
+        .map((o: UnitOrResourceScore | undefined) => o?.[props.value as keyof UnitOrResourceScore])
         .filter((v) => !isNil(v));
     }
 
