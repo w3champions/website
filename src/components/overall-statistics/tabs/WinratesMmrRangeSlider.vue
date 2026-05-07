@@ -3,7 +3,6 @@
     <v-card-text class="text-body-1 w3-mid-emphasis pt-0 pl-1 pb-0">{{ $t("components_common_mmrselect.selectmmr") }}</v-card-text>
     <v-card-text class="pt-6">
       <v-range-slider
-        v-if="isBucketMode"
         v-model="bucketIndexRange"
         color="primary"
         thumb-color="primary"
@@ -25,21 +24,6 @@
           </span>
         </template>
       </v-range-slider>
-      <v-range-slider
-        v-else
-        v-model="currentMinMax"
-        color="primary"
-        thumb-color="primary"
-        min="0"
-        max="3000"
-        step="100"
-        thumb-label="always"
-        class="pt-2"
-        strict
-        track-size="1"
-        hide-details
-        @update:model-value="onSliderUpdated"
-      />
     </v-card-text>
   </div>
 </template>
@@ -75,8 +59,6 @@ export default defineComponent({
       return buckets;
     });
 
-    const isBucketMode = computed<boolean>(() => bucketOptions.value.length > 1);
-
     function clampBucketIndex(index: number): number {
       return Math.min(Math.max(index, 0), bucketOptions.value.length - 1);
     }
@@ -109,10 +91,6 @@ export default defineComponent({
     }
 
     function normalizeSelection(): void {
-      if (!isBucketMode.value) {
-        return;
-      }
-
       const snappedMin = findClosestBucketValue(currentMinMax.value[0]);
       const snappedMax = findClosestBucketValue(currentMinMax.value[1]);
       const normalizedMin = Math.min(snappedMin, snappedMax);
@@ -123,7 +101,7 @@ export default defineComponent({
 
     const bucketIndexRange = computed<number[]>({
       get: () => {
-        if (!isBucketMode.value || bucketOptions.value.length === 0) {
+        if (bucketOptions.value.length === 0) {
           return [0, 0];
         }
 
@@ -132,7 +110,7 @@ export default defineComponent({
         return [Math.min(minIndex, maxIndex), Math.max(minIndex, maxIndex)];
       },
       set: (indexRange) => {
-        if (!isBucketMode.value || bucketOptions.value.length === 0) {
+        if (bucketOptions.value.length === 0) {
           return;
         }
 
@@ -198,10 +176,6 @@ export default defineComponent({
     }
 
     function onSliderUpdated(): void {
-      if (!isBucketMode.value) {
-        normalizeSelection();
-      }
-
       if (!hasSelectedDifferentMmr()) {
         return;
       }
@@ -231,11 +205,9 @@ export default defineComponent({
     }
 
     return {
-      currentMinMax,
       bucketOptions,
       bucketIndexRange,
       bucketLabels,
-      isBucketMode,
       onSliderUpdated,
       formatBucketThumbLabel,
       isCombinedBucketThumbLabel,
