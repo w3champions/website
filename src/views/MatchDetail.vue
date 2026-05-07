@@ -114,7 +114,7 @@
             </v-col>
           </v-row>
           <match-head-to-head
-            v-if="isCompleteGame && !matchIsFFA && playerBattleTag && opponentBattleTag"
+            v-if="isCompleteGame && isOneVsOne"
             :player-battle-tag="playerBattleTag"
             :opponent-battle-tag="opponentBattleTag"
             :current-match-id="matchId"
@@ -208,6 +208,11 @@ export default defineComponent({
 
     const matchIsFFA = computed<boolean>(() => {
       return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
+    });
+
+    const isOneVsOne = computed<boolean>(() => {
+      const teams = match.value?.teams;
+      return teams?.length === 2 && teams.every((t) => t.players?.length === 1);
     });
 
     const playerBattleTag = computed<string>(() => {
@@ -336,6 +341,7 @@ export default defineComponent({
       season,
       match,
       matchIsFFA,
+      isOneVsOne,
       gameNumber,
       matchDuration,
       playedDate,
