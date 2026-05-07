@@ -19,7 +19,7 @@
         hide-details
         @update:model-value="onSliderUpdated"
       >
-        <template #thumb-label="{ modelValue }">
+        <template v-slot:thumb-label="{ modelValue }">
           <span :class="['mmr-thumb-label', { 'mmr-thumb-label--combined': isCombinedBucketThumbLabel(modelValue) }]">
             {{ formatBucketThumbLabel(modelValue) }}
           </span>
@@ -116,7 +116,7 @@ export default defineComponent({
       const snappedMin = findClosestBucketValue(currentMinMax.value[0]);
       const snappedMax = findClosestBucketValue(currentMinMax.value[1]);
       const normalizedMin = Math.min(snappedMin, snappedMax);
-      let normalizedMax = Math.max(snappedMin, snappedMax);
+      const normalizedMax = Math.max(snappedMin, snappedMax);
 
       currentMinMax.value = [normalizedMin, normalizedMax];
     }
@@ -139,7 +139,7 @@ export default defineComponent({
         const minIndex = clampBucketIndex(indexRange[0] ?? 0);
         const maxIndex = clampBucketIndex(indexRange[1] ?? minIndex);
         const from = Math.min(minIndex, maxIndex);
-        let to = Math.max(minIndex, maxIndex);
+        const to = Math.max(minIndex, maxIndex);
 
         currentMinMax.value = [bucketOptions.value[from], bucketOptions.value[to]];
       },
