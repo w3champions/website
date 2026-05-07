@@ -154,7 +154,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, watch, toRef } from "vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
@@ -290,14 +290,13 @@ export default defineComponent({
       });
     }
 
-    // watch(matchIdRef, init);
-
-    onMounted((): void => {
-      init();
-    });
+    watch(toRef(props, "matchId"), init, { immediate: true });
 
     async function init(): Promise<void> {
-      await matchStore.loadMatchDetail(props.matchId);
+      matchStore.SET_LOADING_MATCH_DETAIL(true);
+      const requestedId = props.matchId;
+      await matchStore.loadMatchDetail(requestedId);
+      if (props.matchId !== requestedId) return;
     }
 
     const rowLabels = [
