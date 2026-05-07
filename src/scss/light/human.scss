@@ -36,4 +36,10 @@
     position: absolute;
     z-index: 0;
   }
+
+  .recent-performance__results {
+    .v-chip__underlay {
+      background: transparent !important;
+    }
+  }
 }
