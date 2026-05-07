@@ -4,6 +4,16 @@
       <v-col cols="md-4">
         <v-card-text>
           <v-select
+            v-model="selectedPatch"
+            :items="patches"
+            item-title="patchVersion"
+            item-value="patch"
+            :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
+            variant="outlined"
+            color="primary"
+            @update:model-value="setSelectedPatch"
+          />
+          <v-select
             v-model="selectedMap"
             :items="maps"
             item-title="mapName"
@@ -13,25 +23,10 @@
             color="primary"
             @update:model-value="setSelectedMap"
           />
-          <v-select
-            v-model="selectedMmr"
-            :items="mmrs"
-            item-title="league"
-            item-value="mmr"
-            :label="$t(`components_overall-statistics_tabs_winratestab.selectmmr`)"
-            variant="outlined"
-            color="primary"
-            @update:model-value="setSelectedMmr"
-          />
-          <v-select
-            v-model="selectedPatch"
-            :items="patches"
-            item-title="patchVersion"
-            item-value="patch"
-            :label="$t(`components_overall-statistics_tabs_winratestab.selectpatch`)"
-            variant="outlined"
-            color="primary"
-            @update:model-value="setSelectedPatch"
+          <winrates-mmr-range-slider
+            :mmr="selectedMmrRange"
+            :mmrOptions="mmrBuckets"
+            @mmrFilterChanged="setSelectedMmrRange"
           />
         </v-card-text>
       </v-col>
@@ -72,18 +67,21 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
+import WinratesMmrRangeSlider from "@/components/overall-statistics/tabs/WinratesMmrRangeSlider.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
+import { Mmr } from "@/store/match/types";
 import { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "WinratesTab",
   components: {
+    WinratesMmrRangeSlider,
     PlayerStatsRaceVersusRaceOnMapTableCell,
   },
   setup() {
@@ -91,9 +89,46 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
     const raceEnums = ERaceEnum;
     const selectedPatch = ref<string>("All");
-    const selectedMmr = ref<number>(0);
+    const selectedMmrRange = ref<Mmr>({ min: 0, max: 3000 });
     const selectedMap = ref<TranslateResult>(t("common.overall"));
+    const hasAutoSelectedPatch = ref(false);
+    const hasAutoSelectedMmrRange = ref(false);
+    const hasAutoSelectedMap = ref(false);
     const statsPerRaceAndMap = computed<StatsPerWinrate[]>(() => overallStatsStore.statsPerMapAndRace);
+
+    const mmrBuckets = computed<number[]>(() => {
+      return [...new Set(statsPerRaceAndMap.value.map((stats) => stats.mmrRange))].sort((a, b) => a - b);
+    });
+
+    function isNumericPatch(patch: string): boolean {
+      return patch
+        .split(".")
+        .every((segment) => /^\d+$/.test(segment));
+    }
+
+    function comparePatchesDescending(a: string, b: string): number {
+      const aIsNumeric = isNumericPatch(a);
+      const bIsNumeric = isNumericPatch(b);
+
+      if (aIsNumeric && !bIsNumeric) return -1;
+      if (!aIsNumeric && bIsNumeric) return 1;
+      if (!aIsNumeric && !bIsNumeric) return a.localeCompare(b);
+
+      const aSegments = a.split(".").map((segment) => Number.parseInt(segment, 10));
+      const bSegments = b.split(".").map((segment) => Number.parseInt(segment, 10));
+      const maxLength = Math.max(aSegments.length, bSegments.length);
+
+      for (let i = 0; i < maxLength; i++) {
+        const aValue = aSegments[i] ?? 0;
+        const bValue = bSegments[i] ?? 0;
+
+        if (aValue !== bValue) {
+          return bValue - aValue;
+        }
+      }
+
+      return bSegments.length - aSegments.length;
+    }
 
     const headers: DataTableHeader[] = [
       {
@@ -132,22 +167,13 @@ export default defineComponent({
       },
     ];
 
-    const mmrs = computed<{ league: TranslateResult; mmr: number }[]>(() => {
-      const mmrsSorted = statsPerRaceAndMap.value
-        .map((r) => r.mmrRange)
-        .sort()
-        .reverse();
-      const mapped = mmrsSorted.map((m) => ({
-        league: t("mmrLeagueRanges.MMR_" + m),
-        mmr: m,
-      }));
-      return mapped;
-    });
-
     const maps = computed<{ mapId: string; mapName: TranslateResult }[]>(() => {
       const stats = statsPerRaceAndMap.value[0];
       if (!stats) return [];
-      return stats.patchToStatsPerModes[selectedPatch.value].map((r) => {
+      const patchStats = stats.patchToStatsPerModes[selectedPatch.value];
+      if (!patchStats) return [];
+
+      return patchStats.map((r) => {
         return { mapId: r.mapName, mapName: t("mapNames." + r.mapName) };
       });
     });
@@ -163,16 +189,89 @@ export default defineComponent({
         return [];
       }
 
-      const statsPerMapAndRace = statsPerRaceAndMap.value
-        .filter((r) => r.mmrRange === selectedMmr.value)[0]
-        .patchToStatsPerModes[selectedPatch.value].filter(
-          (r) => r.mapName === selectedMap.value
-        )[0];
+      const ratioByRace = new Map<ERaceEnum, Map<ERaceEnum, RaceWinLoss>>();
 
-      if (!statsPerMapAndRace) return [];
+      const selectedBuckets = mmrBuckets.value;
+      if (!selectedBuckets.length) {
+        return [];
+      }
+
+      const rangeMinBucket = selectedBuckets[0];
+      const highestBucket = selectedBuckets[selectedBuckets.length - 1];
+      const firstRealBucket = selectedBuckets.find((bucket) => bucket > 0);
+      const isFullRangeSelection = selectedMmrRange.value.min === rangeMinBucket && selectedMmrRange.value.max === highestBucket;
+      const isFirstVisibleBucketOnlySelection =
+        selectedMmrRange.value.min === rangeMinBucket &&
+        selectedMmrRange.value.max === rangeMinBucket &&
+        firstRealBucket !== undefined;
+
+      const selectedStats = statsPerRaceAndMap.value.filter((stats) => {
+        if (isFullRangeSelection) {
+          return stats.mmrRange === 0;
+        }
+
+        if (isFirstVisibleBucketOnlySelection) {
+          return stats.mmrRange === firstRealBucket;
+        }
+
+        if (stats.mmrRange === 0) {
+          return false;
+        }
+
+        if (selectedMmrRange.value.max === highestBucket) {
+          return stats.mmrRange >= selectedMmrRange.value.min;
+        }
+
+        return stats.mmrRange >= selectedMmrRange.value.min && stats.mmrRange <= selectedMmrRange.value.max;
+      });
+
+      for (const stats of selectedStats) {
+        const patchStats = stats.patchToStatsPerModes[selectedPatch.value];
+        if (!patchStats) {
+          continue;
+        }
+
+        const statsPerMapAndRace = patchStats.find((mapStats) => mapStats.mapName === selectedMap.value);
+        if (!statsPerMapAndRace) {
+          continue;
+        }
+
+        for (const ratio of statsPerMapAndRace.ratio) {
+          if (!ratioByRace.has(ratio.race)) {
+            ratioByRace.set(ratio.race, new Map<ERaceEnum, RaceWinLoss>());
+          }
+
+          const winLossByOpponentRace = ratioByRace.get(ratio.race)!;
+          for (const winLoss of ratio.winLosses) {
+            const existing = winLossByOpponentRace.get(winLoss.race);
+            if (existing) {
+              const wins = existing.wins + winLoss.wins;
+              const losses = existing.losses + winLoss.losses;
+              const games = existing.games + winLoss.games;
+
+              winLossByOpponentRace.set(winLoss.race, {
+                race: winLoss.race,
+                wins,
+                losses,
+                games,
+                winrate: games > 0 ? wins / games : 0,
+              });
+            } else {
+              winLossByOpponentRace.set(winLoss.race, {
+                ...winLoss,
+              });
+            }
+          }
+        }
+      }
+
+      const aggregatedRatios: Ratio[] = Array.from(ratioByRace.entries()).map(([race, winLossByOpponentRace]) => ({
+        race,
+        winLosses: Array.from(winLossByOpponentRace.values()),
+      }));
 
       // Sort both the rows and columns by race.
-      return statsPerMapAndRace.ratio
+      return aggregatedRatios
         .sort(sortByRaceWithRandomLast)
         .map((item) => {
           const winLosses = [...item.winLosses].sort(sortByRaceWithRandomLast);
@@ -214,10 +313,60 @@ export default defineComponent({
           }
         }
 
-        return allowedPatches;
+        const sortedPatches = allowedPatches
+          .filter((patch) => patch !== "All")
+          .sort(comparePatchesDescending);
+
+        return ["All", ...sortedPatches];
       }
       return [];
     });
+
+    watch(
+      patches,
+      (availablePatches) => {
+        if (hasAutoSelectedPatch.value || availablePatches.length === 0) {
+          return;
+        }
+
+        const latestNumericPatch = availablePatches.find((patch) => isNumericPatch(patch));
+        selectedPatch.value = latestNumericPatch ?? availablePatches[0];
+        hasAutoSelectedPatch.value = true;
+      },
+      { immediate: true }
+    );
+
+    watch(
+      mmrBuckets,
+      (availableBuckets) => {
+        if (hasAutoSelectedMmrRange.value || availableBuckets.length === 0) {
+          return;
+        }
+
+        selectedMmrRange.value = {
+          min: availableBuckets[0],
+          max: availableBuckets[availableBuckets.length - 1],
+        };
+        hasAutoSelectedMmrRange.value = true;
+      },
+      { immediate: true }
+    );
+
+    watch(
+      maps,
+      (availableMaps) => {
+        if (!availableMaps.length) {
+          return;
+        }
+
+        const hasSelectedMap = availableMaps.some((map) => map.mapId === selectedMap.value);
+        if (!hasSelectedMap || !hasAutoSelectedMap.value) {
+          selectedMap.value = availableMaps[0].mapId;
+          hasAutoSelectedMap.value = true;
+        }
+      },
+      { immediate: true }
+    );
 
     function getNumberOfMatches(patchStats: StatsPerMapAndRace[]) {
       const dict: { [key: string]: number } = {};
@@ -257,8 +406,8 @@ export default defineComponent({
       selectedMap.value = map;
     }
 
-    function setSelectedMmr(mmr: number): void {
-      selectedMmr.value = mmr;
+    function setSelectedMmrRange(mmr: Mmr): void {
+      selectedMmrRange.value = mmr;
     }
 
     function setSelectedPatch(patch: string): void {
@@ -271,9 +420,9 @@ export default defineComponent({
       maps,
       selectedMap,
       setSelectedMap,
-      mmrs,
-      selectedMmr,
-      setSelectedMmr,
+      selectedMmrRange,
+      mmrBuckets,
+      setSelectedMmrRange,
       patches,
       selectedPatch,
       setSelectedPatch,
