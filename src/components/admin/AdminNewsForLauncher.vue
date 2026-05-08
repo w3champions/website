@@ -284,8 +284,9 @@ export default defineComponent({
     }
 
     async function deleteNewsItem(item: NewsMessage): Promise<void> {
-      confirm("Are you sure you want to delete this item?") &&
-      (await infoMessagesStore.deleteNews(item));
+      if (confirm("Are you sure you want to delete this item?")) {
+        await infoMessagesStore.deleteNews(item);
+      }
       dialog.value = false;
     }
 

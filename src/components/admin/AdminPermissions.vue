@@ -175,9 +175,10 @@ export default defineComponent({
     }
 
     async function deleteItem(item: IPermission): Promise<void> {
-      confirm("Are you sure you want to delete this item?") &&
-      await permissionStore.deleteAdmin(item.id);
-      await loadPermissions();
+      if (confirm("Are you sure you want to delete this item?")) {
+        await permissionStore.deleteAdmin(item.id);
+        await loadPermissions();
+      }
     }
 
     function close(): void {

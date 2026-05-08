@@ -378,9 +378,11 @@ export default defineComponent({
       await rankingsStore.retrieveSeasons();
 
       // Check if season is defined (also allow the value 0), otherwise we can use the first season
-      props.season || props.season === 0
-        ? rankingsStore.setSeason({ id: props.season })
-        : rankingsStore.setSeason(rankingsStore.seasons[0]);
+      if (props.season || props.season === 0) {
+        rankingsStore.setSeason({ id: props.season });
+      } else {
+        rankingsStore.setSeason(rankingsStore.seasons[0]);
+      }
 
       if (props.league || props.league === 0) {
         rankingsStore.setLeague(props.league);

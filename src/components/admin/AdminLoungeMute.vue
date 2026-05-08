@@ -185,9 +185,10 @@ export default defineComponent({
     const author = computed<string>(() => oauthStore.blizzardVerifiedBtag);
 
     async function deleteItem(item: LoungeMute): Promise<void> {
-      confirm("Are you sure you want to delete this item?") &&
-      await loungeMuteStore.deleteLoungeMute(item.battleTag);
-      loadMutes();
+      if (confirm("Are you sure you want to delete this item?")) {
+        await loungeMuteStore.deleteLoungeMute(item.battleTag);
+        loadMutes();
+      }
     }
 
     function close(): void {

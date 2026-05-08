@@ -97,7 +97,7 @@ export default defineComponent({
         fileName.value = "";
         file.value = {} as File;
       } catch(err) {
-        err ? alert(err) : alert("Error trying to create map file.");
+        alert(err ? err : "Error trying to create map file.");
       }
     }
 

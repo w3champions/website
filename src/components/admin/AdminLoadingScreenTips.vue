@@ -99,12 +99,11 @@ export default defineComponent({
     }
 
     async function deleteTipItem(item: LoadingScreenTip): Promise<void> {
-      confirm("Are you sure you want to delete this item?") &&
-        (await infoMessagesStore.deleteTip(item));
+      if (confirm("Are you sure you want to delete this item?")) {
+        await infoMessagesStore.deleteTip(item);
+      }
       dialog.value = false;
     }
-
-
 
     async function saveTips(): Promise<void> {
       editedTipItem.value.author = oauthStore.blizzardVerifiedBtag;

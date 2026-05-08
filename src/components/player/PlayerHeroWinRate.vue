@@ -163,7 +163,7 @@ export default defineComponent({
         return [];
       }
       let hasData = false;
-      heroStatsItemList.map((item) => {
+      heroStatsItemList.forEach((item) => {
         const filteredByMap = item.stats
           .filter((byRace) => byRace.race == selectedRace.value)[0]
           .winLossesOnMap.filter((byMap) => byMap.map == props.selectedMap)[0];
@@ -173,7 +173,7 @@ export default defineComponent({
         return [];
       }
       const resp: PlayerHeroWinRateForStatisticsTab[] = [];
-      heroStatsItemList.map((item) => {
+      heroStatsItemList.forEach((item) => {
         let total = 0;
         let wins = 0;
         const playerWinRate = {
@@ -224,7 +224,7 @@ export default defineComponent({
           total: total,
         };
         resp.push(playerWinRate);
-      }) || [];
+      });
       return resp.sort((a, b) => b.numbers_by_race[ERaceEnum.TOTAL].total - a.numbers_by_race[ERaceEnum.TOTAL].total);
     }
 
