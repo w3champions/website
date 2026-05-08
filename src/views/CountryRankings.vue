@@ -109,7 +109,7 @@ import { Countries } from "@/store/countries";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
-import AppConstants from "../constants";
+import AppConstants, { isGatewayNeededForSeason } from "../constants";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -158,7 +158,7 @@ export default defineComponent({
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const rankings = computed<CountryRanking[]>(() => rankingsStore.countryRankings);
     const selectedCountryCode = computed<string>(() => rankingsStore.selectedCountry);
-    const isGatewayNeeded = computed<boolean>(() => rankingsStore.selectedSeason.id <= 5);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
 
     const selectedCountry = computed<CountryType>(() => {
       return countries.value.find((c) => c.countryCode === selectedCountryCode.value) ?? {} as CountryType;

@@ -25,7 +25,7 @@
                 </div>
               </v-col>
               <div class="position-static right-0 mt-2 ml-1">
-                <gateway-select @gatewayChanged="gatewayChanged" />
+                <gateway-select v-if="isGatewayNeeded" @gatewayChanged="gatewayChanged" />
                 <v-menu v-if="!!seasons && seasons.length > 0" location="right">
                   <template v-slot:activator="{ props }">
                     <v-btn tile class="ml-2 bg-transparent" v-bind="props">
@@ -130,7 +130,7 @@ import { Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
-import AppConstants from "../constants";
+import AppConstants, { isGatewayNeededForSeason } from "../constants";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
@@ -172,6 +172,7 @@ export default defineComponent({
     const seasons = computed<Season[]>(() => playerStore.playerProfile.participatedInSeasons);
     const profile = computed<PlayerProfile>(() => playerStore.playerProfile);
     const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(selectedSeason.value.id));
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const ongoingMatch = computed<Match>(() => playerStore.ongoingMatch);
     const permissions = computed<string[]>(() => oauthStore.permissions);
@@ -305,6 +306,7 @@ export default defineComponent({
       gatewayChanged,
       seasons,
       selectedSeason,
+      isGatewayNeeded,
       ongoingMatch,
       getDuration,
       isOngoingMatchFFA,

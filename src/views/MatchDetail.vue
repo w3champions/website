@@ -15,8 +15,7 @@
             <v-row justify="space-around">
               <v-col cols="1" class="pl-0 pr-0">
                 <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-                  <!-- We only ever have Europe gateway now, so hidden unless this changes -->
-                  <!-- <div>{{ $t(`gatewayNames.${gateWay}`) }}</div> -->
+                  <div v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }}</div>
                   <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
                 </v-card-subtitle>
                 <host-icon
@@ -209,6 +208,7 @@ import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchHeadToHead from "@/components/match-details/MatchHeadToHead.vue";
 import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
+import { isGatewayNeededForSeason } from "@/constants";
 import _keyBy from "lodash/keyBy";
 import { battleTagToName } from "@/helpers/profile";
 import { GAME_MODES_FFA } from "@/store/constants";
@@ -249,6 +249,7 @@ export default defineComponent({
     const ffaPlayers = computed<PlayerScore[]>(() => [ffaWinner.value, ...ffaLosers.value]);
     const gateWay = computed<string>(() => Gateways[matchStore.matchDetail.match.gateWay]);
     const season = computed<number>(() => matchStore.matchDetail.match.season ?? 1);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(season.value));
     const isCompleteGame = computed<PlayerScore[]>(() => matchStore.matchDetail.playerScores);
     const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
     const permissions = computed<string[]>(() => oauthStore.permissions);
@@ -519,6 +520,7 @@ export default defineComponent({
       loading,
       gateWay,
       season,
+      isGatewayNeeded,
       match,
       matchIsFFA,
       isOneVsOne,

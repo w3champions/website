@@ -162,7 +162,7 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
-import AppConstants from "../constants";
+import AppConstants, { isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
@@ -216,7 +216,7 @@ export default defineComponent({
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
 
-    const isGatewayNeeded = computed<boolean>(() => rankingsStore.selectedSeason.id <= 5);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
     const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const selectedGameMode = computed<EGameMode>(() => rankingsStore.gameMode);

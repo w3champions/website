@@ -62,6 +62,7 @@ import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallSta
 import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
+import { isGatewayNeededForSeason } from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
@@ -90,7 +91,7 @@ export default defineComponent({
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const mmrDistribution = computed<MmrDistribution>(() => overallStatsStore.mmrDistribution);
     const standardDeviation = computed<string>(() => mmrDistribution.value?.standardDeviation?.toString() ?? "-");
-    const isGatewayNeeded = computed<boolean>(() => selectedSeason.value.id <= 5);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(selectedSeason.value.id));
 
     const selectedSeason = computed<Season>({
       get(): Season {
