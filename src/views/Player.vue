@@ -267,13 +267,19 @@ export default defineComponent({
         stopLoadingMatches();
       }
 
+      const isRequestedProfileAlreadyLoaded = !!profile.value && battleTag.value === profile.value.battleTag;
+      if (!isRequestedProfileAlreadyLoaded) {
+        playerStore.SET_LOADING_PROFILE(true);
+        playerStore.SET_PROFILE({} as PlayerProfile);
+      }
+
       _intervalRefreshHandle = setInterval(async () => {
         await playerStore.loadOngoingPlayerMatch(battleTag.value);
       }, AppConstants.ongoingMatchesRefreshInterval);
 
       await playerStore.loadOngoingPlayerMatch(battleTag.value);
 
-      if (profile.value && battleTag.value === profile.value.battleTag) return;
+      if (isRequestedProfileAlreadyLoaded) return;
 
       await playerStore.loadFullProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
 
