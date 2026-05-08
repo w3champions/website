@@ -146,6 +146,10 @@ export default defineComponent({
       type: Number as PropType<Gateways>,
       required: true,
     },
+    gameMode: {
+      type: Number as PropType<EGameMode>,
+      required: true,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -231,7 +235,7 @@ export default defineComponent({
         0,
         props.playerBattleTag,
         props.opponentBattleTag,
-        EGameMode.GM_1ON1,
+        props.gameMode,
         ERaceEnum.TOTAL,
         ERaceEnum.TOTAL,
         props.gateway,

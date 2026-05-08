@@ -141,6 +141,7 @@
             :current-match-id="matchId"
             :season="season"
             :gateway="match.gateWay"
+            :game-mode="match.gameMode"
           />
           <v-row v-if="isCompleteGame && matchIsFFA" class="mb-3">
             <v-col cols="2" />
