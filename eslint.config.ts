@@ -113,6 +113,7 @@ export default defineConfigWithVueTs([
       "@stylistic/arrow-parens": ["warn", "always"],
       "@stylistic/no-trailing-spaces": ["warn"],
       "@stylistic/array-bracket-spacing": ["warn", "never"],
+      "@stylistic/eol-last": ["warn", "always"],
       // "@stylistic/keyword-spacing": ["warn", { "before": true, "after": true }],
       // "@stylistic/space-before-blocks": ["warn", "always"],
       // "@stylistic/space-before-function-paren": ["warn", "never"],

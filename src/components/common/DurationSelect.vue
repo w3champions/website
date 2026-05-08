@@ -126,7 +126,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .uniform-values {
   font-size: 14px;
   font-weight: 400;
