@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!matchIsFFA && hasData" class="mt-8 mb-4">
+  <div v-if="hasData" class="mt-8 mb-4">
     <v-card-title class="d-flex justify-center">
       {{ $t("components_matchdetails_matchheadtohead.headToHead") }}
     </v-card-title>
@@ -22,8 +22,7 @@
             <span class="text-body-2 text-medium-emphasis score-name text-left">{{ opponentName }}</span>
           </div>
           <div class="text-caption text-medium-emphasis mt-1">
-            <template v-if="isCapped">{{ $t("components_matchdetails_matchheadtohead.last50") }}</template>
-            <template v-else>{{ stats.totalGames }} {{ $t("components_matchdetails_matchheadtohead.gamesPlayed") }}</template>
+            {{ stats.totalGames }} {{ $t("components_matchdetails_matchheadtohead.gamesPlayed") }}
           </div>
           <RecentPerformance v-if="recentFormStrings.length > 1" :last-ten-matches-performance="recentFormStrings" />
         </v-col>
@@ -102,7 +101,6 @@ import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { formatDistanceToNow, parseJSON } from "date-fns";
 
 const MAX_DURATION_BAR = 1800;
-const MAX_GROUPED_MATCHES = 15;
 
 interface H2HStats {
   wins: number;
@@ -148,9 +146,9 @@ export default defineComponent({
       type: Number as PropType<Gateways>,
       required: true,
     },
-    matchIsFFA: {
-      type: Boolean,
-      default: false,
+    gameMode: {
+      type: Number as PropType<EGameMode>,
+      required: true,
     },
   },
   setup(props) {
@@ -203,8 +201,6 @@ export default defineComponent({
       hasData.value = allMatches.length > 1;
     }
 
-    const isCapped = computed(() => h2hMatches.value.length >= MatchService.pageSize);
-
     const rankingStore = useRankingStore();
     const currentSeason = computed(() =>
       rankingStore.seasons.length > 0 ? rankingStore.seasons[0].id : props.season,
@@ -239,7 +235,7 @@ export default defineComponent({
         0,
         props.playerBattleTag,
         props.opponentBattleTag,
-        EGameMode.UNDEFINED,
+        props.gameMode,
         ERaceEnum.TOTAL,
         ERaceEnum.TOTAL,
         props.gateway,
@@ -356,8 +352,7 @@ export default defineComponent({
 
     const groupedMatches = computed(() => {
       const groups: { season: number; matches: Match[] }[] = [];
-      const filtered = h2hMatches.value.slice(0, MAX_GROUPED_MATCHES);
-      for (const match of filtered) {
+      for (const match of h2hMatches.value) {
         const last = groups[groups.length - 1];
         if (last && last.season === match.season) {
           last.matches.push(match);
@@ -386,7 +381,6 @@ export default defineComponent({
       loading,
       loadingMore,
       hasData,
-      isCapped,
       canLoadMore,
       nextSeasonToLoad,
       loadMore,
