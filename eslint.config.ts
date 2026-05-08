@@ -1,18 +1,14 @@
 import { globalIgnores } from "eslint/config";
 import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
-import pluginVue from "eslint-plugin-vue";
 import eslintPluginVue from "eslint-plugin-vue";
 import { defineConfig } from "eslint/config";
 import eslintPluginLodash from "eslint-plugin-lodash";
-import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 
-export default defineConfig([
-  eslint.configs.recommended,
+export default defineConfigWithVueTs([
   tseslint.configs.recommended,
-  ...pluginVue.configs["flat/recommended"],
-  defineConfigWithVueTs(vueTsConfigs.recommended),
-  ...eslintPluginVue.configs["flat/recommended"],
+  vueTsConfigs.recommended,
+  eslintPluginVue.configs["flat/recommended"],
   globalIgnores(["**/dist/**", "src/locales/data.ts", "src/locales/en.ts", "public/env.js"]),
   {
     name: "eslint",
