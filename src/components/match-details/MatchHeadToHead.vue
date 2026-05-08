@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!matchIsFFA && hasData" class="mt-8 mb-4">
+  <div v-if="hasData" class="mt-8 mb-4">
     <v-card-title class="d-flex justify-center">
       {{ $t("components_matchdetails_matchheadtohead.headToHead") }}
     </v-card-title>
@@ -22,8 +22,7 @@
             <span class="text-body-2 text-medium-emphasis score-name text-left">{{ opponentName }}</span>
           </div>
           <div class="text-caption text-medium-emphasis mt-1">
-            <template v-if="isCapped">{{ $t("components_matchdetails_matchheadtohead.last50") }}</template>
-            <template v-else>{{ stats.totalGames }} {{ $t("components_matchdetails_matchheadtohead.gamesPlayed") }}</template>
+            {{ stats.totalGames }} {{ $t("components_matchdetails_matchheadtohead.gamesPlayed") }}
           </div>
           <RecentPerformance v-if="recentFormStrings.length > 1" :last-ten-matches-performance="recentFormStrings" />
         </v-col>
@@ -147,10 +146,6 @@ export default defineComponent({
       type: Number as PropType<Gateways>,
       required: true,
     },
-    matchIsFFA: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup(props) {
     const router = useRouter();
@@ -202,8 +197,6 @@ export default defineComponent({
       hasData.value = allMatches.length > 1;
     }
 
-    const isCapped = computed(() => h2hMatches.value.length >= MatchService.pageSize);
-
     const rankingStore = useRankingStore();
     const currentSeason = computed(() =>
       rankingStore.seasons.length > 0 ? rankingStore.seasons[0].id : props.season,
@@ -238,7 +231,7 @@ export default defineComponent({
         0,
         props.playerBattleTag,
         props.opponentBattleTag,
-        EGameMode.UNDEFINED,
+        EGameMode.GM_1ON1,
         ERaceEnum.TOTAL,
         ERaceEnum.TOTAL,
         props.gateway,
@@ -384,7 +377,6 @@ export default defineComponent({
       loading,
       loadingMore,
       hasData,
-      isCapped,
       canLoadMore,
       nextSeasonToLoad,
       loadMore,
