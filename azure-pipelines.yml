@@ -25,6 +25,11 @@ steps:
           Write-Host "PR-Version: dev-$(System.PullRequest.PullRequestNumber)"
         }
 
+  - task: UseNode@1
+    displayName: use node version
+    inputs:
+      version: '24.x'
+
   - task: Npm@1
     displayName: install
     inputs:
