@@ -8,6 +8,7 @@ export default defineConfig({
     vue(),
     vuetify({ autoImport: true }), // Enabled by default
   ],
+  clearScreen: false,
   server: {
     port: 8080,
   },

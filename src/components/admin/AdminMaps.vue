@@ -160,7 +160,7 @@ export default defineComponent({
         closeEdit();
         await mapsManagementStore.loadMaps();
       } catch(err) {
-        err ? alert(err) : alert("Error trying to select map.");
+        alert(err ? err : "Error trying to select map.");
       }
     }
 

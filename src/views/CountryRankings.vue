@@ -198,9 +198,11 @@ export default defineComponent({
       window.scrollTo(0, 0);
       await rankingsStore.retrieveSeasons();
 
-      props.season
-        ? rankingsStore.setSeason({ id: props.season })
-        : rankingsStore.setSeason(rankingsStore.seasons[0]);
+      if (props.season) {
+        rankingsStore.setSeason({ id: props.season });
+      } else {
+        rankingsStore.setSeason(rankingsStore.seasons[0]);
+      }
 
       if (props.gateway) {
         rootStateStore.SET_GATEWAY(props.gateway);

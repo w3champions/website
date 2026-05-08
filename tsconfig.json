@@ -1,29 +1,29 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "bundler",
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "types": ["vuetify", "chart.js", "node"],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "jsx": "preserve",
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext",
+    "types": ["vuetify", "chart.js", "node"],
   },
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "vueCompilerOptions": {
     "experimentalModelPropName": {
       "checked": {
         "input": { "type": "checkbox" },
         "v-checkbox": true
       },
-    }
+    },
   },
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"]
 }

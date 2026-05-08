@@ -39,7 +39,7 @@ export default defineConfig([
       "@typescript-eslint/no-loss-of-precision": "warn",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-unused-expressions": "warn",
       "@typescript-eslint/no-unused-vars": ["error", {
         "argsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_",
@@ -69,8 +69,8 @@ export default defineConfig([
           "max": 1,
         },
       }],
-      "vue/v-bind-style": ["error", "shorthand"],
-      "vue/v-slot-style": ["error", "longform"],
+      "vue/v-bind-style": ["warn", "shorthand"],
+      "vue/v-slot-style": ["warn", "longform"],
       // "vue/attribute-hyphenation": ["warn", "always"],
       "vue/attribute-hyphenation": ["off"],
       "vue/singleline-html-element-content-newline": ["off"],
@@ -84,6 +84,9 @@ export default defineConfig([
       "vue/no-deprecated-props-default-this": "warn",
       "vue/no-deprecated-slot-attribute": "warn",
       "vue/prefer-import-from-vue": "warn",
+      // "vue/component-name-in-template-casing": "warn", // https://eslint.vuejs.org/rules/component-name-in-template-casing
+      // "vue/component-api-style": ["error", ["script-setup", "composition"]], // Allow both script setup and normal Composition API https://eslint.vuejs.org/rules/component-api-style
+      // "vue/component-api-style": ["error", ["script-setup"]], // Allow only script setup
     },
   },
   {

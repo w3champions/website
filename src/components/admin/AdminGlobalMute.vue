@@ -174,9 +174,10 @@ export default defineComponent({
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     async function deleteItem(item: GloballyMutedPlayer): Promise<void> {
-      confirm("Are you sure you want to delete this item?") &&
-      await adminStore.deleteGlobalMute(item);
-      loadMutes();
+      if (confirm("Are you sure you want to delete this item?")) {
+        await adminStore.deleteGlobalMute(item);
+        loadMutes();
+      }
     }
 
     function close(): void {
