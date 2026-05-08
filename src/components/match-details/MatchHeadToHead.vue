@@ -198,7 +198,7 @@ export default defineComponent({
       oldestLoadedSeason.value = cache.oldestLoadedSeason;
       consecutiveEmpty.value = cache.consecutiveEmpty;
       exhausted.value = cache.exhausted;
-      hasData.value = allMatches.length > 1;
+      hasData.value = allMatches.length > 0;
     }
 
     const rankingStore = useRankingStore();
@@ -266,7 +266,7 @@ export default defineComponent({
       h2hMatches.value = [...current, ...previous];
       oldestLoadedSeason.value = prevSeason;
       cache.oldestLoadedSeason = prevSeason;
-      hasData.value = h2hMatches.value.length > 1;
+      hasData.value = h2hMatches.value.length > 0;
       loading.value = false;
       scrollHighlightIntoView();
     });
