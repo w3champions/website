@@ -246,7 +246,7 @@ export default defineComponent({
           } catch (err) {
             uploadProgress.value[definitionStepIndex].status = "error";
             uploadProgress.value[definitionStepIndex].message = err instanceof Error ? err.message : "Creation failed";
-            throw new Error(`Portrait definition creation failed for ID ${filePortraitId}: ${err}`);
+            throw new Error(`Portrait definition creation failed for ID ${filePortraitId}: ${err}`, { cause: err });
           }
 
           // Create a new File object with the correct name
@@ -267,7 +267,7 @@ export default defineComponent({
           } catch (err) {
             uploadProgress.value[s3StepIndex].status = "error";
             uploadProgress.value[s3StepIndex].message = err instanceof Error ? err.message : "Upload failed";
-            throw new Error(`S3 upload failed for ${fileName}: ${err}`);
+            throw new Error(`S3 upload failed for ${fileName}: ${err}`, { cause: err });
           }
 
           // Step 3: Upload to Alibaba
@@ -285,7 +285,7 @@ export default defineComponent({
           } catch (err) {
             uploadProgress.value[alibabaStepIndex].status = "error";
             uploadProgress.value[alibabaStepIndex].message = err instanceof Error ? err.message : "Upload failed";
-            throw new Error(`Alibaba upload failed for ${fileName}: ${err}`);
+            throw new Error(`Alibaba upload failed for ${fileName}: ${err}`, { cause: err });
           }
         }
 
