@@ -2,7 +2,13 @@
   <v-container>
     <v-card-title>Chat Log</v-card-title>
     <v-card-text>
-      <v-row class="ma-1">
+      <v-row v-if="loading" justify="center" class="ma-1">
+        <v-progress-circular indeterminate />
+      </v-row>
+      <v-row v-else-if="!messages || messages.length === 0" class="ma-1">
+        <span class="text-medium-emphasis">This match had no chat messages.</span>
+      </v-row>
+      <v-row v-else class="ma-1">
         <replay-chat-message
           v-for="(item, index) in messages"
           :key="index"
@@ -38,6 +44,7 @@ export default defineComponent({
   setup(props) {
     const replayManagementStore = useReplayManagementStore();
     const log = ref<ReplayChatLog>({} as ReplayChatLog);
+    const loading = ref(false);
 
     const messages = computed<ReplayMessage[]>(() => log.value.messages);
 
@@ -61,11 +68,14 @@ export default defineComponent({
     }
 
     onMounted(async (): Promise<void> => {
+      loading.value = true;
       await replayManagementStore.loadChatLog(props.matchId);
       log.value = replayManagementStore.chatLog;
+      loading.value = false;
     });
 
     return {
+      loading,
       messages,
       getSenderName,
       getTeam,
