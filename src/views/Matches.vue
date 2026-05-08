@@ -17,7 +17,11 @@
             <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
             <hero-icon-toggle :showHeroes="showHeroIcons" :unfinished="unfinished" @update:showHeroes="toggleShowHeroIcons" />
           </v-card-text>
+          <v-card-text v-if="isMatchesLoading" class="d-flex justify-center py-10">
+            <v-progress-circular indeterminate color="primary" size="40" />
+          </v-card-text>
           <matches-grid
+            v-else
             v-model="matches"
             :totalMatches="totalMatches"
             :itemsPerPage="50"
@@ -34,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { Match, EGameMode } from "@/store/types";
 import { MatchStatus, Mmr } from "@/store/match/types";
 import { Season } from "@/store/ranking/types";
@@ -73,10 +77,12 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
+    const isInitializing = ref<boolean>(true);
     let _intervalRefreshHandle: NodeJS.Timeout;
 
     const matches = computed<Match[]>(() => matchStore.matches);
     const totalMatches = computed<number>(() => matchStore.totalMatches);
+    const isMatchesLoading = computed<boolean>(() => isInitializing.value || matchStore.loadingMatches);
     const selectedHeroes = computed<number[]>(() => matchStore.selectedHeroFilter);
     const currentSeason = computed<Season>(() => rankingsStore.seasons[0]);
     const unfinished = computed<boolean>(() => matchStore.status === MatchStatus.onGoing);
@@ -162,7 +168,11 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await rankingsStore.retrieveSeasons();
       rankingsStore.setSeason(rankingsStore.seasons[0]);
-      await matchStore.setSeason(rankingsStore.seasons[0]);
+      try {
+        await matchStore.setSeason(rankingsStore.seasons[0]);
+      } finally {
+        isInitializing.value = false;
+      }
       overallStatsStore.loadMatchesOnMapsPerSeason();
       refreshMatches();
     });
@@ -210,6 +220,7 @@ export default defineComponent({
       durationFilterChanged,
       selectSeason,
       unfinished,
+      isMatchesLoading,
       matches,
       totalMatches,
       selectedHeroes,
