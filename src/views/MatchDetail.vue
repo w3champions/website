@@ -1,7 +1,14 @@
 <template>
   <v-container class="w3-container-width">
     <div v-if="isJubileeGame" class="jubilee"></div>
-    <v-row v-if="!loading">
+    <v-row v-if="loading">
+      <v-col cols="12">
+        <v-card tile class="d-flex justify-center align-center py-10">
+          <v-progress-circular indeterminate color="primary" size="40" />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row v-else>
       <v-col cols="12">
         <v-card tile class="pb-5 pt-1">
           <v-card-title class="justify-center">
