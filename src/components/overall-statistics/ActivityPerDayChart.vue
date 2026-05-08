@@ -1,13 +1,16 @@
 <template>
-  <line-chart :chart-data="gameHourChartData" />
+  <div ref="chartContainer" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+    <line-chart :chart-data="gameHourChartData" :chart-options="chartOptions" />
+  </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { Chart } from "chart.js";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { activeGameModes } from "@/composables/GameModesMixin";
 import { GameDay, GameDayPerMode } from "@/store/overallStats/types";
-import LineChart, { getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
-import { ChartData, ChartDataset, Point } from "chart.js";
+import LineChart, { defaultOptions, getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
+import { ChartData, ChartDataset, ChartOptions, Point } from "chart.js";
 import { EGameMode } from "@/store/types";
 import { parseJSON } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
@@ -33,6 +36,19 @@ export default defineComponent({
   },
   setup(props) {
     const { t } = useI18n();
+
+    const chartContainer = ref<HTMLElement | null>(null);
+    // Stores the base colour for each dataset in render order, for imperative hover dimming.
+    const datasetBaseColors = ref<string[]>([]);
+    let activeHoverIndex: number | null = null;
+
+    function withAlpha(color: string, alpha: number): string {
+      const rgba = color.match(/^rgba\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\)$/i);
+      if (rgba) return `rgba(${rgba[1]}, ${rgba[2]}, ${rgba[3]}, ${alpha})`;
+      const rgb = color.match(/^rgb\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\)$/i);
+      if (rgb) return `rgba(${rgb[1]}, ${rgb[2]}, ${rgb[3]}, ${alpha})`;
+      return color;
+    }
 
     // Get the "All" set, or an empty set if it doesn't exist
     const allSet = computed(() => props.gameDaysPerMode
@@ -79,26 +95,32 @@ export default defineComponent({
             props.selectedGameMode === EGameMode.UNDEFINED
             || c.gameMode === props.selectedGameMode
           )
-          .map((c) => ({
-            label: t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
-            data: c.gameDays
-              // Drop today's data (last entry), as it's incomplete (day isn't over)
-              .slice(0, c.gameDays.length - 1)
-              // Produce the data points, normalizing if needed
-              .map((g) => ({
-                // The date is midnight UTC, but parseJSON returns it in local time,
-                // so we need to convert it back to UTC
-                x: utcToZonedTime(parseJSON(g.date), "UTC").getTime(),
-                // If on, normalize the games played by the mode's multiplier
-                y: g.gamesPlayed * (props.normalized ? normalizingMultiplier(c.gameMode) : 1),
-              } satisfies Point)),
-            fill: true,
-            backgroundColor: (context) => getBackgroundColor(context, mapColor(c.gameMode)),
-            borderColor: mapColor(c.gameMode),
-            borderWidth: 1.5,
-            tension: 0.4, // Smooth line.
-            cubicInterpolationMode: "monotone",
-          } satisfies ChartDataset<"line">)),
+          .map((c, i) => {
+            const color = mapColor(c.gameMode);
+            // Store colours for imperative hover dimming (can't use reactive chain
+            // because updating colours triggers a chart re-render which fires hover again).
+            datasetBaseColors.value[i] = color;
+            return {
+              label: t(`gameModes.${EGameMode[c.gameMode]}`).toString(),
+              data: c.gameDays
+                // Drop today's data (last entry), as it's incomplete (day isn't over)
+                .slice(0, c.gameDays.length - 1)
+                // Produce the data points, normalizing if needed
+                .map((g) => ({
+                  // The date is midnight UTC, but parseJSON returns it in local time,
+                  // so we need to convert it back to UTC
+                  x: utcToZonedTime(parseJSON(g.date), "UTC").getTime(),
+                  // If on, normalize the games played by the mode's multiplier
+                  y: g.gamesPlayed * (props.normalized ? normalizingMultiplier(c.gameMode) : 1),
+                } satisfies Point)),
+              fill: true,
+              backgroundColor: (context) => getBackgroundColor(context, color),
+              borderColor: color,
+              borderWidth: 1.5,
+              tension: 0.4, // Smooth line.
+              cubicInterpolationMode: "monotone",
+            } satisfies ChartDataset<"line">;
+          }),
       };
     });
 
@@ -229,9 +251,57 @@ export default defineComponent({
           return 1;
       }
     }
+
+    function getChart(): Chart | undefined {
+      const canvas = chartContainer.value?.querySelector("canvas");
+      return canvas ? Chart.getChart(canvas) : undefined;
+    }
+
+    function applyDimming(activeIndex: number | null) {
+      const chart = getChart();
+      if (!chart) return;
+      const colors = datasetBaseColors.value;
+      chart.data.datasets.forEach((ds, i) => {
+        const color = colors[i] ?? "rgb(54, 162, 235)";
+        const dimmed = activeIndex !== null && activeIndex !== i;
+        ds.borderColor = dimmed ? withAlpha(color, 0.3) : color;
+        ds.backgroundColor = dimmed
+          ? withAlpha(color, 0.1)
+          : (ctx: Parameters<typeof getBackgroundColor>[0]) => getBackgroundColor(ctx, color);
+      });
+      chart.update("none");
+    }
+
+    function onMouseMove(event: MouseEvent) {
+      const chart = getChart();
+      if (!chart) return;
+      const elements = chart.getElementsAtEventForMode(event, "nearest", { intersect: false }, false);
+      const nextIndex = elements.length > 0 ? elements[0].datasetIndex : null;
+      if (nextIndex !== activeHoverIndex) {
+        activeHoverIndex = nextIndex;
+        applyDimming(nextIndex);
+      }
+    }
+
+    function onMouseLeave() {
+      if (activeHoverIndex !== null) {
+        activeHoverIndex = null;
+        applyDimming(null);
+      }
+    }
+
+    const chartOptions = computed<ChartOptions<"line">>(() => {
+      return defaultOptions() as ChartOptions<"line">;
+    });
+
     return {
+      chartContainer,
+      onMouseMove,
+      onMouseLeave,
       gameHourChartData,
+      chartOptions,
     };
+
   },
 });
 </script>

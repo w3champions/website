@@ -48,22 +48,29 @@ export default defineComponent({
       return isLoggedIn && isOwnProfile;
     });
 
-    const colors = computed(() => {
-      const colors: string[] = [];
-      for (let i = 0; i < props.mmrDistribution.distributedMmrs.length; i++) {
-        if (
-          i === props.mmrDistribution.top2PercentIndex ||
-          i === props.mmrDistribution.top5PercentIndex ||
-          i === props.mmrDistribution.top10PercentIndex ||
-          i === props.mmrDistribution.top25PercentIndex ||
-          i === props.mmrDistribution.top50PercentIndex
-        ) {
-          colors.push("rgb(120, 45, 160, 0.8)");
-        } else {
-          colors.push("rgba(54, 162, 235, 0.5)");
+    const percentileMarkers = computed<Array<{ index: number; label: string }>>(() => {
+      const markers = [
+        { index: props.mmrDistribution.top2PercentIndex, label: "Top 2%" },
+        { index: props.mmrDistribution.top5PercentIndex, label: "Top 5%" },
+        { index: props.mmrDistribution.top10PercentIndex, label: "Top 10%" },
+        { index: props.mmrDistribution.top25PercentIndex, label: "Top 25%" },
+        { index: props.mmrDistribution.top50PercentIndex, label: "Top 50%" },
+      ];
+
+      const seen = new Set<number>();
+      return markers.filter((marker) => {
+        const isValidIndex =
+          Number.isInteger(marker.index) &&
+          marker.index >= 0 &&
+          marker.index < props.mmrDistribution.distributedMmrs.length;
+
+        if (!isValidIndex || seen.has(marker.index)) {
+          return false;
         }
-      }
-      return colors;
+
+        seen.add(marker.index);
+        return true;
+      });
     });
 
     const mmrOfLoggedInPlayer = computed<number>(() => {
@@ -141,7 +148,7 @@ export default defineComponent({
             data: props.mmrDistribution.distributedMmrs.map((d) => d.count),
             borderColor: "rgba(54, 162, 235, 1)",
             borderWidth: 1,
-            backgroundColor: colors.value,
+            backgroundColor: "rgba(54, 162, 235, 0.5)",
           },
           {
             type: "line",
@@ -157,27 +164,60 @@ export default defineComponent({
 
     const mmrDistributionChartOptions = computed<ChartOptions>(() => {
       const isValidMMR = mmrGroupOfLoggedInPlayer.value > 0 && isLoggedInUserProfile.value;
-      const annotations: { [key: string]: AnnotationOptions } = isValidMMR
-        ? {
-          x: {
+      const percentileAnnotations = percentileMarkers.value.reduce(
+        (result, marker, order) => {
+          const mmr = props.mmrDistribution.distributedMmrs[marker.index]?.mmr;
+          if (mmr === undefined) {
+            return result;
+          }
+
+          result[`percentile-${marker.index}-${marker.label}`] = {
             type: "line",
             scaleID: "x",
-            value: `> ${mmrGroupOfLoggedInPlayer.value}`,
-            borderColor: "rgb(28,95,47, 0.7)",
+            value: `> ${mmr}`,
+            borderColor: "rgba(120, 45, 160, 0.9)",
             borderWidth: 2,
-            borderDash: [10, 10],
+            borderDash: [6, 4],
             label: {
               display: true,
-              content: "Your MMR",
-              backgroundColor: "rgb(28,95,47, 0.7)",
-              yAdjust: 10,
-              xAdjust: isTop50percent.value ? 40 : -40, //Move label to left or right of line
+              content: marker.label,
+              backgroundColor: "rgba(120, 45, 160, 0.25)",
+              color: "white",
               position: "start",
-              borderRadius: 0,
+              yAdjust: 8 + order * 14,
+              borderRadius: 2,
             },
-          },
-        }
-        : {};
+          } as AnnotationOptions;
+
+          return result;
+        },
+        {} as { [key: string]: AnnotationOptions }
+      );
+
+      const annotations: { [key: string]: AnnotationOptions } = {
+        ...percentileAnnotations,
+        ...(isValidMMR
+          ? {
+            x: {
+              type: "line",
+              scaleID: "x",
+              value: `> ${mmrGroupOfLoggedInPlayer.value}`,
+              borderColor: "rgb(28,95,47, 0.7)",
+              borderWidth: 2,
+              borderDash: [10, 10],
+              label: {
+                display: true,
+                content: "Your MMR",
+                backgroundColor: "rgb(28,95,47, 0.7)",
+                yAdjust: 10,
+                xAdjust: isTop50percent.value ? 40 : -40, //Move label to left or right of line
+                position: "start",
+                borderRadius: 0,
+              },
+            } as AnnotationOptions,
+          }
+          : {}),
+      };
 
       return {
         plugins: {
