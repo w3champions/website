@@ -4,6 +4,7 @@ import eslintPluginVue from "eslint-plugin-vue";
 import { defineConfig } from "eslint/config";
 import eslintPluginLodash from "eslint-plugin-lodash";
 import tseslint from "typescript-eslint";
+import stylistic from "@stylistic/eslint-plugin";
 
 export default defineConfigWithVueTs([
   tseslint.configs.recommended,
@@ -14,15 +15,8 @@ export default defineConfigWithVueTs([
     name: "eslint",
     files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
     rules: {
-      "arrow-parens": ["warn", "always"], // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/arrow-parens
       "camelcase": "off",
-      "comma-dangle": ["warn", "only-multiline"], // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/comma-dangle
-      "no-trailing-spaces": "warn", // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/no-trailing-spaces
-      "object-curly-spacing": ["warn", "always"], // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/object-curly-spacing
       "prefer-const": "warn",
-      "quotes": "warn", // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/quotes
-      "semi": "warn", // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/semi
-      "space-infix-ops": "warn", // TODO: Deprecated. Removed in v11.0.0. Use @stylistic/eslint-plugin. Read more: https://eslint.org/docs/latest/rules/space-infix-ops
     },
   },
   {
@@ -98,6 +92,29 @@ export default defineConfigWithVueTs([
       "lodash/prefer-lodash-typecheck": "off",
       "lodash/prefer-matches": "off",
       "lodash/prop-shorthand": "off",
+    },
+  },
+  {
+    name: "eslint-plugin-stylistic",
+    plugins: {
+      "@stylistic": stylistic,
+    },
+    files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
+    rules: {
+      "@stylistic/semi": ["warn", "always"],
+      "@stylistic/quotes": ["warn", "double"],
+      "@stylistic/comma-dangle": ["warn", "only-multiline"],
+      // "@stylistic/comma-dangle": ["warn", "always-multiline"],
+      // "@stylistic/indent": ["warn", 2],
+      // "@stylistic/object-curly-spacing": ["warn", "always"],
+      "@stylistic/space-infix-ops": ["warn"],
+      "@stylistic/arrow-parens": ["warn", "always"],
+      "@stylistic/no-trailing-spaces": ["warn"],
+      "@stylistic/array-bracket-spacing": ["warn", "never"],
+      // "@stylistic/keyword-spacing": ["warn", { "before": true, "after": true }],
+      // "@stylistic/space-before-blocks": ["warn", "always"],
+      // "@stylistic/space-before-function-paren": ["warn", "never"],
+      // "@stylistic/space-before-function-parentheses": ["warn", "never"],
     },
   },
 ]);

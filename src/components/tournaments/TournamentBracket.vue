@@ -67,7 +67,7 @@ export default defineComponent({
       const playerExtraData = fromPairs(
         props.tournament.players.map((p) => [
           p.battleTag,
-          pick(p, [ "countryCode", "race" ]),
+          pick(p, ["countryCode", "race"]),
         ])
       );
       for (const round of props.tournament.rounds) {

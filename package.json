@@ -12,7 +12,7 @@
     "build:prod": "npm run generate-locales && vite build",
     "generate-locales": "node scripts/generate-locales.ts",
     "lint": "eslint --no-fix --max-warnings=0 --flag unstable_native_nodejs_ts_config src/",
-    "lint-js": "eslint --no-fix --max-warnings=0 src/",
+    "lint-js": "eslint --no-fix --max-warnings=0",
     "lint:fix": "eslint --fix src/",
     "dprint": "dprint check",
     "dprint:fix": "dprint fmt",
@@ -61,6 +61,7 @@
     "vuetify": "^3.10.5"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.24",
     "@types/node": "^20.11.30",
