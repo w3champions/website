@@ -77,8 +77,8 @@ export default defineComponent({
           ...item,
           items: item.items
             ? item.items.filter((subItem) =>
-                permissions.value.includes(EPermission[subItem.permission])
-              )
+              permissions.value.includes(EPermission[subItem.permission])
+            )
             : [],
         }))
         .filter(

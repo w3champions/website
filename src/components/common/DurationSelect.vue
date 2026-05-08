@@ -82,8 +82,8 @@ export default defineComponent({
       m === 240
         ? "4h+"
         : m < 60
-        ? `${m} min`
-        : `${Math.floor(m / 60)}h ${m % 60 ? m % 60 + "min" : ""}`.trim();
+          ? `${m} min`
+          : `${Math.floor(m / 60)}h ${m % 60 ? m % 60 + "min" : ""}`.trim();
 
     const selected = computed(() => {
       if (!props.duration) return "Duration";

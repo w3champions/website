@@ -105,7 +105,7 @@ export default defineConfigWithVueTs([
       "@stylistic/quotes": ["warn", "double"],
       "@stylistic/comma-dangle": ["warn", "only-multiline"],
       // "@stylistic/comma-dangle": ["warn", "always-multiline"],
-      // "@stylistic/indent": ["warn", 2],
+      "@stylistic/indent": ["warn", 2],
       // "@stylistic/object-curly-spacing": ["warn", "always"],
       "@stylistic/space-infix-ops": ["warn"],
       "@stylistic/arrow-parens": ["warn", "always"],

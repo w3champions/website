@@ -115,9 +115,9 @@ export default defineComponent({
     const selectedTab = ref<string>("");
 
     watch(() => playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All,
-        (newData: RaceWinsOnMap[]) => {
-          selectedTab.value = defaultStatsTab(newData);
-        }
+      (newData: RaceWinsOnMap[]) => {
+        selectedTab.value = defaultStatsTab(newData);
+      }
     );
 
     function getWinRateClass(heroStats: PlayerHeroWinRateForStatisticsTab, raceEnum: ERaceEnum): string[] {
