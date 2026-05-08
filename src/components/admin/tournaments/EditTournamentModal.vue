@@ -242,11 +242,11 @@ export default defineComponent({
 
     const isEdit = computed<boolean>(() => !!props.tournament);
     const mapOptions = computed<Map[]>(() => props.maps);
-    const gameModes = computed<{id: number; name: string}[]>(() => getSelectOptions(EGameModeLabel));
-    const formats = computed<{id: number; name: string}[]>(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
+    const gameModes = computed<{ id: number; name: string }[]>(() => getSelectOptions(EGameModeLabel));
+    const formats = computed<{ id: number; name: string }[]>(() => getSelectOptions(ETournamentFormatLabel).slice(0, 1));
     const enabledFloNodes = computed<ITournamentFloNode[]>(() => tournamentsManagementStore.floNodes);
 
-    const states = computed<{id: number; name: string}[]>(() => {
+    const states = computed<{ id: number; name: string }[]>(() => {
       const validStates = pickBy(ETournamentState, (_value, key) => {
         return !isNaN(Number(key));
       }) as { [key: number]: string };

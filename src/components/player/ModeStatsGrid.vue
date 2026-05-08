@@ -112,7 +112,7 @@ export default defineComponent({
       return topPerc.toFixed(1);
     }
 
-    const headers: (DataTableHeader & {tooltip: TranslateResult})[] = [
+    const headers: (DataTableHeader & { tooltip: TranslateResult })[] = [
       {
         title: t("components_player_modestatsgrid.mode"),
         align: "center",

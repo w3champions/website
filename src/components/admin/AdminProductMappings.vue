@@ -318,7 +318,7 @@ export default defineComponent({
       },
     };
 
-    const mappingTypeOptions = ref<{title: string; value: ProductMappingType}[]>([
+    const mappingTypeOptions = ref<{ title: string; value: ProductMappingType }[]>([
       { title: "One Time", value: ProductMappingType.OneTime },
       { title: "Recurring", value: ProductMappingType.Recurring },
       { title: "Tiered", value: ProductMappingType.Tiered },

@@ -226,7 +226,7 @@ export default defineComponent({
       }))
     );
 
-    const durationUnitItems = ref<{title: string; value: DurationType}[]>([
+    const durationUnitItems = ref<{ title: string; value: DurationType }[]>([
       { title: "Days", value: DurationType.Days },
       { title: "Months", value: DurationType.Months },
       { title: "Years", value: DurationType.Years },
