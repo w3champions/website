@@ -102,7 +102,6 @@ import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { formatDistanceToNow, parseJSON } from "date-fns";
 
 const MAX_DURATION_BAR = 1800;
-const MAX_GROUPED_MATCHES = 15;
 
 interface H2HStats {
   wins: number;
@@ -356,8 +355,7 @@ export default defineComponent({
 
     const groupedMatches = computed(() => {
       const groups: { season: number; matches: Match[] }[] = [];
-      const filtered = h2hMatches.value.slice(0, MAX_GROUPED_MATCHES);
-      for (const match of filtered) {
+      for (const match of h2hMatches.value) {
         const last = groups[groups.length - 1];
         if (last && last.season === match.season) {
           last.matches.push(match);
