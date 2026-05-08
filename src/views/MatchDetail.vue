@@ -298,10 +298,10 @@ export default defineComponent({
       const battleTag = normalize(player.battleTag);
       const inviteName = normalize(player.inviteName);
       const displayName = normalize(player.name);
-      const battleTagName = stripTag(player.battleTag);
-      const inviteNameTag = stripTag(player.inviteName);
-      const scoreTag = normalize(score.battleTag);
-      const scoreTagName = stripTag(score.battleTag);
+      const battleTagStripped = stripTag(player.battleTag);
+      const inviteNameStripped = stripTag(player.inviteName);
+      const scoreBattleTag = normalize(score.battleTag);
+      const scoreBattleTagStripped = stripTag(score.battleTag);
 
       // Match strategies in priority order:
       // 1. Exact BattleTag match
@@ -310,12 +310,12 @@ export default defineComponent({
       // 4. Score matches BattleTag without discriminator (#number)
       // 5. Score matches invite name without discriminator
       // 6. Score matches display name without discriminator
-      return scoreTag === battleTag ||
-          !!(inviteName && scoreTag === inviteName) ||
-          !!(displayName && scoreTag === displayName) ||
-          !!(battleTagName && scoreTagName === battleTagName) ||
-          !!(inviteNameTag && scoreTagName === inviteNameTag) ||
-          !!(displayName && scoreTagName === displayName);
+      return scoreBattleTag === battleTag ||
+          !!(inviteName && scoreBattleTag === inviteName) ||
+          !!(displayName && scoreBattleTag === displayName) ||
+          !!(battleTagStripped && scoreBattleTagStripped === battleTagStripped) ||
+          !!(inviteNameStripped && scoreBattleTagStripped === inviteNameStripped) ||
+          !!(displayName && scoreBattleTagStripped === displayName);
     }
 
     // Resolves which score data teamIndex corresponds to each displayed team.
