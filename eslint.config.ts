@@ -16,7 +16,9 @@ export default defineConfigWithVueTs([
     files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
     rules: {
       "camelcase": "off",
+      "curly": ["warn", "multi-line"],
       "prefer-const": "warn",
+      // "sort-imports": "warn",
     },
   },
   {
