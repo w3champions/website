@@ -30,20 +30,32 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const oauthStore = useOauthStore();
+    const loginReturnToKey = "w3-login-return-to";
 
     const account = computed<string>(() => oauthStore.blizzardVerifiedBtag);
     const authCode = computed<string>(() => oauthStore.token);
 
-    function openPlayerProfile() {
+    function openPlayerProfile(): void {
       router.push({
         path: getProfileUrl(account.value) + "?freshLogin=true",
       });
     }
 
+    function openRequestedReturnPath(): void {
+      const returnTo = window.sessionStorage.getItem(loginReturnToKey);
+      if (returnTo) {
+        window.sessionStorage.removeItem(loginReturnToKey);
+        router.replace(returnTo);
+        return;
+      }
+
+      openPlayerProfile();
+    }
+
     async function init(): Promise<void> {
       await oauthStore.authorizeWithCode(props.code);
       await oauthStore.loadBlizzardBtag(authCode.value);
-      openPlayerProfile();
+      openRequestedReturnPath();
     }
 
     onMounted((): void => {

@@ -153,14 +153,14 @@
 </template>
 
 <script lang="ts">
-import { onBeforeMount, onMounted, defineComponent, computed, ref } from "vue";
+import { onBeforeMount, onBeforeUnmount, onMounted, defineComponent, computed, ref } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import languages from "@/locales/languages";
 import { useI18n } from "vue-i18n";
 import noop from "lodash/noop";
@@ -203,11 +203,13 @@ export default defineComponent({
   setup() {
     const { locale } = useI18n();
     const router = useRouter();
+    const route = useRoute();
     const oauthStore = useOauthStore();
     const rootStateStore = useRootStateStore();
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
     const theme = useTheme();
+    const loginReturnToKey = "w3-login-return-to";
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -258,8 +260,20 @@ export default defineComponent({
       if (authCode.value) {
         openPlayerProfile();
       } else {
+        clearLoginReturnTo();
         showSignInDialog.value = true;
       }
+    }
+
+    function openSignInDialog(returnTo?: string): void {
+      if (returnTo) {
+        window.sessionStorage.setItem(loginReturnToKey, returnTo);
+      }
+      showSignInDialog.value = true;
+    }
+
+    function clearLoginReturnTo(): void {
+      window.sessionStorage.removeItem(loginReturnToKey);
     }
 
     function setNavigationDrawerOpen(val: boolean): void {
@@ -329,6 +343,11 @@ export default defineComponent({
       showSignInDialog.value = val;
     };
 
+    const handleOpenSignInDialog = (event: Event): void => {
+      const customEvent = event as CustomEvent<{ returnTo?: string }>;
+      openSignInDialog(customEvent.detail?.returnTo ?? route.fullPath);
+    };
+
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
@@ -340,7 +359,12 @@ export default defineComponent({
     }
 
     onMounted(async () => {
+      window.addEventListener("w3-open-sign-in-dialog", handleOpenSignInDialog);
       await init();
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener("w3-open-sign-in-dialog", handleOpenSignInDialog);
     });
 
     onBeforeMount(() => {
@@ -367,6 +391,8 @@ export default defineComponent({
       rootStateStore,
       authCode,
       loginOrGoToProfile,
+      openSignInDialog,
+      clearLoginReturnTo,
       logout,
       loginName,
       battleTag,
