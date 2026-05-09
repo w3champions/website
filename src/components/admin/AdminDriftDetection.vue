@@ -1,4 +1,4 @@
-J<template>
+<template>
   <div>
     <v-card-title class="pt-3">
       Drift Detection Dashboard

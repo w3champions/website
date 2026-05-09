@@ -553,12 +553,12 @@ export interface PatreonMemberDetails {
   email?: string;
   patronStatus?: string;
   isActivePatron?: boolean;
-  entitledTiers: EntitledTier[];
+  entitledTiers?: EntitledTier[];
   lastChargeDate?: string;
   lastChargeStatus?: string;
   pledgeRelationshipStart?: string;
-  activeAssociationCount: number;
-  activeAssociationTiers: string[];
+  activeAssociationCount?: number;
+  activeAssociationTiers?: string[];
   message?: string;
   error?: string;
 }
