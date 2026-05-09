@@ -1,31 +1,13 @@
 <template>
-  <v-menu location="right">
-    <template v-slot:activator="{ props }">
-      <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
-        <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
-        {{ currentStatus.name }}
-      </v-btn>
-    </template>
-    <v-card>
-      <v-card-text>
-        <v-list>
-          <v-list-item-title>
-            {{ $t("components_matches_matchesstatusselect.selectstatus") }}
-          </v-list-item-title>
-        </v-list>
-        <v-divider />
-        <v-list density="compact" max-height="400" class="overflow-y-auto">
-          <v-list-item
-            v-for="s in matchStatuses"
-            :key="s.status"
-            @click="currentStatus = s"
-          >
-            <v-list-item-title>{{ s.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-card-text>
-    </v-card>
-  </v-menu>
+  <v-btn
+    tile
+    class="w3-dropdown-button"
+    style="background-color: transparent"
+    @click="toggleStatus"
+  >
+    <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
+    {{ currentStatus.name }}
+  </v-btn>
 </template>
 
 <script lang="ts">
@@ -48,16 +30,6 @@ export default defineComponent({
     const { t } = useI18n();
     const matchStore = useMatchStore();
 
-    const currentStatus = computed<MatchStatusSelectData>({
-      get(): MatchStatusSelectData {
-        const selectedStatus = matchStore.status;
-        return matchStatuses.find((x) => x.status == selectedStatus)!;
-      },
-      set(val: MatchStatusSelectData): void {
-        matchStore.setStatus(val.status);
-      },
-    });
-
     const matchStatuses: MatchStatusSelectData[] = [
       {
         name: t("matchStatuses.onGoing"),
@@ -69,10 +41,21 @@ export default defineComponent({
       },
     ];
 
+    const currentStatus = computed<MatchStatusSelectData>(
+      () => matchStatuses.find((x) => x.status == matchStore.status)!,
+    );
+
+    const toggleStatus = (): void => {
+      const next = currentStatus.value.status === MatchStatus.onGoing
+        ? MatchStatus.past
+        : MatchStatus.onGoing;
+      matchStore.setStatus(next);
+    };
+
     return {
       mdiControllerClassic,
       currentStatus,
-      matchStatuses,
+      toggleStatus,
     };
   },
 });
