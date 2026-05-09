@@ -39,9 +39,9 @@
   // they read as buttons (parity with the affordance light themes get).
   .w3-dropdown-button {
     box-shadow:
-      0 3px 1px -2px rgba(255, 255, 255, 0.2),
-      0 2px 2px 0 rgba(255, 255, 255, 0.14),
-      0 1px 5px 0 rgba(255, 255, 255, 0.12);
+      0 2px 1px -2px rgba(200, 200, 200, 0.15),
+      0 1px 2px 0 rgba(200, 200, 200, 0.10),
+      0 1px 4px 0 rgba(200, 200, 200, 0.08);
   }
 
   // Floating overlays (menus, dialogs) blend into dark backgrounds because
@@ -50,8 +50,8 @@
   .v-overlay__content {
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow:
-      0 4px 6px -2px rgba(255, 255, 255, 0.08),
-      0 8px 12px 0 rgba(255, 255, 255, 0.06);
+      0 3px 6px -2px rgba(200, 200, 200, 0.06),
+      0 6px 12px 0 rgba(200, 200, 200, 0.04);
   }
 
   &.v-application, &.v-overlay {
