@@ -5,6 +5,14 @@
       <v-row v-if="loading" justify="center" class="ma-1">
         <v-progress-circular indeterminate />
       </v-row>
+      <v-alert v-else-if="errorMessage" type="error" variant="tonal" class="ma-1">
+        <div class="d-flex align-center justify-space-between flex-wrap ga-2">
+          <span>{{ errorMessage }}</span>
+          <v-btn v-if="showLoginButton" variant="text" @click="promptLogin">
+            Log in again
+          </v-btn>
+        </div>
+      </v-alert>
       <v-row v-else-if="!messages || messages.length === 0" class="ma-1">
         <span class="text-medium-emphasis">This match had no chat messages.</span>
       </v-row>
@@ -29,6 +37,7 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "AdminReplayChatLogMessages",
@@ -43,8 +52,11 @@ export default defineComponent({
   },
   setup(props) {
     const replayManagementStore = useReplayManagementStore();
+    const route = useRoute();
     const log = ref<ReplayChatLog>({} as ReplayChatLog);
     const loading = ref(false);
+    const errorMessage = ref<string>("");
+    const showLoginButton = ref(false);
 
     const messages = computed<ReplayMessage[]>(() => log.value.messages);
 
@@ -67,11 +79,42 @@ export default defineComponent({
       return name;
     }
 
+    function promptLogin(): void {
+      window.dispatchEvent(new CustomEvent("w3-open-sign-in-dialog", {
+        detail: {
+          returnTo: route.fullPath,
+        },
+      }));
+    }
+
+    function handleLoadError(error: unknown): void {
+      const status = typeof error === "object" && error !== null && "status" in error
+        ? (error as { status?: number }).status
+        : undefined;
+
+      if (status === 401) {
+        showLoginButton.value = true;
+        promptLogin();
+        errorMessage.value = "Your session expired while loading the chat log. Please log in again.";
+        return;
+      }
+
+      errorMessage.value = "We could not load the chat log right now. Please try again.";
+    }
+
     onMounted(async (): Promise<void> => {
       loading.value = true;
-      await replayManagementStore.loadChatLog(props.matchId);
-      log.value = replayManagementStore.chatLog;
-      loading.value = false;
+      errorMessage.value = "";
+      showLoginButton.value = false;
+
+      try {
+        await replayManagementStore.loadChatLog(props.matchId);
+        log.value = replayManagementStore.chatLog;
+      } catch (error) {
+        handleLoadError(error);
+      } finally {
+        loading.value = false;
+      }
     });
 
     return {
@@ -80,6 +123,9 @@ export default defineComponent({
       getSenderName,
       getTeam,
       getPrivateRecipientName,
+      errorMessage,
+      showLoginButton,
+      promptLogin,
     };
   },
 });
