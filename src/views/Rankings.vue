@@ -4,12 +4,43 @@
       <v-card-title class="pt-3">
         {{ $t("views_app.rankings") }}
       </v-card-title>
-      <v-card-text class="pt-2 d-flex">
+      <v-card-text class="pt-2 pb-0 d-flex align-center flex-wrap">
+        <v-menu location="right" transition="fade-transition">
+          <template v-slot:activator="{ props }">
+            <v-btn tile class="ma-0 mr-3" style="background-color: transparent" v-bind="props">
+              <h2 class="pa-0">
+                {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
+              </h2>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item-title>
+                  {{ $t("views_rankings.prevseasons") }}
+                </v-list-item-title>
+              </v-list>
+              <v-list density="compact" max-height="400" class="overflow-y-auto">
+                <v-list-item
+                  v-for="item in seasons"
+                  :key="item.id"
+                  @click="selectSeason(item)"
+                >
+                  <v-list-item-title>
+                    {{ $t("views_rankings.season") }} {{ item.id }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
         <gateway-select
           v-if="isGatewayNeeded"
+          class="mr-3"
           @gatewayChanged="onGatewayChanged"
         />
         <game-mode-select
+          class="mr-3"
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
@@ -76,66 +107,51 @@
                 {{ item.raw }}
               </template>
               <template v-else>
-                <v-list-item>
-                  <v-list-item-title v-bind="props">
-                    <span v-if="!isDuplicateName(item.raw.player.name)">
-                      {{ item.raw.player.name }}
-                    </span>
-                    <span v-if="isDuplicateName(item.raw.player.name)">
-                      {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
-                    </span>
-                    <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
-                      ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
-                    </span>
-                  </v-list-item-title>
-                  <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
-                    {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
-                    {{ $t(`common.losses`) }}
-                    {{ item.raw.player.losses }} |
-                    {{ $t(`common.total`) }}
-                    {{ item.raw.player.games }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle v-else>
-                    {{ $t(`views_rankings.unranked`) }}
-                  </v-list-item-subtitle>
+                <v-list-item v-bind="props">
+                  <template v-slot:title>
+                    <div class="search-result-row d-flex align-center">
+                      <img
+                        v-if="showSearchRaceIcon(item.raw)"
+                        :src="getSearchRaceIconUrl(item.raw)"
+                        :alt="getSearchRaceIconName(item.raw)"
+                        class="search-race-icon mr-3"
+                      />
+                      <div class="d-flex flex-column justify-center">
+                        <span v-if="!isDuplicateName(item.raw.player.name)">
+                          {{ item.raw.player.name }}
+                        </span>
+                        <span v-if="isDuplicateName(item.raw.player.name)">
+                          <span
+                            v-for="(pid, index) in item.raw.player.playerIds"
+                            :key="pid.battleTag"
+                          >
+                            {{ pid.name }}<span class="btag-discriminator">#{{ pid.battleTag.split("#")[1] }}</span><span v-if="index < item.raw.player.playerIds.length - 1"> &amp; </span>
+                          </span>
+                        </span>
+                        <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                          <span class="w3-won">{{ item.raw.player.wins }}</span>
+                          -
+                          <span class="w3-lost">{{ item.raw.player.losses }}</span>
+                          | MMR: {{ item.raw.player.mmr }}
+                        </v-list-item-subtitle>
+                        <v-list-item-subtitle v-else>
+                          {{ $t(`views_rankings.unranked`) }}
+                        </v-list-item-subtitle>
+                      </div>
+                    </div>
+                  </template>
                 </v-list-item>
               </template>
             </template>
           </v-autocomplete>
         </div>
       </v-card-text>
-      <v-menu location="right" transition="fade-transition">
-        <template v-slot:activator="{ props }">
-          <v-btn tile class="ma-4" style="background-color: transparent" v-bind="props">
-            <h2 class="pa-0">
-              {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
-            </h2>
-            <v-icon size="x-large" end>{{ mdiChevronRight }}</v-icon>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-text>
-            <v-list>
-              <v-list-item-title>
-                {{ $t("views_rankings.prevseasons") }}
-              </v-list-item-title>
-            </v-list>
-            <v-list density="compact" max-height="400" class="overflow-y-auto">
-              <v-list-item
-                v-for="item in seasons"
-                :key="item.id"
-                @click="selectSeason(item)"
-              >
-                <v-list-item-title>
-                  {{ $t("views_rankings.season") }} {{ item.id }}
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-menu>
       <v-card-text>
+        <div v-if="isRankingsLoading" class="d-flex justify-center py-10">
+          <v-progress-circular indeterminate color="primary" size="40" />
+        </div>
         <rankings-grid
+          v-else
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
           :selectedRank="selectedRank"
@@ -154,7 +170,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -162,12 +178,12 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
-import AppConstants from "../constants";
+import AppConstants, { isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { mdiChevronRight, mdiMagnify } from "@mdi/js";
+import { mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router";
 import noop from "lodash/noop";
 
@@ -215,8 +231,10 @@ export default defineComponent({
     const selectedRank = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
+    const playerIdToScroll = ref<string | undefined>(undefined);
+    const isProgrammaticSelection = ref<boolean>(false);
 
-    const isGatewayNeeded = computed<boolean>(() => rankingsStore.selectedSeason.id <= 5);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
     const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const selectedGameMode = computed<EGameMode>(() => rankingsStore.gameMode);
@@ -224,6 +242,7 @@ export default defineComponent({
     const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
     const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
     const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const isRankingsLoading = computed<boolean>(() => rankingsStore.loading);
 
     const ladders = computed<League[]>(() => {
       const league = rankingsStore.ladders?.filter((l) =>
@@ -273,12 +292,16 @@ export default defineComponent({
 
     async function refreshRankings() {
       await loadOngoingMatches();
-      await getRankings();
+      await getRefreshRankings();
       await getLadders();
     }
 
     async function getRankings() {
       await rankingsStore.retrieveRankings();
+    }
+
+    async function getRefreshRankings() {
+      await rankingsStore.retrieveRankings(undefined, false);
     }
 
     async function getLadders() {
@@ -288,11 +311,15 @@ export default defineComponent({
     watch(selectedRank, onSelectedRank);
     function onSelectedRank(rank: Ranking | undefined): void {
       if (!rank) return;
+      // Don't trigger side effects when selectedRank is set programmatically for scrolling
+      if (isProgrammaticSelection.value) return;
 
       if (!playerIsRanked(rank)) {
         routeToProfilePage(rank.player.playerIds[0].battleTag);
+        return;
       }
 
+      playerIdToScroll.value = rank.player.playerIds[0]?.battleTag;
       setLeague(rank.league);
     }
 
@@ -300,6 +327,28 @@ export default defineComponent({
     function onSearchRanksChanged() {
       isLoading.value = false;
     }
+
+    function rankingMatchesPlayerId(rank: Ranking, playerId: string): boolean {
+      return rank.player.playerIds.some((player) => player.battleTag === playerId);
+    }
+
+    const handlePlayerScroll = async () => {
+      if (playerIdToScroll.value && rankings.value.length > 0) {
+        await nextTick();
+        const selectedPlayer = rankings.value.find((r) => rankingMatchesPlayerId(r, playerIdToScroll.value!));
+        if (selectedPlayer) {
+          isProgrammaticSelection.value = true;
+          selectedRank.value = selectedPlayer;
+          playerIdToScroll.value = undefined;
+          await nextTick();
+          isProgrammaticSelection.value = false;
+          const element = document.getElementById(`listitem_${selectedPlayer.rankNumber}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      }
+    };
 
     const searchDebounced = (newValue: string, timeout = 500) => {
       clearTimeout(searchTimer);
@@ -348,6 +397,31 @@ export default defineComponent({
       return item.order;
     }
 
+    function showSearchRaceIcon(rank: Ranking): boolean {
+      return rank.player.gameMode === EGameMode.GM_1ON1
+        && rank.player.race !== undefined
+        && rank.player.race !== null
+        && rank.player.race !== ERaceEnum.TOTAL;
+    }
+
+    function getSearchRaceIconUrl(rank: Ranking): string {
+      const race = rank.player.race;
+      if (race === undefined || race === null) {
+        return "/assets/raceIcons/RANDOM.png";
+      }
+
+      return `/assets/raceIcons/${ERaceEnum[race]}.png`;
+    }
+
+    function getSearchRaceIconName(rank: Ranking): string {
+      const race = rank.player.race;
+      if (race === undefined || race === null) {
+        return ERaceEnum[ERaceEnum.RANDOM];
+      }
+
+      return ERaceEnum[race];
+    }
+
     const noDataText = computed<string>(() => {
       if (!search.value || search.value.length < 3) {
         return "Type at least 3 letters";
@@ -373,24 +447,45 @@ export default defineComponent({
     }
 
     onMounted(async (): Promise<void> => {
-      // search.value = "";
+      const hasSeason = props.season || props.season === 0;
+      const hasLeague = props.league || props.league === 0;
+      const hasGateway = props.gateway || props.gateway === 0;
+      const hasGameMode = props.gamemode || props.gamemode === 0;
+
+      const targetSeason = hasSeason ? props.season : rankingsStore.selectedSeason.id;
+      const targetLeague = hasLeague ? props.league : rankingsStore.league;
+      const targetGateway = hasGateway ? props.gateway : rootStateStore.gateway;
+      const targetGameMode = hasGameMode ? props.gamemode : rankingsStore.gameMode;
+
+      const alreadyLoaded =
+        rankingsStore.rankings.length > 0 &&
+        rankingsStore.selectedSeason.id === targetSeason &&
+        rankingsStore.league === targetLeague &&
+        rootStateStore.gateway === targetGateway &&
+        rankingsStore.gameMode === targetGameMode;
+
+      // Show spinner immediately before any await if we need to refetch, so stale data is never rendered
+      if (!alreadyLoaded) {
+        rankingsStore.SET_LOADING(true);
+      }
+
+      if (props.playerId) {
+        playerIdToScroll.value = props.playerId;
+      }
 
       await rankingsStore.retrieveSeasons();
 
       // Check if season is defined (also allow the value 0), otherwise we can use the first season
-      if (props.season || props.season === 0) {
+      if (hasSeason) {
         rankingsStore.setSeason({ id: props.season });
       } else {
         rankingsStore.setSeason(rankingsStore.seasons[0]);
       }
 
-      if (props.league || props.league === 0) {
+      if (hasLeague) {
         rankingsStore.setLeague(props.league);
       }
-      if (props.gamemode) {
-        await rankingsStore.setGameMode(props.gamemode);
-      }
-      if (props.gateway) {
+      if (hasGateway) {
         rootStateStore.setGateway(props.gateway);
       }
 
@@ -401,11 +496,16 @@ export default defineComponent({
         rankingsStore.setLeague(ladders.value[0].id);
       }
 
-      await getRankings();
-
-      if (props.playerId) {
-        const selectedPlayer = rankings.value.find((r) => r.player.id === props.playerId);
-        selectedRank.value = selectedPlayer;
+      if (alreadyLoaded) {
+        // Data is already current — scroll immediately, then silently refresh in background
+        await handlePlayerScroll();
+        getRefreshRankings();
+      } else if (props.gamemode) {
+        await rankingsStore.setGameMode(props.gamemode);
+        await handlePlayerScroll();
+      } else {
+        await getRankings();
+        await handlePlayerScroll();
       }
 
       _intervalRefreshHandle = setInterval(async () => {
@@ -440,6 +540,10 @@ export default defineComponent({
     }
 
     async function selectSeason(season: Season) {
+      const highlightedPlayerId =
+        playerIdToScroll.value ??
+        props.playerId ??
+        selectedRank.value?.player.playerIds[0]?.battleTag;
       const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
       await getLadders();
@@ -455,12 +559,17 @@ export default defineComponent({
         }
       }
 
+      if (highlightedPlayerId) {
+        playerIdToScroll.value = highlightedPlayerId;
+      }
+
       await setLeague(leagueToSelect);
     }
 
     async function setLeague(league: number) {
       rankingsStore.setLeague(league);
       await getRankings();
+      await handlePlayerScroll();
     }
 
     function playerIsRanked(rank: Ranking): boolean {
@@ -472,7 +581,6 @@ export default defineComponent({
     }
 
     return {
-      mdiChevronRight,
       mdiMagnify,
       EGameMode,
       ERaceEnum,
@@ -485,6 +593,9 @@ export default defineComponent({
       selectedLeague,
       setLeague,
       listLeagueIcon,
+      showSearchRaceIcon,
+      getSearchRaceIconUrl,
+      getSearchRaceIconName,
       ladders,
       selectedRank,
       searchRanks,
@@ -499,6 +610,7 @@ export default defineComponent({
       rankings,
       ongoingMatchesMap,
       showRaceDistribution,
+      isRankingsLoading,
     };
   },
 });
@@ -510,5 +622,21 @@ export default defineComponent({
   width: 45%;
   margin-top: -15px;
   min-width: 100px;
+}
+
+.search-race-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.search-result-row {
+  width: 100%;
+}
+
+.btag-discriminator {
+  color: rgb(var(--v-theme-on-surface), 0.55);
 }
 </style>

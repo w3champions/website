@@ -11,6 +11,7 @@ export type OverallStatisticState = {
   matchupLength: MatchupLength;
   playedHeroes: PlayedHeroByMode[];
   heroWinrate: WinLoss;
+  loadingHeroWinrates: boolean;
   loadingMapAndRaceStats: boolean;
   mmrDistribution: MmrDistribution;
   heroPicks: HeroPick[];

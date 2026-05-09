@@ -336,8 +336,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Select Season",
       mode: "Mode",
-      purplebarsdesc:
-        "The purple bars mark top: 2%, 5%, 10%, 25% and 50% of players.",
       greenbardesc: "The green line shows where you are in the distribution.",
       stddev: "Standard Deviation",
     },
@@ -905,8 +903,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Выберите сезон",
       mode: "Режим",
-      purplebarsdesc:
-        "Фиолетовая полоса отмечает топ 2%, 5%, 10%, 25% и 50% игроков.",
       greenbardesc: "Зеленая полоса отмечает вашу позицию на графике",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -1401,8 +1397,6 @@ const data = {
       pickedheroes: "영웅 선택",
     },
     "components_overall-statistics_tabs_mmrdistributiontab": {
-      purplebarsdesc:
-        "보라색 바는 상위 2%, 5%, 10%, 25% and 50% 를 표시 합니다",
       greenbardesc: "녹색 선은 당신의 위치를 나타냅니다",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -1878,7 +1872,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "选择赛季",
       mode: "模式",
-      purplebarsdesc: "紫线代表前 2%， 5%， 10%， 25%， 50%玩家。",
       greenbardesc: "绿线代表你在这个分布的位置。",
       stddev: "标准差",
     },
@@ -2383,8 +2376,6 @@ const data = {
       pickedheroes: "Ausgewählte Helden",
     },
     "components_overall-statistics_tabs_mmrdistributiontab": {
-      purplebarsdesc:
-        "Die lila Balken markieren die besten 2%, 5%, 10%, 25% und 50% der Spieler.",
       greenbardesc: "Die grüne Linie zeigt deinen Platz in der Verteilung.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -2896,8 +2887,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Wybierz sezon",
       mode: "Tryb",
-      purplebarsdesc:
-        "Fioletowe paski zaznaczają czołowe: 2%, 5%, 10%, 25% i 50% graczy",
       greenbardesc: "Zielonia linia pokazuje twoją pozycję",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -3436,8 +3425,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Оберіть сезон",
       mode: "Режим",
-      purplebarsdesc:
-        "Фіолетова смуга відзначає топ 2%, 5%, 10%, 25% та 50% гравців.",
       greenbardesc: "Зелена смуга відзначає вашу позицію на графіку",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -3964,8 +3951,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Selecione Temporada",
       mode: "Modo",
-      purplebarsdesc:
-        "As barras roxas marcam o top: 2%, 5%, 10%, 25% e 50% dos jogadores.",
       greenbardesc: "A linha verde mostra onde você está na distribuição.",
     },
     "components_overall-statistics_tabs_playeractivitytab": {
@@ -4497,8 +4482,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Sélectionnez une Saison",
       mode: "Mode",
-      purplebarsdesc:
-        "Les barres violettes marquent les : 2%, 5%, 10%, 25%, 50% des meilleurs joueurs.",
       greenbardesc:
         "La ligne verte montre où vous êtes dans la répartition des joueurs.",
     },
@@ -5045,8 +5028,6 @@ const data = {
     "components_overall-statistics_tabs_mmrdistributiontab": {
       selectseason: "Izaberite sezonu",
       mode: "Mod",
-      purplebarsdesc:
-        "Ljubičaste crte označavaju: 2%, 5%, 10%, 25% i 50% igrača.",
       greenbardesc: "Zelena crta označava gde ste vi na raspodeli.",
       stddev: "Standardno otstupanje",
     },

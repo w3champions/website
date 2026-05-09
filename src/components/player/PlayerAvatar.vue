@@ -648,9 +648,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .player-country {
   position: absolute;
-  border-color: white;
-  border-style: solid;
-  border-width: thin;
   bottom: 10px;
   right: 10px;
 }

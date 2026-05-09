@@ -310,9 +310,25 @@ const router = createRouter({
 });
 
 const documentTitle = (pageName: string | null | undefined) => pageName ? `${pageName} | W3Champions` : "W3Champions";
+const playerRouteNames = new Set<string>(Object.values(EPlayerRouteName));
+
+const titleForRoute = (to: RouteLocationNormalized): string => {
+  if (to.name && playerRouteNames.has(to.name.toString())) {
+    const playerId = Array.isArray(to.params.id) ? to.params.id[0] : to.params.id;
+    const battleTag = playerId ? decodeURIComponent(playerId) : undefined;
+    const routeName = to.name.toString();
+    const titleSuffix = routeName === EPlayerRouteName.PLAYER_PROFILE
+      ? "Profile"
+      : routeName.replace("Player Profile - ", "");
+    const playerTabTitle = battleTag ? `${battleTag} - ${titleSuffix}` : titleSuffix;
+    return documentTitle(playerTabTitle);
+  }
+
+  return documentTitle(to.name as string);
+};
 
 router.afterEach((to: RouteLocationNormalized) => {
-  document.title = documentTitle(to.name as string);
+  document.title = titleForRoute(to);
 });
 
 export default router;

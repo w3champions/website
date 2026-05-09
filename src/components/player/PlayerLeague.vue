@@ -97,7 +97,7 @@ export default defineComponent({
     const rootStateStore = useRootStateStore();
 
     const matches = ref<Match[]>([]);
-    const playerId = computed<string>(() => props.modeStat.id);
+    const playerId = computed<string>(() => battleTag.value);
     const leagueMode = computed<TranslateResult>(() => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
     const gameMode = computed<EGameMode>(() => props.modeStat.gameMode);
     const league = computed<number>(() => props.modeStat.leagueId);
