@@ -4,12 +4,43 @@
       <v-card-title class="pt-3">
         {{ $t("views_app.rankings") }}
       </v-card-title>
-      <v-card-text class="pt-2 d-flex">
+      <v-card-text class="pt-2 pb-0 d-flex align-center flex-wrap">
+        <v-menu location="right" transition="fade-transition">
+          <template v-slot:activator="{ props }">
+            <v-btn tile class="ma-0 mr-3" style="background-color: transparent" v-bind="props">
+              <h2 class="pa-0">
+                {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
+              </h2>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item-title>
+                  {{ $t("views_rankings.prevseasons") }}
+                </v-list-item-title>
+              </v-list>
+              <v-list density="compact" max-height="400" class="overflow-y-auto">
+                <v-list-item
+                  v-for="item in seasons"
+                  :key="item.id"
+                  @click="selectSeason(item)"
+                >
+                  <v-list-item-title>
+                    {{ $t("views_rankings.season") }} {{ item.id }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
         <gateway-select
           v-if="isGatewayNeeded"
+          class="mr-3"
           @gatewayChanged="onGatewayChanged"
         />
         <game-mode-select
+          class="mr-3"
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
@@ -76,8 +107,8 @@
                 {{ item.raw }}
               </template>
               <template v-else>
-                <v-list-item>
-                  <v-list-item-title v-bind="props">
+                <v-list-item v-bind="props">
+                  <template v-slot:title>
                     <span v-if="!isDuplicateName(item.raw.player.name)">
                       {{ item.raw.player.name }}
                     </span>
@@ -87,7 +118,7 @@
                     <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
                       ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
                     </span>
-                  </v-list-item-title>
+                  </template>
                   <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
                     {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
                     {{ $t(`common.losses`) }}
@@ -104,38 +135,12 @@
           </v-autocomplete>
         </div>
       </v-card-text>
-      <v-menu location="right" transition="fade-transition">
-        <template v-slot:activator="{ props }">
-          <v-btn tile class="ma-4" style="background-color: transparent" v-bind="props">
-            <h2 class="pa-0">
-              {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
-            </h2>
-            <v-icon size="x-large" end>{{ mdiChevronRight }}</v-icon>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-text>
-            <v-list>
-              <v-list-item-title>
-                {{ $t("views_rankings.prevseasons") }}
-              </v-list-item-title>
-            </v-list>
-            <v-list density="compact" max-height="400" class="overflow-y-auto">
-              <v-list-item
-                v-for="item in seasons"
-                :key="item.id"
-                @click="selectSeason(item)"
-              >
-                <v-list-item-title>
-                  {{ $t("views_rankings.season") }} {{ item.id }}
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-menu>
       <v-card-text>
+        <div v-if="isRankingsLoading" class="d-flex justify-center py-10">
+          <v-progress-circular indeterminate color="primary" size="40" />
+        </div>
         <rankings-grid
+          v-else
           :rankings="rankings"
           :ongoingMatches="ongoingMatchesMap"
           :selectedRank="selectedRank"
@@ -154,7 +159,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
@@ -167,7 +172,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { mdiChevronRight, mdiMagnify } from "@mdi/js";
+import { mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router";
 import noop from "lodash/noop";
 
@@ -215,6 +220,8 @@ export default defineComponent({
     const selectedRank = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
+    const playerIdToScroll = ref<string | undefined>(undefined);
+    const isProgrammaticSelection = ref<boolean>(false);
 
     const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
     const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
@@ -224,6 +231,7 @@ export default defineComponent({
     const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
     const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
     const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const isRankingsLoading = computed<boolean>(() => rankingsStore.loading);
 
     const ladders = computed<League[]>(() => {
       const league = rankingsStore.ladders?.filter((l) =>
@@ -273,12 +281,16 @@ export default defineComponent({
 
     async function refreshRankings() {
       await loadOngoingMatches();
-      await getRankings();
+      await getRefreshRankings();
       await getLadders();
     }
 
     async function getRankings() {
       await rankingsStore.retrieveRankings();
+    }
+
+    async function getRefreshRankings() {
+      await rankingsStore.retrieveRankings(undefined, false);
     }
 
     async function getLadders() {
@@ -288,11 +300,15 @@ export default defineComponent({
     watch(selectedRank, onSelectedRank);
     function onSelectedRank(rank: Ranking | undefined): void {
       if (!rank) return;
+      // Don't trigger side effects when selectedRank is set programmatically for scrolling
+      if (isProgrammaticSelection.value) return;
 
       if (!playerIsRanked(rank)) {
         routeToProfilePage(rank.player.playerIds[0].battleTag);
+        return;
       }
 
+      playerIdToScroll.value = rank.player.playerIds[0]?.battleTag;
       setLeague(rank.league);
     }
 
@@ -300,6 +316,28 @@ export default defineComponent({
     function onSearchRanksChanged() {
       isLoading.value = false;
     }
+
+    function rankingMatchesPlayerId(rank: Ranking, playerId: string): boolean {
+      return rank.player.playerIds.some((player) => player.battleTag === playerId);
+    }
+
+    const handlePlayerScroll = async () => {
+      if (playerIdToScroll.value && rankings.value.length > 0) {
+        await nextTick();
+        const selectedPlayer = rankings.value.find((r) => rankingMatchesPlayerId(r, playerIdToScroll.value!));
+        if (selectedPlayer) {
+          isProgrammaticSelection.value = true;
+          selectedRank.value = selectedPlayer;
+          playerIdToScroll.value = undefined;
+          await nextTick();
+          isProgrammaticSelection.value = false;
+          const element = document.getElementById(`listitem_${selectedPlayer.rankNumber}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      }
+    };
 
     const searchDebounced = (newValue: string, timeout = 500) => {
       clearTimeout(searchTimer);
@@ -373,24 +411,45 @@ export default defineComponent({
     }
 
     onMounted(async (): Promise<void> => {
-      // search.value = "";
+      const hasSeason = props.season || props.season === 0;
+      const hasLeague = props.league || props.league === 0;
+      const hasGateway = props.gateway || props.gateway === 0;
+      const hasGameMode = props.gamemode || props.gamemode === 0;
+
+      const targetSeason = hasSeason ? props.season : rankingsStore.selectedSeason.id;
+      const targetLeague = hasLeague ? props.league : rankingsStore.league;
+      const targetGateway = hasGateway ? props.gateway : rootStateStore.gateway;
+      const targetGameMode = hasGameMode ? props.gamemode : rankingsStore.gameMode;
+
+      const alreadyLoaded =
+        rankingsStore.rankings.length > 0 &&
+        rankingsStore.selectedSeason.id === targetSeason &&
+        rankingsStore.league === targetLeague &&
+        rootStateStore.gateway === targetGateway &&
+        rankingsStore.gameMode === targetGameMode;
+
+      // Show spinner immediately before any await if we need to refetch, so stale data is never rendered
+      if (!alreadyLoaded) {
+        rankingsStore.SET_LOADING(true);
+      }
+
+      if (props.playerId) {
+        playerIdToScroll.value = props.playerId;
+      }
 
       await rankingsStore.retrieveSeasons();
 
       // Check if season is defined (also allow the value 0), otherwise we can use the first season
-      if (props.season || props.season === 0) {
+      if (hasSeason) {
         rankingsStore.setSeason({ id: props.season });
       } else {
         rankingsStore.setSeason(rankingsStore.seasons[0]);
       }
 
-      if (props.league || props.league === 0) {
+      if (hasLeague) {
         rankingsStore.setLeague(props.league);
       }
-      if (props.gamemode) {
-        await rankingsStore.setGameMode(props.gamemode);
-      }
-      if (props.gateway) {
+      if (hasGateway) {
         rootStateStore.setGateway(props.gateway);
       }
 
@@ -401,11 +460,16 @@ export default defineComponent({
         rankingsStore.setLeague(ladders.value[0].id);
       }
 
-      await getRankings();
-
-      if (props.playerId) {
-        const selectedPlayer = rankings.value.find((r) => r.player.id === props.playerId);
-        selectedRank.value = selectedPlayer;
+      if (alreadyLoaded) {
+        // Data is already current — scroll immediately, then silently refresh in background
+        await handlePlayerScroll();
+        getRefreshRankings();
+      } else if (props.gamemode) {
+        await rankingsStore.setGameMode(props.gamemode);
+        await handlePlayerScroll();
+      } else {
+        await getRankings();
+        await handlePlayerScroll();
       }
 
       _intervalRefreshHandle = setInterval(async () => {
@@ -440,6 +504,10 @@ export default defineComponent({
     }
 
     async function selectSeason(season: Season) {
+      const highlightedPlayerId =
+        playerIdToScroll.value ??
+        props.playerId ??
+        selectedRank.value?.player.playerIds[0]?.battleTag;
       const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
       await getLadders();
@@ -455,12 +523,17 @@ export default defineComponent({
         }
       }
 
+      if (highlightedPlayerId) {
+        playerIdToScroll.value = highlightedPlayerId;
+      }
+
       await setLeague(leagueToSelect);
     }
 
     async function setLeague(league: number) {
       rankingsStore.setLeague(league);
       await getRankings();
+      await handlePlayerScroll();
     }
 
     function playerIsRanked(rank: Ranking): boolean {
@@ -472,7 +545,6 @@ export default defineComponent({
     }
 
     return {
-      mdiChevronRight,
       mdiMagnify,
       EGameMode,
       ERaceEnum,
@@ -499,6 +571,7 @@ export default defineComponent({
       rankings,
       ongoingMatchesMap,
       showRaceDistribution,
+      isRankingsLoading,
     };
   },
 });
