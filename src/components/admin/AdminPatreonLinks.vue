@@ -287,7 +287,7 @@
           </div>
 
           <!-- Tier Information -->
-          <div v-if="memberDetails.found && memberDetails.entitledTierIds" class="mt-4">
+          <div v-if="memberDetails.found && memberDetails.entitledTiers" class="mt-4">
             <v-divider class="mb-4" />
             <div class="text-subtitle-1 text-medium-emphasis font-weight-bold mb-3">Tier Information</div>
 
@@ -295,16 +295,30 @@
               <v-col cols="12" md="6">
                 <v-card border class="pa-3">
                   <div class="text-caption text-medium-emphasis mb-2">Patreon Entitled Tiers</div>
-                  <v-chip
-                    v-for="tier in memberDetails.entitledTierIds"
-                    :key="tier"
-                    size="small"
-                    color="orange"
-                    class="mr-1 mb-1"
+                  <v-tooltip
+                    v-for="tier in memberDetails.entitledTiers"
+                    :key="tier.tierId"
+                    location="top"
+                    content-class="w3-tooltip elevation-1"
                   >
-                    {{ tier }}
-                  </v-chip>
-                  <div v-if="!memberDetails.entitledTierIds.length" class="text-caption">No tiers</div>
+                    <template v-slot:activator="{ props }">
+                      <v-chip
+                        size="small"
+                        color="orange"
+                        class="mr-1 mb-1"
+                        v-bind="props"
+                      >
+                        {{ tierDisplayLabel(tier) }}
+                      </v-chip>
+                    </template>
+                    <div>
+                      <div><strong>ID:</strong> {{ tier.tierId }}</div>
+                      <div v-if="formatAmount(tier.amountCents)">
+                        <strong>Amount:</strong> {{ formatAmount(tier.amountCents) }}
+                      </div>
+                    </div>
+                  </v-tooltip>
+                  <div v-if="!memberDetails.entitledTiers.length" class="text-caption">No tiers</div>
                 </v-card>
               </v-col>
               <v-col cols="12" md="6">
@@ -363,7 +377,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { PatreonAccountLink } from "@/store/admin/types";
+import { EntitledTier, PatreonAccountLink, PatreonMemberDetails } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import {
   mdiMagnify, mdiRefresh, mdiDelete, mdiAccountHeart, mdiAccount,
@@ -397,8 +411,7 @@ export default defineComponent({
     // Member details functionality
     const memberDetailsDialog = ref(false);
 
-    // eslint-disable-next-line
-    const memberDetails = ref<any>(null);
+    const memberDetails = ref<PatreonMemberDetails | null>(null);
 
     const loadingMemberDetails = ref(false);
     const selectedMemberBattleTag = ref<string>("");
@@ -502,6 +515,15 @@ export default defineComponent({
       }
     };
 
+    const tierDisplayLabel = (tier: EntitledTier): string => {
+      return tier.title?.trim() || tier.tierId;
+    };
+
+    const formatAmount = (amountCents: number | null): string | null => {
+      if (amountCents == null) return null;
+      return `$${(amountCents / 100).toFixed(2)}/mo`;
+    };
+
     const showSnackbar = (message: string, color: string): void => {
       snackbarMessage.value = message;
       snackbarColor.value = color;
@@ -602,6 +624,8 @@ export default defineComponent({
       headers,
 
       // Methods
+      tierDisplayLabel,
+      formatAmount,
       loadPatreonLinks,
       filterLinks,
       clearFilters,
