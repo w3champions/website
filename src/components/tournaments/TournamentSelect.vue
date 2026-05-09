@@ -1,7 +1,7 @@
 <template>
   <v-menu>
     <template v-slot:activator="{ props }">
-      <v-btn tile style="background-color: transparent" v-bind="props">
+      <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
         <v-icon style="margin-right: 5px">{{ mdiTrophy }}</v-icon>
         {{ selectedTournamentText }}
       </v-btn>

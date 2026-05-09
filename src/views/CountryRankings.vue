@@ -9,7 +9,7 @@
           <template v-slot:activator="{ props }">
             <v-btn
               tile
-              class="mr-3 bg-transparent"
+              class="mr-3 bg-transparent w3-dropdown-button"
               v-bind="props"
             >
               <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
@@ -44,7 +44,7 @@
         />
         <v-menu location="right">
           <template v-slot:activator="{ props }">
-            <v-btn tile style="background-color: transparent" v-bind="props">
+            <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
               <div
                 v-if="selectedCountry.countryCode"
                 class="mr-2"

@@ -19,6 +19,7 @@
       </v-btn>
       <v-btn
         v-else
+        class="w3-dropdown-button"
         style="background-color: transparent"
         v-bind="props"
       >
