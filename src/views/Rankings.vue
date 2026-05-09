@@ -109,26 +109,37 @@
               <template v-else>
                 <v-list-item v-bind="props">
                   <template v-slot:title>
-                    <span v-if="!isDuplicateName(item.raw.player.name)">
-                      {{ item.raw.player.name }}
-                    </span>
-                    <span v-if="isDuplicateName(item.raw.player.name)">
-                      {{ item.raw.player.playerIds.map((p: any) => p.battleTag).join(" & ") }}
-                    </span>
-                    <span v-if="item.raw.player.gameMode === EGameMode.GM_1ON1 && item.raw.player.race">
-                      ({{ $t(`racesShort.${ERaceEnum[item.raw.player.race]}`) }})
-                    </span>
+                    <div class="search-result-row d-flex align-center">
+                      <img
+                        v-if="showSearchRaceIcon(item.raw)"
+                        :src="getSearchRaceIconUrl(item.raw)"
+                        :alt="getSearchRaceIconName(item.raw)"
+                        class="search-race-icon mr-3"
+                      />
+                      <div class="d-flex flex-column justify-center">
+                        <span v-if="!isDuplicateName(item.raw.player.name)">
+                          {{ item.raw.player.name }}
+                        </span>
+                        <span v-if="isDuplicateName(item.raw.player.name)">
+                          <span
+                            v-for="(pid, index) in item.raw.player.playerIds"
+                            :key="pid.battleTag"
+                          >
+                            {{ pid.name }}<span class="btag-discriminator">#{{ pid.battleTag.split("#")[1] }}</span><span v-if="index < item.raw.player.playerIds.length - 1"> &amp; </span>
+                          </span>
+                        </span>
+                        <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
+                          <span class="w3-won">{{ item.raw.player.wins }}</span>
+                          -
+                          <span class="w3-lost">{{ item.raw.player.losses }}</span>
+                          | MMR: {{ item.raw.player.mmr }}
+                        </v-list-item-subtitle>
+                        <v-list-item-subtitle v-else>
+                          {{ $t(`views_rankings.unranked`) }}
+                        </v-list-item-subtitle>
+                      </div>
+                    </div>
                   </template>
-                  <v-list-item-subtitle v-if="playerIsRanked(item.raw)">
-                    {{ $t(`common.wins`) }} {{ item.raw.player.wins }} |
-                    {{ $t(`common.losses`) }}
-                    {{ item.raw.player.losses }} |
-                    {{ $t(`common.total`) }}
-                    {{ item.raw.player.games }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle v-else>
-                    {{ $t(`views_rankings.unranked`) }}
-                  </v-list-item-subtitle>
                 </v-list-item>
               </template>
             </template>
@@ -386,6 +397,31 @@ export default defineComponent({
       return item.order;
     }
 
+    function showSearchRaceIcon(rank: Ranking): boolean {
+      return rank.player.gameMode === EGameMode.GM_1ON1
+        && rank.player.race !== undefined
+        && rank.player.race !== null
+        && rank.player.race !== ERaceEnum.TOTAL;
+    }
+
+    function getSearchRaceIconUrl(rank: Ranking): string {
+      const race = rank.player.race;
+      if (race === undefined || race === null) {
+        return "/assets/raceIcons/RANDOM.png";
+      }
+
+      return `/assets/raceIcons/${ERaceEnum[race]}.png`;
+    }
+
+    function getSearchRaceIconName(rank: Ranking): string {
+      const race = rank.player.race;
+      if (race === undefined || race === null) {
+        return ERaceEnum[ERaceEnum.RANDOM];
+      }
+
+      return ERaceEnum[race];
+    }
+
     const noDataText = computed<string>(() => {
       if (!search.value || search.value.length < 3) {
         return "Type at least 3 letters";
@@ -557,6 +593,9 @@ export default defineComponent({
       selectedLeague,
       setLeague,
       listLeagueIcon,
+      showSearchRaceIcon,
+      getSearchRaceIconUrl,
+      getSearchRaceIconName,
       ladders,
       selectedRank,
       searchRanks,
@@ -583,5 +622,21 @@ export default defineComponent({
   width: 45%;
   margin-top: -15px;
   min-width: 100px;
+}
+
+.search-race-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.search-result-row {
+  width: 100%;
+}
+
+.btag-discriminator {
+  color: rgb(var(--v-theme-on-surface), 0.55);
 }
 </style>
