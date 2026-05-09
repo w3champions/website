@@ -538,3 +538,27 @@ export interface LauncherChatMessage {
   time: string;
   battleTag: string;
 }
+
+export interface EntitledTier {
+  tierId: string;
+  amountCents: number | null;
+  title: string | null;
+}
+
+export interface PatreonMemberDetails {
+  found: boolean;
+  battleTag?: string;
+  patreonUserId?: string;
+  patreonMemberId?: string;
+  email?: string;
+  patronStatus?: string;
+  isActivePatron?: boolean;
+  entitledTiers: EntitledTier[];
+  lastChargeDate?: string;
+  lastChargeStatus?: string;
+  pledgeRelationshipStart?: string;
+  activeAssociationCount: number;
+  activeAssociationTiers: string[];
+  message?: string;
+  error?: string;
+}

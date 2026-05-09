@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PatreonMemberDetails, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -372,8 +372,7 @@ export default class AdminService {
     return response.ok;
   }
 
-  // eslint-disable-next-line
-  public static async getPatreonMemberDetails(battleTag: string, token: string): Promise<any> {
+  public static async getPatreonMemberDetails(battleTag: string, token: string): Promise<PatreonMemberDetails> {
     const url = `${API_URL}api/rewards/admin/patreon/members/${encodeURIComponent(battleTag)}`;
     const response = await authorizedFetch("GET", url, token);
     if (!response.ok) {

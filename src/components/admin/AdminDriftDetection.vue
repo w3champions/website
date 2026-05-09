@@ -346,15 +346,30 @@ J<template>
                 class="elevation-0"
                 :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
               >
-                <template v-slot:item.entitledTierIds="{ item }">
-                  <v-chip
-                    v-for="tierId in item.entitledTierIds"
-                    :key="tierId"
-                    size="small"
-                    class="mr-1"
+                <template v-slot:item.entitledTiers="{ item }">
+                  <v-tooltip
+                    v-for="tier in item.entitledTiers"
+                    :key="tier.tierId"
+                    location="top"
+                    content-class="w3-tooltip elevation-1"
                   >
-                    {{ tierId }}
-                  </v-chip>
+                    <template v-slot:activator="{ props }">
+                      <v-chip
+                        size="small"
+                        color="orange"
+                        class="mr-1"
+                        v-bind="props"
+                      >
+                        {{ tierDisplayLabel(tier) }}
+                      </v-chip>
+                    </template>
+                    <div>
+                      <div><strong>ID:</strong> {{ tier.tierId }}</div>
+                      <div v-if="formatAmount(tier.amountCents)">
+                        <strong>Amount:</strong> {{ formatAmount(tier.amountCents) }}
+                      </div>
+                    </div>
+                  </v-tooltip>
                 </template>
               </v-data-table>
             </v-expansion-panel-text>
@@ -471,7 +486,7 @@ J<template>
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { DriftDetectionResult, ReconciliationResult, DriftSyncResult } from "@/store/admin/types";
+import { DriftDetectionResult, DriftSyncResult, EntitledTier, ReconciliationResult } from "@/store/admin/types";
 import {
   mdiPatreon, mdiAlert, mdiCheckCircle, mdiRefresh,
   mdiAccountMinus, mdiAccountPlus, mdiAccountAlert,
@@ -502,7 +517,7 @@ export default defineComponent({
       { title: "Patreon Member ID", value: "patreonMemberId", sortable: true },
       { title: "Email", value: "email", sortable: true },
       { title: "Patron Status", value: "patronStatus", sortable: true },
-      { title: "Entitled Tiers", value: "entitledTierIds", sortable: false },
+      { title: "Entitled Tiers", value: "entitledTiers", sortable: false },
       { title: "Reason", value: "reason", sortable: false },
     ];
 
@@ -580,6 +595,15 @@ export default defineComponent({
       } catch (error) {
         console.error("Error loading drift detection status:", error);
       }
+    };
+
+    const tierDisplayLabel = (tier: EntitledTier): string => {
+      return tier.title?.trim() || tier.tierId;
+    };
+
+    const formatAmount = (amountCents: number | null): string | null => {
+      if (amountCents == null) return null;
+      return `$${(amountCents / 100).toFixed(2)}/mo`;
     };
 
     const formatDateTime = (dateString: string): string => {
@@ -697,6 +721,8 @@ export default defineComponent({
       mismatchedTiersHeaders,
       reconciliationDetailsHeaders,
       reconciliationDetailsItems,
+      tierDisplayLabel,
+      formatAmount,
       runDriftDetection,
       runReconciliationPreview,
       runReconciliation,
