@@ -7,7 +7,7 @@
       <v-card-text class="pt-2 pb-0 d-flex align-center flex-wrap">
         <v-menu location="right" transition="fade-transition">
           <template v-slot:activator="{ props }">
-            <v-btn tile class="ma-0 mr-3" style="background-color: transparent" v-bind="props">
+            <v-btn tile class="ma-0 mr-3 w3-dropdown-button" style="background-color: transparent" v-bind="props">
               <h2 class="pa-0">
                 {{ $t("views_rankings.season") }} {{ selectedSeason.id }}
               </h2>
@@ -46,7 +46,7 @@
         />
         <v-menu location="right" transition="fade-transition">
           <template v-slot:activator="{ props }">
-            <v-btn tile style="background-color: transparent" v-bind="props">
+            <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
               {{ selectedLeagueName }}
               {{ selectedLeague.division !== 0 ? selectedLeague.division : null }}

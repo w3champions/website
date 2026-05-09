@@ -34,6 +34,26 @@
     }
   }
 
+  // Dropdown trigger buttons use a transparent bg, which strips Vuetify's
+  // default elevation shadow. Apply a light-RGBA shadow on dark themes so
+  // they read as buttons (parity with the affordance light themes get).
+  .w3-dropdown-button {
+    box-shadow:
+      0 3px 1px -2px rgba(255, 255, 255, 0.2),
+      0 2px 2px 0 rgba(255, 255, 255, 0.14),
+      0 1px 5px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  // Floating overlays (menus, dialogs) blend into dark backgrounds because
+  // their card uses near-black bg and Vuetify's shadow is dark-RGBA. A subtle
+  // border defines the edge; a faint inverted shadow gives just enough lift.
+  .v-overlay__content {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 4px 6px -2px rgba(255, 255, 255, 0.08),
+      0 8px 12px 0 rgba(255, 255, 255, 0.06);
+  }
+
   &.v-application, &.v-overlay {
     .v-card-title, h3 {
       color: rgb(var(--v-theme-w3-gold));
