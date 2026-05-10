@@ -16,6 +16,7 @@ export const useOverallStatsStore = defineStore("overallStats", {
     playedHeroes: [] as PlayedHeroByMode[],
     matchesOnMapPerSeason: [] as MatchesOnMapPerSeason[],
     heroWinrate: {} as WinLoss,
+    loadingHeroWinrates: false,
     mmrDistribution: {} as MmrDistribution,
     popularHours: [] as PopularHours[],
     matchupMmrRange: "all" as MmrRangeValues,
@@ -74,15 +75,20 @@ export const useOverallStatsStore = defineStore("overallStats", {
       this.SET_POPULAR_GAME_HOURS(stats);
     },
     async loadHeroWinrates() {
-      const stats = await StatisticService.retrieveHeroWinrates(
-        this.heroPicks[0].heroId,
-        this.heroPicks[1].heroId,
-        this.heroPicks[2].heroId,
-        this.heroPicks[3].heroId,
-        this.heroPicks[4].heroId,
-        this.heroPicks[5].heroId,
-      );
-      this.SET_HERO_WINRATES(stats);
+      this.SET_LOADING_HERO_WINRATES(true);
+      try {
+        const stats = await StatisticService.retrieveHeroWinrates(
+          this.heroPicks[0].heroId,
+          this.heroPicks[1].heroId,
+          this.heroPicks[2].heroId,
+          this.heroPicks[3].heroId,
+          this.heroPicks[4].heroId,
+          this.heroPicks[5].heroId,
+        );
+        this.SET_HERO_WINRATES(stats);
+      } finally {
+        this.SET_LOADING_HERO_WINRATES(false);
+      }
     },
     async loadMmrDistribution(payload: SeasonGameModeGateWayForMMR) {
       const stats = await StatisticService.retrieveMmrDistribution(
@@ -128,6 +134,9 @@ export const useOverallStatsStore = defineStore("overallStats", {
     SET_HERO_WINRATES(winLoss: WinLoss): void {
       this.heroWinrate = winLoss;
     },
+    SET_LOADING_HERO_WINRATES(loading: boolean): void {
+      this.loadingHeroWinrates = loading;
+    },
     SET_MMR_DISTRIBUTION(mmrDistribution: MmrDistribution): void {
       this.mmrDistribution = mmrDistribution;
     },
@@ -135,6 +144,9 @@ export const useOverallStatsStore = defineStore("overallStats", {
       const newPicks = [...this.heroPicks];
       newPicks[pick.index] = pick.heroPick;
       this.heroPicks = newPicks;
+    },
+    SET_HERO_PICKS(heroPicks: HeroPick[]): void {
+      this.heroPicks = [...heroPicks];
     },
     SET_MATCHUP_MMR_RANGE(mmrRange: MmrRangeValues) {
       this.matchupMmrRange = mmrRange;

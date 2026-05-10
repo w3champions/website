@@ -28,7 +28,7 @@
           :id="`listitem_${item.rankNumber}`"
           :key="item.player.id"
           :class="{
-            searchedItem: item.player.id === selectedRankBattleTag(),
+            searchedItem: hasSelectedRank(item),
             'w3-mid-emphasis': true,
           }"
         >
@@ -348,12 +348,21 @@ export default defineComponent({
     }
 
     // get properties
-    function selectedRankBattleTag(): string {
+    function selectedRankBattleTags(): string[] {
       if (!props.selectedRank || !props.selectedRank.player) {
-        return "";
+        return [];
       }
 
-      return props.selectedRank.player.id;
+      return props.selectedRank.player.playerIds.map((playerId) => playerId.battleTag);
+    }
+
+    function hasSelectedRank(rank: Ranking): boolean {
+      const selectedBattleTags = selectedRankBattleTags();
+      if (selectedBattleTags.length === 0) {
+        return false;
+      }
+
+      return rank.player.playerIds.some((playerId) => selectedBattleTags.includes(playerId.battleTag));
     }
 
     const goToOptions: Partial<Partial<InternalGoToOptions>> = {
@@ -501,7 +510,8 @@ export default defineComponent({
       sortColumn,
       isSortedAsc,
       getStreamStatus,
-      selectedRankBattleTag,
+      selectedRankBattleTags,
+      hasSelectedRank,
       goToRank,
       getRaceIcon,
       getTitleRace,

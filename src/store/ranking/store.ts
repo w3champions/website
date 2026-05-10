@@ -11,7 +11,7 @@ export const useRankingStore = defineStore("ranking", {
     league: 0,
     page: 0,
     totalRanks: 0,
-    working: false,
+    loading: false,
     ladders: [],
     rankings: [],
     topFive: [],
@@ -25,20 +25,29 @@ export const useRankingStore = defineStore("ranking", {
     activeModes: [] as ActiveGameMode[],
   }),
   actions: {
-    async retrieveRankings(options?: DataTableOptions) {
+    async retrieveRankings(options?: DataTableOptions, showLoading: boolean = true) {
       if (options && options.page != null) {
         this.SET_PAGE(options.page - 1);
       }
-      const player = usePlayerStore();
-      const rootStateStore = useRootStateStore();
-      const response = await RankingService.retrieveRankings(
-        this.league,
-        rootStateStore.gateway,
-        this.gameMode,
-        this.selectedSeason.id ?? player.selectedSeason.id,
-      );
-      this.SET_TOTAL_RANKS(response.length);
-      this.SET_RANKINGS(response);
+      if (showLoading) {
+        this.SET_LOADING(true);
+      }
+      try {
+        const player = usePlayerStore();
+        const rootStateStore = useRootStateStore();
+        const response = await RankingService.retrieveRankings(
+          this.league,
+          rootStateStore.gateway,
+          this.gameMode,
+          this.selectedSeason.id ?? player.selectedSeason.id,
+        );
+        this.SET_TOTAL_RANKS(response.length);
+        this.SET_RANKINGS(response);
+      } finally {
+        if (showLoading) {
+          this.SET_LOADING(false);
+        }
+      }
     },
     async getTopFive() {
       const rootStateStore = useRootStateStore();
@@ -154,6 +163,9 @@ export const useRankingStore = defineStore("ranking", {
     },
     SET_ACTIVE_MODES(modes: ActiveGameMode[]) {
       this.activeModes = modes;
+    },
+    SET_LOADING(isLoading: boolean): void {
+      this.loading = isLoading;
     },
   },
 });

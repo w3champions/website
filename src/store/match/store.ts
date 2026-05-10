@@ -10,7 +10,9 @@ export const useMatchStore = defineStore("match", {
   state: (): MatchState => ({
     page: 1,
     totalMatches: 0,
+    loadingMatches: false,
     loadingMatchDetail: true,
+    lastMatchesRequestId: 0,
     matches: [] as Match[],
     allOngoingMatches: [] as Match[],
     matchDetail: {} as MatchDetail,
@@ -27,48 +29,64 @@ export const useMatchStore = defineStore("match", {
     selectedHeroFilter: [],
   }),
   actions: {
-    async loadMatches() {
+    async loadMatches(showSpinner = false) {
+      const requestId = this.lastMatchesRequestId + 1;
+      this.SET_LAST_MATCHES_REQUEST_ID(requestId);
+      this.SET_LOADING_MATCHES(showSpinner);
+
       let response: { count: number; matches: Match[] };
       const rootStateStore = useRootStateStore();
-      if (this.status == MatchStatus.onGoing) {
-        response = await MatchService.retrieveOnGoingMatchesPaged(
-          this.page - 1,
-          rootStateStore.gateway,
-          this.gameMode,
-          this.map,
-          this.mmr,
-          this.duration,
-          this.sort,
-        );
+      try {
+        if (this.status == MatchStatus.onGoing) {
+          response = await MatchService.retrieveOnGoingMatchesPaged(
+            this.page - 1,
+            rootStateStore.gateway,
+            this.gameMode,
+            this.map,
+            this.mmr,
+            this.duration,
+            this.sort,
+          );
 
-        // Handle edge case when loading ongoing matches, if the number of matches are reduced
-        // so that the current page no longer exists, we decrement the current page by 1 and retry.
-        if (!response.matches.length && this.page > 1) {
-          this.SET_PAGE(this.page - 1);
-          await this.loadMatches();
+          // Handle edge case when loading ongoing matches, if the number of matches are reduced
+          // so that the current page no longer exists, we decrement the current page by 1 and retry.
+          if (!response.matches.length && this.page > 1) {
+            this.SET_PAGE(this.page - 1);
+            await this.loadMatches();
+            return;
+          }
+        } else {
+          // If the selected map isn't available in this season, reset the map filter
+          const map = this.mapNames.includes(this.map) ? this.map : "Overall";
+
+          if (map !== this.map) {
+            this.SET_MAP(map);
+          }
+
+          response = await MatchService.retrieveMatches(
+            this.page - 1,
+            rootStateStore.gateway,
+            this.gameMode,
+            this.map,
+            this.mmr,
+            this.duration,
+            this.selectedSeason.id,
+            this.selectedHeroFilter,
+          );
+        }
+
+        // Ignore stale responses from older requests when filters/pages change rapidly.
+        if (requestId !== this.lastMatchesRequestId) {
           return;
         }
-      } else {
-        // If the selected map isn't available in this season, reset the map filter
-        const map = this.mapNames.includes(this.map) ? this.map : "Overall";
 
-        if (map !== this.map) {
-          this.SET_MAP(map);
+        this.SET_TOTAL_MATCHES(response.count);
+        this.SET_MATCHES(response.matches);
+      } finally {
+        if (requestId === this.lastMatchesRequestId) {
+          this.SET_LOADING_MATCHES(false);
         }
-
-        response = await MatchService.retrieveMatches(
-          this.page - 1,
-          rootStateStore.gateway,
-          this.gameMode,
-          this.map,
-          this.mmr,
-          this.duration,
-          this.selectedSeason.id,
-          this.selectedHeroFilter,
-        );
       }
-      this.SET_TOTAL_MATCHES(response.count);
-      this.SET_MATCHES(response.matches);
     },
     async loadAllOngoingMatches(gameMode?: EGameMode, map?: string) {
       const rootStateStore = useRootStateStore();
@@ -108,44 +126,51 @@ export const useMatchStore = defineStore("match", {
       this.SET_MAP_NAMES(mapNames);
     },
     async setStatus(matchStatus: MatchStatus) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_STATUS(matchStatus);
       this.SET_MAP("Overall");
       this.SET_PAGE(1);
       await this.loadMapNames();
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setGameMode(gameMode: EGameMode) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_GAME_MODE(gameMode);
       this.SET_MAP("Overall");
       this.SET_PAGE(1);
       await this.loadMapNames();
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setMap(map: string) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_MAP(map);
       this.SET_PAGE(1);
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setMmr(mmr: Mmr) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_MMR(mmr);
       this.SET_PAGE(1);
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setDuration(duration: { min: number; max: number }) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_DURATION(duration);
       this.SET_PAGE(1);
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setSort(sort: string) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_SORT(sort);
       this.SET_PAGE(1);
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setSeason(season: Season) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_SEASON(season);
       this.SET_PAGE(1);
       await this.loadMapNames();
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
     async setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
@@ -155,9 +180,10 @@ export const useMatchStore = defineStore("match", {
     },
 
     async setSelectedHeroFilter(heroes: number[]) {
+      this.SET_LOADING_MATCHES(true);
       this.SET_SELECTED_HERO_FILTER(heroes);
       this.SET_PAGE(1);
-      await this.loadMatches();
+      await this.loadMatches(true);
     },
 
     SET_PAGE(page: number): void {
@@ -165,6 +191,12 @@ export const useMatchStore = defineStore("match", {
     },
     SET_TOTAL_MATCHES(totalMatches: number): void {
       this.totalMatches = totalMatches;
+    },
+    SET_LOADING_MATCHES(loading: boolean): void {
+      this.loadingMatches = loading;
+    },
+    SET_LAST_MATCHES_REQUEST_ID(requestId: number): void {
+      this.lastMatchesRequestId = requestId;
     },
     SET_MATCHES(matches: Match[]): void {
       this.matches = matches;

@@ -4,18 +4,47 @@
       <v-card-title class="pt-3">
         Country Rankings
       </v-card-title>
-      <v-card-title class="pt-2 d-flex">
+      <v-card-title class="pt-2 d-flex align-center flex-wrap">
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              tile
+              class="mr-3 bg-transparent w3-dropdown-button"
+              v-bind="props"
+            >
+              <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item-title>Previous seasons:</v-list-item-title>
+              </v-list>
+              <v-list density="compact" max-height="400" class="overflow-y-auto">
+                <v-list-item
+                  v-for="item in seasons"
+                  :key="item.id"
+                  @click="selectSeason(item)"
+                >
+                  <v-list-item-title>Season {{ item.id }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
         <gateway-select
           v-if="isGatewayNeeded"
+          class="mr-3"
           @gatewayChanged="onGatewayChanged"
         />
         <game-mode-select
+          class="mr-3"
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
         <v-menu location="right">
           <template v-slot:activator="{ props }">
-            <v-btn tile style="background-color: transparent" v-bind="props">
+            <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
               <div
                 v-if="selectedCountry.countryCode"
                 class="mr-2"
@@ -56,34 +85,6 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <v-menu>
-          <template v-slot:activator="{ props }">
-            <v-btn
-              tile
-              class="ml-auto bg-transparent"
-              v-bind="props"
-            >
-              <h2 class="pa-0">Season {{ selectedSeason.id }}</h2>
-              <v-icon size="x-large" end>{{ mdiChevronRight }}</v-icon>
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-text>
-              <v-list>
-                <v-list-item-title>Previous seasons:</v-list-item-title>
-              </v-list>
-              <v-list density="compact" max-height="400" class="overflow-y-auto">
-                <v-list-item
-                  v-for="item in seasons"
-                  :key="item.id"
-                  @click="selectSeason(item)"
-                >
-                  <v-list-item-title>Season {{ item.id }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </v-card>
-        </v-menu>
       </v-card-title>
       <v-card-text class="pt-5">
         <country-rankings-grid
@@ -109,11 +110,10 @@ import { Countries } from "@/store/countries";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
-import AppConstants from "../constants";
+import AppConstants, { isGatewayNeededForSeason } from "../constants";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
-import { mdiChevronRight } from "@mdi/js";
 import { useRouter } from "vue-router";
 
 // Lazy load.
@@ -158,7 +158,7 @@ export default defineComponent({
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const rankings = computed<CountryRanking[]>(() => rankingsStore.countryRankings);
     const selectedCountryCode = computed<string>(() => rankingsStore.selectedCountry);
-    const isGatewayNeeded = computed<boolean>(() => rankingsStore.selectedSeason.id <= 5);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
 
     const selectedCountry = computed<CountryType>(() => {
       return countries.value.find((c) => c.countryCode === selectedCountryCode.value) ?? {} as CountryType;
@@ -272,7 +272,6 @@ export default defineComponent({
     }
 
     return {
-      mdiChevronRight,
       onGatewayChanged,
       isGatewayNeeded,
       selectedGameMode,

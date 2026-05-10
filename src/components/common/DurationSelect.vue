@@ -7,6 +7,7 @@
     <template v-slot:activator="{ props }">
       <v-btn
         tile
+        class="w3-dropdown-button"
         style="background-color: transparent; min-width: 180px;"
         v-bind="props"
       >

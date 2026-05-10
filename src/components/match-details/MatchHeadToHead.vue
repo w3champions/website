@@ -426,7 +426,7 @@ export default defineComponent({
 .match-list-scroll {
   max-height: 400px;
   overflow-y: auto;
-  padding: 0 20px 8px 8px;
+  padding: 0 0 8px 8px;
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--v-theme-on-surface), 0.15) transparent;
   background-color: rgba(var(--v-theme-on-surface), 0.03);
@@ -465,6 +465,7 @@ export default defineComponent({
 
 .duration-cell {
   min-width: 48px;
+  margin-right: 8px;
 }
 
 .duration-bar {

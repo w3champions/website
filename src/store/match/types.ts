@@ -10,7 +10,9 @@ export type MatchState = {
   mapNamesCache: Record<string, string[]>;
   page: number;
   totalMatches: number;
+  loadingMatches: boolean;
   loadingMatchDetail: boolean;
+  lastMatchesRequestId: number;
   status: MatchStatus;
   gameMode: EGameMode;
   map: string;

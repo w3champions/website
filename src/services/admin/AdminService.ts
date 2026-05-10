@@ -211,6 +211,12 @@ export default class AdminService {
     const url = `${API_URL}api/replays/${matchId}/chats`;
 
     const response = await authorizedFetch("GET", url, token);
+    if (!response.ok) {
+      const error = new Error("Failed to load chat log") as Error & { status?: number };
+      error.status = response.status;
+      throw error;
+    }
+
     return response.json();
   }
 

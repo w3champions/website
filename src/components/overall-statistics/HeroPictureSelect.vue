@@ -5,7 +5,9 @@
         <div v-bind="props">
           <v-card-text
             class="hero-picture-select"
-            :class="isEnabledForChange ? '' : 'hero-icon-disabled'"
+            :class="[
+              isEnabledForChange ? 'hero-icon-select-clickable' : 'hero-icon-disabled',
+            ]"
             :style="{ 'background-image': 'url(' + heroPicture + ')' }"
             @click="() => {
               if (isEnabledForChange) openDialog();
@@ -38,13 +40,12 @@
                     <div
                       :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
                       class="hero-icon-select"
-                      :class="isEnabledForSelect(heroPickSelection) ? '' : 'hero-icon-disabled'"
-                      @click="
-                        () => {
-                          if (isEnabledForSelect(heroPickSelection))
-                            pickHero(heroPickSelection);
-                        }
-                      "
+                      :class="[
+                        isEnabledForSelect(heroPickSelection)
+                          ? 'hero-icon-select-clickable'
+                          : 'hero-icon-disabled',
+                      ]"
+                      @click="pickHeroIfEnabled(heroPickSelection)"
                     ></div>
                   </v-responsive>
                 </div>
@@ -59,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import { TranslateResult } from "vue-i18n";
@@ -84,83 +85,84 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
 
     const dialogOpened = ref<boolean>(false);
+    const loadingHeroWinrates = computed<boolean>(() => overallStatsStore.loadingHeroWinrates);
     const heroPicks = computed<HeroPick[]>(() => overallStatsStore.heroPicks);
 
     function openDialog() {
+      if (loadingHeroWinrates.value) return;
       dialogOpened.value = true;
     }
 
-    function pickHero(hero: HeroPick) {
-      const newPick = { index: props.heroIndex, heroPick: hero };
+    async function pickHero(hero: HeroPick) {
+      dialogOpened.value = false;
+
+      const updatedHeroPicks = [...heroPicks.value];
+      const setHeroPick = (index: number, heroPick: HeroPick) => {
+        updatedHeroPicks[index] = heroPick;
+      };
 
       if (hero.heroId === "none" || hero.heroId === "all") {
         if (props.heroIndex === 0 || props.heroIndex === 3) {
-          overallStatsStore.SET_HERO_PICK({
-            index: props.heroIndex + 1,
-            heroPick: hero,
-          });
-          overallStatsStore.SET_HERO_PICK({
-            index: props.heroIndex + 2,
-            heroPick: hero,
-          });
+          setHeroPick(props.heroIndex + 1, hero);
+          setHeroPick(props.heroIndex + 2, hero);
         }
         if (props.heroIndex === 1 || props.heroIndex === 4) {
-          overallStatsStore.SET_HERO_PICK({
-            index: props.heroIndex + 1,
-            heroPick: hero,
-          });
+          setHeroPick(props.heroIndex + 1, hero);
         }
       }
 
       if (props.heroIndex === 0 || props.heroIndex === 3) {
         const allPickedRaces = [
-          heroPicks.value[0 + (props.heroIndex % 3)].race,
-          heroPicks.value[1 + (props.heroIndex % 3)].race,
-          heroPicks.value[2 + (props.heroIndex % 3)].race,
+          updatedHeroPicks[0 + (props.heroIndex % 3)].race,
+          updatedHeroPicks[1 + (props.heroIndex % 3)].race,
+          updatedHeroPicks[2 + (props.heroIndex % 3)].race,
         ];
 
         if (allPickedRaces[1] !== hero.race && allPickedRaces[1] !== ERaceEnum.RANDOM) {
-          overallStatsStore.SET_HERO_PICK({
-            index: props.heroIndex + 1,
-            heroPick: {
-              name: "anyhero",
-              heroId: "all",
-              race: ERaceEnum.TOTAL,
-            },
+          setHeroPick(props.heroIndex + 1, {
+            name: "anyhero",
+            heroId: "all",
+            race: ERaceEnum.TOTAL,
           });
-          overallStatsStore.SET_HERO_PICK({
-            index: props.heroIndex + 2,
-            heroPick: {
-              name: "anyhero",
-              heroId: "all",
-              race: ERaceEnum.TOTAL,
-            },
+          setHeroPick(props.heroIndex + 2, {
+            name: "anyhero",
+            heroId: "all",
+            race: ERaceEnum.TOTAL,
           });
         }
 
         if (allPickedRaces[2] !== hero.race && allPickedRaces[2] !== ERaceEnum.RANDOM) {
-          overallStatsStore.SET_HERO_PICK({
-            index: props.heroIndex + 2,
-            heroPick: {
-              name: "anyhero",
-              heroId: "all",
-              race: ERaceEnum.TOTAL,
-            },
+          setHeroPick(props.heroIndex + 2, {
+            name: "anyhero",
+            heroId: "all",
+            race: ERaceEnum.TOTAL,
           });
         }
       }
 
-      overallStatsStore.SET_HERO_PICK(newPick);
-      overallStatsStore.loadHeroWinrates();
-      dialogOpened.value = false;
+      setHeroPick(props.heroIndex, hero);
+      overallStatsStore.SET_HERO_PICKS(updatedHeroPicks);
+      await overallStatsStore.loadHeroWinrates();
     }
+
+    function pickHeroIfEnabled(hero: HeroPick) {
+      if (!isEnabledForSelect(hero)) return;
+      void pickHero(hero);
+    }
+
+    watch(loadingHeroWinrates, (isLoading) => {
+      if (isLoading) {
+        dialogOpened.value = false;
+      }
+    });
 
     function parsePicture(hero: HeroPick): string {
       return getAsset(`heroes/${hero.heroId}.png`);
     }
 
     const isEnabledForChange = computed<boolean>(() =>
-      previousHero.value?.heroId !== "all"
+      !loadingHeroWinrates.value
+      && previousHero.value?.heroId !== "all"
       && previousHero.value?.heroId !== "none"
     );
 
@@ -189,13 +191,13 @@ export default defineComponent({
       if (props.heroIndex === 3 && heroPick.heroId === "none") return false;
 
       const previousHeroRaces = [
-        possibleHeroPicks.filter((h) => h.heroId === previousHero.value?.heroId)[0]?.race ?? ERaceEnum.TOTAL,
-        possibleHeroPicks.filter((h) => h.heroId === previousPreviousHero.value?.heroId)[0]?.race ?? ERaceEnum.TOTAL,
+        heroPickById[previousHero.value?.heroId ?? ""]?.race ?? ERaceEnum.TOTAL,
+        heroPickById[previousPreviousHero.value?.heroId ?? ""]?.race ?? ERaceEnum.TOTAL,
       ];
 
       const previousHeroPicks = [
-        possibleHeroPicks.filter((h) => h.heroId === previousHero.value?.heroId)[0]?.heroId ?? "all",
-        possibleHeroPicks.filter((h) => h.heroId === previousPreviousHero.value?.heroId)[0]?.heroId ?? "all",
+        heroPickById[previousHero.value?.heroId ?? ""]?.heroId ?? "all",
+        heroPickById[previousPreviousHero.value?.heroId ?? ""]?.heroId ?? "all",
       ];
 
       const raceWithoutRandom = previousHeroRaces.filter((r) => r !== ERaceEnum.TOTAL && r !== ERaceEnum.RANDOM)[0];
@@ -254,6 +256,10 @@ export default defineComponent({
       { name: t("heroNames.alchemist").toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
     ];
 
+    const heroPickById = Object.fromEntries(
+      possibleHeroPicks.map((pick) => [pick.heroId, pick]),
+    ) as Record<string, HeroPick>;
+
     const possibleHeroPickRows: HeroPick[][] = [
       possibleHeroPicks.slice(0, 2),
       possibleHeroPicks.slice(2, 6),
@@ -275,6 +281,7 @@ export default defineComponent({
       parsePicture,
       isEnabledForSelect,
       pickHero,
+      pickHeroIfEnabled,
     };
   },
 });
@@ -301,6 +308,10 @@ export default defineComponent({
 .hero-icon-disabled {
   opacity: 0.5;
   filter: alpha(opacity=50);
+}
+
+.hero-icon-select-clickable {
+  cursor: pointer;
 }
 
 .v-theme--human, .v-theme--orc {

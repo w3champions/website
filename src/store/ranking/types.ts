@@ -4,7 +4,7 @@ import { AliasData } from "../player/types";
 
 export type RankingState = {
   league: number;
-  working: boolean;
+  loading: boolean;
   page: number;
   totalRanks: number;
   ladders: Ladder[];

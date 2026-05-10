@@ -32,23 +32,28 @@
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.stddev") }}
           <div>{{ standardDeviation }}</div>
         </v-card-text>
-        <v-card-text class="w3-mid-emphasis">
-          {{ $t("components_overall-statistics_tabs_mmrdistributiontab.purplebarsdesc") }}
-        </v-card-text>
         <v-card-text v-if="authCode" class="w3-mid-emphasis">
           {{ $t("components_overall-statistics_tabs_mmrdistributiontab.greenbardesc") }}
         </v-card-text>
       </v-col>
       <v-col cols="md-10">
         <div class="text-center my-auto">
-          <v-progress-circular v-if="loadingData" indeterminate />
+          <v-progress-circular v-if="loadingData && !mmrDistribution.distributedMmrs" indeterminate />
         </div>
-        <mmr-distribution-chart
-          v-if="!loadingData"
-          :mmr-distribution="mmrDistribution"
-          :selected-season="selectedSeason"
-          :selected-game-mode="selectedGameMode"
-        />
+        <div v-if="mmrDistribution.distributedMmrs" style="position: relative;">
+          <div
+            v-if="loadingData"
+            style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1;"
+          >
+            <v-progress-circular indeterminate />
+          </div>
+          <mmr-distribution-chart
+            :mmr-distribution="mmrDistribution"
+            :selected-season="selectedSeason"
+            :selected-game-mode="selectedGameMode"
+            :style="loadingData ? 'opacity: 0.4; pointer-events: none;' : ''"
+          />
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -62,6 +67,7 @@ import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallSta
 import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
+import { isGatewayNeededForSeason } from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
@@ -90,7 +96,7 @@ export default defineComponent({
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const mmrDistribution = computed<MmrDistribution>(() => overallStatsStore.mmrDistribution);
     const standardDeviation = computed<string>(() => mmrDistribution.value?.standardDeviation?.toString() ?? "-");
-    const isGatewayNeeded = computed<boolean>(() => selectedSeason.value.id <= 5);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(selectedSeason.value.id));
 
     const selectedSeason = computed<Season>({
       get(): Season {

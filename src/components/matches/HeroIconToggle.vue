@@ -2,6 +2,7 @@
   <div v-if="!unfinished" style="margin-left: auto;">
     <v-btn
       tile
+      class="w3-dropdown-button"
       style="background-color: transparent"
       @click="toggle"
     >
