@@ -9,6 +9,52 @@ import ProfileService from "@/services/ProfileService";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
 
+type PlayerMatchesResponse = { count: number; matches: Match[] };
+
+const playerMatchesCache = new Map<string, PlayerMatchesResponse>();
+const playerMatchesInFlight = new Map<string, Promise<PlayerMatchesResponse>>();
+const recentPerformanceCache = new Map<string, Match[]>();
+const recentPerformanceInFlight = new Map<string, Promise<Match[]>>();
+
+function buildPlayerMatchesCacheKey(params: {
+  page: number;
+  battleTag: string;
+  opponentTag: string;
+  gameMode: EGameMode;
+  playerRace: ERaceEnum;
+  opponentRace: ERaceEnum;
+  gateway: number;
+  season: number;
+  heroes: number[];
+}): string {
+  const heroesKey = params.heroes.length ? params.heroes.join(",") : "none";
+  return [
+    params.page,
+    params.battleTag,
+    params.opponentTag,
+    params.gameMode,
+    params.playerRace,
+    params.opponentRace,
+    params.gateway,
+    params.season,
+    heroesKey,
+  ].join("|");
+}
+
+function buildRecentPerformanceCacheKey(params: {
+  battleTag: string;
+  gameMode: EGameMode;
+  gateway: number;
+  season: number;
+}): string {
+  return [
+    params.battleTag,
+    params.gameMode,
+    params.gateway,
+    params.season,
+  ].join("|");
+}
+
 export const usePlayerStore = defineStore("player", {
   state: (): PlayerState => ({
     playerStatsRaceVersusRaceOnMap: {} as PlayerStatsRaceOnMapVersusRace,
@@ -92,20 +138,48 @@ export const usePlayerStore = defineStore("player", {
       this.SET_PAGE(page ?? 1);
       this.SET_LOADING_RECENT_MATCHES(true);
       const rootStateStore = useRootStateStore();
-      const response = await MatchService.retrievePlayerMatches(
-        this.page - 1,
-        this.battleTag,
-        this.opponentTag,
-        this.profileMatchesGameMode,
-        this.playerRace ?? ERaceEnum.TOTAL,
-        this.opponentRace ?? ERaceEnum.TOTAL,
-        rootStateStore.gateway,
-        this.selectedSeason?.id ?? -1,
-        this.selectedHeroes,
-      );
-      this.SET_TOTAL_MATCHES(response.count);
-      this.SET_MATCHES(response.matches);
-      this.SET_LOADING_RECENT_MATCHES(false);
+      const key = buildPlayerMatchesCacheKey({
+        page: this.page - 1,
+        battleTag: this.battleTag,
+        opponentTag: this.opponentTag,
+        gameMode: this.profileMatchesGameMode,
+        playerRace: this.playerRace ?? ERaceEnum.TOTAL,
+        opponentRace: this.opponentRace ?? ERaceEnum.TOTAL,
+        gateway: rootStateStore.gateway,
+        season: this.selectedSeason?.id ?? -1,
+        heroes: this.selectedHeroes,
+      });
+
+      try {
+        let response = playerMatchesCache.get(key);
+
+        if (!response) {
+          let request = playerMatchesInFlight.get(key);
+          if (!request) {
+            request = MatchService.retrievePlayerMatches(
+              this.page - 1,
+              this.battleTag,
+              this.opponentTag,
+              this.profileMatchesGameMode,
+              this.playerRace ?? ERaceEnum.TOTAL,
+              this.opponentRace ?? ERaceEnum.TOTAL,
+              rootStateStore.gateway,
+              this.selectedSeason?.id ?? -1,
+              this.selectedHeroes,
+            );
+            playerMatchesInFlight.set(key, request);
+          }
+
+          response = await request;
+          playerMatchesCache.set(key, response);
+        }
+
+        this.SET_TOTAL_MATCHES(response.count);
+        this.SET_MATCHES(response.matches);
+      } finally {
+        playerMatchesInFlight.delete(key);
+        this.SET_LOADING_RECENT_MATCHES(false);
+      }
     },
     async loadOngoingPlayerMatch(playerId: string) {
       const response = await MatchService.retrieveOnGoingPlayerMatch(playerId);
@@ -134,6 +208,44 @@ export const usePlayerStore = defineStore("player", {
       );
       this.SET_MMR_RP_TIMELINE(mmrRpTimeline);
       this.SET_LOADING_MMR_TIMELINE(false);
+    },
+    async loadRecentPerformanceMatches(gameMode: EGameMode): Promise<Match[]> {
+      const rootStateStore = useRootStateStore();
+      const key = buildRecentPerformanceCacheKey({
+        battleTag: this.battleTag,
+        gameMode,
+        gateway: rootStateStore.gateway,
+        season: this.selectedSeason?.id ?? -1,
+      });
+
+      const cached = recentPerformanceCache.get(key);
+      if (cached) {
+        return cached;
+      }
+
+      let request = recentPerformanceInFlight.get(key);
+      if (!request) {
+        request = MatchService.retrievePlayerMatches(
+          0,
+          this.battleTag,
+          "",
+          gameMode,
+          ERaceEnum.TOTAL,
+          ERaceEnum.TOTAL,
+          rootStateStore.gateway,
+          this.selectedSeason?.id ?? -1,
+        ).then((response) => response.matches);
+
+        recentPerformanceInFlight.set(key, request);
+      }
+
+      try {
+        const matches = await request;
+        recentPerformanceCache.set(key, matches);
+        return matches;
+      } finally {
+        recentPerformanceInFlight.delete(key);
+      }
     },
     async loadPlayerGameLengths() {
       const playerGameLengthStats = await ProfileService.retrievePlayerGameLengthStats(
@@ -263,6 +375,12 @@ export const usePlayerStore = defineStore("player", {
       this.SET_OPPONENT_RACE(undefined);
       this.SET_SELECTED_HEROES([]);
       this.SET_PAGE(1);
+    },
+    invalidateMatchesCache(): void {
+      playerMatchesCache.clear();
+      playerMatchesInFlight.clear();
+      recentPerformanceCache.clear();
+      recentPerformanceInFlight.clear();
     },
     SET_ONGOING_MATCH(match: Match): void {
       this.ongoingMatch = match;
