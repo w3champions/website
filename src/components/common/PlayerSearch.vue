@@ -31,12 +31,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, ref, watch, PropType } from "vue";
 import debounce from "debounce";
 import ProfileService from "@/services/ProfileService";
 
 import { mdiMagnify } from "@mdi/js";
 import { PlayerProfile } from "@/store/player/types";
+
+type SearchDensity = "default" | "comfortable" | "compact";
 
 export default defineComponent({
   name: "PlayerSearch",
@@ -62,7 +64,7 @@ export default defineComponent({
       default: true,
     },
     density: {
-      type: String,
+      type: String as PropType<SearchDensity>,
       required: false,
       default: "default",
     },
@@ -128,9 +130,6 @@ export default defineComponent({
       isLoading,
       searchedPlayers,
       clearSearch,
-      showFloatingLabel: props.showFloatingLabel,
-      density: props.density,
-      searchLabel: props.searchLabel,
     };
   },
 });
