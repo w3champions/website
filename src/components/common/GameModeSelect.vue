@@ -7,14 +7,10 @@
       </v-btn>
     </template>
     <v-card>
-      <v-card-text>
-        <v-list>
-          <v-list-item>
-            <v-list-item-title>
-              {{ $t("components_common_gamemodeselect.selectgamemode") }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
+      <v-card-text class="dropdown-menu-content">
+        <div class="dropdown-menu-title">
+          {{ $t("components_common_gamemodeselect.selectgamemode") }}
+        </div>
         <v-divider />
         <v-list density="compact" max-height="400" class="overflow-y-auto">
           <v-list-item

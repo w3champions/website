@@ -7,7 +7,11 @@
       :class="classes"
       menu-icon=""
       :append-inner-icon="mdiMagnify"
-      label="Search BattleTag"
+      :label="showFloatingLabel ? searchLabel : undefined"
+      :placeholder="showFloatingLabel ? undefined : searchLabel"
+      :persistent-placeholder="!showFloatingLabel"
+      :single-line="!showFloatingLabel"
+      :density="density"
       :items="searchedPlayers"
       item-title="battleTag"
       :no-data-text="noDataText"
@@ -51,9 +55,24 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true,
+    },
+    showFloatingLabel: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    density: {
+      type: String,
+      required: false,
+      default: "default",
+    },
+    searchLabel: {
+      type: String,
+      required: false,
+      default: "Search BattleTag",
     }
   },
-  setup: (_props, context) => {
+  setup: (props, context) => {
     const input = ref<string>("");
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;
@@ -109,6 +128,9 @@ export default defineComponent({
       isLoading,
       searchedPlayers,
       clearSearch,
+      showFloatingLabel: props.showFloatingLabel,
+      density: props.density,
+      searchLabel: props.searchLabel,
     };
   },
 });
