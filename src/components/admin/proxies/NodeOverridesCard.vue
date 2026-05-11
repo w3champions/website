@@ -72,8 +72,9 @@ export default defineComponent({
     // todo: 3. format PUT request to endpoint using setOverrides
 
     const isProxyListModified = computed<boolean>(() => {
-      if (props.passedOverrides.length !== modifiedOverrides.value.length)
+      if (props.passedOverrides.length !== modifiedOverrides.value.length) {
         return true;
+      }
 
       const uniqueValues = new Set([
         ...modifiedOverrides.value,

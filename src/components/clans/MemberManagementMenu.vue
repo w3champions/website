@@ -51,7 +51,7 @@ export default defineComponent({
     const clanStore = useClanStore();
 
     async function kickPlayer(): Promise<void> {
-        await clanStore.kickPlayer(props.battleTag);
+      await clanStore.kickPlayer(props.battleTag);
     }
 
     async function promoteToShaman(): Promise<void> {

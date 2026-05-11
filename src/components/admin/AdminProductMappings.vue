@@ -280,7 +280,7 @@ export default defineComponent({
         userId: user.userId,
         rewardId: "", // Not applicable for product mappings
         status: user.isActive ? RewardStatus.Active :
-                user.status === "Expired" ? RewardStatus.Expired : RewardStatus.Revoked,
+          user.status === "Expired" ? RewardStatus.Expired : RewardStatus.Revoked,
         providerId: user.providerId,
         assignedAt: user.assignedAt,
         expiresAt: user.expiresAt,
@@ -318,7 +318,7 @@ export default defineComponent({
       },
     };
 
-    const mappingTypeOptions = ref<{title: string; value: ProductMappingType}[]>([
+    const mappingTypeOptions = ref<{ title: string; value: ProductMappingType }[]>([
       { title: "One Time", value: ProductMappingType.OneTime },
       { title: "Recurring", value: ProductMappingType.Recurring },
       { title: "Tiered", value: ProductMappingType.Tiered },

@@ -159,29 +159,29 @@ export default defineComponent({
     });
 
     const leagueName = computed<string | null>(() => {
-        switch (props.player.ranking?.leagueOrder) {
-          case 0:
-            return "Grand Master";
-          case 1:
-            return "Master";
-          case 2:
-            return "Adept";
-          case 3:
-            return "Diamond";
-          case 4:
-            return "Platinum";
-          case 5:
-            return "Gold";
-          case 6:
-            return "Silver";
-          case 7:
-            return "Bronze";
-          case 8:
-            return "Grass";
-          default:
-            return null;
-        }
-      });
+      switch (props.player.ranking?.leagueOrder) {
+        case 0:
+          return "Grand Master";
+        case 1:
+          return "Master";
+        case 2:
+          return "Adept";
+        case 3:
+          return "Diamond";
+        case 4:
+          return "Platinum";
+        case 5:
+          return "Gold";
+        case 6:
+          return "Silver";
+        case 7:
+          return "Bronze";
+        case 8:
+          return "Grass";
+        default:
+          return null;
+      }
+    });
 
     function openProfileInNewTab() {
       if (!showPlayerInfo.value) return;
@@ -194,12 +194,12 @@ export default defineComponent({
       if (!showPlayerInfo.value) return;
 
       router
-          .push({
-            path: getProfileUrl(props.player.battleTag),
-          })
-          .catch((err) => {
-            return err;
-          });
+        .push({
+          path: getProfileUrl(props.player.battleTag),
+        })
+        .catch((err) => {
+          return err;
+        });
     }
 
     return {

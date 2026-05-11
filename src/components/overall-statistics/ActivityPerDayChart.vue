@@ -51,11 +51,10 @@ export default defineComponent({
     }
 
     // Get the "All" set, or an empty set if it doesn't exist
-    const allSet = computed(() => props.gameDaysPerMode
-      .find((g) => g.gameMode == EGameMode.UNDEFINED) ?? {
-        gameMode: EGameMode.UNDEFINED,
-        gameDays: [] as GameDay[],
-      } as GameDayPerMode
+    const allSet = computed(() => props.gameDaysPerMode.find((g) => g.gameMode == EGameMode.UNDEFINED) ?? {
+      gameMode: EGameMode.UNDEFINED,
+      gameDays: [] as GameDay[],
+    } as GameDayPerMode
     );
 
     // Get the list of dates for the x-axis

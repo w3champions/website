@@ -16,7 +16,9 @@ export default defineConfigWithVueTs([
     files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
     rules: {
       "camelcase": "off",
+      "curly": ["warn", "multi-line"],
       "prefer-const": "warn",
+      // "sort-imports": "warn",
     },
   },
   {
@@ -25,7 +27,6 @@ export default defineConfigWithVueTs([
     rules: {
       "@typescript-eslint/ban-ts-comment": "warn",
       "@typescript-eslint/explicit-module-boundary-types": "warn",
-      // "@typescript-eslint/member-delimiter-style": "warn", TODO: Use @stylistic/eslint-plugin (https://eslint.style/rules). Read more: https://typescript-eslint.io/rules/member-delimiter-style
       "@typescript-eslint/no-loss-of-precision": "warn",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-explicit-any": "error",
@@ -105,12 +106,14 @@ export default defineConfigWithVueTs([
       "@stylistic/quotes": ["warn", "double"],
       "@stylistic/comma-dangle": ["warn", "only-multiline"],
       // "@stylistic/comma-dangle": ["warn", "always-multiline"],
-      // "@stylistic/indent": ["warn", 2],
-      // "@stylistic/object-curly-spacing": ["warn", "always"],
+      "@stylistic/indent": ["warn", 2],
+      "@stylistic/object-curly-spacing": ["warn", "always"],
       "@stylistic/space-infix-ops": ["warn"],
       "@stylistic/arrow-parens": ["warn", "always"],
       "@stylistic/no-trailing-spaces": ["warn"],
       "@stylistic/array-bracket-spacing": ["warn", "never"],
+      "@stylistic/eol-last": ["warn", "always"],
+      "@stylistic/member-delimiter-style": "warn",
       // "@stylistic/keyword-spacing": ["warn", { "before": true, "after": true }],
       // "@stylistic/space-before-blocks": ["warn", "always"],
       // "@stylistic/space-before-function-paren": ["warn", "never"],
