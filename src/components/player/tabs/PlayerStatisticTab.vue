@@ -7,7 +7,7 @@
         </v-card-text>
       </v-row>
     </div>
-    <v-card-title>
+    <v-card-title class="pb-0 pt-3">
       {{ $t("components_player_tabs_playerstatistictab.title") }}
     </v-card-title>
     <v-row v-if="selectedSeason.id !== 0">

@@ -4,18 +4,31 @@
       <v-col cols="12">
         <v-card tile>
           <v-card-title class="pt-3">
-            {{ $t("views_app.matches") }}
+            <v-row no-gutters align="start">
+              <v-col cols="auto">
+                {{ $t("views_app.matches") }}
+              </v-col>
+              <v-spacer />
+              <v-col cols="auto" class="d-flex align-start">
+                <div class="matches-season-slot" :class="{ 'matches-season-slot--hidden': unfinished }">
+                  <season-select @seasonSelected="selectSeason" />
+                </div>
+              </v-col>
+            </v-row>
           </v-card-title>
-          <v-card-text class="pt-2 d-flex align-center">
-            <matches-status-select />
-            <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
-            <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
-            <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
-            <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
-            <sort-select v-if="unfinished" />
-            <season-select v-if="!unfinished" @seasonSelected="selectSeason" />
-            <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
-            <hero-icon-toggle :showHeroes="showHeroIcons" :unfinished="unfinished" @update:showHeroes="toggleShowHeroIcons" />
+          <v-card-text class="pt-2">
+            <div class="matches-filter-scroll">
+              <div class="matches-filter-row d-flex align-center">
+                <matches-status-select />
+                <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
+                <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
+                <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
+                <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
+                <sort-select v-if="unfinished" />
+                <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
+                <hero-icon-toggle :showHeroes="showHeroIcons" :unfinished="unfinished" @update:showHeroes="toggleShowHeroIcons" />
+              </div>
+            </div>
           </v-card-text>
           <v-card-text v-if="isMatchesLoading" class="d-flex justify-center py-10">
             <v-progress-circular indeterminate color="primary" size="40" />
@@ -233,3 +246,25 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.matches-filter-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-top: 2px;
+  padding-bottom: 8px;
+  margin-top: -2px;
+  margin-bottom: -8px;
+}
+
+.matches-filter-row {
+  width: max-content;
+  min-width: 100%;
+  flex-wrap: nowrap;
+}
+
+.matches-season-slot--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+</style>

@@ -8,7 +8,7 @@
       <v-btn
         tile
         class="w3-dropdown-button"
-        style="background-color: transparent; min-width: 180px;"
+        style="background-color: transparent"
         v-bind="props"
       >
         <v-icon size="x-large" start>{{ mdiTimerSand }}</v-icon>

@@ -1,68 +1,136 @@
 <template>
   <div>
     <v-card-title class="pb-0 pt-3">
-      {{ $t("components_player_tabs_matchhistorytab.title") }}
-    </v-card-title>
-    <v-card-text class="pb-3">
-      <v-row>
+      <v-row no-gutters align="end">
+        <v-col cols="auto" class="pa-0">
+          {{ $t("components_player_tabs_matchhistorytab.title") }}
+        </v-col>
         <v-spacer />
-        <v-col cols="12" md="5" class="pt-0 px-4">
-          <player-search
-            :key="battleTag"
-            :setAutofocus="false"
-            @playerFound="playerFound"
-            @searchCleared="searchCleared"
-          />
+        <v-col cols="auto" class="pa-0 d-flex justify-end align-end player-match-title-search-col">
+          <div class="player-match-search-wrap">
+            <player-search
+              :key="battleTag"
+              :setAutofocus="false"
+              :showFloatingLabel="false"
+              density="compact"
+              searchLabel="Search Opponents"
+              @playerFound="playerFound"
+              @searchCleared="searchCleared"
+            />
+          </div>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="12" md="2">
-          <v-select
-            :items="activeGameModesWithAll()"
-            item-title="name"
-            item-value="id"
-            :model-value="profileMatchesGameMode"
-            label="Mode"
-            variant="outlined"
-            color="primary"
-            hide-details
-            @update:model-value="setSelectedGameModeForSearch"
-          />
+    </v-card-title>
+    <v-card-text class="pt-4 pb-3">
+      <v-row no-gutters align="end" class="player-match-controls-row">
+        <v-col cols="auto" class="pa-0">
+          <v-menu location="right" transition="fade-transition">
+            <template v-slot:activator="{ props }">
+              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+                <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
+                {{ selectedGameModeName }}
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-text class="dropdown-menu-content">
+                <div class="dropdown-menu-title">Mode</div>
+                <v-divider />
+                <v-list density="compact" max-height="400" class="overflow-y-auto">
+                  <v-list-item
+                    v-for="mode in activeGameModesWithAll()"
+                    :key="mode.id"
+                    @click="setSelectedGameModeForSearch(mode)"
+                  >
+                    <v-list-item-title>{{ mode.name }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-menu>
         </v-col>
-        <v-col cols="12" md="2">
-          <v-select
-            :items="races"
-            item-title="raceName"
-            item-value="raceId"
-            :model-value="playerRace"
-            label="Player Race"
-            variant="outlined"
-            color="primary"
-            hide-details
-            @update:model-value="setPlayerRaceForSearch"
-          />
+        <v-col cols="auto" class="pa-0">
+          <v-menu location="right">
+            <template v-slot:activator="{ props }">
+              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+                {{ playerRaceButtonText }}
+                <img
+                  v-if="selectedPlayerRaceIcon"
+                  :src="selectedPlayerRaceIcon"
+                  :alt="playerRaceButtonText"
+                  class="race-filter-icon ml-2"
+                />
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-text class="dropdown-menu-content">
+                <div class="dropdown-menu-title">Player Race</div>
+                <v-divider />
+                <v-list density="compact" max-height="400" class="overflow-y-auto">
+                  <v-list-item
+                    v-for="race in races"
+                    :key="`player-race-${race.raceId}`"
+                    @click="setPlayerRaceForSearch(race.raceId)"
+                  >
+                    <template v-slot:prepend>
+                      <img
+                        v-if="race.icon"
+                        :src="race.icon"
+                        :alt="race.raceName"
+                        class="race-filter-icon mr-3"
+                      />
+                    </template>
+                    <v-list-item-title>{{ race.raceName }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-menu>
         </v-col>
-        <v-col cols="12" md="2">
-          <v-select
-            :items="races"
-            item-title="raceName"
-            item-value="raceId"
-            :model-value="opponentRace"
-            label="Opponent Race"
-            variant="outlined"
-            color="primary"
-            hide-details
-            @update:model-value="setOpponentRaceForSearch"
-          />
+        <v-col cols="auto" class="pa-0">
+          <v-menu location="right">
+            <template v-slot:activator="{ props }">
+              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+                {{ opponentRaceButtonText }}
+                <img
+                  v-if="selectedOpponentRaceIcon"
+                  :src="selectedOpponentRaceIcon"
+                  :alt="opponentRaceButtonText"
+                  class="race-filter-icon ml-2"
+                />
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-text class="dropdown-menu-content">
+                <div class="dropdown-menu-title">Opponent Race</div>
+                <v-divider />
+                <v-list density="compact" max-height="400" class="overflow-y-auto">
+                  <v-list-item
+                    v-for="race in races"
+                    :key="`opponent-race-${race.raceId}`"
+                    @click="setOpponentRaceForSearch(race.raceId)"
+                  >
+                    <template v-slot:prepend>
+                      <img
+                        v-if="race.icon"
+                        :src="race.icon"
+                        :alt="race.raceName"
+                        class="race-filter-icon mr-3"
+                      />
+                    </template>
+                    <v-list-item-title>{{ race.raceName }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-menu>
         </v-col>
-        <v-col cols="12" md="3">
+        <v-col cols="auto" class="pa-0">
           <hero-select
-            :is-player-matches-tab="true"
             :selectedHeroes="selectedHeroes"
             @heroChanged="heroChanged"
           />
         </v-col>
-        <v-col class="pt-5 pl-0">
+        <v-col class="pa-0 d-flex justify-end align-end player-match-search-col">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
         </v-col>
       </v-row>
@@ -80,7 +148,11 @@
         </v-col>
       </v-row>
     </v-card-text>
+    <v-card-text v-if="isMatchHistoryLoading" class="d-flex justify-center py-10">
+      <v-progress-circular indeterminate color="primary" size="40" />
+    </v-card-text>
     <matches-grid
+      v-else
       v-model="matches"
       :total-matches="totalMatches"
       :items-per-page="50"
@@ -107,6 +179,15 @@ import { useRankingStore } from "@/store/ranking/store";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import { useCommonStore } from "@/store/common/store";
+import { getAsset } from "@/helpers/url-functions";
+import { TranslateResult } from "vue-i18n";
+import { mdiControllerClassic } from "@mdi/js";
+
+interface RaceFilterOption {
+  raceName: TranslateResult;
+  raceId: ERaceEnum;
+  icon?: string;
+}
 
 export default defineComponent({
   name: "PlayerMatchesTab",
@@ -130,18 +211,105 @@ export default defineComponent({
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
     const showHeroIcons = ref<boolean>(false);
+    const hasResolvedInitialMatches = ref<boolean>(false);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
     const matches = computed<Match[]>(() => playerStore.matches);
-    const profileMatchesGameMode = computed<EGameMode>(() => playerStore.profileMatchesGameMode);
-    const playerRace = computed<ERaceEnum | undefined>(() => playerStore.playerRace);
-    const opponentRace = computed<ERaceEnum | undefined>(() => playerStore.opponentRace);
     const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
+
+    const selectedGameModeName = ref<string>("All Modes");
+
+    function syncSelectedGameModeLabel(): void {
+      const normalized = Number(playerStore.profileMatchesGameMode);
+      if (Number.isNaN(normalized) || normalized === EGameMode.UNDEFINED) {
+        selectedGameModeName.value = "All Modes";
+        return;
+      }
+
+      const selected = activeGameModesWithAll().find((mode) => Number(mode.id) === normalized);
+      selectedGameModeName.value = selected?.name?.toString() ?? "All Modes";
+    }
+
+    const races = computed<RaceFilterOption[]>(() => [
+      { raceName: "Any", raceId: ERaceEnum.TOTAL },
+      {
+        raceName: t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`),
+        raceId: ERaceEnum.HUMAN,
+        icon: getAsset(`raceIcons/${ERaceEnum[ERaceEnum.HUMAN]}.png`),
+      },
+      {
+        raceName: t(`races.${ERaceEnum[ERaceEnum.ORC]}`),
+        raceId: ERaceEnum.ORC,
+        icon: getAsset(`raceIcons/${ERaceEnum[ERaceEnum.ORC]}.png`),
+      },
+      {
+        raceName: t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`),
+        raceId: ERaceEnum.NIGHT_ELF,
+        icon: getAsset(`raceIcons/${ERaceEnum[ERaceEnum.NIGHT_ELF]}.png`),
+      },
+      {
+        raceName: t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`),
+        raceId: ERaceEnum.UNDEAD,
+        icon: getAsset(`raceIcons/${ERaceEnum[ERaceEnum.UNDEAD]}.png`),
+      },
+      {
+        raceName: t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`),
+        raceId: ERaceEnum.RANDOM,
+        icon: getAsset(`raceIcons/${ERaceEnum[ERaceEnum.RANDOM]}.png`),
+      },
+    ]);
+
+    function getRaceOption(race: ERaceEnum | undefined): RaceFilterOption {
+      const selectedRace = race ?? ERaceEnum.TOTAL;
+      return races.value.find((raceOption) => raceOption.raceId === selectedRace) ?? races.value[0];
+    }
+
+    const playerRaceButtonText = computed<string>(() => {
+      const selected = getRaceOption(playerStore.playerRace);
+      if (selected.raceId === ERaceEnum.TOTAL) {
+        return "Player Race";
+      }
+
+      return `Player ${selected.raceName.toString()}`;
+    });
+
+    const opponentRaceButtonText = computed<string>(() => {
+      const selected = getRaceOption(playerStore.opponentRace);
+      if (selected.raceId === ERaceEnum.TOTAL) {
+        return "Opponent Race";
+      }
+
+      return `Opponent ${selected.raceName.toString()}`;
+    });
+
+    const selectedPlayerRaceIcon = computed<string | undefined>(() => {
+      return getRaceOption(playerStore.playerRace).icon;
+    });
+
+    const selectedOpponentRaceIcon = computed<string | undefined>(() => {
+      return getRaceOption(playerStore.opponentRace).icon;
+    });
+
+    const isMatchHistoryLoading = computed<boolean>(() => {
+      return !hasResolvedInitialMatches.value
+        || playerStore.loadingProfile
+        || playerStore.loadingRecentMatches
+        || isLoadingMatches.value;
+    });
 
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
       await commonStore.loadHeroFilters();
+      syncSelectedGameModeLabel();
+
+      if (
+        playerStore.playerProfile?.battleTag === battleTag.value
+        && !playerStore.loadingProfile
+        && !playerStore.loadingRecentMatches
+      ) {
+        hasResolvedInitialMatches.value = true;
+      }
     });
 
     onBeforeRouteLeave((): void => {
@@ -150,7 +318,24 @@ export default defineComponent({
 
     watch(battleTag, (newBattleTag: string, oldBattleTag: string | undefined): void => {
       if (!oldBattleTag || newBattleTag === oldBattleTag) return;
+      hasResolvedInitialMatches.value = false;
       resetProfileMatchFilters();
+    });
+
+    watch(() => playerStore.loadingRecentMatches, (isLoading, wasLoading): void => {
+      if (wasLoading && !isLoading) {
+        hasResolvedInitialMatches.value = true;
+      }
+    });
+
+    watch(() => playerStore.loadingProfile, (isLoading, wasLoading): void => {
+      if (wasLoading && !isLoading) {
+        hasResolvedInitialMatches.value = true;
+      }
+    });
+
+    watch(() => playerStore.profileMatchesGameMode, () => {
+      syncSelectedGameModeLabel();
     });
 
     function resetProfileMatchFilters(): void {
@@ -172,22 +357,22 @@ export default defineComponent({
       await getMatches();
     }
 
-    const races = [
-      { raceName: t(`races.${ERaceEnum[ERaceEnum.TOTAL]}`), raceId: ERaceEnum.TOTAL },
-      { raceName: t(`races.${ERaceEnum[ERaceEnum.HUMAN]}`), raceId: ERaceEnum.HUMAN },
-      { raceName: t(`races.${ERaceEnum[ERaceEnum.ORC]}`), raceId: ERaceEnum.ORC },
-      { raceName: t(`races.${ERaceEnum[ERaceEnum.NIGHT_ELF]}`), raceId: ERaceEnum.NIGHT_ELF },
-      { raceName: t(`races.${ERaceEnum[ERaceEnum.UNDEAD]}`), raceId: ERaceEnum.UNDEAD },
-      { raceName: t(`races.${ERaceEnum[ERaceEnum.RANDOM]}`), raceId: ERaceEnum.RANDOM },
-    ];
-
     const winRateVsOpponent = computed<string>(() => {
       if (opponentWins.value == 0) return "0";
       return ((opponentWins.value / matches.value.length) * 100).toFixed(1);
     });
 
-    function setSelectedGameModeForSearch(gameMode: EGameMode): void {
+    function setSelectedGameModeForSearch(mode: { id: EGameMode | string | number; name?: string | TranslateResult }): void {
+      const normalized = Number(mode.id);
+      const gameMode = Number.isNaN(normalized) ? EGameMode.UNDEFINED : normalized as EGameMode;
       playerStore.SET_PROFILE_MATCHES_GAME_MODE(gameMode);
+
+      if (gameMode === EGameMode.UNDEFINED) {
+        selectedGameModeName.value = "All Modes";
+      } else {
+        selectedGameModeName.value = mode.name?.toString() ?? selectedGameModeName.value;
+      }
+
       getMatches();
     }
 
@@ -262,8 +447,12 @@ export default defineComponent({
       }
 
       isLoadingMatches.value = true;
-      await playerStore.loadMatches(page);
-      isLoadingMatches.value = false;
+      try {
+        await playerStore.loadMatches(page);
+      } finally {
+        isLoadingMatches.value = false;
+        hasResolvedInitialMatches.value = true;
+      }
     }
 
     async function onPageChanged(page: number): Promise<void> {
@@ -272,19 +461,23 @@ export default defineComponent({
 
     return {
       activeGameModesWithAll,
-      profileMatchesGameMode,
-      playerRace,
-      opponentRace,
       playerFound,
       searchCleared,
       setSelectedGameModeForSearch,
       races,
       setPlayerRaceForSearch,
       setOpponentRaceForSearch,
+      selectedGameModeName,
+      playerRaceButtonText,
+      opponentRaceButtonText,
+      selectedPlayerRaceIcon,
+      selectedOpponentRaceIcon,
+      mdiControllerClassic,
       foundPlayer,
       opponentWins,
       totalMatchesAgainstOpponent,
       winRateVsOpponent,
+      isMatchHistoryLoading,
       matches,
       totalMatches,
       battleTag,
@@ -296,3 +489,35 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.race-filter-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.player-match-search-col {
+  margin-left: 12px;
+}
+
+.player-match-title-search-col {
+  width: 250px;
+  max-width: 100%;
+}
+
+.player-match-search-wrap {
+  width: 250px;
+  max-width: 100%;
+}
+
+.player-match-search-col :deep(.w3-autocomplete) {
+  width: 100%;
+}
+
+@media (min-width: 960px) {
+  .player-match-controls-row {
+    flex-wrap: nowrap;
+  }
+}
+</style>

@@ -275,7 +275,14 @@ export default defineComponent({
       }
 
       _intervalRefreshHandle = setInterval(async () => {
+        const hadOngoingMatch = !!playerStore.ongoingMatch?.id;
         await playerStore.loadOngoingPlayerMatch(battleTag.value);
+
+        // Keep recent performance data fresh when a live match ends while this profile is open.
+        if (hadOngoingMatch && !playerStore.ongoingMatch?.id) {
+          playerStore.invalidateMatchesCache();
+          await playerStore.loadMatches(1);
+        }
       }, AppConstants.ongoingMatchesRefreshInterval);
 
       await playerStore.loadOngoingPlayerMatch(battleTag.value);

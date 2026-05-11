@@ -7,10 +7,8 @@
       </v-btn>
     </template>
     <v-card>
-      <v-card-text>
-        <v-list>
-          <v-list-item-title>{{ $t("components_matches_sortselect.sortmatchesby") }}</v-list-item-title>
-        </v-list>
+      <v-card-text class="dropdown-menu-content">
+        <div class="dropdown-menu-title">{{ $t("components_matches_sortselect.sortmatchesby") }}</div>
         <v-divider />
         <v-list density="compact" max-height="400" class="overflow-y-auto">
           <v-list-item v-for="sort in sortings" :key="sort.mode" @click="currentSort = sort">

@@ -7,7 +7,11 @@
       :class="classes"
       menu-icon=""
       :append-inner-icon="mdiMagnify"
-      label="Search BattleTag"
+      :label="showFloatingLabel ? searchLabel : undefined"
+      :placeholder="showFloatingLabel ? undefined : searchLabel"
+      :persistent-placeholder="!showFloatingLabel"
+      :single-line="!showFloatingLabel"
+      :density="density"
       :items="searchedPlayers"
       item-title="battleTag"
       :no-data-text="noDataText"
@@ -27,12 +31,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, ref, watch, PropType } from "vue";
 import debounce from "debounce";
 import ProfileService from "@/services/ProfileService";
 
 import { mdiMagnify } from "@mdi/js";
 import { PlayerProfile } from "@/store/player/types";
+
+type SearchDensity = "default" | "comfortable" | "compact";
 
 export default defineComponent({
   name: "PlayerSearch",
@@ -51,9 +57,24 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true,
+    },
+    showFloatingLabel: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    density: {
+      type: String as PropType<SearchDensity>,
+      required: false,
+      default: "default",
+    },
+    searchLabel: {
+      type: String,
+      required: false,
+      default: "Search BattleTag",
     }
   },
-  setup: (_props, context) => {
+  setup: (props, context) => {
     const input = ref<string>("");
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;

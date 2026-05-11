@@ -52,12 +52,11 @@
 import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
-import { EGameMode, ERaceEnum, Match } from "@/store/types";
+import { EGameMode, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
-import MatchService from "@/services/MatchService";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { Gateways, PlayerId, Season } from "@/store/ranking/types";
@@ -115,18 +114,7 @@ export default defineComponent({
     async function init(): Promise<void> {
       if (!props.showPerformance) return;
 
-      const playerMatches = await MatchService.retrievePlayerMatches(
-        0,
-        battleTag.value,
-        "",
-        gameMode.value,
-        ERaceEnum.TOTAL,
-        ERaceEnum.TOTAL,
-        gateWay.value,
-        selectedSeason.value.id
-      );
-
-      matches.value = playerMatches.matches;
+      matches.value = await playerStore.loadRecentPerformanceMatches(gameMode.value);
     }
 
     function navigateToPartner(partner: PlayerId): void {
