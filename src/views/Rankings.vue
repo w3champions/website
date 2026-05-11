@@ -178,7 +178,7 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
-import AppConstants, { isGatewayNeededForSeason } from "../constants";
+import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
@@ -489,6 +489,8 @@ export default defineComponent({
         rootStateStore.setGateway(props.gateway);
       }
 
+      rootStateStore.setGateway(getDefaultGatewayForSeason(rankingsStore.selectedSeason.id, rootStateStore.gateway));
+
       await loadOngoingMatches();
       await getLadders();
 
@@ -546,6 +548,7 @@ export default defineComponent({
         selectedRank.value?.player.playerIds[0]?.battleTag;
       const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
+      rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
       await getLadders();
 
       // Try to maintain the same league if it exists in the new season
