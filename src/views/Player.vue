@@ -130,7 +130,7 @@ import { Match, PlayerInTeam, Team } from "@/store/types";
 import { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
-import AppConstants, { isGatewayNeededForSeason } from "../constants";
+import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
@@ -138,6 +138,7 @@ import ModerationStatusBadges from "@/components/admin/smurf-detection/Moderatio
 import { usePlayerStore } from "@/store/player/store";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRootStateStore } from "@/store/rootState/store";
 import { EPermission } from "@/store/admin/permission/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 
@@ -165,6 +166,7 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const adminStore = useAdminStore();
     const oauthStore = useOauthStore();
+    const rootStateStore = useRootStateStore();
     let _intervalRefreshHandle: NodeJS.Timeout;
     const tabsModel = ref<number>(0);
     const loadingModerationStatus = ref<boolean>(false);
@@ -229,6 +231,7 @@ export default defineComponent({
 
     async function selectSeason(season: Season): Promise<void> {
       playerStore.SET_SELECTED_SEASON(season);
+      rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
       await playerStore.loadAllDataForSelectedSeason();
       // This requires loadGameModeStats and loadRaceStats to be called first
       await playerStore.initMmrRpTimeline();
@@ -290,6 +293,9 @@ export default defineComponent({
       if (isRequestedProfileAlreadyLoaded) return;
 
       await playerStore.loadFullProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
+      rootStateStore.setGateway(
+        getDefaultGatewayForSeason(playerStore.selectedSeason.id, rootStateStore.gateway)
+      );
 
       // Load moderation data if user has permission
       if (hasModerationPermission.value) {

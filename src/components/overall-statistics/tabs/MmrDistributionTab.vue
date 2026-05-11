@@ -67,11 +67,12 @@ import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallSta
 import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
-import { isGatewayNeededForSeason } from "@/constants";
+import { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
+import { useRootStateStore } from "@/store/rootState/store";
 
 export default defineComponent({
   name: "MmrDistributionTab",
@@ -84,6 +85,7 @@ export default defineComponent({
     const overallStatsStore = useOverallStatsStore();
     const player = usePlayerStore();
     const rankingsStore = useRankingStore();
+    const rootStateStore = useRootStateStore();
 
     const selectedGameMode = ref<EGameMode>(EGameMode.GM_1ON1);
     const selectedGateWay = ref<Gateways>(Gateways.Europe);
@@ -104,6 +106,8 @@ export default defineComponent({
       },
       async set(season: Season): Promise<void> {
         selectedSeasonRef.value = season;
+        selectedGateWay.value = getDefaultGatewayForSeason(season.id, selectedGateWay.value);
+        rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
         loadingData.value = true;
         if (verifiedBtag.value) {
           try {
@@ -173,6 +177,8 @@ export default defineComponent({
       }
 
       selectedSeason.value = seasons.value[0];
+      selectedGateWay.value = getDefaultGatewayForSeason(selectedSeason.value.id, selectedGateWay.value);
+      rootStateStore.setGateway(getDefaultGatewayForSeason(selectedSeason.value.id, rootStateStore.gateway));
     }
 
     return {

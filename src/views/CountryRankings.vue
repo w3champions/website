@@ -110,7 +110,7 @@ import { Countries } from "@/store/countries";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import CountryRankingsGrid from "@/components/ladder/CountryRankingsGrid.vue";
-import AppConstants, { isGatewayNeededForSeason } from "../constants";
+import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -208,6 +208,8 @@ export default defineComponent({
         rootStateStore.SET_GATEWAY(props.gateway);
       }
 
+      rootStateStore.setGateway(getDefaultGatewayForSeason(rankingsStore.selectedSeason.id, rootStateStore.gateway));
+
       const country = props.country || selectedCountryCode.value || countries.value[0].countryCode;
 
       await getLadders();
@@ -264,6 +266,7 @@ export default defineComponent({
 
     async function selectSeason(season: Season): Promise<void> {
       rankingsStore.setSeason(season);
+      rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
       refreshRankings();
     }
 
