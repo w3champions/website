@@ -170,7 +170,7 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { loadActiveGameModes, activeGameModesWithAll } from "@/composables/GameModesMixin";
+import { loadActiveGameModes, activeGameModesWithAll, type IGameModeBrief } from "@/composables/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import { EGameMode, ERaceEnum, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -218,17 +218,6 @@ export default defineComponent({
     const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
 
     const selectedGameModeName = ref<string>("All Modes");
-
-    function syncSelectedGameModeLabel(): void {
-      const normalized = Number(playerStore.profileMatchesGameMode);
-      if (Number.isNaN(normalized) || normalized === EGameMode.UNDEFINED) {
-        selectedGameModeName.value = "All Modes";
-        return;
-      }
-
-      const selected = activeGameModesWithAll().find((mode) => Number(mode.id) === normalized);
-      selectedGameModeName.value = selected?.name?.toString() ?? "All Modes";
-    }
 
     const races = computed<RaceFilterOption[]>(() => [
       { raceName: "Any", raceId: ERaceEnum.TOTAL },
@@ -300,7 +289,6 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await loadActiveGameModes();
       await commonStore.loadHeroFilters();
-      syncSelectedGameModeLabel();
 
       if (
         playerStore.playerProfile?.battleTag === battleTag.value
@@ -333,10 +321,6 @@ export default defineComponent({
       }
     });
 
-    watch(() => playerStore.profileMatchesGameMode, () => {
-      syncSelectedGameModeLabel();
-    });
-
     function resetProfileMatchFilters(): void {
       foundPlayer.value = "";
       rankingsStore.clearSearch();
@@ -361,9 +345,8 @@ export default defineComponent({
       return ((opponentWins.value / matches.value.length) * 100).toFixed(1);
     });
 
-    function setSelectedGameModeForSearch(mode: { id: EGameMode | string | number; name?: string }): void {
-      const normalized = Number(mode.id);
-      const gameMode = Number.isNaN(normalized) ? EGameMode.UNDEFINED : normalized as EGameMode;
+    function setSelectedGameModeForSearch(mode: IGameModeBrief): void {
+      const gameMode = Number.isNaN(mode.id) ? EGameMode.UNDEFINED : mode.id;
       playerStore.SET_PROFILE_MATCHES_GAME_MODE(gameMode);
 
       if (gameMode === EGameMode.UNDEFINED) {
