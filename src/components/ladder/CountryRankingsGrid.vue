@@ -154,7 +154,7 @@
 import { defineComponent, onMounted, type PropType, ref, toRefs, watch } from "vue";
 import flatMap from "lodash/flatMap";
 import type { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
-import type { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
+import { EAvatarCategory, ERaceEnum, type OngoingMatches } from "@/store/types";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
