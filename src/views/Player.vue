@@ -125,9 +125,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
-import { PlayerProfile } from "@/store/player/types";
-import { Match, PlayerInTeam, Team } from "@/store/types";
-import { Season } from "@/store/ranking/types";
+import type { PlayerProfile } from "@/store/player/types";
+import type { Match, PlayerInTeam, Team } from "@/store/types";
+import type { Season } from "@/store/ranking/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
@@ -277,14 +277,14 @@ export default defineComponent({
         playerStore.SET_PROFILE({} as PlayerProfile);
       }
 
-      _intervalRefreshHandle = setInterval(async () => {
+      _intervalRefreshHandle = setInterval(() => {
         const hadOngoingMatch = !!playerStore.ongoingMatch?.id;
-        await playerStore.loadOngoingPlayerMatch(battleTag.value);
+        playerStore.loadOngoingPlayerMatch(battleTag.value);
 
         // Keep recent performance data fresh when a live match ends while this profile is open.
         if (hadOngoingMatch && !playerStore.ongoingMatch?.id) {
           playerStore.invalidateMatchesCache();
-          await playerStore.loadMatches(1);
+          playerStore.loadMatches(1);
         }
       }, AppConstants.ongoingMatchesRefreshInterval);
 

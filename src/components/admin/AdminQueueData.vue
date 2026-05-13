@@ -96,8 +96,9 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await init();
 
-      _intervalRefreshHandle = setInterval(async () => {
-        await refresh();
+      _intervalRefreshHandle = setInterval(() => {
+        refresh();
+        console.log("I'm refreshed!");
       }, AppConstants.queueDataRefreshInterval);
     });
 

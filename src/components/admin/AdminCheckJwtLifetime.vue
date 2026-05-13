@@ -30,8 +30,8 @@ export default defineComponent({
     });
 
     onMounted(async (): Promise<void> => {
-      _intervalRefreshHandle = setInterval(async () => {
-        await adminStore.checkJwtLifetime();
+      _intervalRefreshHandle = setInterval(() => {
+        adminStore.checkJwtLifetime();
       }, checkJwtLifetimeInterval);
       await adminStore.checkJwtLifetime();
     });

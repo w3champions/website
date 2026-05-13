@@ -173,8 +173,8 @@ export default defineComponent({
     }
 
     function refreshMatches(): void {
-      _intervalRefreshHandle = setInterval(async () => {
-        await getMatches();
+      _intervalRefreshHandle = setInterval(() => {
+        getMatches();
       }, AppConstants.ongoingMatchesRefreshInterval);
     }
 

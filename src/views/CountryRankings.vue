@@ -218,8 +218,8 @@ export default defineComponent({
 
       await loadOngoingMatches();
 
-      _intervalRefreshHandle = setInterval(async () => {
-        await refreshRankings();
+      _intervalRefreshHandle = setInterval(() => {
+        refreshRankings();
       }, AppConstants.ongoingMatchesRefreshInterval);
     });
 
