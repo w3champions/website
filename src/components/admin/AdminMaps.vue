@@ -62,14 +62,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { AdminMapsFilters, Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import type { AdminMapsFilters, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiFile, mdiPencil } from "@mdi/js";
-import { DataTableHeader } from "vuetify";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminMaps",
@@ -145,7 +145,7 @@ export default defineComponent({
       isBulkUploadOpen.value = false;
     }
 
-    async function handleBulkUploadCompleted(count: number): Promise<void> {
+    function handleBulkUploadCompleted(count: number): void {
       alert(`Successfully selected ${count} maps!`);
       closeBulkUpload();
     }
@@ -165,8 +165,8 @@ export default defineComponent({
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
-      const map = e.map as Map;
-      const file = e.file as MapFileData;
+      const map = e.map;
+      const file = e.file;
 
       map.gameMap = file.metaData;
       map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;

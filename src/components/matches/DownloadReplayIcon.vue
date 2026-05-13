@@ -37,7 +37,7 @@ const { t } = useI18n();
 const downloading = ref(false);
 const tooltip = ref<TranslateResult>(t("components_matches_replayicon.download"));
 
-async function downloadReplay(): Promise<void> {
+function downloadReplay(): void {
   downloading.value = true;
 
   try {

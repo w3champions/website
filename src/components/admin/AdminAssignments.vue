@@ -467,7 +467,7 @@
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from "@/store/admin/types";
+import { type RewardAssignment, RewardStatus, type Reward, type PaginatedAssignments } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import {
   mdiMagnify, mdiDotsVertical, mdiEye, mdiCancel,
@@ -478,7 +478,7 @@ import {
   mdiClock, mdiClockAlert, mdiAlert, mdiAlertCircle,
   mdiInformation
 } from "@mdi/js";
-import { DataTableHeader } from "vuetify";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminAssignments",
@@ -750,7 +750,7 @@ export default defineComponent({
       detailsDialog.value = true;
     };
 
-    const revokeAssignment = async (assignment: RewardAssignment) => {
+    const revokeAssignment = (assignment: RewardAssignment) => {
       if (assignment.status !== RewardStatus.Active) {
         showSnackbar("Can only revoke active assignments", "warning");
         return;

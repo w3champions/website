@@ -151,10 +151,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref, toRefs, watch } from "vue";
+import { defineComponent, onMounted, type PropType, ref, toRefs, watch } from "vue";
 import flatMap from "lodash/flatMap";
-import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
+import type { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
+import type { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";

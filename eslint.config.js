@@ -36,6 +36,11 @@ export default defineConfigWithVueTs([
         "caughtErrorsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",
       }],
+      // "@typescript-eslint/no-use-before-define": "warn",
+      // "@typescript-eslint/consistent-type-imports": "warn",
+      // "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
+      // "@typescript-eslint/consistent-type-exports": "warn",
+      // "@typescript-eslint/no-floating-promises": "off",
     },
   },
   {

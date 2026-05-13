@@ -72,11 +72,11 @@ import { useI18n } from "vue-i18n";
 import { TranslateResult } from "vue-i18n";
 import WinratesMmrRangeSlider from "@/components/overall-statistics/tabs/WinratesMmrRangeSlider.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-import { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
+import type { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-import { Mmr } from "@/store/match/types";
-import { DataTableHeader } from "vuetify";
+import type { Mmr } from "@/store/match/types";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "WinratesTab",

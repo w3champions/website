@@ -172,7 +172,7 @@ import { onBeforeRouteLeave } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { loadActiveGameModes, activeGameModesWithAll } from "@/composables/GameModesMixin";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
-import { EGameMode, ERaceEnum, Match, PlayerInTeam, Team } from "@/store/types";
+import { EGameMode, ERaceEnum, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -180,11 +180,10 @@ import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import { useCommonStore } from "@/store/common/store";
 import { getAsset } from "@/helpers/url-functions";
-import { TranslateResult } from "vue-i18n";
 import { mdiControllerClassic } from "@mdi/js";
 
 interface RaceFilterOption {
-  raceName: TranslateResult;
+  raceName: string;
   raceId: ERaceEnum;
   icon?: string;
 }
@@ -362,7 +361,7 @@ export default defineComponent({
       return ((opponentWins.value / matches.value.length) * 100).toFixed(1);
     });
 
-    function setSelectedGameModeForSearch(mode: { id: EGameMode | string | number; name?: string | TranslateResult }): void {
+    function setSelectedGameModeForSearch(mode: { id: EGameMode | string | number; name?: string }): void {
       const normalized = Number(mode.id);
       const gameMode = Number.isNaN(normalized) ? EGameMode.UNDEFINED : normalized as EGameMode;
       playerStore.SET_PROFILE_MATCHES_GAME_MODE(gameMode);

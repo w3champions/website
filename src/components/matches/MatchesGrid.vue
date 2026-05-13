@@ -121,9 +121,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, StyleValue, PropType } from "vue";
+import { computed, defineComponent, type StyleValue, type PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
+import { EGameMode, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";

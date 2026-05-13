@@ -25,7 +25,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import ReviewProxies from "@/components/admin/proxies/ReviewProxies.vue";
-import { Proxy, ProxySettings } from "@/store/admin/types";
+import type { Proxy, ProxySettings } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { useAdminStore } from "@/store/admin/store";
@@ -45,7 +45,7 @@ export default defineComponent({
 
     async function playerFound(bTag: string): Promise<void> {
       const proxies = await adminStore.getProxiesForPlayer(bTag);
-      await setPlayerProxies(proxies);
+      setPlayerProxies(proxies);
 
       if (proxies._id) {
         showProxyOptions.value = true;
@@ -56,7 +56,7 @@ export default defineComponent({
       showProxyOptions.value = false;
     }
 
-    async function setPlayerProxies(proxies: ProxySettings): Promise<void> {
+    function setPlayerProxies(proxies: ProxySettings): void {
       adminStore.updateModifiedProxies({ overrides: proxies.nodeOverrides, isAutomatic: false });
       adminStore.updateModifiedProxies({ overrides: proxies.automaticNodeOverrides, isAutomatic: true });
     }

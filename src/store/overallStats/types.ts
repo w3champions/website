@@ -1,5 +1,5 @@
-import { EGameMode, EPick, ERaceEnum, timestampString } from "@/store/types";
-import { Gateways } from "@/store/ranking/types";
+import type { EGameMode, EPick, ERaceEnum, timestampString } from "@/store/types";
+import type { Gateways } from "@/store/ranking/types";
 
 export type OverallStatisticState = {
   gamesPerDay: GameDayPerMode[][];

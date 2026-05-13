@@ -29,8 +29,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch } from "vue";
-import { Mmr } from "@/store/match/types";
+import { computed, defineComponent, type PropType, ref, watch } from "vue";
+import type { Mmr } from "@/store/match/types";
 
 export default defineComponent({
   name: "WinratesMmrRangeSlider",
@@ -183,7 +183,7 @@ export default defineComponent({
       }
 
       previousMinMax = [currentMinMax.value[0], currentMinMax.value[1]];
-      context.emit("mmrFilterChanged", { min: currentMinMax.value[0], max: currentMinMax.value[1] } as Mmr);
+      context.emit("mmrFilterChanged", { min: currentMinMax.value[0], max: currentMinMax.value[1] });
     }
 
     function formatBucketThumbLabel(modelValue: number): string {

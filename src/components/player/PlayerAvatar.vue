@@ -323,7 +323,7 @@ import { computed, defineAsyncComponent, defineComponent, onMounted, ref, watch 
 import { useI18n } from "vue-i18n";
 import { ERaceEnum, EAvatarCategory } from "@/store/types";
 import { ECountries } from "@/store/countries";
-import { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
+import type { AkaSettings, PersonalSetting, ProfilePlayerSocials, SpecialPicture } from "@/store/personalSettings/types";
 import PlayerSocials from "./PlayerSocials.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { enumKeys } from "@/helpers/general";
@@ -331,7 +331,7 @@ import { usePersonalSettingsStore } from "@/store/personalSettings/store";
 import { usePlayerStore } from "@/store/player/store";
 import { mdiAccountCheck, mdiFlag, mdiHome, mdiPencil, mdiTwitch, mdiTwitter, mdiYoutube } from "@mdi/js";
 import { useRouter } from "vue-router";
-import { CountryType } from "@/store/ranking/types";
+import type { CountryType } from "@/store/ranking/types";
 
 // Lazy load.
 const CountryFlag = defineAsyncComponent(() => import( "vue-country-flag-next"));
@@ -433,7 +433,7 @@ export default defineComponent({
       } satisfies ProfilePlayerSocials;
     });
 
-    async function resetUserProfile(): Promise<void> {
+    function resetUserProfile(): void {
       // userProfile.value = {
       //   twitch: twitch.value,
       //   youtube: youtube.value,

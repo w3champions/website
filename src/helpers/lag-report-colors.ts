@@ -13,7 +13,7 @@ export type LagAnnotationStyle = {
   textColor: string;
 };
 
-type SemanticColors = {
+export type SemanticColors = {
   warning: LagAnnotationStyle;
   info: LagAnnotationStyle;
   error: LagAnnotationStyle;
