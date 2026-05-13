@@ -98,7 +98,6 @@ export default defineComponent({
 
       _intervalRefreshHandle = setInterval(() => {
         refresh();
-        console.log("I'm refreshed!");
       }, AppConstants.queueDataRefreshInterval);
     });
 
