@@ -184,7 +184,7 @@ import { computed, defineComponent, ref, onMounted, useTemplateRef } from "vue";
 import { useAdminStore } from "@/store/admin/store";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRouter, useRoute } from "vue-router";
-import { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
+import type { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsTable.vue";
 import ModerationStatusBadges from "./smurf-detection/ModerationStatusBadges.vue";
 import { useOauthStore } from "@/store/oauth/store";

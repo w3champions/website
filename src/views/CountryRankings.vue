@@ -103,9 +103,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineAsyncComponent, defineComponent, onMounted, onUnmounted, PropType, ref, watch } from "vue";
-import { CountryRanking, CountryType, Gateways, Season } from "@/store/ranking/types";
-import { EGameMode, OngoingMatches } from "@/store/types";
+import { computed, defineAsyncComponent, defineComponent, onMounted, onUnmounted, type PropType, ref, watch } from "vue";
+import type { CountryRanking, CountryType, Gateways, Season } from "@/store/ranking/types";
+import type { EGameMode, OngoingMatches } from "@/store/types";
 import { Countries } from "@/store/countries";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -182,12 +182,12 @@ export default defineComponent({
 
     async function onGatewayChanged(): Promise<void> {
       rankingsStore.SET_PAGE(0);
-      refreshRankings();
+      await refreshRankings();
     }
 
     async function onGameModeChanged(gameMode: EGameMode): Promise<void> {
       await rankingsStore.setGameMode(gameMode);
-      refreshRankings();
+      await refreshRankings();
     }
 
     function selectCountry(countryCode: string): void {
@@ -218,8 +218,8 @@ export default defineComponent({
 
       await loadOngoingMatches();
 
-      _intervalRefreshHandle = setInterval(async () => {
-        await refreshRankings();
+      _intervalRefreshHandle = setInterval(() => {
+        refreshRankings();
       }, AppConstants.ongoingMatchesRefreshInterval);
     });
 
@@ -267,7 +267,7 @@ export default defineComponent({
     async function selectSeason(season: Season): Promise<void> {
       rankingsStore.setSeason(season);
       rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
-      refreshRankings();
+      await refreshRankings();
     }
 
     async function setCountry(countryCode: string): Promise<void> {

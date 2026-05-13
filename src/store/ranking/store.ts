@@ -1,5 +1,5 @@
-import { ActiveGameMode, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
-import { DataTableOptions, EGameMode } from "../types";
+import type { ActiveGameMode, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
+import { type DataTableOptions, EGameMode } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";
 import RankingService from "@/services/RankingService";
@@ -81,7 +81,7 @@ export const useRankingStore = defineStore("ranking", {
       );
       this.SET_SEARCH_RANKINGS(rankings);
     },
-    async clearSearch() {
+    clearSearch() {
       this.SET_SEARCH_RANKINGS([]);
     },
     setLeague(league: number) {

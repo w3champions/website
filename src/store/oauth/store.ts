@@ -1,4 +1,4 @@
-import { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
+import type { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
 import { defineStore } from "pinia";
 import AuthorizationService from "@/services/AuthorizationService";
 
@@ -14,7 +14,7 @@ export const useOauthStore = defineStore("oauth", {
   }),
   actions: {
     async authorizeWithCode(code: string) {
-      const region = await AuthorizationService.loadAuthRegionCookie();
+      const region = AuthorizationService.loadAuthRegionCookie();
       const bearer = await AuthorizationService.authorize(code, region);
 
       this.SET_BEARER(bearer.jwt);
@@ -26,15 +26,15 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        await AuthorizationService.saveAuthToken(bearer);
+        AuthorizationService.saveAuthToken(bearer);
       }
     },
     async authorizeWithTwitch() {
       const token = await AuthorizationService.authorizeWithTwitch();
       this.SET_TWITCH_TOKEN(token);
     },
-    async loadAuthCodeToState() {
-      const bearer = await AuthorizationService.loadAuthCookie();
+    loadAuthCodeToState() {
+      const bearer = AuthorizationService.loadAuthCookie();
       this.SET_BEARER(bearer);
     },
     async loadBlizzardBtag(bearerToken: string) {
@@ -48,14 +48,14 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        await AuthorizationService.saveAuthToken(profile);
+        AuthorizationService.saveAuthToken(profile);
       } else {
         this.logout();
       }
       this.SET_IS_LOADING_BLIZZARD_BTAG(false);
     },
-    async saveLoginRegion(region: BnetOAuthRegion) {
-      await AuthorizationService.saveAuthRegion(region);
+    saveLoginRegion(region: BnetOAuthRegion) {
+      AuthorizationService.saveAuthRegion(region);
     },
     logout() {
       AuthorizationService.deleteAuthCookie();

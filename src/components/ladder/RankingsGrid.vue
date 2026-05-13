@@ -131,22 +131,21 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, toRefs, watch } from "vue";
-import { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
+import { computed, defineComponent, type PropType, ref, toRefs, watch } from "vue";
+import type { Ranking, PlayerId, PlayerInfo } from "@/store/ranking/types";
+import { EAvatarCategory, ERaceEnum, type OngoingMatches } from "@/store/types";
 import { useTwitchStore } from "@/store/twitch/store";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
-import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
 import { useGoTo } from "vuetify";
-import { InternalGoToOptions } from "vuetify/lib/composables/goto.mjs";
+import type { InternalGoToOptions } from "vuetify/lib/composables/goto.mjs";
 
 export default defineComponent({
   name: "RankingsGrid",
@@ -402,7 +401,7 @@ export default defineComponent({
       }
     }
 
-    function getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
+    function getTitleRace(ranking: Ranking, playerIndex: number): string {
       const playersInfo = ranking.playersInfo;
       if (!playersInfo) return "Random";
       const playerInfo = playersInfo[playerIndex];
@@ -478,10 +477,7 @@ export default defineComponent({
       }
 
       const firstPlayer = playerIds[0].battleTag;
-      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
-        players: string[];
-        opponents: string[];
-      };
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer];
       if (foundByFirstPlayer) {
         return foundByFirstPlayer.opponents.join(",");
       }

@@ -130,14 +130,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, reactive, ref, watch } from "vue";
+import { computed, defineComponent, type PropType, reactive, ref, watch } from "vue";
 import { useTheme } from "vuetify";
-import { EConnectionEventType, EConnectionType, LagReportDetail } from "@/store/admin/lagReports/types";
+import { EConnectionEventType, EConnectionType, type LagReportDetail } from "@/store/admin/lagReports/types";
 import { mdiCircle } from "@mdi/js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import { ChartData, ChartOptions } from "chart.js";
+import type { ChartData, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle } from "@/helpers/lag-report-colors";
+import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle, type SemanticColors } from "@/helpers/lag-report-colors";
 
 const PLAYER_COLORS = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d", "#ab47bc", "#26c6da", "#ec407a", "#8d6e63"];
 
@@ -434,13 +434,13 @@ export default defineComponent({
         player.diagnostics.connectionEvents.forEach((ce) => {
           const ts = new Date(ce.timestamp).getTime();
           const ceLabel = connectionEventLabelMap[ce.eventType] ?? ce.eventType;
-          const semanticKey = (
+          const semanticKey: keyof SemanticColors = (
             [EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType)
               ? "warning"
               : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType)
                 ? "info"
                 : "error"
-          ) as keyof typeof chipColors;
+          );
 
           if (ce.eventType === EConnectionEventType.Reconnect && ce.durationMs) {
             const disconnectTs = ts - ce.durationMs;
@@ -771,7 +771,7 @@ export default defineComponent({
       const mouseY = event.clientY - rect.top;
 
       const nearestPoint = chart.getElementsAtEventForMode(
-        event as unknown as Event,
+        event,
         "nearest",
         { intersect: false, axis: "xy" },
         false,

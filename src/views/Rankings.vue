@@ -170,9 +170,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, onUnmounted, PropType, ref, watch } from "vue";
-import { Gateways, League, Ranking, Season } from "@/store/ranking/types";
-import { EGameMode, ERaceEnum, OngoingMatches } from "@/store/types";
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, type PropType, ref, watch } from "vue";
+import type { Gateways, League, Ranking, Season } from "@/store/ranking/types";
+import { EGameMode, ERaceEnum, type OngoingMatches } from "@/store/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -510,8 +510,8 @@ export default defineComponent({
         await handlePlayerScroll();
       }
 
-      _intervalRefreshHandle = setInterval(async () => {
-        await refreshRankings();
+      _intervalRefreshHandle = setInterval(() => {
+        refreshRankings();
       }, AppConstants.ongoingMatchesRefreshInterval);
     });
 

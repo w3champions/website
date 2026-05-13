@@ -64,7 +64,7 @@ export default defineComponent({
     const dialog = ref<boolean>(false);
     const acceptedGame = ref<boolean>(false);
 
-    async function openConfirmation(): Promise<void> {
+    function openConfirmation(): void {
       dialog.value = true;
     }
 

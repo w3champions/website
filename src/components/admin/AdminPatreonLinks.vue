@@ -33,7 +33,6 @@
         <v-row>
           <v-col cols="12" md="6">
             <player-search
-              ref="playerSearchComponent"
               :classes="'outlined dense'"
               :setAutofocus="false"
               @playerFound="onPlayerFound"
@@ -377,7 +376,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { EntitledTier, PatreonAccountLink, PatreonMemberDetails } from "@/store/admin/types";
+import type { EntitledTier, PatreonAccountLink, PatreonMemberDetails } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import {
   mdiMagnify, mdiRefresh, mdiDelete, mdiAccountHeart, mdiAccount,
@@ -385,7 +384,7 @@ import {
   mdiAlert, mdiAlertCircle, mdiInformation, mdiAccountSearch, mdiAccountDetails
 } from "@mdi/js";
 import { formatTimestampString } from "@/helpers/date-functions";
-import { DataTableHeader } from "vuetify";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminPatreonLinks",
@@ -400,7 +399,6 @@ export default defineComponent({
     const filteredLinks = ref<PatreonAccountLink[]>([]);
     const loading = ref(false);
     const selectedPlayer = ref<string>("");
-    const playerSearchComponent = ref<InstanceType<typeof PlayerSearch> | null>(null);
 
     // Delete functionality
     const deleteDialog = ref(false);
@@ -502,14 +500,15 @@ export default defineComponent({
       try {
         const details = await AdminService.getPatreonMemberDetails(battleTag, oauthStore.token);
         memberDetails.value = details;
-      } catch (error) {
-        console.error("Error fetching member details:", error);
+      } catch (err: unknown) {
+        const ex = err instanceof Error ? err : new Error(String(err));
+        console.error("Error fetching member details:", ex.message);
         memberDetails.value = {
           found: false,
           battleTag: battleTag,
-          error: `Failed to fetch member details: ${error}`
+          error: `Failed to fetch member details: ${ex.message}`
         };
-        showSnackbar(`Failed to fetch member details: ${error}`, "error");
+        showSnackbar(`Failed to fetch member details: ${ex.message}`, "error");
       } finally {
         loadingMemberDetails.value = false;
       }
@@ -609,7 +608,6 @@ export default defineComponent({
       filteredLinks,
       loading,
       selectedPlayer,
-      playerSearchComponent,
       deleteDialog,
       selectedLink,
       deleting,

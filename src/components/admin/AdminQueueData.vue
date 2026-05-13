@@ -36,13 +36,13 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, watch } from "vue";
-import { QueueData, QueuedPlayer } from "@/store/admin/types";
-import { activeGameModes, IGameModeBrief, loadActiveGameModes } from "@/composables/GameModesMixin";
-import { EGameMode } from "@/store/types";
+import type { QueueData, QueuedPlayer } from "@/store/admin/types";
+import { activeGameModes, type IGameModeBrief, loadActiveGameModes } from "@/composables/GameModesMixin";
+import type { EGameMode } from "@/store/types";
 import AppConstants from "@/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
-import { DataTableHeader } from "vuetify";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminQueueData",
@@ -96,8 +96,8 @@ export default defineComponent({
     onMounted(async (): Promise<void> => {
       await init();
 
-      _intervalRefreshHandle = setInterval(async () => {
-        await refresh();
+      _intervalRefreshHandle = setInterval(() => {
+        refresh();
       }, AppConstants.queueDataRefreshInterval);
     });
 

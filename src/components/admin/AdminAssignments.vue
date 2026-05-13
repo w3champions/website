@@ -39,7 +39,6 @@
         <v-row>
           <v-col cols="12" md="6">
             <player-search
-              ref="playerSearchComponent"
               :classes="'outlined dense'"
               :setAutofocus="false"
               @playerFound="onPlayerFound"
@@ -467,7 +466,7 @@
 import { computed, defineComponent, onMounted, ref, getCurrentInstance } from "vue";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
-import { RewardAssignment, RewardStatus, Reward, PaginatedAssignments } from "@/store/admin/types";
+import { type RewardAssignment, RewardStatus, type Reward, type PaginatedAssignments } from "@/store/admin/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import {
   mdiMagnify, mdiDotsVertical, mdiEye, mdiCancel,
@@ -478,7 +477,7 @@ import {
   mdiClock, mdiClockAlert, mdiAlert, mdiAlertCircle,
   mdiInformation
 } from "@mdi/js";
-import { DataTableHeader } from "vuetify";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "AdminAssignments",
@@ -492,7 +491,6 @@ export default defineComponent({
     const rewards = ref<Reward[]>([]);
     const selectedPlayer = ref<string>("");
     const statusFilter = ref<RewardStatus | null>(null);
-    const playerSearchComponent = ref<InstanceType<typeof PlayerSearch> | null>(null);
     const providerFilter = ref<string | null>(null);
     const loading = ref(false);
     const detailsDialog = ref(false);
@@ -750,7 +748,7 @@ export default defineComponent({
       detailsDialog.value = true;
     };
 
-    const revokeAssignment = async (assignment: RewardAssignment) => {
+    const revokeAssignment = (assignment: RewardAssignment) => {
       if (assignment.status !== RewardStatus.Active) {
         showSnackbar("Can only revoke active assignments", "warning");
         return;
@@ -830,7 +828,6 @@ export default defineComponent({
     return {
       assignments,
       selectedPlayer,
-      playerSearchComponent,
       statusFilter,
       providerFilter,
       loading,

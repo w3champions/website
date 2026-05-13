@@ -151,17 +151,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref, toRefs, watch } from "vue";
+import { defineComponent, onMounted, type PropType, ref, toRefs, watch } from "vue";
 import flatMap from "lodash/flatMap";
-import { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum, OngoingMatches } from "@/store/types";
+import type { Ranking, PlayerId, PlayerInfo, CountryRanking, League } from "@/store/ranking/types";
+import { EAvatarCategory, ERaceEnum, type OngoingMatches } from "@/store/types";
 import SwordIcon from "@/components/ladder/SwordIcon.vue";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
-import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -355,7 +354,7 @@ export default defineComponent({
       }
     }
 
-    function getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
+    function getTitleRace(ranking: Ranking, playerIndex: number): string {
       const playersInfo = ranking.playersInfo;
       if (!playersInfo) return t("races.RANDOM");
       const playerInfo = playersInfo[playerIndex];
@@ -424,10 +423,7 @@ export default defineComponent({
       }
 
       const firstPlayer = playerIds[0].battleTag;
-      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
-        players: string[];
-        opponents: string[];
-      };
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer];
       if (foundByFirstPlayer) {
         return foundByFirstPlayer.opponents.join(",");
       }

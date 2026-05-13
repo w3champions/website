@@ -66,7 +66,6 @@
 import { computed, defineComponent, ref } from "vue";
 import { ResourceScore, UnitScore } from "@/store/types";
 import NumberDisplay from "./NumberDisplay.vue";
-import { TranslateResult } from "vue-i18n";
 
 export enum AddValuesDelimiter {
   PLUS = " + ",
@@ -108,7 +107,7 @@ export default defineComponent({
   setup(props) {
     const alignText = ref<"right" | "left">(props.left ? "right" : "left");
 
-    const goldComparison = computed<TranslateResult>(() => {
+    const goldComparison = computed<string>(() => {
       return comparison(
         props.resourceScoreOpponent
           .map((s) => s?.goldCollected ?? 0)
@@ -117,7 +116,7 @@ export default defineComponent({
       );
     });
 
-    const woodComparison = computed<TranslateResult>(() => {
+    const woodComparison = computed<string>(() => {
       return comparison(
         props.resourceScoreOpponent
           .map((s) => s?.lumberCollected ?? 0)
@@ -128,7 +127,7 @@ export default defineComponent({
       );
     });
 
-    const upkeepComparison = computed<TranslateResult>(() => {
+    const upkeepComparison = computed<string>(() => {
       return comparison(
         props.resourceScore
           .map((s) => s?.goldUpkeepLost ?? 0)
@@ -139,7 +138,7 @@ export default defineComponent({
       );
     });
 
-    const armyComparison = computed<TranslateResult>(() => {
+    const armyComparison = computed<string>(() => {
       return comparison(
         props.unitScoreOpponent
           .map((s) => s?.largestArmy ?? 0)
@@ -148,7 +147,7 @@ export default defineComponent({
       );
     });
 
-    const unitsKilledComparison = computed<TranslateResult>(() => {
+    const unitsKilledComparison = computed<string>(() => {
       return comparison(
         props.unitScoreOpponent
           .map((s) => s?.unitsKilled ?? 0)
@@ -157,7 +156,7 @@ export default defineComponent({
       );
     });
 
-    const unitsProducedComparison = computed<TranslateResult>(() => {
+    const unitsProducedComparison = computed<string>(() => {
       return comparison(
         props.unitScoreOpponent
           .map((s) => s?.unitsProduced ?? 0)
@@ -166,7 +165,7 @@ export default defineComponent({
       );
     });
 
-    function comparison(opponent: number, me: number): TranslateResult {
+    function comparison(opponent: number, me: number): string {
       const percentageDiff = Math.abs(opponent - me) / ((opponent + me) / 2);
       if (!percentageDiff || percentageDiff < 0.25) return "";
       return opponent > me ? "w3-lost" : "w3-won";

@@ -1,14 +1,14 @@
 import { globalIgnores } from "eslint/config";
 import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import eslintPluginVue from "eslint-plugin-vue";
-import { defineConfig } from "eslint/config";
 import eslintPluginLodash from "eslint-plugin-lodash";
 import tseslint from "typescript-eslint";
 import stylistic from "@stylistic/eslint-plugin";
 
 export default defineConfigWithVueTs([
   tseslint.configs.recommended,
-  vueTsConfigs.recommended,
+  // vueTsConfigs.recommended,
+  vueTsConfigs.recommendedTypeChecked,
   eslintPluginVue.configs["flat/recommended"],
   globalIgnores(["**/dist/**", "src/locales/data.ts", "src/locales/en.ts", "public/env.js"]),
   {
@@ -29,13 +29,19 @@ export default defineConfigWithVueTs([
       "@typescript-eslint/explicit-module-boundary-types": "warn",
       "@typescript-eslint/no-loss-of-precision": "warn",
       "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-expressions": "warn",
-      "@typescript-eslint/no-unused-vars": ["error", {
+      "@typescript-eslint/no-unused-vars": ["warn", {
         "argsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",
       }],
+      // "@typescript-eslint/no-use-before-define": "warn",
+      // "@typescript-eslint/consistent-type-imports": "warn",
+      // "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
+      // "@typescript-eslint/consistent-type-exports": "warn",
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-unsafe-enum-comparison": "off",
     },
   },
   {

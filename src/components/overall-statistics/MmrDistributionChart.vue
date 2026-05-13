@@ -4,19 +4,19 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent, type PropType } from "vue";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import { MmrDistribution } from "@/store/overallStats/types";
-import { Season } from "@/store/ranking/types";
-import { EGameMode } from "@/store/types";
-import { ChartData, ChartOptions } from "chart.js";
-import { AnnotationOptions } from "chartjs-plugin-annotation";
+import type { MmrDistribution } from "@/store/overallStats/types";
+import type { Season } from "@/store/ranking/types";
+import type { EGameMode } from "@/store/types";
+import type { ChartData, ChartOptions } from "chart.js";
+import type { AnnotationOptions } from "chartjs-plugin-annotation";
 import clamp from "lodash/clamp";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import { usePlayerStore } from "@/store/player/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { ModeStat } from "@/store/player/types";
+import type { ModeStat } from "@/store/player/types";
 
 export default defineComponent({
   name: "MmrDistributionChart",
@@ -187,7 +187,7 @@ export default defineComponent({
               yAdjust: 8 + order * 14,
               borderRadius: 2,
             },
-          } as AnnotationOptions;
+          };
 
           return result;
         },
@@ -214,7 +214,7 @@ export default defineComponent({
                 position: "start",
                 borderRadius: 0,
               },
-            } as AnnotationOptions,
+            },
           }
           : {}),
       };

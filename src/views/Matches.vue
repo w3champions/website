@@ -52,9 +52,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
-import { Match, EGameMode } from "@/store/types";
-import { MatchStatus, Mmr } from "@/store/match/types";
-import { Season } from "@/store/ranking/types";
+import { type Match, EGameMode } from "@/store/types";
+import { MatchStatus, type Mmr } from "@/store/match/types";
+import type { Season } from "@/store/ranking/types";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
 import MatchesStatusSelect from "@/components/matches/MatchesStatusSelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
@@ -62,12 +62,12 @@ import MapSelect from "@/components/common/MapSelect.vue";
 import MmrSelect from "@/components/common/MmrSelect.vue";
 import DurationSelect from "@/components/common/DurationSelect.vue";
 import SortSelect from "@/components/matches/SortSelect.vue";
-import { MatchesOnMapPerSeason } from "@/store/overallStats/types";
+import type { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
-import { MapInfo } from "@/store/common/types";
+import type { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
@@ -173,8 +173,8 @@ export default defineComponent({
     }
 
     function refreshMatches(): void {
-      _intervalRefreshHandle = setInterval(async () => {
-        await getMatches();
+      _intervalRefreshHandle = setInterval(() => {
+        getMatches();
       }, AppConstants.ongoingMatchesRefreshInterval);
     }
 

@@ -1,4 +1,4 @@
-import { AdminInfoMessageState, LoadingScreenTip, MessageOfTheDay, NewsMessage } from "./types";
+import type { AdminInfoMessageState, LoadingScreenTip, MessageOfTheDay, NewsMessage } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import InfoMessageService from "@/services/admin/InfoMessageService";
 import { defineStore } from "pinia";

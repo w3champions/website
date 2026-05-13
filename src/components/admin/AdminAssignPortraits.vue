@@ -156,7 +156,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { ChangePortraitsCommand } from "@/store/admin/types";
+import type { ChangePortraitsCommand } from "@/store/admin/types";
 import AssignPortrait from "./portraits/AssignPortrait.vue";
 import PortraitGroupDropdown from "./portraits/PortraitGroupDropdown.vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
@@ -260,7 +260,7 @@ export default defineComponent({
     }
 
     watch(assignDialogOpen, updateConfirmedAssignments);
-    async function updateConfirmedAssignments(): Promise<void> {
+    function updateConfirmedAssignments(): void {
       confirmAddedPortraits.value = assignedPortraitsModel.value.filter((x) => !searchedPlayerPortraits.value.includes(x));
       confirmRemovedPortraits.value = searchedPlayerPortraits.value.filter((x) => !assignedPortraitsModel.value.includes(x));
     }

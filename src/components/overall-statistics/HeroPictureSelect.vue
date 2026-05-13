@@ -63,7 +63,6 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
-import { TranslateResult } from "vue-i18n";
 import { HeroPick } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { getAsset } from "@/helpers/url-functions";
@@ -219,7 +218,7 @@ export default defineComponent({
 
     const heroPicture = computed<string>(() => parsePicture(heroPicks.value[props.heroIndex]));
 
-    const heroPickName = computed<TranslateResult>(() => {
+    const heroPickName = computed<string>(() => {
       const heroName = heroPicks.value[props.heroIndex].name;
       if (heroName === "anyhero") {
         return t("components_overall-statistics_heropictureselect.anyhero");

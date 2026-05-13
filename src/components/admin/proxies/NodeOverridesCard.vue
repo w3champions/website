@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { Proxy } from "@/store/admin/types";
+import type { Proxy } from "@/store/admin/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useAdminStore } from "@/store/admin/store";
 
@@ -131,7 +131,7 @@ export default defineComponent({
 
     watch(isAdmin, init);
 
-    async function initiateChipGroupIndex(): Promise<void> {
+    function initiateChipGroupIndex(): void {
       // sets the initial index array for the V-Chip-Group component to use
       for (let i = 0; i < availableProxies.value.length; i++) {
         for (let j = 0; j < props.passedOverrides.length; j++) {
@@ -147,7 +147,7 @@ export default defineComponent({
 
       await adminStore.loadAvailableProxies(oauthStore.token);
       modifiedOverrides.value = JSON.parse(JSON.stringify(props.passedOverrides));
-      await initiateChipGroupIndex();
+      initiateChipGroupIndex();
       updateProxyState(props.passedOverrides);
       setTimeout(setLoaded, 100);
     }

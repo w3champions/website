@@ -5,12 +5,12 @@
 </template>
 <script lang="ts">
 import { Chart } from "chart.js";
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, type PropType, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { activeGameModes } from "@/composables/GameModesMixin";
-import { GameDay, GameDayPerMode } from "@/store/overallStats/types";
+import type { GameDay, GameDayPerMode } from "@/store/overallStats/types";
 import LineChart, { defaultOptions, getBackgroundColor } from "@/components/overall-statistics/LineChart.vue";
-import { ChartData, ChartDataset, ChartOptions, Point } from "chart.js";
+import type { ChartData, ChartDataset, ChartOptions, Point } from "chart.js";
 import { EGameMode } from "@/store/types";
 import { parseJSON } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
@@ -54,8 +54,7 @@ export default defineComponent({
     const allSet = computed(() => props.gameDaysPerMode.find((g) => g.gameMode == EGameMode.UNDEFINED) ?? {
       gameMode: EGameMode.UNDEFINED,
       gameDays: [] as GameDay[],
-    } as GameDayPerMode
-    );
+    });
 
     // Get the list of dates for the x-axis
     const gameDayDates = computed(() => allSet.value.gameDays

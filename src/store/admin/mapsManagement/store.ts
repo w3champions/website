@@ -1,11 +1,11 @@
-import { AdminMapsState, GetMapsResponse, Map, MapFileData } from "./types";
+import type { AdminMapsState, GetMapsResponse, Map, MapFileData } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import MapsService from "@/services/MapsService";
 import { defineStore } from "pinia";
 
 export const useMapsManagementStore = defineStore("mapsManagement", {
   state: (): AdminMapsState => ({
-    totalMaps: 0 as number,
+    totalMaps: 0,
     maps: [] as Map[],
     mapsFilter: undefined,
     mapFiles: [] as MapFileData[],

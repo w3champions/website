@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import { AT_modes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
@@ -112,7 +112,7 @@ export default defineComponent({
       return topPerc.toFixed(1);
     }
 
-    const headers: (DataTableHeader & { tooltip: TranslateResult })[] = [
+    const headers: (DataTableHeader & { tooltip: string })[] = [
       {
         title: t("components_player_modestatsgrid.mode"),
         align: "center",

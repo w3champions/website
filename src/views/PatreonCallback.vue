@@ -79,7 +79,7 @@ export default defineComponent({
     async function processCallback() {
       try {
         // Ensure auth token is loaded from cookies
-        await oauthStore.loadAuthCodeToState();
+        oauthStore.loadAuthCodeToState();
 
         // Check if user is authenticated
         if (!authCode.value) {

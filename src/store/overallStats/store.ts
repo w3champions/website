@@ -1,4 +1,4 @@
-import { GameDay, GameDayPerMode, GameLength, HeroPick, MatchesOnMapPerSeason, MatchupLength, MmrDistribution, MmrRangeValues, OverallStatisticState, PlayedHeroByMode, PlayersPerDay, PopularHours, SeasonGameModeGateWayForMMR, StatsPerWinrate, WinLoss } from "./types";
+import type { GameDay, GameDayPerMode, GameLength, HeroPick, MatchesOnMapPerSeason, MatchupLength, MmrDistribution, MmrRangeValues, OverallStatisticState, PlayedHeroByMode, PlayersPerDay, PopularHours, SeasonGameModeGateWayForMMR, StatsPerWinrate, WinLoss } from "./types";
 import { ERaceEnum } from "../types";
 import StatisticService from "@/services/StatisticService";
 import { defineStore } from "pinia";

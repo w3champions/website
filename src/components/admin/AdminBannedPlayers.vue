@@ -240,7 +240,7 @@ import { useAdminStore } from "@/store/admin/store";
 import { mdiChevronDown, mdiChevronUp, mdiDelete, mdiMagnify, mdiPencil } from "@mdi/js";
 import isEmpty from "lodash/isEmpty";
 import { dateToCurrentTimeDate, formatTimestampString } from "@/helpers/date-functions";
-import { TranslateResult, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import debounce from "debounce";
 import { DataTableHeader } from "vuetify";
 import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort.mjs";
@@ -317,7 +317,7 @@ export default defineComponent({
       await debouncedLoadBanList();
     }
 
-    function getGameModeName(id: EGameMode): TranslateResult {
+    function getGameModeName(id: EGameMode): string {
       return activeGameModesWithAT().find((mode) => mode.id === id)?.name ?? t(`gameModes.${EGameMode[id]}`);
     }
 

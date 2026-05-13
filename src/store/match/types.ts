@@ -1,6 +1,6 @@
-import { EGameMode } from "@/store/types";
-import { Match, MatchDetail } from "../types";
-import { Season } from "@/store/ranking/types";
+import type { EGameMode } from "@/store/types";
+import type { Match, MatchDetail } from "../types";
+import type { Season } from "@/store/ranking/types";
 
 export type MatchState = {
   matches: Match[];

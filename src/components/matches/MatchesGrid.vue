@@ -121,15 +121,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, StyleValue, PropType } from "vue";
+import { computed, defineComponent, type StyleValue, type PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { EGameMode, Match, PlayerInTeam, Team } from "@/store/types";
+import { EGameMode, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
-import { TranslateResult } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
@@ -137,7 +136,7 @@ import { usePlayerStore } from "@/store/player/store";
 
 interface MatchesGridHeader {
   name: string;
-  text: TranslateResult;
+  text: string;
   sortable: boolean;
   value: string;
   style: StyleValue;

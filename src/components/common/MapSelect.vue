@@ -23,12 +23,11 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
-import { MapInfo } from "@/store/common/types";
+import type { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";
 
 type MapSelectMap = {
-  mapName: TranslateResult;
+  mapName: string;
   key: string;
 };
 
@@ -48,7 +47,7 @@ export default defineComponent({
   },
   setup: (props, context) => {
     const { t } = useI18n();
-    const selected = computed<string | TranslateResult>(() => {
+    const selected = computed<string>(() => {
       const match = maps.value.find((m) => m.key === props.map);
       return match ? match.mapName : "Overall";
     });

@@ -69,14 +69,13 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
 import WinratesMmrRangeSlider from "@/components/overall-statistics/tabs/WinratesMmrRangeSlider.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
-import { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
+import type { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
-import { Mmr } from "@/store/match/types";
-import { DataTableHeader } from "vuetify";
+import type { Mmr } from "@/store/match/types";
+import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
   name: "WinratesTab",
@@ -90,7 +89,7 @@ export default defineComponent({
     const raceEnums = ERaceEnum;
     const selectedPatch = ref<string>("All");
     const selectedMmrRange = ref<Mmr>({ min: 0, max: 3000 });
-    const selectedMap = ref<TranslateResult>(t("common.overall"));
+    const selectedMap = ref<string>(t("common.overall"));
     const hasAutoSelectedPatch = ref(false);
     const hasAutoSelectedMmrRange = ref(false);
     const hasAutoSelectedMap = ref(false);
@@ -167,7 +166,7 @@ export default defineComponent({
       },
     ];
 
-    const maps = computed<{ mapId: string; mapName: TranslateResult }[]>(() => {
+    const maps = computed<{ mapId: string; mapName: string }[]>(() => {
       const stats = statsPerRaceAndMap.value[0];
       if (!stats) return [];
       const patchStats = stats.patchToStatsPerModes[selectedPatch.value];
@@ -304,8 +303,7 @@ export default defineComponent({
         const patches = Object.keys(
           statsPerRaceAndMap.value[0].patchToStatsPerModes
         );
-        for (const key in patches) {
-          const patch = patches[key];
+        for (const patch of patches) {
           const numberOfMatches = getNumberOfMatches(statsPerRaceAndMap.value[0].patchToStatsPerModes[patch]);
 
           if (numberOfMatches > 10000) {
@@ -379,8 +377,8 @@ export default defineComponent({
             dict[r.race.toString() + wL.race.toString()] = wL.games;
           }
           let found = false;
-          for (const k in keys) {
-            const charArray = keys[k].split("");
+          for (const key of keys) {
+            const charArray = key.split("");
             const k0 = charArray[0] || "0";
             const k1 = charArray[1] || "0";
 

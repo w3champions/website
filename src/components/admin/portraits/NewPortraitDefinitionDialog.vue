@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
+import type { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { mdiClose } from "@mdi/js";
@@ -98,7 +98,7 @@ export default defineComponent({
       return {
         ids: [portraitId.value],
         groups: groups.value,
-      } as PortraitDefinitionDTO;
+      };
     });
 
     function confirmDialog(): void {

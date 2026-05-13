@@ -1,6 +1,6 @@
-import { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerState, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "./types";
-import { EGameMode, ERaceEnum, Match } from "../types";
-import { Season } from "@/store/ranking/types";
+import type { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerState, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "./types";
+import { EGameMode, ERaceEnum, type Match } from "../types";
+import type { Season } from "@/store/ranking/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -82,7 +82,7 @@ export const usePlayerStore = defineStore("player", {
     mmrRpTimeline: {} as PlayerMmrRpTimeline,
     playerGameLengthStats: {} as PlayerGameLengthStats | undefined,
     loadProfileError: undefined,
-  } as PlayerState),
+  }),
   actions: {
     async loadProfile(params: { battleTag: string; freshLogin: boolean }) {
       const oauthStore = useOauthStore();
@@ -193,7 +193,7 @@ export const usePlayerStore = defineStore("player", {
         await this.loadGameModeStats({});
         await this.loadPlayerMmrRpTimeline();
         await this.loadPlayerGameLengths();
-        await this.loadPlayerStatsHeroVersusRaceOnMap;
+        await this.loadPlayerStatsHeroVersusRaceOnMap(this.battleTag);
       }
     },
     async loadPlayerMmrRpTimeline() {

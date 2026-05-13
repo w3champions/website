@@ -31,9 +31,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { MessageOfTheDay } from "@/store/admin/infoMessages/types";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
-import { ValidationRule } from "vuetify";
+import type { ValidationRule } from "vuetify";
 
 export default defineComponent({
   name: "AdminMotd",
@@ -61,7 +60,7 @@ export default defineComponent({
     }
 
     async function setMotd(value: string): Promise<boolean> {
-      return await infoMessagesStore.setMotd({ motd: value } as MessageOfTheDay);
+      return await infoMessagesStore.setMotd({ motd: value });
     }
 
     onMounted(async (): Promise<void> => {
