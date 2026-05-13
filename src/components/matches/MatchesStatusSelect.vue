@@ -16,10 +16,9 @@ import { MatchStatus } from "@/store/match/types";
 import { useMatchStore } from "@/store/match/store";
 import { mdiControllerClassic } from "@mdi/js";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
 
 interface MatchStatusSelectData {
-  name: TranslateResult;
+  name: string;
   status: MatchStatus;
 }
 

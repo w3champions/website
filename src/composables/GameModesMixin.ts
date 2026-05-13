@@ -1,10 +1,10 @@
 import { EGameMode, EGameModeType } from "@/store/types";
 import { useRankingStore } from "@/store/ranking/store";
 import type { ActiveGameMode } from "@/store/ranking/types";
-import { TranslateResult, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 export interface IGameModeBrief {
-  name: TranslateResult;
+  name: string;
   id: EGameMode;
 }
 

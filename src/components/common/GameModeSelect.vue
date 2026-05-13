@@ -31,7 +31,6 @@ import { defineComponent, PropType } from "vue";
 import { activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
-import { TranslateResult } from "vue-i18n";
 
 export default defineComponent({
   name: "GameModeSelect",
@@ -49,7 +48,7 @@ export default defineComponent({
     }
   },
   setup: (props, context) => {
-    function gameModes(): Array<{ name: TranslateResult; id: number }> {
+    function gameModes(): Array<{ name: string; id: number }> {
       let modes = activeGameModesWithAT();
 
       if (props.disabledModes) {
@@ -59,7 +58,7 @@ export default defineComponent({
       return modes;
     }
 
-    function gameModeName(): TranslateResult {
+    function gameModeName(): string {
       if (!props.gameMode) {
         return "";
       }

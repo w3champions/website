@@ -48,7 +48,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import { useClanStore } from "@/store/clan/store";
 
 export default defineComponent({
@@ -63,8 +63,8 @@ export default defineComponent({
     const clanValidationError = computed<string>(() => clanStore.clanValidationError);
     const isValidationError = computed<boolean>(() => clanStore.clanValidationError !== "");
 
-    function mustBeBetween(min: number, max: number, space: string): (v: string) => TranslateResult {
-      return (v: string): TranslateResult => {
+    function mustBeBetween(min: number, max: number, space: string): (v: string) => string {
+      return (v: string): string => {
         if (!v) {
           return t("components_clans_clancreationpanel.fieldismandatory");
         }

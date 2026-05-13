@@ -22,12 +22,12 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import type { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";
 
 type MapSelectMap = {
-  mapName: TranslateResult;
+  mapName: string;
   key: string;
 };
 

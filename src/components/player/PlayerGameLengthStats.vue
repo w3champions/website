@@ -13,7 +13,6 @@ import { usePlayerStore } from "@/store/player/store";
 import { ERaceEnum } from "@/store/types";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { ChartData } from "chart.js";
-import { TranslateResult } from "vue-i18n";
 
 export default defineComponent({
   name: "PlayerGameLengthStats",
@@ -26,7 +25,7 @@ export default defineComponent({
       required: true,
     },
     selectedOpponentRaceName: {
-      type: String as PropType<TranslateResult>,
+      type: String as PropType<string>,
       required: true,
     },
   },

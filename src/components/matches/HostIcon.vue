@@ -18,7 +18,6 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import { ServerInfo } from "@/store/types";
 
@@ -36,7 +35,7 @@ const icon = computed<string>(() => {
   return getAsset(`icons/${host.provider}.png`);
 });
 
-const tooltip = computed<TranslateResult>(() => {
+const tooltip = computed<string>(() => {
   if (!host) return t("components_matches_hosticon.error");
   if (host.provider === "BNET") return t("components_matches_hosticon.hostedonbnet");
   return `${t("components_matches_hosticon.hostedonflo")} / ${host.name}`;

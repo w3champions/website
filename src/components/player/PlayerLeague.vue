@@ -51,7 +51,6 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
 import { EGameMode, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
@@ -97,7 +96,7 @@ export default defineComponent({
 
     const matches = ref<Match[]>([]);
     const playerId = computed<string>(() => battleTag.value);
-    const leagueMode = computed<TranslateResult>(() => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
+    const leagueMode = computed<string>(() => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
     const gameMode = computed<EGameMode>(() => props.modeStat.gameMode);
     const league = computed<number>(() => props.modeStat.leagueId);
     const isRanked = computed<boolean>(() => props.modeStat.rank > 0);

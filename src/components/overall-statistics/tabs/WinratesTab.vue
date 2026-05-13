@@ -69,7 +69,6 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { TranslateResult } from "vue-i18n";
 import WinratesMmrRangeSlider from "@/components/overall-statistics/tabs/WinratesMmrRangeSlider.vue";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import type { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/store/overallStats/types";
@@ -90,7 +89,7 @@ export default defineComponent({
     const raceEnums = ERaceEnum;
     const selectedPatch = ref<string>("All");
     const selectedMmrRange = ref<Mmr>({ min: 0, max: 3000 });
-    const selectedMap = ref<TranslateResult>(t("common.overall"));
+    const selectedMap = ref<string>(t("common.overall"));
     const hasAutoSelectedPatch = ref(false);
     const hasAutoSelectedMmrRange = ref(false);
     const hasAutoSelectedMap = ref(false);
@@ -167,7 +166,7 @@ export default defineComponent({
       },
     ];
 
-    const maps = computed<{ mapId: string; mapName: TranslateResult }[]>(() => {
+    const maps = computed<{ mapId: string; mapName: string }[]>(() => {
       const stats = statsPerRaceAndMap.value[0];
       if (!stats) return [];
       const patchStats = stats.patchToStatsPerModes[selectedPatch.value];

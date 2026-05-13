@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { TranslateResult, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import { mdiCheck, mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
@@ -77,7 +77,7 @@ const { t } = useI18n();
 const commonStore = useCommonStore();
 const heroFilters = computed<HeroFilter[]>(() => commonStore.heroFilters);
 
-const selectedText = computed<TranslateResult>(() => {
+const selectedText = computed<string>(() => {
   if (!selectedHeroes.length) {
     return t("heroNames.allfilter");
   }

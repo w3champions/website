@@ -24,7 +24,6 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { API_URL } from "@/main";
 import { mdiDownload } from "@mdi/js";
-import { TranslateResult } from "vue-i18n";
 
 const { gameId } = defineProps({
   gameId: {
@@ -35,7 +34,7 @@ const { gameId } = defineProps({
 
 const { t } = useI18n();
 const downloading = ref(false);
-const tooltip = ref<TranslateResult>(t("components_matches_replayicon.download"));
+const tooltip = ref<string>(t("components_matches_replayicon.download"));
 
 function downloadReplay(): void {
   downloading.value = true;

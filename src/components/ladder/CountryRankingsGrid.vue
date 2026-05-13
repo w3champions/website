@@ -161,7 +161,6 @@ import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
-import { TranslateResult } from "vue-i18n";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { useTwitchStore } from "@/store/twitch/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -355,7 +354,7 @@ export default defineComponent({
       }
     }
 
-    function getTitleRace(ranking: Ranking, playerIndex: number): TranslateResult {
+    function getTitleRace(ranking: Ranking, playerIndex: number): string {
       const playersInfo = ranking.playersInfo;
       if (!playersInfo) return t("races.RANDOM");
       const playerInfo = playersInfo[playerIndex];
