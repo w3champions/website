@@ -149,14 +149,14 @@ export default defineComponent({
     const userRewards = computed(() => rewardsStore.userRewards);
     const isLoadingRewards = computed(() => rewardsStore.isLoadingRewards);
 
-    async function linkWithPatreon() {
+    function linkWithPatreon(): void {
       if (!authCode.value) return;
 
       isLinkingPatreon.value = true;
       errorMessage.value = "";
 
       try {
-        await rewardsStore.initiatePatreonOAuth();
+        rewardsStore.initiatePatreonOAuth();
       } catch (error) {
         const ex = error as Error;
         errorMessage.value = ex.message || "Failed to initiate Patreon linking";
@@ -165,7 +165,7 @@ export default defineComponent({
       }
     }
 
-    async function unlinkPatreon() {
+    async function unlinkPatreon(): Promise<void> {
       if (!authCode.value) return;
 
       isUnlinkingPatreon.value = true;
@@ -182,7 +182,7 @@ export default defineComponent({
       }
     }
 
-    async function loadRewardsData() {
+    async function loadRewardsData(): Promise<void> {
       if (!authCode.value) return;
 
       try {

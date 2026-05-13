@@ -1,4 +1,4 @@
-import { BnetOAuthRegion, TwitchToken, W3cToken } from "@/store/oauth/types";
+import { BnetOAuthRegion, type TwitchToken, type W3cToken } from "@/store/oauth/types";
 import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
 import Cookies from "js-cookie";
 
@@ -45,21 +45,21 @@ export default class AuthorizationService {
     return await response.json();
   }
 
-  public static async loadAuthCookie(): Promise<string> {
+  public static loadAuthCookie(): string {
     const cookie = Cookies.get(w3CAuth);
     return (cookie as string) ?? "";
   }
 
-  public static async loadAuthRegionCookie(): Promise<BnetOAuthRegion> {
+  public static loadAuthRegionCookie(): BnetOAuthRegion {
     const cookie = Cookies.get(w3CAuthRegion);
     return (cookie as BnetOAuthRegion) ?? BnetOAuthRegion.eu;
   }
 
-  public static async saveAuthRegion(region: BnetOAuthRegion): Promise<void> {
+  public static saveAuthRegion(region: BnetOAuthRegion): void {
     Cookies.set(w3CAuthRegion, region, { expires: 365 });
   }
 
-  public static async saveAuthToken(token: W3cToken): Promise<void> {
+  public static saveAuthToken(token: W3cToken): void {
     Cookies.set(w3CAuth, token.jwt, { expires: 365 });
   }
 

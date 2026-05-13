@@ -39,7 +39,6 @@
         <v-row>
           <v-col cols="12" md="6">
             <player-search
-              ref="playerSearchComponent"
               :classes="'outlined dense'"
               :setAutofocus="false"
               @playerFound="onPlayerFound"
@@ -492,7 +491,6 @@ export default defineComponent({
     const rewards = ref<Reward[]>([]);
     const selectedPlayer = ref<string>("");
     const statusFilter = ref<RewardStatus | null>(null);
-    const playerSearchComponent = ref<InstanceType<typeof PlayerSearch> | null>(null);
     const providerFilter = ref<string | null>(null);
     const loading = ref(false);
     const detailsDialog = ref(false);
@@ -830,7 +828,6 @@ export default defineComponent({
     return {
       assignments,
       selectedPlayer,
-      playerSearchComponent,
       statusFilter,
       providerFilter,
       loading,

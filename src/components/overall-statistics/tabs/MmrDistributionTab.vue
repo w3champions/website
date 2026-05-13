@@ -62,8 +62,8 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { activeGameModes, loadActiveGameModes } from "@/composables/GameModesMixin";
-import { Gateways, Season } from "@/store/ranking/types";
-import { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
+import { Gateways, type Season } from "@/store/ranking/types";
+import type { MmrDistribution, SeasonGameModeGateWayForMMR } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import MmrDistributionChart from "@/components/overall-statistics/MmrDistributionChart.vue";
@@ -104,6 +104,7 @@ export default defineComponent({
       get(): Season {
         return selectedSeasonRef.value;
       },
+      /* eslint-disable  @typescript-eslint/no-misused-promises */
       async set(season: Season): Promise<void> {
         selectedSeasonRef.value = season;
         selectedGateWay.value = getDefaultGatewayForSeason(season.id, selectedGateWay.value);

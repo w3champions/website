@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
@@ -75,7 +75,7 @@ export default class MapsService {
   }
 
   public static async createMapFile(token: string, form: FormData): Promise<Map> {
-    const mapId = form.get("mapId");
+    const mapId = form.get("mapId") as string;
     const url = `${API_URL}api/maps/${mapId}/files`;
 
     const response = await fetch(url, {

@@ -7,8 +7,8 @@ import stylistic from "@stylistic/eslint-plugin";
 
 export default defineConfigWithVueTs([
   tseslint.configs.recommended,
-  vueTsConfigs.recommended,
-  // vueTsConfigs.recommendedTypeChecked,
+  // vueTsConfigs.recommended,
+  vueTsConfigs.recommendedTypeChecked,
   eslintPluginVue.configs["flat/recommended"],
   globalIgnores(["**/dist/**", "src/locales/data.ts", "src/locales/en.ts", "public/env.js"]),
   {
@@ -40,7 +40,8 @@ export default defineConfigWithVueTs([
       // "@typescript-eslint/consistent-type-imports": "warn",
       // "@typescript-eslint/consistent-type-definitions": ["warn", "interface"],
       // "@typescript-eslint/consistent-type-exports": "warn",
-      // "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-unsafe-enum-comparison": "off",
     },
   },
   {

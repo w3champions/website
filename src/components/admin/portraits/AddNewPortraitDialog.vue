@@ -145,7 +145,7 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
 import { CloudStorageProvider } from "@/store/admin/cloudStorage/types";
-import { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
+import type { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
 import { mdiClose, mdiRefresh, mdiImagePlus } from "@mdi/js";
 
@@ -243,10 +243,12 @@ export default defineComponent({
 
             uploadProgress.value[definitionStepIndex].status = "success";
             uploadProgress.value[definitionStepIndex].message = "Portrait definition created successfully";
-          } catch (err) {
+          } catch (err: unknown) {
+            const ex = err instanceof Error ? err : new Error(String(err));
+            const errorMessage = ex.message ?? "Creation failed";
             uploadProgress.value[definitionStepIndex].status = "error";
-            uploadProgress.value[definitionStepIndex].message = err instanceof Error ? err.message : "Creation failed";
-            throw new Error(`Portrait definition creation failed for ID ${filePortraitId}: ${err}`, { cause: err });
+            uploadProgress.value[definitionStepIndex].message = errorMessage;
+            throw new Error(`Portrait definition creation failed for ID ${filePortraitId}: ${errorMessage}`);
           }
 
           // Create a new File object with the correct name
@@ -264,10 +266,12 @@ export default defineComponent({
             await cloudStorageStore.uploadFile(renamedFile, CloudStorageProvider.S3);
             uploadProgress.value[s3StepIndex].status = "success";
             uploadProgress.value[s3StepIndex].message = "Uploaded successfully";
-          } catch (err) {
+          } catch (err: unknown) {
+            const ex = err instanceof Error ? err : new Error(String(err));
+            const errorMessage = ex.message ?? "Upload failed";
             uploadProgress.value[s3StepIndex].status = "error";
-            uploadProgress.value[s3StepIndex].message = err instanceof Error ? err.message : "Upload failed";
-            throw new Error(`S3 upload failed for ${fileName}: ${err}`, { cause: err });
+            uploadProgress.value[s3StepIndex].message = errorMessage;
+            throw new Error(`S3 upload failed for ${fileName}: ${errorMessage}`);
           }
 
           // Step 3: Upload to Alibaba
@@ -282,10 +286,12 @@ export default defineComponent({
             await cloudStorageStore.uploadFile(renamedFile, CloudStorageProvider.ALIBABA);
             uploadProgress.value[alibabaStepIndex].status = "success";
             uploadProgress.value[alibabaStepIndex].message = "Uploaded successfully";
-          } catch (err) {
+          } catch (err: unknown) {
+            const ex = err instanceof Error ? err : new Error(String(err));
+            const errorMessage = ex.message ?? "Upload failed";
             uploadProgress.value[alibabaStepIndex].status = "error";
-            uploadProgress.value[alibabaStepIndex].message = err instanceof Error ? err.message : "Upload failed";
-            throw new Error(`Alibaba upload failed for ${fileName}: ${err}`, { cause: err });
+            uploadProgress.value[alibabaStepIndex].message = errorMessage;
+            throw new Error(`Alibaba upload failed for ${fileName}: ${errorMessage}`);
           }
         }
 
@@ -299,7 +305,7 @@ export default defineComponent({
         files.value = [];
         calculateNextPortraitId();
 
-      } catch (err) {
+      } catch (err: unknown) {
         error.value = err instanceof Error ? err.message : "Upload process failed";
       } finally {
         uploading.value = false;

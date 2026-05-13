@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { CommonState } from "./types";
-import { HeroFilter } from "../heroes";
+import type { CommonState } from "./types";
+import type { HeroFilter } from "../heroes";
 import HeroService from "@/services/HeroService";
 
 let heroFiltersRequest: Promise<HeroFilter[]> | null = null;
@@ -8,7 +8,7 @@ let heroFiltersRequest: Promise<HeroFilter[]> | null = null;
 export const useCommonStore = defineStore("commonState", {
   state: (): CommonState => ({
     heroFilters: [] as HeroFilter[],
-  } as CommonState),
+  }),
   actions: {
     async loadHeroFilters() {
       if (this.heroFilters.length > 0) {

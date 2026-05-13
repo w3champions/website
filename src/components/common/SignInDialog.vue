@@ -84,8 +84,8 @@ export default defineComponent({
       },
     });
 
-    async function signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
-      await oauthStore.saveLoginRegion(id);
+    function signIn({ id, uri }: { id: BnetOAuthRegion; uri: string }) {
+      oauthStore.saveLoginRegion(id);
       location.href = `${uri}/oauth/authorize?scope=openid%20streaming.titles&region=${id}&response_type=code&client_id=${BNET_API_CLIENT_ID}&redirect_uri=${REDIRECT_URL}`;
     }
 

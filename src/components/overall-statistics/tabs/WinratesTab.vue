@@ -303,8 +303,7 @@ export default defineComponent({
         const patches = Object.keys(
           statsPerRaceAndMap.value[0].patchToStatsPerModes
         );
-        for (const key in patches) {
-          const patch = patches[key];
+        for (const patch of patches) {
           const numberOfMatches = getNumberOfMatches(statsPerRaceAndMap.value[0].patchToStatsPerModes[patch]);
 
           if (numberOfMatches > 10000) {
@@ -378,8 +377,8 @@ export default defineComponent({
             dict[r.race.toString() + wL.race.toString()] = wL.games;
           }
           let found = false;
-          for (const k in keys) {
-            const charArray = keys[k].split("");
+          for (const key of keys) {
+            const charArray = key.split("");
             const k0 = charArray[0] || "0";
             const k1 = charArray[1] || "0";
 

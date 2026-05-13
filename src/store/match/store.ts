@@ -1,10 +1,10 @@
-import { EGameMode, PlayerScore } from "@/store/types";
-import { MatchState, MatchStatus, Mmr } from "./types";
-import { Match, MatchDetail } from "../types";
+import { EGameMode, type PlayerScore } from "@/store/types";
+import { type MatchState, MatchStatus, type Mmr } from "./types";
+import type { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
 import { defineStore } from "pinia";
 import { useRootStateStore } from "@/store/rootState/store";
-import { Season } from "@/store/ranking/types";
+import type { Season } from "@/store/ranking/types";
 
 export const useMatchStore = defineStore("match", {
   state: (): MatchState => ({
@@ -21,8 +21,8 @@ export const useMatchStore = defineStore("match", {
     status: MatchStatus.onGoing,
     gameMode: EGameMode.GM_1ON1,
     map: "Overall",
-    mmr: { min: 0, max: 3000 } as Mmr,
-    duration: { min: 0, max: 14400 } as { min: number; max: number },
+    mmr: { min: 0, max: 3000 },
+    duration: { min: 0, max: 14400 },
     sort: "startTimeDescending",
     selectedSeason: {} as Season,
     showHeroIcons: false,
@@ -172,10 +172,10 @@ export const useMatchStore = defineStore("match", {
       await this.loadMapNames();
       await this.loadMatches(true);
     },
-    async setPlayerScores(playerScores: PlayerScore[]) {
+    setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
     },
-    async setShowHeroIcons(showHeroIcons: boolean) {
+    setShowHeroIcons(showHeroIcons: boolean) {
       this.SET_SHOW_HERO_ICONS(showHeroIcons);
     },
 

@@ -423,10 +423,7 @@ export default defineComponent({
       }
 
       const firstPlayer = playerIds[0].battleTag;
-      const foundByFirstPlayer = props.ongoingMatches[firstPlayer] as {
-        players: string[];
-        opponents: string[];
-      };
+      const foundByFirstPlayer = props.ongoingMatches[firstPlayer];
       if (foundByFirstPlayer) {
         return foundByFirstPlayer.opponents.join(",");
       }

@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { CloudFile, CloudStorageProvider, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
+import type { CloudFile, CloudStorageProvider, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
 import { authDownload, authorizedFetch } from "@/helpers/general";
 
 export default class CloudStorageService {
@@ -32,12 +32,14 @@ export default class CloudStorageService {
           );
 
           resolve(response);
-        } catch (err) {
-          reject(err);
+        } catch (err: unknown) {
+          const ex = err as Error;
+          reject(ex);
         }
       };
       reader.onerror = (error) => {
-        reject(error);
+        const ex = new Error(JSON.stringify(error));
+        reject(ex);
       };
       reader.readAsDataURL(file);
     });
@@ -45,9 +47,9 @@ export default class CloudStorageService {
     const response = await filePromise;
     const message = await response.json();
     if (response.ok) {
-      return { message, isSuccess: true } as CloudValidationMessage;
+      return { message, isSuccess: true };
     } else {
-      return { message, isSuccess: false } as CloudValidationMessage;
+      return { message, isSuccess: false };
     }
   }
 
@@ -62,12 +64,13 @@ export default class CloudStorageService {
       const response = await authorizedFetch("DELETE", url, token);
       const message = await response.json();
       if (response.ok) {
-        return { message, isSuccess: true } as CloudValidationMessage;
+        return { message, isSuccess: true };
       } else {
-        return { message, isSuccess: false } as CloudValidationMessage;
+        return { message, isSuccess: false };
       }
-    } catch (e: unknown) {
-      return { message: e, isSuccess: false } as CloudValidationMessage;
+    } catch (err: unknown) {
+      const ex = err as Error;
+      return { message: ex.message, isSuccess: false };
     }
   }
 }

@@ -7,7 +7,7 @@ export default class GatewaysService {
     const gatewayString = localStorage.getItem(gatewayLocalStorageKey);
 
     if (gatewayString) {
-      return Number.parseInt(gatewayString) as Gateways;
+      return Number(gatewayString);
     }
 
     return Gateways.Europe;

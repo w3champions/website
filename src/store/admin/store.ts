@@ -1,10 +1,10 @@
-import { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, BattleTagModerationMap, CreateBanReasonTranslationRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData, UpdateBanReasonTranslationRequest } from "./types";
+import type { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, BattleTagModerationMap, CreateBanReasonTranslationRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData, UpdateBanReasonTranslationRequest } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
 import AdminService from "@/services/admin/AdminService";
 import ModerationService from "@/services/admin/ModerationService";
 import { defineStore } from "pinia";
 import { formatTimestampString } from "@/helpers/date-functions";
-import { SmurfDetectionResult } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
+import type { SmurfDetectionResult } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
@@ -18,13 +18,13 @@ export const useAdminStore = defineStore("admin", {
     modifiedProxies: {
       nodeOverrides: [],
       automaticNodeOverrides: [],
-    } as ProxySettings,
+    },
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
     mutesNextId: null,
     banValidationError: "",
     showJwtExpiredDialog: false,
-    battleTagModerationStatus: {} as BattleTagModerationMap,
+    battleTagModerationStatus: {},
     banReasonTranslations: [] as BanReasonTranslation[],
   }),
   actions: {

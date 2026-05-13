@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { PatreonLinkStatus, RewardsState } from "./types";
+import type { PatreonLinkStatus, RewardsState } from "./types";
 import RewardsService from "@/services/RewardsService";
 import { PATREON_REDIRECT_URL } from "@/main";
 
@@ -36,7 +36,7 @@ export const useRewardsStore = defineStore("rewards", {
     /**
      * Initiate Patreon OAuth flow
      */
-    async initiatePatreonOAuth(): Promise<void> {
+    initiatePatreonOAuth(): void {
       try {
         // Hardcoded Patreon OAuth URL for now
         const clientId = "NQfJXU43KYIBkj6kCMFIaEY-83JuVH9rCJKaleKhm3jDAy-gxRC7bzn4aPo9UJgf";

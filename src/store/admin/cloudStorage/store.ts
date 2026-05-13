@@ -1,4 +1,4 @@
-import { CloudFile, CloudStorageProvider, CloudStorageState, CloudValidationMessage } from "./types";
+import type { CloudFile, CloudStorageProvider, CloudStorageState, CloudValidationMessage } from "./types";
 import CloudStorageService from "@/services/admin/CloudStorageService";
 import { useOauthStore } from "@/store/oauth/store";
 import { defineStore } from "pinia";
@@ -6,7 +6,7 @@ import { defineStore } from "pinia";
 export const useCloudStorageStore = defineStore("cloudStorage", {
   state: (): CloudStorageState => ({
     files: [] as CloudFile[],
-    validationMessage: { message: "", isSuccess: true } as CloudValidationMessage,
+    validationMessage: { message: "", isSuccess: true },
   }),
   actions: {
     async fetchFiles(provider: CloudStorageProvider): Promise<void> {
