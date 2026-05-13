@@ -351,7 +351,7 @@ export default defineComponent({
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
-      await oauthStore.loadAuthCodeToState();
+      oauthStore.loadAuthCodeToState();
 
       if (authCode.value) {
         await oauthStore.loadBlizzardBtag(authCode.value);

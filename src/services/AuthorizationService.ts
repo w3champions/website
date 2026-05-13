@@ -1,9 +1,10 @@
 import { BnetOAuthRegion, type TwitchToken, type W3cToken } from "@/store/oauth/types";
-import { IDENTIFICATION_URL, REDIRECT_URL } from "@/main";
+import { REDIRECT_URL } from "@/main";
 import Cookies from "js-cookie";
 
 const w3CAuth = "W3ChampionsJWT";
 const w3CAuthRegion = "W3ChampionsAuthRegion";
+const IDENTIFICATION_URL = window._env_.IDENTIFICATION_URL;
 
 export default class AuthorizationService {
   public static async authorize(code: string, region: BnetOAuthRegion = BnetOAuthRegion.eu): Promise<W3cToken> {
