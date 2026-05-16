@@ -4,7 +4,7 @@
       <v-progress-circular indeterminate size="24" />
       <span class="ml-2">{{ $t("common.verifying") || "Verifying..." }}</span>
     </div>
-    <div v-else-if="error" class="turnstile-error">
+    <div v-else-if="isError" class="turnstile-error">
       <v-alert type="error" density="compact">
         {{ errorMessage }}
       </v-alert>
@@ -16,76 +16,62 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { TurnstileService } from "@/services/TurnstileService";
 
-export default defineComponent({
-  name: "TurnstileProtected",
-  props: {
-    action: {
-      type: String,
-      default: undefined,
-    },
-    autoVerify: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup(props, { emit }) {
-    const turnstileService = TurnstileService.getInstance();
-    const loading = ref(false);
-    const error = ref(false);
-    const errorMessage = ref("");
-    const token = ref<string | null>(null);
+const { action = undefined, autoVerify = false } = defineProps<{
+  action?: string;
+  autoVerify?: boolean;
+}>();
 
-    const getToken = async (): Promise<string | null> => {
-      if (!turnstileService.isEnabled()) {
-        // Turnstile is disabled, return null and let the component handle it
-        return null;
-      }
+const emit = defineEmits<{
+  verified: [token: string];
+  error: [error: Error];
+}>();
 
-      loading.value = true;
-      error.value = false;
-      errorMessage.value = "";
+const turnstileService = TurnstileService.getInstance();
+const loading = ref(false);
+const isError = ref(false);
+const errorMessage = ref("");
+const token = ref<string | null>(null);
 
-      try {
-        const newToken = await turnstileService.getToken(props.action);
-        if (!newToken) {
-          throw new Error("Failed to get verification token");
-        }
-        token.value = newToken;
-        emit("verified", newToken);
-        return newToken;
-      } catch (err) {
-        error.value = true;
-        errorMessage.value = err instanceof Error ? err.message : "Verification failed";
-        emit("error", err);
-        return null;
-      } finally {
-        loading.value = false;
-      }
-    };
+const getToken = async (): Promise<string | null> => {
+  if (!turnstileService.isEnabled()) {
+    // Turnstile is disabled, return null and let the component handle it
+    return null;
+  }
 
-    const retry = () => {
-      getToken();
-    };
+  loading.value = true;
+  isError.value = false;
+  errorMessage.value = "";
 
-    onMounted(() => {
-      if (props.autoVerify) {
-        getToken();
-      }
-    });
+  try {
+    const newToken = await turnstileService.getToken(action);
+    if (!newToken) {
+      throw new Error("Failed to get verification token");
+    }
+    token.value = newToken;
+    emit("verified", newToken);
+    return newToken;
+  } catch (err) {
+    isError.value = true;
+    errorMessage.value = err instanceof Error ? err.message : "Verification failed";
+    emit("error", err instanceof Error ? err : new Error("Verification failed"));
+    return null;
+  } finally {
+    loading.value = false;
+  }
+};
 
-    return {
-      loading,
-      error,
-      errorMessage,
-      token,
-      getToken,
-      retry,
-    };
-  },
+const retry = () => {
+  getToken();
+};
+
+onMounted(() => {
+  if (autoVerify) {
+    getToken();
+  }
 });
 </script>
 
