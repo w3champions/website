@@ -11,55 +11,17 @@
     <v-row v-else>
       <v-col cols="12">
         <v-card tile class="pb-5 pt-1">
-          <v-card-title class="justify-center">
-            <v-row justify="space-around">
-              <v-col cols="1" class="pl-0 pr-0">
-                <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-                  <div v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }}</div>
-                  <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
-                </v-card-subtitle>
-                <host-icon
-                  v-if="match.serverInfo && match.serverInfo.provider"
-                  :host="match.serverInfo"
-                  style="padding-right: 0px"
-                />
-              </v-col>
-              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
-                <team-match-info
-                  :big-race-icon="true"
-                  :left="true"
-                  :team="match.teams[0]"
-                />
-              </v-col>
-              <v-col cols="1" class="text-center" align-self="center">
-                <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
-              </v-col>
-              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
-                <team-match-info :big-race-icon="true" :team="match.teams[1]" />
-              </v-col>
-              <v-col v-if="matchIsFFA" cols="6" align-self="center">
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[0]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[1]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[2]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[3]"
-                />
-              </v-col>
-              <v-col cols="1" />
+          <div v-if="isOneVsOne && !loading" class="ovo-header">
+            <div class="ovo-season-bar">
+              <v-card-subtitle class="pa-0 text-uppercase opacity-100">
+                <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} · </span>
+                <span>{{ $t(`views_matchdetail.season`) }}: {{ season }}</span>
+              </v-card-subtitle>
+              <host-icon
+                v-if="match.serverInfo && match.serverInfo.provider"
+                :host="match.serverInfo"
+                style="padding-right: 0px"
+              />
               <div class="subicon">
                 <download-replay-icon :gameId="matchId" />
                 <v-tooltip
@@ -83,20 +45,153 @@
                   <span>View Chat Log</span>
                 </v-tooltip>
               </div>
-            </v-row>
-          </v-card-title>
-          <div class="pb-2">
-            <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
-              {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
-            </v-card-title>
-            <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
-              {{ $t(`views_matchdetail.jubileeGameMessage`) }}
-            </v-card-title>
-            <v-card-title class="d-flex justify-center">
-              {{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}
-            </v-card-title>
+            </div>
+            <div class="ovo-player-names">
+              <div class="ovo-name ovo-name--left">
+                <country-flag-extended
+                  v-if="match.teams[0].players[0].countryCode || match.teams[0].players[0].location"
+                  :countryCode="match.teams[0].players[0].countryCode"
+                  :location="match.teams[0].players[0].location"
+                  class="mr-2"
+                />
+                <a class="text-primary cursor-pointer" @click="goToPlayer(match.teams[0].players[0].battleTag)">
+                  {{ match.teams[0].players[0].name }}
+                </a>
+              </div>
+              <player-icon :race="match.teams[0].players[0].race" :rndRace="match.teams[0].players[0].rndRace" :big="true" />
+              <div class="ovo-vs">VS</div>
+              <player-icon :race="match.teams[1].players[0].race" :rndRace="match.teams[1].players[0].rndRace" :big="true" />
+              <div class="ovo-name ovo-name--right">
+                <a class="text-primary cursor-pointer" @click="goToPlayer(match.teams[1].players[0].battleTag)">
+                  {{ match.teams[1].players[0].name }}
+                </a>
+                <country-flag-extended
+                  v-if="match.teams[1].players[0].countryCode || match.teams[1].players[0].location"
+                  :countryCode="match.teams[1].players[0].countryCode"
+                  :location="match.teams[1].players[0].location"
+                  class="ml-2"
+                />
+              </div>
+            </div>
+            <div class="ovo-mmr-row">
+              <div class="ovo-mmr ovo-mmr--left">
+                <template v-if="match.teams[0].players[0].oldMmr">
+                  {{ Math.floor(match.teams[0].players[0].oldMmr) }}
+                  <span class="ovo-mmr-label">MMR</span>
+                  <span v-if="mmrChangePlayer1 !== 0" class="number-text" :class="match.teams[0].players[0].won ? 'w3-won' : 'w3-lost'">
+                    ({{ mmrChangePlayer1 > 0 ? '+' : '' }}{{ mmrChangePlayer1 }})
+                  </span>
+                </template>
+                <template v-else>{{ $t("components_matches_playermatchinfo.calibrating") }}</template>
+              </div>
+              <div></div>
+              <div class="ovo-winner-icon">
+                <span v-if="match.teams[0].players[0].won" class="ovo-crown">👑</span>
+                <span v-if="match.teams[1].players[0].won" class="ovo-crown">👑</span>
+              </div>
+              <div></div>
+              <div class="ovo-mmr ovo-mmr--right">
+                <template v-if="match.teams[1].players[0].oldMmr">
+                  {{ Math.floor(match.teams[1].players[0].oldMmr) }}
+                  <span class="ovo-mmr-label">MMR</span>
+                  <span v-if="mmrChangePlayer2 !== 0" class="number-text" :class="match.teams[1].players[0].won ? 'w3-won' : 'w3-lost'">
+                    ({{ mmrChangePlayer2 > 0 ? '+' : '' }}{{ mmrChangePlayer2 }})
+                  </span>
+                </template>
+                <template v-else>{{ $t("components_matches_playermatchinfo.calibrating") }}</template>
+              </div>
+            </div>
           </div>
-          <div v-if="isCompleteGame">
+          <div v-if="isCompleteGame && isOneVsOne">
+            <match-detail-hero-row
+              :heroes-of-winner="scoresOfWinners[0]?.heroes"
+              :heroes-of-loser="scoresOfLosers[0]?.heroes"
+              :scores-of-winner="scoresOfWinners[0]?.heroScore"
+              :scores-of-loser="scoresOfLosers[0]?.heroScore"
+              :unit-score-winner="scoresOfWinners[0]?.unitScore"
+              :unit-score-loser="scoresOfLosers[0]?.unitScore"
+              :resource-score-winner="scoresOfWinners[0]?.resourceScore"
+              :resource-score-loser="scoresOfLosers[0]?.resourceScore"
+              :duration-minutes="match.durationInSeconds / 60"
+            />
+            <div class="ovo-map-stats">
+              <div><span class="ovo-mmr-label">Map:</span> {{ mapNameFromMatch(match) }}</div>
+              <div><span class="ovo-mmr-label">Duration:</span> {{ gameDurationLong }}</div>
+              <div><span class="ovo-mmr-label">Start time:</span> {{ gameStartTime }}</div>
+            </div>
+          </div>
+          <div v-else-if="!loading">
+            <v-card-title class="justify-center">
+              <v-row justify="space-around">
+                <v-col cols="1" class="pl-0 pr-0">
+                  <v-card-subtitle class="pa-0 text-uppercase opacity-100">
+                    <div v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }}</div>
+                    <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
+                  </v-card-subtitle>
+                  <host-icon
+                    v-if="match.serverInfo && match.serverInfo.provider"
+                    :host="match.serverInfo"
+                    style="padding-right: 0px"
+                  />
+                </v-col>
+                <v-col v-if="!matchIsFFA" cols="4" align-self="center">
+                  <team-match-info
+                    :big-race-icon="true"
+                    :left="true"
+                    :team="match.teams[0]"
+                  />
+                </v-col>
+                <v-col cols="1" class="text-center" align-self="center">
+                  <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
+                </v-col>
+                <v-col v-if="!matchIsFFA" cols="4" align-self="center">
+                  <team-match-info :big-race-icon="true" :team="match.teams[1]" />
+                </v-col>
+                <v-col v-if="matchIsFFA" cols="6" align-self="center">
+                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[0]" />
+                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[1]" />
+                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[2]" />
+                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[3]" />
+                </v-col>
+                <v-col cols="1" />
+                <div class="subicon">
+                  <download-replay-icon :gameId="matchId" />
+                  <v-tooltip
+                    v-if="showChatLogShortcut"
+                    location="left"
+                    content-class="w3-tooltip elevation-1"
+                  >
+                    <template v-slot:activator="{ props: activatorProps }">
+                      <span v-bind="activatorProps">
+                        <v-btn
+                          class="ma-2 w3-gray-gold-text"
+                          icon
+                          variant="outlined"
+                          size="small"
+                          @click="openChatLogDialog"
+                        >
+                          <v-icon size="x-large">{{ mdiChatProcessingOutline }}</v-icon>
+                        </v-btn>
+                      </span>
+                    </template>
+                    <span>View Chat Log</span>
+                  </v-tooltip>
+                </div>
+              </v-row>
+            </v-card-title>
+            <div class="pb-2">
+              <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
+                {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
+              </v-card-title>
+              <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
+                {{ $t(`views_matchdetail.jubileeGameMessage`) }}
+              </v-card-title>
+              <v-card-title class="d-flex justify-center">
+                {{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}
+              </v-card-title>
+            </div>
+          </div>
+          <div v-else-if="isCompleteGame && !matchIsFFA">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
               :key="index"
@@ -105,40 +200,49 @@
               :scores-of-winner="scoresOfWinners[index]?.heroScore"
               :scores-of-loser="scoresOfLosers[index]?.heroScore"
             />
+            <v-row class="justify-center">
+              <v-col cols="5" class="mr-7">
+                <player-performance-on-match
+                  class="mt-4"
+                  :unit-score="scoresOfWinners.map((h) => h.unitScore)"
+                  :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
+                  :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
+                  :resource-score-opponent="scoresOfLosers.map((h) => h.resourceScore)"
+                  :left="true"
+                />
+              </v-col>
+              <v-col cols="5" class="ml-7">
+                <player-performance-on-match
+                  class="mt-4"
+                  :unit-score="scoresOfLosers.map((h) => h.unitScore)"
+                  :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
+                  :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
+                  :resource-score-opponent="scoresOfWinners.map((h) => h.resourceScore)"
+                />
+              </v-col>
+            </v-row>
           </div>
-          <match-detail-hero-row
-            v-if="matchIsFFA && isCompleteGame"
-            :not-color-winner="true"
-            :heroes-of-winner="ffaLoser2?.heroes"
-            :heroes-of-loser="ffaLoser3?.heroes"
-            :scores-of-winner="ffaLoser2?.heroScore"
-            :scores-of-loser="ffaLoser3?.heroScore"
-          />
+          <div v-else-if="isCompleteGame && matchIsFFA">
+            <match-detail-hero-row
+              v-for="(player, index) in scoresOfWinners"
+              :key="index"
+              :heroes-of-winner="scoresOfWinners[index]?.heroes"
+              :heroes-of-loser="scoresOfLosers[index]?.heroes"
+              :scores-of-winner="scoresOfWinners[index]?.heroScore"
+              :scores-of-loser="scoresOfLosers[index]?.heroScore"
+            />
+            <match-detail-hero-row
+              :not-color-winner="true"
+              :heroes-of-winner="ffaLoser2?.heroes"
+              :heroes-of-loser="ffaLoser3?.heroes"
+              :scores-of-winner="ffaLoser2?.heroScore"
+              :scores-of-loser="ffaLoser3?.heroScore"
+            />
+          </div>
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
-          </v-row>
-          <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">
-            <v-col cols="5" class="mr-7">
-              <player-performance-on-match
-                class="mt-4"
-                :unit-score="scoresOfWinners.map((h) => h.unitScore)"
-                :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
-                :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
-                :resource-score-opponent="scoresOfLosers.map((h) => h.resourceScore)"
-                :left="true"
-              />
-            </v-col>
-            <v-col cols="5" class="ml-7">
-              <player-performance-on-match
-                class="mt-4"
-                :unit-score="scoresOfLosers.map((h) => h.unitScore)"
-                :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
-                :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
-                :resource-score-opponent="scoresOfWinners.map((h) => h.resourceScore)"
-              />
-            </v-col>
           </v-row>
           <match-head-to-head
             v-if="isCompleteGame && isOneVsOne && !previewMode"
@@ -197,6 +301,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch, toRef } from "vue";
+import { useRouter } from "vue-router";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import PlayerPerformanceOnMatch from "@/components/match-details/PlayerPerformanceOnMatch.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
@@ -207,15 +312,18 @@ import { mapNameFromMatch } from "@/composables/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchHeadToHead from "@/components/match-details/MatchHeadToHead.vue";
 import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
+import { formatDuration, intervalToDuration } from "date-fns";
 import { useMatchStore } from "@/store/match/store";
 import { isGatewayNeededForSeason } from "@/constants";
-import _keyBy from "lodash/keyBy";
 import { battleTagToName } from "@/helpers/profile";
 import { GAME_MODES_FFA } from "@/store/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPermission } from "@/store/admin/permission/types";
 import AdminReplayChatLogMessages from "@/components/admin/replays/AdminReplayChatLogMessages.vue";
 import { mdiChatProcessingOutline } from "@mdi/js";
+import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
+import PlayerIcon from "@/components/matches/PlayerIcon.vue";
+import { getProfileUrl } from "@/helpers/url-functions";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -227,6 +335,8 @@ export default defineComponent({
     DownloadReplayIcon,
     MatchHeadToHead,
     AdminReplayChatLogMessages,
+    CountryFlagExtended,
+    PlayerIcon,
   },
   props: {
     matchId: {
@@ -277,6 +387,32 @@ export default defineComponent({
       if (!match.value?.number) return false;
       return match.value.number !== 0 && match.value?.number % 1000000 === 0;
     });
+
+    const router = useRouter();
+
+    const mmrChangePlayer1 = computed<number>(() => {
+      const p = match.value?.teams?.[0]?.players?.[0];
+      if (p?.oldMmr && p?.currentMmr) return Math.floor(p.currentMmr - p.oldMmr);
+      return 0;
+    });
+
+    const mmrChangePlayer2 = computed<number>(() => {
+      const p = match.value?.teams?.[1]?.players?.[0];
+      if (p?.oldMmr && p?.currentMmr) return Math.floor(p.currentMmr - p.oldMmr);
+      return 0;
+    });
+
+    const gameDurationLong = computed<string>(() =>
+      formatDuration(intervalToDuration({ start: 0, end: match.value.durationInSeconds * 1000 })),
+    );
+
+    const gameStartTime = computed<string>(() =>
+      new Date(match.value.startTime).toLocaleString(),
+    );
+
+    function goToPlayer(battleTag: string) {
+      router.push({ path: getProfileUrl(battleTag) });
+    }
 
     const playerScores = computed<PlayerScore[]>(() => {
       const { playerScores, match } = matchStore.matchDetail;
@@ -542,12 +678,24 @@ export default defineComponent({
       showChatLogShortcut,
       openChatLogDialog,
       mdiChatProcessingOutline,
+      mmrChangePlayer1,
+      mmrChangePlayer2,
+      gameDurationLong,
+      gameStartTime,
+      goToPlayer,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+@media (max-width: 850px) {
+  .w3-container-width {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
 .small-title {
   margin-top: -25px !important;
   margin-bottom: -25px !important;
@@ -571,4 +719,109 @@ export default defineComponent({
   top: 8px;
   right: 8px;
 }
+
+.ovo-header {
+  padding: 8px 16px;
+  position: relative;
+}
+
+.ovo-season-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .subicon {
+    position: static;
+    margin-left: auto;
+    flex-direction: row;
+  }
+}
+
+.ovo-player-names {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto 1fr;
+  align-items: center;
+  grid-column-gap: 10px;
+  margin-bottom: 4px;
+}
+
+.ovo-name {
+  font-weight: bold;
+  font-size: 1.5em;
+
+  @media (max-width: 850px) {
+    font-size: 1.1em;
+  }
+  overflow: hidden;
+
+  a {
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.ovo-name--left {
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ovo-name--right {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ovo-vs {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 0 8px;
+}
+
+.ovo-mmr-row {
+  display: grid;
+  grid-template-columns: 1fr 10px 141px 10px 1fr;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 1px;
+}
+
+.ovo-mmr--left {
+  text-align: right;
+}
+
+.ovo-mmr--right {
+  text-align: left;
+}
+
+.ovo-mmr-label {
+  opacity: 0.6;
+}
+
+.ovo-winner-icon {
+  width: 40px;
+  text-align: center;
+}
+
+.ovo-crown {
+  font-size: 1.5em;
+}
+
+.ovo-map-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 16px 0 8px;
+}
+
 </style>
