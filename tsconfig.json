@@ -17,7 +17,7 @@
     "target": "esnext",
     "types": ["vuetify", "chart.js", "node"],
   },
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "include": ["vite.config.ts", "src/**/*", "src/**/*.vue"],
   "vueCompilerOptions": {
     "experimentalModelPropName": {
       "checked": {
