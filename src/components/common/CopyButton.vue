@@ -9,33 +9,15 @@
   </v-tooltip>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { mdiContentCopy } from "@mdi/js";
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  name: "CopyButton",
-  components: {},
-  props: {
-    copyText: {
-      type: String,
-      required: true,
-    },
-    tooltipText: {
-      type: String,
-      required: false,
-      default: "tooltip",
-    },
-  },
-  setup(props) {
-    function copy() {
-      navigator.clipboard.writeText(props.copyText);
-    }
+const { copyText, tooltipText = "tooltip" } = defineProps<{
+  copyText: string;
+  tooltipText?: string;
+}>();
 
-    return {
-      mdiContentCopy,
-      copy,
-    };
-  },
-});
+function copy(): void {
+  navigator.clipboard.writeText(copyText);
+}
 </script>
