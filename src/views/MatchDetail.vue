@@ -14,7 +14,8 @@
           <div v-if="isOneVsOne && !loading" class="ovo-header">
             <div class="ovo-season-bar">
               <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-                <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} · </span>
+                <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} ·
+                </span>
                 <span>{{ $t(`views_matchdetail.season`) }}: {{ season }}</span>
               </v-card-subtitle>
               <host-icon
@@ -38,7 +39,9 @@
                         size="small"
                         @click="openChatLogDialog"
                       >
-                        <v-icon size="x-large">{{ mdiChatProcessingOutline }}</v-icon>
+                        <v-icon size="x-large">{{
+                          mdiChatProcessingOutline
+                        }}</v-icon>
                       </v-btn>
                     </span>
                   </template>
@@ -49,28 +52,139 @@
             <div class="ovo-player-names">
               <div class="ovo-name ovo-name--left">
                 <country-flag-extended
-                  v-if="match.teams[0].players[0].countryCode || match.teams[0].players[0].location"
+                  v-if="
+                    match.teams[0].players[0].countryCode ||
+                      match.teams[0].players[0].location
+                  "
                   :countryCode="match.teams[0].players[0].countryCode"
                   :location="match.teams[0].players[0].location"
                   class="mr-2"
                 />
-                <a class="text-primary cursor-pointer" @click="goToPlayer(match.teams[0].players[0].battleTag)">
+                <a
+                  class="text-primary cursor-pointer"
+                  @click="goToPlayer(match.teams[0].players[0].battleTag)"
+                >
                   {{ match.teams[0].players[0].name }}
                 </a>
               </div>
-              <player-icon :race="match.teams[0].players[0].race" :rndRace="match.teams[0].players[0].rndRace" :big="true" />
+              <player-icon
+                :race="match.teams[0].players[0].race"
+                :rndRace="match.teams[0].players[0].rndRace"
+                :big="true"
+              />
               <div class="ovo-vs">VS</div>
-              <player-icon :race="match.teams[1].players[0].race" :rndRace="match.teams[1].players[0].rndRace" :big="true" />
+              <player-icon
+                :race="match.teams[1].players[0].race"
+                :rndRace="match.teams[1].players[0].rndRace"
+                :big="true"
+              />
               <div class="ovo-name ovo-name--right">
-                <a class="text-primary cursor-pointer" @click="goToPlayer(match.teams[1].players[0].battleTag)">
+                <a
+                  class="text-primary cursor-pointer"
+                  @click="goToPlayer(match.teams[1].players[0].battleTag)"
+                >
                   {{ match.teams[1].players[0].name }}
                 </a>
                 <country-flag-extended
-                  v-if="match.teams[1].players[0].countryCode || match.teams[1].players[0].location"
+                  v-if="
+                    match.teams[1].players[0].countryCode ||
+                      match.teams[1].players[0].location
+                  "
                   :countryCode="match.teams[1].players[0].countryCode"
                   :location="match.teams[1].players[0].location"
                   class="ml-2"
                 />
+              </div>
+            </div>
+            <div class="ovo-league-row">
+              <div class="ovo-league ovo-league--left">
+                <template
+                  v-if="match.teams[0].players[0].ranking?.leagueOrder != null"
+                >
+                  <router-link
+                    :to="
+                      rankingsUrl(
+                        match.teams[0].players[0],
+                        match.teams[0].players[0].ranking.leagueOrder,
+                      )
+                    "
+                    class="ovo-league-link"
+                  >
+                    <img
+                      :src="`/assets/leagueIcons/${match.teams[0].players[0].ranking.leagueOrder}.png`"
+                      class="ovo-league-icon"
+                      :style="{
+                        filter: leagueGlow(
+                          match.teams[0].players[0].ranking.leagueOrder,
+                        ),
+                      }"
+                    />
+                    <span class="ovo-league-name">{{ leagueNamePlayer1 }}</span>
+                    <span
+                      v-if="match.teams[0].players[0].ranking.division"
+                      class="ovo-mmr-label"
+                    >
+                      {{ match.teams[0].players[0].ranking.division }}
+                    </span>
+                    <span
+                      v-if="match.teams[0].players[0].ranking.rank"
+                      class="ovo-rank-num"
+                    >
+                      #{{ match.teams[0].players[0].ranking.rank }}
+                    </span>
+                  </router-link>
+                  <span
+                    v-if="match.teams[0].players[0].won"
+                    class="ovo-crown"
+                  >👑</span>
+                </template>
+                <template v-else>{{ $t("views_rankings.unranked") }}</template>
+              </div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div class="ovo-league ovo-league--right">
+                <template
+                  v-if="match.teams[1].players[0].ranking?.leagueOrder != null"
+                >
+                  <router-link
+                    :to="
+                      rankingsUrl(
+                        match.teams[1].players[0],
+                        match.teams[1].players[0].ranking.leagueOrder,
+                      )
+                    "
+                    class="ovo-league-link"
+                  >
+                    <img
+                      :src="`/assets/leagueIcons/${match.teams[1].players[0].ranking.leagueOrder}.png`"
+                      class="ovo-league-icon"
+                      :style="{
+                        filter: leagueGlow(
+                          match.teams[1].players[0].ranking.leagueOrder,
+                        ),
+                      }"
+                    />
+                    <span class="ovo-league-name">{{ leagueNamePlayer2 }}</span>
+                    <span
+                      v-if="match.teams[1].players[0].ranking.division"
+                      class="ovo-mmr-label"
+                    >
+                      {{ match.teams[1].players[0].ranking.division }}
+                    </span>
+                    <span
+                      v-if="match.teams[1].players[0].ranking.rank"
+                      class="ovo-rank-num"
+                    >
+                      #{{ match.teams[1].players[0].ranking.rank }}
+                    </span>
+                  </router-link>
+                  <span
+                    v-if="match.teams[1].players[0].won"
+                    class="ovo-crown"
+                  >👑</span>
+                </template>
+                <template v-else>{{ $t("views_rankings.unranked") }}</template>
               </div>
             </div>
             <div class="ovo-mmr-row">
@@ -78,27 +192,46 @@
                 <template v-if="match.teams[0].players[0].oldMmr">
                   {{ Math.floor(match.teams[0].players[0].oldMmr) }}
                   <span class="ovo-mmr-label">MMR</span>
-                  <span v-if="mmrChangePlayer1 !== 0" class="number-text" :class="match.teams[0].players[0].won ? 'w3-won' : 'w3-lost'">
-                    ({{ mmrChangePlayer1 > 0 ? '+' : '' }}{{ mmrChangePlayer1 }})
+                  <span
+                    v-if="mmrChangePlayer1 !== 0"
+                    class="number-text"
+                    :class="
+                      match.teams[0].players[0].won ? 'w3-won' : 'w3-lost'
+                    "
+                  >
+                    ({{ mmrChangePlayer1 > 0 ? "+" : ""
+                    }}{{ mmrChangePlayer1 }})
                   </span>
                 </template>
-                <template v-else>{{ $t("components_matches_playermatchinfo.calibrating") }}</template>
+                <template v-else>
+                  {{
+                    $t("components_matches_playermatchinfo.calibrating")
+                  }}
+                </template>
               </div>
               <div></div>
-              <div class="ovo-winner-icon">
-                <span v-if="match.teams[0].players[0].won" class="ovo-crown">👑</span>
-                <span v-if="match.teams[1].players[0].won" class="ovo-crown">👑</span>
-              </div>
+              <div></div>
               <div></div>
               <div class="ovo-mmr ovo-mmr--right">
                 <template v-if="match.teams[1].players[0].oldMmr">
                   {{ Math.floor(match.teams[1].players[0].oldMmr) }}
                   <span class="ovo-mmr-label">MMR</span>
-                  <span v-if="mmrChangePlayer2 !== 0" class="number-text" :class="match.teams[1].players[0].won ? 'w3-won' : 'w3-lost'">
-                    ({{ mmrChangePlayer2 > 0 ? '+' : '' }}{{ mmrChangePlayer2 }})
+                  <span
+                    v-if="mmrChangePlayer2 !== 0"
+                    class="number-text"
+                    :class="
+                      match.teams[1].players[0].won ? 'w3-won' : 'w3-lost'
+                    "
+                  >
+                    ({{ mmrChangePlayer2 > 0 ? "+" : ""
+                    }}{{ mmrChangePlayer2 }})
                   </span>
                 </template>
-                <template v-else>{{ $t("components_matches_playermatchinfo.calibrating") }}</template>
+                <template v-else>
+                  {{
+                    $t("components_matches_playermatchinfo.calibrating")
+                  }}
+                </template>
               </div>
             </div>
           </div>
@@ -115,18 +248,31 @@
               :duration-minutes="match.durationInSeconds / 60"
             />
             <div class="ovo-map-stats">
-              <div><span class="ovo-mmr-label">Map:</span> {{ mapNameFromMatch(match) }}</div>
-              <div><span class="ovo-mmr-label">Duration:</span> {{ gameDurationLong }}</div>
-              <div><span class="ovo-mmr-label">Start time:</span> {{ gameStartTime }}</div>
+              <div>
+                <span class="ovo-mmr-label">Map:</span>
+                {{ mapNameFromMatch(match) }}
+              </div>
+              <div>
+                <span class="ovo-mmr-label">Duration:</span>
+                {{ gameDurationLong }}
+              </div>
+              <div>
+                <span class="ovo-mmr-label">Start time:</span>
+                {{ gameStartTime }}
+              </div>
             </div>
           </div>
-          <div v-else-if="!loading">
+          <div v-else-if="!loading && match.teams?.length">
             <v-card-title class="justify-center">
               <v-row justify="space-around">
                 <v-col cols="1" class="pl-0 pr-0">
                   <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-                    <div v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }}</div>
-                    <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
+                    <div v-if="isGatewayNeeded">
+                      {{ $t(`gatewayNames.${gateWay}`) }}
+                    </div>
+                    <div>
+                      {{ $t(`views_matchdetail.season`) }}: {{ season }}
+                    </div>
                   </v-card-subtitle>
                   <host-icon
                     v-if="match.serverInfo && match.serverInfo.provider"
@@ -142,16 +288,37 @@
                   />
                 </v-col>
                 <v-col cols="1" class="text-center" align-self="center">
-                  <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
+                  <span v-if="!matchIsFFA">{{
+                    $t(`views_matchdetail.vs`)
+                  }}</span>
                 </v-col>
                 <v-col v-if="!matchIsFFA" cols="4" align-self="center">
-                  <team-match-info :big-race-icon="true" :team="match.teams[1]" />
+                  <team-match-info
+                    :big-race-icon="true"
+                    :team="match.teams[1]"
+                  />
                 </v-col>
                 <v-col v-if="matchIsFFA" cols="6" align-self="center">
-                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[0]" />
-                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[1]" />
-                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[2]" />
-                  <team-match-info class="ma-1" :big-race-icon="true" :team="match.teams[3]" />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[0]"
+                  />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[1]"
+                  />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[2]"
+                  />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[3]"
+                  />
                 </v-col>
                 <v-col cols="1" />
                 <div class="subicon">
@@ -170,7 +337,9 @@
                           size="small"
                           @click="openChatLogDialog"
                         >
-                          <v-icon size="x-large">{{ mdiChatProcessingOutline }}</v-icon>
+                          <v-icon size="x-large">{{
+                            mdiChatProcessingOutline
+                          }}</v-icon>
                         </v-btn>
                       </span>
                     </template>
@@ -187,7 +356,11 @@
                 {{ $t(`views_matchdetail.jubileeGameMessage`) }}
               </v-card-title>
               <v-card-title class="d-flex justify-center">
-                {{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}
+                {{
+                  `${mapNameFromMatch(
+                    match,
+                  )} (${matchDuration}) | ${playedDate}`
+                }}
               </v-card-title>
             </div>
           </div>
@@ -207,7 +380,9 @@
                   :unit-score="scoresOfWinners.map((h) => h.unitScore)"
                   :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
                   :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
-                  :resource-score-opponent="scoresOfLosers.map((h) => h.resourceScore)"
+                  :resource-score-opponent="
+                    scoresOfLosers.map((h) => h.resourceScore)
+                  "
                   :left="true"
                 />
               </v-col>
@@ -215,9 +390,11 @@
                 <player-performance-on-match
                   class="mt-4"
                   :unit-score="scoresOfLosers.map((h) => h.unitScore)"
-                  :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
+                  :resource-score="scoresOfLosers.map((h) => h.resourceScore)"
                   :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
-                  :resource-score-opponent="scoresOfWinners.map((h) => h.resourceScore)"
+                  :resource-score-opponent="
+                    scoresOfWinners.map((h) => h.resourceScore)
+                  "
                 />
               </v-col>
             </v-row>
@@ -291,7 +468,10 @@
 
         <v-dialog v-model="chatLogDialog" width="1500">
           <v-card>
-            <admin-replay-chat-log-messages v-if="chatLogDialog" :matchId="matchId" />
+            <admin-replay-chat-log-messages
+              v-if="chatLogDialog"
+              :matchId="matchId"
+            />
           </v-card>
         </v-dialog>
       </v-col>
@@ -311,7 +491,10 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchHeadToHead from "@/components/match-details/MatchHeadToHead.vue";
-import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
+import {
+  formatSecondsToDuration,
+  formatTimestampStringToDateTime,
+} from "@/helpers/date-functions";
 import { formatDuration, intervalToDuration } from "date-fns";
 import { useMatchStore } from "@/store/match/store";
 import { isGatewayNeededForSeason } from "@/constants";
@@ -354,17 +537,36 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const chatLogDialog = ref<boolean>(false);
     const match = computed<Match>(() => matchStore.matchDetail.match);
-    const matchDuration = computed<string>(() => formatSecondsToDuration(match.value.durationInSeconds));
-    const playedDate = computed<string>(() => formatTimestampStringToDateTime(match.value.startTime));
-    const ffaPlayers = computed<PlayerScore[]>(() => [ffaWinner.value, ...ffaLosers.value]);
-    const gateWay = computed<string>(() => Gateways[matchStore.matchDetail.match.gateWay]);
-    const season = computed<number>(() => matchStore.matchDetail.match.season ?? 1);
-    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(season.value));
-    const isCompleteGame = computed<PlayerScore[]>(() => matchStore.matchDetail.playerScores);
+    const matchDuration = computed<string>(() =>
+      formatSecondsToDuration(match.value.durationInSeconds),
+    );
+    const playedDate = computed<string>(() =>
+      formatTimestampStringToDateTime(match.value.startTime),
+    );
+    const ffaPlayers = computed<PlayerScore[]>(() => [
+      ffaWinner.value,
+      ...ffaLosers.value,
+    ]);
+    const gateWay = computed<string>(
+      () => Gateways[matchStore.matchDetail.match.gateWay],
+    );
+    const season = computed<number>(
+      () => matchStore.matchDetail.match.season ?? 1,
+    );
+    const isGatewayNeeded = computed<boolean>(() =>
+      isGatewayNeededForSeason(season.value),
+    );
+    const isCompleteGame = computed<PlayerScore[]>(
+      () => matchStore.matchDetail.playerScores,
+    );
     const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
     const permissions = computed<string[]>(() => oauthStore.permissions);
-    const hasModerationPermission = computed<boolean>(() => permissions.value.includes(EPermission[EPermission.Moderation]));
-    const showChatLogShortcut = computed<boolean>(() => hasModerationPermission.value && !props.previewMode);
+    const hasModerationPermission = computed<boolean>(() =>
+      permissions.value.includes(EPermission[EPermission.Moderation]),
+    );
+    const showChatLogShortcut = computed<boolean>(
+      () => hasModerationPermission.value && !props.previewMode,
+    );
 
     const matchIsFFA = computed<boolean>(() => {
       return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
@@ -392,23 +594,84 @@ export default defineComponent({
 
     const mmrChangePlayer1 = computed<number>(() => {
       const p = match.value?.teams?.[0]?.players?.[0];
-      if (p?.oldMmr && p?.currentMmr) return Math.floor(p.currentMmr - p.oldMmr);
+      if (p?.oldMmr && p?.currentMmr)
+      {return Math.floor(p.currentMmr - p.oldMmr);}
       return 0;
     });
 
     const mmrChangePlayer2 = computed<number>(() => {
       const p = match.value?.teams?.[1]?.players?.[0];
-      if (p?.oldMmr && p?.currentMmr) return Math.floor(p.currentMmr - p.oldMmr);
+      if (p?.oldMmr && p?.currentMmr)
+      {return Math.floor(p.currentMmr - p.oldMmr);}
       return 0;
     });
 
     const gameDurationLong = computed<string>(() =>
-      formatDuration(intervalToDuration({ start: 0, end: match.value.durationInSeconds * 1000 })),
+      formatDuration(
+        intervalToDuration({
+          start: 0,
+          end: match.value.durationInSeconds * 1000,
+        }),
+      ),
     );
 
     const gameStartTime = computed<string>(() =>
       new Date(match.value.startTime).toLocaleString(),
     );
+
+    const leagueNames: Record<number, string> = {
+      0: "Grand Master",
+      1: "Master",
+      2: "Adept",
+      3: "Diamond",
+      4: "Platinum",
+      5: "Gold",
+      6: "Silver",
+      7: "Bronze",
+      8: "Grass",
+    };
+
+    const leagueNamePlayer1 = computed(
+      () =>
+        leagueNames[
+          match.value?.teams?.[0]?.players?.[0]?.ranking?.leagueOrder ?? -1
+        ] ?? "",
+    );
+
+    const leagueNamePlayer2 = computed(
+      () =>
+        leagueNames[
+          match.value?.teams?.[1]?.players?.[0]?.ranking?.leagueOrder ?? -1
+        ] ?? "",
+    );
+
+    const leagueGlowColors: Record<number, string> = {
+      0: "255, 215, 0", // Grand Master — gold
+      1: "180, 130, 255", // Master — purple
+      2: "0, 200, 200", // Adept — teal
+      3: "100, 180, 255", // Diamond — blue
+      4: "180, 220, 255", // Platinum — ice blue
+      5: "255, 215, 0", // Gold — gold
+      6: "192, 192, 192", // Silver — silver
+      7: "205, 127, 50", // Bronze — copper
+      8: "100, 200, 100", // Grass — green
+    };
+
+    function leagueGlow(leagueOrder: number): string {
+      const color = leagueGlowColors[leagueOrder] ?? "255, 255, 255";
+      return `drop-shadow(0 0 5px rgba(${color}, 0.5))`;
+    }
+
+    function rankingsUrl(player: PlayerInTeam, league?: number) {
+      const query: Record<string, string> = {
+        season: String(season.value),
+        gateway: String(match.value.gateWay),
+        gamemode: String(match.value.gameMode),
+        playerId: player.battleTag,
+      };
+      if (league != null) query.league = String(league);
+      return { path: "/rankings", query };
+    }
 
     function goToPlayer(battleTag: string) {
       router.push({ path: getProfileUrl(battleTag) });
@@ -418,7 +681,8 @@ export default defineComponent({
       const { playerScores, match } = matchStore.matchDetail;
       if (matchIsFFA.value) {
         const ffaMappedPlayerScores = playerScores.map((playerScore) => {
-          const battleTag = match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
+          const battleTag =
+            match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
           return {
             ...playerScore,
             battleTag,
@@ -432,13 +696,18 @@ export default defineComponent({
 
     // Helpers for matching player names/battleTags across data sources (team data vs score data)
     // Normalizes strings for case-insensitive comparison
-    const normalize = (value?: string): string => (value ?? "").trim().toLowerCase();
+    const normalize = (value?: string): string =>
+      (value ?? "").trim().toLowerCase();
     // Strips the discriminator (#number) from a BattleTag to match players who only have the character name
-    const stripTag = (value?: string): string => normalize(value).split("#", 1)[0];
+    const stripTag = (value?: string): string =>
+      normalize(value).split("#", 1)[0];
 
     // Determines if a player from team data matches a score record
     // Tries multiple matching strategies since score battleTags may be localized names or incomplete
-    function isDirectPlayerScoreMatch(player: PlayerInTeam, score: PlayerScore): boolean {
+    function isDirectPlayerScoreMatch(
+      player: PlayerInTeam,
+      score: PlayerScore,
+    ): boolean {
       const battleTag = normalize(player.battleTag);
       const inviteName = normalize(player.inviteName);
       const displayName = normalize(player.name);
@@ -454,12 +723,16 @@ export default defineComponent({
       // 4. Score matches BattleTag without discriminator (#number)
       // 5. Score matches invite name without discriminator
       // 6. Score matches display name without discriminator
-      return scoreBattleTag === battleTag ||
-          !!(inviteName && scoreBattleTag === inviteName) ||
-          !!(displayName && scoreBattleTag === displayName) ||
-          !!(battleTagStripped && scoreBattleTagStripped === battleTagStripped) ||
-          !!(inviteNameStripped && scoreBattleTagStripped === inviteNameStripped) ||
-          !!(displayName && scoreBattleTagStripped === displayName);
+      return (
+        scoreBattleTag === battleTag ||
+        !!(inviteName && scoreBattleTag === inviteName) ||
+        !!(displayName && scoreBattleTag === displayName) ||
+        !!(battleTagStripped && scoreBattleTagStripped === battleTagStripped) ||
+        !!(
+          inviteNameStripped && scoreBattleTagStripped === inviteNameStripped
+        ) ||
+        !!(displayName && scoreBattleTagStripped === displayName)
+      );
     }
 
     // Resolves which score data teamIndex corresponds to each displayed team.
@@ -470,8 +743,12 @@ export default defineComponent({
       const teams = match.value.teams ?? [];
 
       // Find the score teamIndex for a specific player by matching against all scores
-      const directMatchTeamIndexForPlayer = (player: PlayerInTeam): number | undefined => {
-        const score = playerScores.value.find((candidate) => isDirectPlayerScoreMatch(player, candidate));
+      const directMatchTeamIndexForPlayer = (
+        player: PlayerInTeam,
+      ): number | undefined => {
+        const score = playerScores.value.find((candidate) =>
+          isDirectPlayerScoreMatch(player, candidate),
+        );
 
         return score?.teamIndex;
       };
@@ -505,13 +782,19 @@ export default defineComponent({
       });
 
       // Fallback: assign remaining score teamIndexes to teams that didn't resolve via direct matching
-      const uniqueScoreTeamIndexes = [...new Set(playerScores.value.map((score) => score.teamIndex))];
-      const usedIndexes = new Set(resolvedIndexes.filter((index): index is number => index !== undefined));
+      const uniqueScoreTeamIndexes = [
+        ...new Set(playerScores.value.map((score) => score.teamIndex)),
+      ];
+      const usedIndexes = new Set(
+        resolvedIndexes.filter((index): index is number => index !== undefined),
+      );
 
       resolvedIndexes.forEach((index, teamIndex) => {
         if (index !== undefined) return; // Already resolved, skip
 
-        const nextAvailableIndex = uniqueScoreTeamIndexes.find((candidate) => !usedIndexes.has(candidate));
+        const nextAvailableIndex = uniqueScoreTeamIndexes.find(
+          (candidate) => !usedIndexes.has(candidate),
+        );
         if (nextAvailableIndex === undefined) return; // No more indexes to assign
 
         resolvedIndexes[teamIndex] = nextAvailableIndex;
@@ -531,25 +814,39 @@ export default defineComponent({
       return getPlayerScores(losingTeam, resolvedTeamIndexes.value[1]);
     });
 
-    const ffaWinner = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[0].players[0].battleTag
-    )!);
+    const ffaWinner = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[0].players[0].battleTag,
+        )!,
+    );
 
-    const ffaLosers = computed<PlayerScore[]>(() => playerScores.value.filter(
-      (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
-    ));
+    const ffaLosers = computed<PlayerScore[]>(() =>
+      playerScores.value.filter(
+        (s) => s.battleTag !== match.value.teams[0].players[0].battleTag,
+      ),
+    );
 
-    const ffaLoser1 = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[1].players[0].battleTag
-    )!);
+    const ffaLoser1 = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[1].players[0].battleTag,
+        )!,
+    );
 
-    const ffaLoser2 = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[2].players[0].battleTag
-    )!);
+    const ffaLoser2 = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[2].players[0].battleTag,
+        )!,
+    );
 
-    const ffaLoser3 = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[3].players[0].battleTag
-    )!);
+    const ffaLoser3 = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[3].players[0].battleTag,
+        )!,
+    );
 
     const gameNumber = computed<string>(() => {
       const number = match.value.number / 1000000;
@@ -583,11 +880,14 @@ export default defineComponent({
     // This handles cases where some scores have localized/incorrect names (e.g. Chinese characters instead of BattleTag)
     function getPlayerScores(team: Team, teamIndex?: number): PlayerScore[] {
       // Restrict to scores for this team if teamIndex is known, otherwise search all scores
-      const teamScores = teamIndex === undefined
-        ? playerScores.value
-        : playerScores.value.filter((score) => score.teamIndex === teamIndex);
+      const teamScores =
+        teamIndex === undefined
+          ? playerScores.value
+          : playerScores.value.filter((score) => score.teamIndex === teamIndex);
       const usedScores = new Set<number>();
-      const mappedScores: Array<PlayerScore | undefined> = new Array(team.players.length).fill(undefined);
+      const mappedScores: Array<PlayerScore | undefined> = new Array(
+        team.players.length,
+      ).fill(undefined);
 
       // Find the first unused score that matches a player
       function findDirectMatch(player: PlayerInTeam): number {
@@ -612,7 +912,9 @@ export default defineComponent({
         if (!score) unmatchedPlayerIndexes.push(playerIndex);
       });
 
-      const remainingScores = teamScores.filter((_, scoreIndex) => !usedScores.has(scoreIndex));
+      const remainingScores = teamScores.filter(
+        (_, scoreIndex) => !usedScores.has(scoreIndex),
+      );
 
       // Only use elimination if counts align (prevents misassignment when data is corrupted)
       if (remainingScores.length === unmatchedPlayerIndexes.length) {
@@ -622,7 +924,7 @@ export default defineComponent({
       }
 
       return team.players.map((player, playerIndex) => ({
-        ...mappedScores[playerIndex] ?? {} as PlayerScore,
+        ...(mappedScores[playerIndex] ?? ({} as PlayerScore)),
         battleTag: player.battleTag, // Use the battleTag from the Match (PlayerInTeam) record, since it is sometimes incorrect on the PlayerScore record
       }));
     }
@@ -680,6 +982,10 @@ export default defineComponent({
       mdiChatProcessingOutline,
       mmrChangePlayer1,
       mmrChangePlayer2,
+      leagueNamePlayer1,
+      leagueNamePlayer2,
+      leagueGlow,
+      rankingsUrl,
       gameDurationLong,
       gameStartTime,
       goToPlayer,
@@ -787,6 +1093,65 @@ export default defineComponent({
   padding: 0 8px;
 }
 
+.ovo-league-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto 1fr;
+  align-items: center;
+  grid-column-gap: 10px;
+  margin-top: 16px;
+}
+
+.ovo-league {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ovo-league--left {
+  justify-content: flex-end;
+}
+
+.ovo-league--right {
+  justify-content: flex-start;
+  padding-left: 12px;
+}
+
+.ovo-league-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.ovo-league-name {
+  @media (max-width: 850px) {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+  .ovo-league-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.ovo-rank-num {
+  opacity: 1;
+}
+
+.ovo-league-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+
+  &:hover {
+    box-shadow: 0 0 10px rgba(var(--v-theme-on-surface), 0.3);
+  }
+}
+
 .ovo-mmr-row {
   display: grid;
   grid-template-columns: 1fr 10px 141px 10px 1fr;
@@ -797,10 +1162,14 @@ export default defineComponent({
 
 .ovo-mmr--left {
   text-align: right;
+  font-size: 0.85em;
+  opacity: 0.8;
 }
 
 .ovo-mmr--right {
   text-align: left;
+  font-size: 0.85em;
+  opacity: 0.8;
 }
 
 .ovo-mmr-label {
@@ -814,6 +1183,7 @@ export default defineComponent({
 
 .ovo-crown {
   font-size: 1.5em;
+  padding-right: 13px;
 }
 
 .ovo-map-stats {
@@ -823,5 +1193,4 @@ export default defineComponent({
   gap: 2px;
   padding: 16px 0 8px;
 }
-
 </style>

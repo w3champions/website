@@ -59,7 +59,7 @@ export default defineComponent({
 .score-stat-row {
   display: grid;
   grid-template-columns: 1fr 16px 135px 16px 1fr;
-  grid-column-gap: 10px;
+  column-gap: 10px;
   grid-template-rows: 16px;
   align-items: center;
   line-height: 1;

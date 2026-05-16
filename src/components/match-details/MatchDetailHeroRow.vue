@@ -4,7 +4,7 @@
       <div class="heroes-icons heroes-icons--left">
         <div
           v-for="(hero, i) of winnersReversed"
-          :key="'mw'+i"
+          :key="'mw-'+hero.name+'-'+i"
           class="hero-icon-wrapper"
         >
           <hero-icon
@@ -17,7 +17,7 @@
       <div class="heroes-icons heroes-icons--right">
         <div
           v-for="(hero, i) in heroesOfLoser"
-          :key="'ml'+i"
+          :key="'ml-'+hero.name+'-'+i"
           class="hero-icon-wrapper"
         >
           <hero-icon
@@ -33,7 +33,7 @@
         <div class="heroes-icons heroes-icons--left">
           <div
             v-for="(hero, i) of winnersReversed"
-            :key="i"
+            :key="'dw-'+hero.name+'-'+i"
             class="hero-icon-wrapper"
           >
             <hero-icon
@@ -149,7 +149,7 @@
         <div class="heroes-icons heroes-icons--right">
           <div
             v-for="(hero, i) in heroesOfLoser"
-            :key="i"
+            :key="'dl-'+hero.name+'-'+i"
             class="hero-icon-wrapper"
           >
             <hero-icon
@@ -200,12 +200,12 @@ export default defineComponent({
       default: false,
     },
     heroesOfWinner: {
-      type: Array<Hero>,
+      type: Array as PropType<Hero[]>,
       required: false,
       default: () => [],
     },
     heroesOfLoser: {
-      type: Array<Hero>,
+      type: Array as PropType<Hero[]>,
       required: false,
       default: () => [],
     },
@@ -305,13 +305,13 @@ export default defineComponent({
 }
 
 .mobile-rates-section {
-  display: none !important;
+  display: none;
 }
 
 .match-stats-grid {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-column-gap: 12px;
+  column-gap: 12px;
   padding: 8px 16px;
 }
 
@@ -334,7 +334,7 @@ export default defineComponent({
   grid-auto-flow: column;
   grid-template-rows: 64px;
   grid-auto-columns: 64px;
-  grid-column-gap: 16px;
+  column-gap: 16px;
   padding-bottom: 30px;
 }
 
@@ -407,12 +407,12 @@ export default defineComponent({
   .mobile-heroes-row .heroes-icons {
     grid-auto-columns: 40px;
     grid-template-rows: 40px;
-    grid-column-gap: 6px;
+    column-gap: 6px;
     padding-bottom: 20px;
   }
 
-  .mobile-rates-section {
-    display: flex !important;
+  .game-stats-section.mobile-rates-section {
+    display: flex;
   }
 
   .heroes-side {
