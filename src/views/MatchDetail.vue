@@ -12,8 +12,8 @@
       <v-col cols="12">
         <v-card tile class="pb-5 pt-1">
           <v-card-title class="justify-center">
-            <v-row justify="space-around">
-              <v-col cols="1" class="pl-0 pr-0">
+            <v-row justify="space-around" class="match-header">
+              <v-col cols="12" md="1" class="pl-0 pr-0">
                 <v-card-subtitle class="pa-0 text-uppercase opacity-100">
                   <div v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }}</div>
                   <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
@@ -24,20 +24,20 @@
                   style="padding-right: 0px"
                 />
               </v-col>
-              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
+              <v-col v-if="!matchIsFFA" cols="12" sm="5" md="4" class="match-header-team" align-self="center">
                 <team-match-info
                   :big-race-icon="true"
-                  :left="true"
+                  :left="!xs"
                   :team="match.teams[0]"
                 />
               </v-col>
-              <v-col cols="1" class="text-center" align-self="center">
+              <v-col cols="12" sm="1" class="match-header-vs text-center px-0 px-md-3" align-self="center">
                 <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
               </v-col>
-              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
+              <v-col v-if="!matchIsFFA" cols="12" sm="5" md="4" class="match-header-team" align-self="center">
                 <team-match-info :big-race-icon="true" :team="match.teams[1]" />
               </v-col>
-              <v-col v-if="matchIsFFA" cols="6" align-self="center">
+              <v-col v-if="matchIsFFA" cols="10" md="6" align-self="center">
                 <team-match-info
                   class="ma-1"
                   :big-race-icon="true"
@@ -59,7 +59,7 @@
                   :team="match.teams[3]"
                 />
               </v-col>
-              <v-col cols="1" />
+              <v-col cols="1" class="d-none d-md-flex" />
               <div class="subicon">
                 <download-replay-icon :gameId="matchId" />
                 <v-tooltip
@@ -216,6 +216,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { EPermission } from "@/store/admin/permission/types";
 import AdminReplayChatLogMessages from "@/components/admin/replays/AdminReplayChatLogMessages.vue";
 import { mdiChatProcessingOutline } from "@mdi/js";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -242,6 +243,7 @@ export default defineComponent({
   setup(props) {
     const matchStore = useMatchStore();
     const oauthStore = useOauthStore();
+    const { xs } = useDisplay();
     const chatLogDialog = ref<boolean>(false);
     const match = computed<Match>(() => matchStore.matchDetail.match);
     const matchDuration = computed<string>(() => formatSecondsToDuration(match.value.durationInSeconds));
@@ -542,6 +544,7 @@ export default defineComponent({
       showChatLogShortcut,
       openChatLogDialog,
       mdiChatProcessingOutline,
+      xs,
     };
   },
 });
@@ -571,4 +574,29 @@ export default defineComponent({
   top: 8px;
   right: 8px;
 }
+
+@media (max-width: 959px) {
+  .match-header {
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .match-header-team,
+  .match-header-vs {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .match-header-team {
+    :deep(.player-info) {
+      justify-content: center !important;
+    }
+
+    :deep(.details-column) {
+      align-items: center !important;
+    }
+  }
+}
+
 </style>

@@ -136,7 +136,7 @@ export default defineComponent({
     const race = ref<ERaceEnum>(props.player.race);
     const rndRace = ref<ERaceEnum>(props.player.rndRace);
     const currentRating = ref<number | null>(props.player.oldMmr != null ? Math.floor(props.player.oldMmr) : null);
-    const textClass = ref<string>(props.left ? "player-info__right" : "player-info__left");
+    const textClass = computed<string>(() => props.left ? "player-info__right" : "player-info__left");
     const nameWithoutBtag = ref<string>(props.player.name);
     const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));
     const leagueDivision = ref<number | null>(props.player.ranking?.division || null);
