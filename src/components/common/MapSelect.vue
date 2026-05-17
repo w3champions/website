@@ -20,8 +20,8 @@
   </v-menu>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { MapInfo } from "@/store/common/types";
 import { mdiMap } from "@mdi/js";
@@ -31,56 +31,40 @@ type MapSelectMap = {
   key: string;
 };
 
-export default defineComponent({
-  name: "MapSelect",
-  props: {
-    map: {
-      type: String,
-      required: false,
-      default: "Overall",
-    },
-    mapInfo: {
-      type: Array<MapInfo>,
-      required: false,
-      default: [],
-    },
-  },
-  setup: (props, context) => {
-    const { t } = useI18n();
-    const selected = computed<string>(() => {
-      const match = maps.value.find((m) => m.key === props.map);
-      return match ? match.mapName : "Overall";
-    });
+const { map = "Overall", mapInfo = [] } = defineProps<{
+  map?: string;
+  mapInfo?: MapInfo[];
+}>();
 
-    const maps = computed<MapSelectMap[]>(() => {
-      const maps = props.mapInfo
-        .map((map) => ({ mapName: (map.mapName ?? map.map), key: map.map }))
-        .sort((mapA, mapB) => {
-          const nameA = mapA.mapName.toString().toUpperCase();
-          const nameB = mapB.mapName.toString().toUpperCase();
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-          return 0;
-        });
-      return [{ mapName: t("mapNames.Overall"), key: "Overall" }, ...maps];
-    });
+const emit = defineEmits<{
+  mapChanged: [map: string];
+}>();
 
-    function selectMap(map: string): void {
-      context.emit("mapChanged", map);
-    }
+const { t } = useI18n();
 
-    return {
-      mdiMap,
-      selected,
-      maps,
-      selectMap,
-    };
-  },
+const selected = computed<string>(() => {
+  const match = maps.value.find((m) => m.key === map);
+  return match ? match.mapName : "Overall";
 });
-</script>
 
-<style></style>
+const maps = computed<MapSelectMap[]>(() => {
+  const maps = mapInfo
+    .map((map) => ({ mapName: (map.mapName ?? map.map), key: map.map }))
+    .sort((mapA, mapB) => {
+      const nameA = mapA.mapName.toString().toUpperCase();
+      const nameB = mapB.mapName.toString().toUpperCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
+  return [{ mapName: t("mapNames.Overall"), key: "Overall" }, ...maps];
+});
+
+function selectMap(map: string): void {
+  emit("mapChanged", map);
+}
+</script>
