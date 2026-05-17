@@ -113,11 +113,7 @@
                     <img
                       :src="`/assets/leagueIcons/${match.teams[0].players[0].ranking.leagueOrder}.png`"
                       class="ovo-league-icon"
-                      :style="{
-                        filter: leagueGlow(
-                          match.teams[0].players[0].ranking.leagueOrder,
-                        ),
-                      }"
+                      :class="`ovo-league-glow--${match.teams[0].players[0].ranking.leagueOrder}`"
                     />
                     <span class="ovo-league-name">{{ leagueNamePlayer1 }}</span>
                     <span
@@ -159,11 +155,7 @@
                     <img
                       :src="`/assets/leagueIcons/${match.teams[1].players[0].ranking.leagueOrder}.png`"
                       class="ovo-league-icon"
-                      :style="{
-                        filter: leagueGlow(
-                          match.teams[1].players[0].ranking.leagueOrder,
-                        ),
-                      }"
+                      :class="`ovo-league-glow--${match.teams[1].players[0].ranking.leagueOrder}`"
                     />
                     <span class="ovo-league-name">{{ leagueNamePlayer2 }}</span>
                     <span
@@ -507,6 +499,7 @@ import { mdiChatProcessingOutline } from "@mdi/js";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { leagueNameFromOrder } from "@/helpers/leagues";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -537,36 +530,17 @@ export default defineComponent({
     const oauthStore = useOauthStore();
     const chatLogDialog = ref<boolean>(false);
     const match = computed<Match>(() => matchStore.matchDetail.match);
-    const matchDuration = computed<string>(() =>
-      formatSecondsToDuration(match.value.durationInSeconds),
-    );
-    const playedDate = computed<string>(() =>
-      formatTimestampStringToDateTime(match.value.startTime),
-    );
-    const ffaPlayers = computed<PlayerScore[]>(() => [
-      ffaWinner.value,
-      ...ffaLosers.value,
-    ]);
-    const gateWay = computed<string>(
-      () => Gateways[matchStore.matchDetail.match.gateWay],
-    );
-    const season = computed<number>(
-      () => matchStore.matchDetail.match.season ?? 1,
-    );
-    const isGatewayNeeded = computed<boolean>(() =>
-      isGatewayNeededForSeason(season.value),
-    );
-    const isCompleteGame = computed<PlayerScore[]>(
-      () => matchStore.matchDetail.playerScores,
-    );
+    const matchDuration = computed<string>(() => formatSecondsToDuration(match.value.durationInSeconds));
+    const playedDate = computed<string>(() => formatTimestampStringToDateTime(match.value.startTime));
+    const ffaPlayers = computed<PlayerScore[]>(() => [ffaWinner.value, ...ffaLosers.value]);
+    const gateWay = computed<string>(() => Gateways[matchStore.matchDetail.match.gateWay]);
+    const season = computed<number>(() => matchStore.matchDetail.match.season ?? 1);
+    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(season.value));
+    const isCompleteGame = computed<PlayerScore[]>(() => matchStore.matchDetail.playerScores);
     const loading = computed<boolean>(() => matchStore.loadingMatchDetail);
     const permissions = computed<string[]>(() => oauthStore.permissions);
-    const hasModerationPermission = computed<boolean>(() =>
-      permissions.value.includes(EPermission[EPermission.Moderation]),
-    );
-    const showChatLogShortcut = computed<boolean>(
-      () => hasModerationPermission.value && !props.previewMode,
-    );
+    const hasModerationPermission = computed<boolean>(() => permissions.value.includes(EPermission[EPermission.Moderation]));
+    const showChatLogShortcut = computed<boolean>(() => hasModerationPermission.value && !props.previewMode);
 
     const matchIsFFA = computed<boolean>(() => {
       return GAME_MODES_FFA.includes(matchStore.matchDetail.match.gameMode);
@@ -606,61 +580,11 @@ export default defineComponent({
       return 0;
     });
 
-    const gameDurationLong = computed<string>(() =>
-      formatDuration(
-        intervalToDuration({
-          start: 0,
-          end: match.value.durationInSeconds * 1000,
-        }),
-      ),
-    );
+    const gameDurationLong = computed<string>(() => formatDuration(intervalToDuration({ start: 0, end: match.value.durationInSeconds * 1000 })));
+    const gameStartTime = computed<string>(() => new Date(match.value.startTime).toLocaleString());
 
-    const gameStartTime = computed<string>(() =>
-      new Date(match.value.startTime).toLocaleString(),
-    );
-
-    const leagueNames: Record<number, string> = {
-      0: "Grand Master",
-      1: "Master",
-      2: "Adept",
-      3: "Diamond",
-      4: "Platinum",
-      5: "Gold",
-      6: "Silver",
-      7: "Bronze",
-      8: "Grass",
-    };
-
-    const leagueNamePlayer1 = computed(
-      () =>
-        leagueNames[
-          match.value?.teams?.[0]?.players?.[0]?.ranking?.leagueOrder ?? -1
-        ] ?? "",
-    );
-
-    const leagueNamePlayer2 = computed(
-      () =>
-        leagueNames[
-          match.value?.teams?.[1]?.players?.[0]?.ranking?.leagueOrder ?? -1
-        ] ?? "",
-    );
-
-    const leagueGlowColors: Record<number, string> = {
-      0: "255, 215, 0", // Grand Master — gold
-      1: "180, 130, 255", // Master — purple
-      2: "0, 200, 200", // Adept — teal
-      3: "100, 180, 255", // Diamond — blue
-      4: "180, 220, 255", // Platinum — ice blue
-      5: "255, 215, 0", // Gold — gold
-      6: "192, 192, 192", // Silver — silver
-      7: "205, 127, 50", // Bronze — copper
-      8: "100, 200, 100", // Grass — green
-    };
-
-    function leagueGlow(leagueOrder: number): string {
-      const color = leagueGlowColors[leagueOrder] ?? "255, 255, 255";
-      return `drop-shadow(0 0 5px rgba(${color}, 0.5))`;
-    }
+    const leagueNamePlayer1 = computed(() => leagueNameFromOrder(match.value?.teams?.[0]?.players?.[0]?.ranking?.leagueOrder));
+    const leagueNamePlayer2 = computed(() => leagueNameFromOrder(match.value?.teams?.[1]?.players?.[0]?.ranking?.leagueOrder));
 
     function rankingsUrl(player: PlayerInTeam, league?: number) {
       const query: Record<string, string> = {
@@ -681,8 +605,7 @@ export default defineComponent({
       const { playerScores, match } = matchStore.matchDetail;
       if (matchIsFFA.value) {
         const ffaMappedPlayerScores = playerScores.map((playerScore) => {
-          const battleTag =
-            match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
+          const battleTag = match.serverInfo.playerServerInfos[playerScore.teamIndex].battleTag;
           return {
             ...playerScore,
             battleTag,
@@ -984,7 +907,6 @@ export default defineComponent({
       mmrChangePlayer2,
       leagueNamePlayer1,
       leagueNamePlayer2,
-      leagueGlow,
       rankingsUrl,
       gameDurationLong,
       gameStartTime,
@@ -1119,6 +1041,16 @@ export default defineComponent({
 .ovo-league-icon {
   width: 32px;
   height: 32px;
+
+  &.ovo-league-glow--0 { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
+  &.ovo-league-glow--1 { filter: drop-shadow(0 0 5px rgba(180, 130, 255, 0.5)); }
+  &.ovo-league-glow--2 { filter: drop-shadow(0 0 5px rgba(0, 200, 200, 0.5)); }
+  &.ovo-league-glow--3 { filter: drop-shadow(0 0 5px rgba(100, 180, 255, 0.5)); }
+  &.ovo-league-glow--4 { filter: drop-shadow(0 0 5px rgba(180, 220, 255, 0.5)); }
+  &.ovo-league-glow--5 { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
+  &.ovo-league-glow--6 { filter: drop-shadow(0 0 5px rgba(192, 192, 192, 0.5)); }
+  &.ovo-league-glow--7 { filter: drop-shadow(0 0 5px rgba(205, 127, 50, 0.5)); }
+  &.ovo-league-glow--8 { filter: drop-shadow(0 0 5px rgba(100, 200, 100, 0.5)); }
 }
 
 .ovo-league-name {
