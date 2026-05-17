@@ -27,6 +27,7 @@
                 <sort-select v-if="unfinished" />
                 <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
                 <hero-icon-toggle :showHeroes="showHeroIcons" :unfinished="unfinished" @update:showHeroes="toggleShowHeroIcons" />
+                <spoiler-free-toggle :unfinished="unfinished" />
               </div>
             </div>
           </v-card-text>
@@ -71,6 +72,7 @@ import type { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
+import SpoilerFreeToggle from "@/components/matches/SpoilerFreeToggle.vue";
 
 export default defineComponent({
   name: "MatchesView",
@@ -83,6 +85,7 @@ export default defineComponent({
     MmrSelect,
     SortSelect,
     HeroIconToggle,
+    SpoilerFreeToggle,
     HeroSelect,
     DurationSelect,
   },

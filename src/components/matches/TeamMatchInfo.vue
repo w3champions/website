@@ -16,6 +16,7 @@
           :not-clickable="notClickable"
           :is-anonymous="isAnonymous"
           :highlighted="highlightedPlayer === player.battleTag"
+          :spoiler-free-winner="spoilerFreeWinner"
           :show-heroes="showHeroes"
           :selectedHeroes="selectedHeroes"
         />
@@ -70,6 +71,11 @@ export default defineComponent({
       type: String,
       required: false,
       default: "",
+    },
+    spoilerFreeWinner: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     showHeroes: {
       type: Boolean,

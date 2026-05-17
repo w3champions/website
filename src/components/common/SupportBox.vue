@@ -68,34 +68,21 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import CryptoDialog from "@/components/common/CryptoDialog.vue";
 import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog.vue";
 
-export default defineComponent({
-  name: "SupportBox",
-  components: {
-    CryptoDialog,
-    AlternatePaymentsDialog,
-  },
-  setup() {
-    const cryptos = ref<{ coin: string; name: string; address: string; dialog: boolean }[]>([
-      { coin: "BTC", name: "Bitcoin", address: "bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80", dialog: false },
-      { coin: "ETH", name: "Ethereum", address: "0x284a0e918e126dF38cFc0207c00D5564CAFbe658", dialog: false },
-      { coin: "LTC", name: "Litecoin", address: "ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0", dialog: false },
-    ]);
-    const alternates = ref<{ name: string; dialog: boolean }[]>([
-      { name: "AliPay", dialog: false },
-      { name: "WeChat", dialog: false },
-    ]);
+const cryptos = ref<{ coin: string; name: string; address: string; dialog: boolean }[]>([
+  { coin: "BTC", name: "Bitcoin", address: "bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80", dialog: false },
+  { coin: "ETH", name: "Ethereum", address: "0x284a0e918e126dF38cFc0207c00D5564CAFbe658", dialog: false },
+  { coin: "LTC", name: "Litecoin", address: "ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0", dialog: false },
+]);
 
-    return {
-      cryptos,
-      alternates,
-    };
-  },
-});
+const alternates = ref<{ name: string; dialog: boolean }[]>([
+  { name: "AliPay", dialog: false },
+  { name: "WeChat", dialog: false },
+]);
 </script>
 
 <style lang="scss" scoped>

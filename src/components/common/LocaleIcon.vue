@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-0">
-    <v-row class="pa-0" align="center" justify="center">
-      <v-col>
+    <v-row class="pa-0">
+      <v-col class="d-flex justify-center align-center">
         <img :src="flag()" width="22px" height="22px" />
       </v-col>
       <v-col v-if="showTwoLetterCode">{{ locale.toUpperCase() }}</v-col>
@@ -9,30 +9,13 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+const { locale, showTwoLetterCode = true } = defineProps<{
+  locale: string;
+  showTwoLetterCode?: boolean;
+}>();
 
-export default defineComponent({
-  name: "LocaleIcon",
-  components: {},
-  props: {
-    locale: {
-      type: String,
-      required: true,
-    },
-    showTwoLetterCode: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-  },
-  setup(props) {
-    function flag(): string {
-      return `/assets/localeFlags/${props.locale}.svg`;
-    }
-    return {
-      flag,
-    };
-  },
-});
+function flag(): string {
+  return `/assets/localeFlags/${locale}.svg`;
+}
 </script>

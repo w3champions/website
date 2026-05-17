@@ -18,21 +18,21 @@
           <template v-slot:activator="{ props }">
             <a
               class="truncated-text text-primary cursor-pointer"
-              :class="[won, $props.highlighted ? 'font-weight-bold' : '']"
+              :class="[playerColorClass, $props.highlighted ? 'font-weight-bold' : '']"
               v-bind="props"
               @click="notClickable ? null : goToPlayer()"
               @click.middle="openProfileInNewTab()"
               @click.right="openProfileInNewTab()"
             >
-              {{ nameWithoutBtag }}<span v-if="currentRating !== null"> ({{ currentRating }})<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
-                <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
+              {{ nameWithoutBtag }}<span v-if="displayRating !== null" :class="{ 'spoiler-mask': hideWinnerSpoilers }"> ({{ displayRating }})<span v-if="displayMmrChange !== 0" class="number-text rating-text" :class="playerColorClass">
+                <span v-if="displayMmrChange > 0">+</span>{{ displayMmrChange }}
               </span></span>
             </a>
           </template>
           <div>
-            <div v-if="currentRating !== null">MMR: {{ currentRating }}<span v-if="mmrChange !== 0" class="number-text rating-text" :class="won">
-              <span v-if="mmrChange > 0">+</span>{{ mmrChange }}
-            </span></div>
+            <div v-if="displayRating !== null">MMR: <span :class="{ 'spoiler-mask': hideWinnerSpoilers }">{{ displayRating }}<span v-if="displayMmrChange !== 0" class="number-text rating-text" :class="playerColorClass">
+              <span v-if="displayMmrChange > 0">+</span>{{ displayMmrChange }}
+            </span></span></div>
             <div v-else>MMR: {{ $t("components_matches_playermatchinfo.calibrating") }}</div>
             <div v-if="topPercentage !== null">Top: {{ topPercentage }}%</div>
             <div class="d-flex align-center">
@@ -69,6 +69,7 @@ import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { leagueNameFromOrder } from "@/helpers/leagues";
 import HeroIconRow from "@/components/matches/HeroIconRow.vue";
+import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
 
 export default defineComponent({
   name: "PlayerMatchInfo",
@@ -110,6 +111,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    spoilerFreeWinner: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     showHeroes: {
       type: Boolean,
       required: false,
@@ -123,6 +129,8 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const spoilerFreeStore = useSpoilerFreeStore();
+    const fakeMmrValue = 2000;
 
     const won = computed<string>(() => {
       if (props.unfinishedMatch) return "";
@@ -149,6 +157,36 @@ export default defineComponent({
       }
 
       return 0;
+    });
+
+    const hideWinnerSpoilers = computed<boolean>(() => props.spoilerFreeWinner && spoilerFreeStore.hideWinner && !props.unfinishedMatch);
+
+    const playerColorClass = computed<string>(() => {
+      if (hideWinnerSpoilers.value) {
+        return "w3-gray-gold-text";
+      }
+
+      return won.value;
+    });
+
+    const displayRating = computed<number | null>(() => {
+      if (currentRating.value === null) {
+        return null;
+      }
+
+      if (hideWinnerSpoilers.value) {
+        return fakeMmrValue;
+      }
+
+      return currentRating.value;
+    });
+
+    const displayMmrChange = computed<number>(() => {
+      if (hideWinnerSpoilers.value) {
+        return 0;
+      }
+
+      return mmrChange.value;
     });
 
     const topPercentage = computed<string | null>(() => {
@@ -185,9 +223,13 @@ export default defineComponent({
       race,
       rndRace,
       currentRating,
+      displayRating,
+      displayMmrChange,
       textClass,
       nameWithoutBtag,
       mmrChange,
+      hideWinnerSpoilers,
+      playerColorClass,
       topPercentage,
       leagueName,
       leagueDivision,
@@ -252,6 +294,10 @@ export default defineComponent({
 
 .secondary-line {
   margin-top: -3px
+}
+
+.spoiler-mask {
+  filter: blur(6px);
 }
 
 @media (max-width: 959px) {
