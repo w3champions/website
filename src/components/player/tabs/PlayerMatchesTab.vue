@@ -132,6 +132,7 @@
         </v-col>
         <v-col class="pa-0 d-flex justify-end align-end player-match-search-col">
           <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
+          <spoiler-free-toggle />
         </v-col>
       </v-row>
     </v-card-text>
@@ -181,6 +182,7 @@ import HeroSelect from "@/components/matches/HeroSelect.vue";
 import { useCommonStore } from "@/store/common/store";
 import { getAsset } from "@/helpers/url-functions";
 import { mdiControllerClassic } from "@mdi/js";
+import SpoilerFreeToggle from "@/components/matches/SpoilerFreeToggle.vue";
 
 interface RaceFilterOption {
   raceName: string;
@@ -195,6 +197,7 @@ export default defineComponent({
     PlayerSearch,
     HeroIconToggle,
     HeroSelect,
+    SpoilerFreeToggle,
   },
   props: {
     id: {

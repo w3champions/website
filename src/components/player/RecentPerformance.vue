@@ -7,7 +7,7 @@
       <ul :class="{ 'recent-performance__results': true, 'enough-items': lastTenMatchesPerformance.length > 1 }">
         <li v-for="(resultSymbol, index) in lastTenMatchesPerformance.slice().reverse()" :key="resultSymbol + index">
           <v-chip color="transparent" :title="resultSymbol === 'W' ? 'Win' : 'Loss'" label style="padding: 0">
-            <v-icon class="sword-icon" :color="resultSymbol === 'W' ? 'green' : 'red'">
+            <v-icon :class="{ 'sword-icon': true, 'spoiler-blur': shouldBlurIcon }" :color="getIconColor(resultSymbol)">
               {{ mdiShieldSwordOutline }}
             </v-icon>
           </v-chip>
@@ -18,8 +18,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { mdiShieldSwordOutline } from "@mdi/js";
+import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
 
 export default defineComponent({
   name: "RecentPerformance",
@@ -29,10 +30,26 @@ export default defineComponent({
       type: Array<string>,
       required: true,
     },
+    spoilerFreeMasking: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
-  setup() {
+  setup(props) {
+    const spoilerFreeStore = useSpoilerFreeStore();
+    const hideWinner = computed<boolean>(() => spoilerFreeStore.hideWinner);
+    const shouldBlurIcon = computed<boolean>(() => props.spoilerFreeMasking && hideWinner.value);
+
     // example: ['W', 'W', 'W', 'L', 'L', 'W', 'L', 'W', 'L', 'L']
-    return { mdiShieldSwordOutline };
+    function getIconColor(resultSymbol: string): string {
+      if (hideWinner.value) {
+        return "w3-gold";
+      }
+      return resultSymbol === "W" ? "green" : "red";
+    }
+
+    return { mdiShieldSwordOutline, getIconColor, shouldBlurIcon };
   },
 });
 </script>
@@ -42,6 +59,10 @@ export default defineComponent({
   font-size: 20px;
   height: 20px;
   width: 20px;
+
+  &.spoiler-blur {
+    filter: blur(6px);
+  }
 }
 
 .recent-performance {

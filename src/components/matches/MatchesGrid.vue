@@ -34,6 +34,7 @@
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
                       :highlightedPlayer="alwaysLeftName"
+                      :spoiler-free-winner="true"
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
                     />
@@ -46,6 +47,7 @@
                       :team="team"
                       :unfinishedMatch="unfinished"
                       :is-anonymous="true"
+                      :spoiler-free-winner="true"
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
                     />
@@ -65,6 +67,7 @@
                     :unfinishedMatch="unfinished"
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
+                    :spoiler-free-winner="true"
                     :show-heroes="showHeroes"
                     :selectedHeroes="selectedHeroes"
                   />
@@ -78,6 +81,7 @@
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
                     :unfinishedMatch="unfinished"
+                    :spoiler-free-winner="true"
                     :show-heroes="showHeroes"
                     :selectedHeroes="selectedHeroes"
                   />
@@ -94,8 +98,13 @@
             </td>
             <td class="text-right">
               <div class="d-flex flex-column text-right align-end">
-                <span class="number-text">{{ getDuration(item) }}</span>
-                <div v-show="!unfinished" class="duration-bar" :style="{ width: getDurationBarWidth(item) }"></div>
+                <span class="number-text" :class="{ 'spoiler-mask': hideDurationSpoilers && !unfinished }">{{ getDuration(item) }}</span>
+                <div
+                  v-show="!unfinished"
+                  class="duration-bar"
+                  :class="{ 'spoiler-mask': hideDurationSpoilers }"
+                  :style="{ width: getDurationBarWidth(item) }"
+                ></div>
               </div>
             </td>
             <td v-if="showReplayDownload(item)" class="text-center">
@@ -133,6 +142,7 @@ import { useRouter } from "vue-router";
 import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import { usePlayerStore } from "@/store/player/store";
+import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
 
 interface MatchesGridHeader {
   name: string;
@@ -192,10 +202,13 @@ export default defineComponent({
     const router = useRouter();
     const matchStore = useMatchStore();
     const playerStore = usePlayerStore();
+    const spoilerFreeStore = useSpoilerFreeStore();
     const gameModeTranslation = (gameMode: EGameMode) => t(`gameModes.${EGameMode[gameMode]}`);
     const isFfa = (gameMode: EGameMode) => GAME_MODES_FFA.includes(gameMode);
+    const FAKE_DURATION_IN_SECONDS = 15 * 60;
 
     const matches = computed<Match[]>(() => props.modelValue);
+    const hideDurationSpoilers = computed<boolean>(() => spoilerFreeStore.hideDuration);
 
     const currentMatchesLowRange = computed<number>(() => {
       if (props.totalMatches === 0) return 0;
@@ -270,6 +283,11 @@ export default defineComponent({
 
     function getDuration(match: Match): string {
       if (props.unfinished) return t("matchStatuses.onGoing").toString();
+
+      if (spoilerFreeStore.hideDuration) {
+        return formatSecondsToDuration(FAKE_DURATION_IN_SECONDS);
+      }
+
       return formatSecondsToDuration(match.durationInSeconds);
     }
 
@@ -278,7 +296,8 @@ export default defineComponent({
       // TODO: Use a percentile based on the game mode length instead (requires backend API data)
       const maxDuration = 1800; // 30 minutes, for now.
       const minPercent = 5; // Minimum width so it's not too small
-      return `${Math.max(minPercent, Math.min(maxDuration, match.durationInSeconds) / maxDuration * 100)}%`;
+      const durationInSeconds = spoilerFreeStore.hideDuration ? FAKE_DURATION_IN_SECONDS : match.durationInSeconds;
+      return `${Math.max(minPercent, Math.min(maxDuration, durationInSeconds) / maxDuration * 100)}%`;
     }
 
     function showReplayDownload(item: Match): boolean {
@@ -350,6 +369,7 @@ export default defineComponent({
       getDuration,
       getDurationBarWidth,
       showReplayDownload,
+      hideDurationSpoilers,
     };
   },
 });
@@ -371,6 +391,10 @@ export default defineComponent({
   height: 3px;
   border-radius: 2px;
   margin-top: 2px;
+}
+
+.spoiler-mask {
+  filter: blur(6px);
 }
 
 .force-no-wrap {
