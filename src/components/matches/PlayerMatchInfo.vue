@@ -67,6 +67,7 @@ import { ERaceEnum, PlayerInTeam } from "@/store/types";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { leagueNameFromOrder } from "@/helpers/leagues";
 import HeroIconRow from "@/components/matches/HeroIconRow.vue";
 
 export default defineComponent({
@@ -158,30 +159,7 @@ export default defineComponent({
       return null;
     });
 
-    const leagueName = computed<string | null>(() => {
-      switch (props.player.ranking?.leagueOrder) {
-        case 0:
-          return "Grand Master";
-        case 1:
-          return "Master";
-        case 2:
-          return "Adept";
-        case 3:
-          return "Diamond";
-        case 4:
-          return "Platinum";
-        case 5:
-          return "Gold";
-        case 6:
-          return "Silver";
-        case 7:
-          return "Bronze";
-        case 8:
-          return "Grass";
-        default:
-          return null;
-      }
-    });
+    const leagueName = computed<string | null>(() => leagueNameFromOrder(props.player.ranking?.leagueOrder) || null);
 
     function openProfileInNewTab() {
       if (!showPlayerInfo.value) return;
