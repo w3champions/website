@@ -44,7 +44,7 @@
         <span>{{ $t("components_player_playerleague.placementsplayed") }}</span>
       </div>
     </div>
-    <recent-performance v-if="isRecentPerformanceVisible" :last-ten-matches-performance="lastTenMatchesPerformance" />
+    <recent-performance v-if="isRecentPerformanceVisible" :last-ten-matches-performance="lastTenMatchesPerformance" spoiler-free-masking />
   </div>
 </template>
 
