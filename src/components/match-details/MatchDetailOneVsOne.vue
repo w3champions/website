@@ -80,20 +80,20 @@
       <div class="ovo-league ovo-league--left">
         <template v-if="player(0).ranking?.leagueOrder != null">
           <router-link
-            :to="rankingsUrl(player(0), player(0).ranking.leagueOrder)"
+            :to="rankingsUrl(player(0), player(0).ranking?.leagueOrder)"
             class="ovo-league-link"
           >
             <img
-              :src="`/assets/leagueIcons/${player(0).ranking.leagueOrder}.png`"
+              :src="`/assets/leagueIcons/${player(0).ranking?.leagueOrder}.png`"
               class="ovo-league-icon"
-              :class="`ovo-league-glow--${player(0).ranking.leagueOrder}`"
+              :class="`ovo-league-glow--${player(0).ranking?.leagueOrder}`"
             />
             <span class="ovo-league-name">{{ leagueName(0) }}</span>
-            <span v-if="player(0).ranking.division" class="ovo-mmr-label">
-              {{ player(0).ranking.division }}
+            <span v-if="player(0).ranking?.division" class="ovo-mmr-label">
+              {{ player(0).ranking?.division }}
             </span>
-            <span v-if="player(0).ranking.rank" class="ovo-rank-num">
-              #{{ player(0).ranking.rank }}
+            <span v-if="player(0).ranking?.rank" class="ovo-rank-num">
+              #{{ player(0).ranking?.rank }}
             </span>
           </router-link>
           <span v-if="player(0).won" class="ovo-crown">👑</span>
@@ -106,20 +106,20 @@
       <div class="ovo-league ovo-league--right">
         <template v-if="player(1).ranking?.leagueOrder != null">
           <router-link
-            :to="rankingsUrl(player(1), player(1).ranking.leagueOrder)"
+            :to="rankingsUrl(player(1), player(1).ranking?.leagueOrder)"
             class="ovo-league-link"
           >
             <img
-              :src="`/assets/leagueIcons/${player(1).ranking.leagueOrder}.png`"
+              :src="`/assets/leagueIcons/${player(1).ranking?.leagueOrder}.png`"
               class="ovo-league-icon"
-              :class="`ovo-league-glow--${player(1).ranking.leagueOrder}`"
+              :class="`ovo-league-glow--${player(1).ranking?.leagueOrder}`"
             />
             <span class="ovo-league-name">{{ leagueName(1) }}</span>
-            <span v-if="player(1).ranking.division" class="ovo-mmr-label">
-              {{ player(1).ranking.division }}
+            <span v-if="player(1).ranking?.division" class="ovo-mmr-label">
+              {{ player(1).ranking?.division }}
             </span>
-            <span v-if="player(1).ranking.rank" class="ovo-rank-num">
-              #{{ player(1).ranking.rank }}
+            <span v-if="player(1).ranking?.rank" class="ovo-rank-num">
+              #{{ player(1).ranking?.rank }}
             </span>
           </router-link>
           <span v-if="player(1).won" class="ovo-crown">👑</span>
@@ -130,7 +130,7 @@
     <div class="ovo-mmr-row">
       <div class="ovo-mmr ovo-mmr--left">
         <template v-if="player(0).oldMmr">
-          {{ Math.floor(player(0).oldMmr) }}
+          {{ Math.floor(player(0).oldMmr!) }}
           <span class="ovo-mmr-label">MMR</span>
           <span
             v-if="mmrChange(0) !== 0"
@@ -149,7 +149,7 @@
       <div></div>
       <div class="ovo-mmr ovo-mmr--right">
         <template v-if="player(1).oldMmr">
-          {{ Math.floor(player(1).oldMmr) }}
+          {{ Math.floor(player(1).oldMmr!) }}
           <span class="ovo-mmr-label">MMR</span>
           <span
             v-if="mmrChange(1) !== 0"
