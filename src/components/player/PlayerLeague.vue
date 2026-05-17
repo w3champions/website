@@ -55,6 +55,7 @@ import { EGameMode, Match } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { leagueKeyFromOrder } from "@/helpers/leagues";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -138,29 +139,7 @@ export default defineComponent({
     const leagueName = computed<string>(() => {
       if (!props.modeStat) return "";
       if (!isRanked.value) return "unranked";
-
-      switch (props.modeStat.leagueOrder) {
-        case 0:
-          return "grandmaster";
-        case 1:
-          return "master";
-        case 2:
-          return "adept";
-        case 3:
-          return "diamond";
-        case 4:
-          return "platinum";
-        case 5:
-          return "gold";
-        case 6:
-          return "silver";
-        case 7:
-          return "bronze";
-        case 8:
-          return "grass";
-        default:
-          return "";
-      }
+      return leagueKeyFromOrder(props.modeStat.leagueOrder);
     });
 
     const lastTenMatchesPerformance = computed<("W" | "L")[]>(() => {
