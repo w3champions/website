@@ -3,27 +3,20 @@ import colors from "vuetify/util/colors";
 export const undead = {
   dark: true,
   colors: {
-    primary: "#ffd428",
-    secondary: "#424242",
-    surface: "rgba(0, 0, 0, 0.9)",
-    "w3-gold": "#FFD428",
-    "w3-race-bg": colors.shades.black,
+    // Bone/purple gold for Undead
+    primary: "#b39adb",
+    secondary: "#8478a0",
+    surface: "rgba(14, 8, 22, 0.92)",
+    background: "#0e0816",
+    "w3-gold": "#ddd2a8",
+    "w3-race-bg": "#1a1029",
+    // Semantic
+    success: "#7dd86a",
     lost: colors.red.accent2,
+    warning: "#c8a449",
+    "on-warning": "#2a1f0a",
   },
   variables: {
     "hover-opacity": 0.08,
   },
 };
-
-// Vuetify 2 color classes for reference:
-// background: "#121212",
-// surface: "#1e1e1e",
-// card: "var(--w3-bg-glass)",
-// toolbar: "var(--v-w3-race-bg-base)",
-// "app-bar": "var(--w3-bg-glass)",
-// "navigation-drawer": "var(--w3-bg-glass)",
-// "bottom-navigation": "var(--v-w3-race-bg-base)",
-// success: "#4caf50",
-// black: colors.shades.black,
-// white: colors.shades.white,
-// "black-gold": "#FFD428",

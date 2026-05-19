@@ -1,5 +1,5 @@
 .v-application.nightelf {
-  --w3-bg-glass: rgba(13, 7, 24, 0.9);
+  --w3-bg-glass: rgba(6, 20, 13, 0.92);
 
   background: url("/assets/backgrounds/nightelf.jpg") no-repeat !important;
   background-attachment: fixed !important;
@@ -9,6 +9,7 @@
 
   .v-card {
     background-color: var(--w3-bg-glass);
+    border: 1px solid rgba(46, 110, 77, 0.35);
   }
 
   .w3-glass {
@@ -18,16 +19,14 @@
 
 // Dialogs are not placed in the dom as a child of .v-application.nightelf, so we need to define this class here as well.
 .v-theme--nightelf {
-  --w3-bg-glass: rgba(13, 7, 24, 0.9);
+  --w3-bg-glass: rgba(6, 20, 13, 0.92);
+
   .w3-glass {
     background-color: var(--w3-bg-glass);
   }
 
-  // Make tonal chip backgrounds opaque by pre-multiplying the color instead of using opacity.
-  // This prevents the chip background from blending with whatever is behind it.
-  // Dark themes blend toward black; light themes blend toward white.
   .v-chip--variant-tonal .v-chip__underlay {
-    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #000000);
+    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #0d1f17);
     opacity: 1;
     position: absolute;
     z-index: 0;
@@ -37,5 +36,20 @@
     .v-chip__underlay {
       background: transparent !important;
     }
+  }
+
+  &.v-application, &.v-overlay {
+    .v-card-title, h3 {
+      color: #dee5eb;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .w3-gray-gold-text {
+    color: #9ac8b0 !important;
+  }
+
+  .w3-mid-emphasis {
+    color: rgba(255, 255, 255, 0.7);
   }
 }

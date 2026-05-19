@@ -24,9 +24,11 @@
 
   .v-btn {
     color: rgb(var(--v-theme-primary));
+    font-family: var(--w3-font-heading) !important;
 
     &.v-tab {
-      color: rgba(white, 0.6);
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--w3-font-heading) !important;
 
       &.v-tab--selected {
         color: rgb(var(--v-theme-primary));

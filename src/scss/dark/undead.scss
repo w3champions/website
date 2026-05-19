@@ -1,5 +1,5 @@
 .v-application.undead {
-  --w3-bg-glass: rgba(0, 0, 0, 0.9);
+  --w3-bg-glass: rgba(14, 8, 22, 0.92);
 
   background: url("/assets/backgrounds/undead.jpg") no-repeat !important;
   background-attachment: fixed !important;
@@ -9,6 +9,7 @@
 
   .v-card {
     background-color: var(--w3-bg-glass);
+    border: 1px solid rgba(107, 61, 160, 0.35);
   }
 
   .w3-glass {
@@ -18,16 +19,14 @@
 
 // Dialogs are not placed in the dom as a child of .v-application.undead, so we need to define this class here as well.
 .v-theme--undead {
-  --w3-bg-glass: rgba(0, 0, 0, 0.9);
+  --w3-bg-glass: rgba(14, 8, 22, 0.92);
+
   .w3-glass {
     background-color: var(--w3-bg-glass);
   }
 
-  // Make tonal chip backgrounds opaque by pre-multiplying the color instead of using opacity.
-  // This prevents the chip background from blending with whatever is behind it.
-  // Dark themes blend toward black; light themes blend toward white.
   .v-chip--variant-tonal .v-chip__underlay {
-    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #000000);
+    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #1a1029);
     opacity: 1;
     position: absolute;
     z-index: 0;
@@ -37,5 +36,20 @@
     .v-chip__underlay {
       background: transparent !important;
     }
+  }
+
+  &.v-application, &.v-overlay {
+    .v-card-title, h3 {
+      color: #ddd2a8;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .w3-gray-gold-text {
+    color: #b39adb !important;
+  }
+
+  .w3-mid-emphasis {
+    color: rgba(255, 255, 255, 0.7);
   }
 }

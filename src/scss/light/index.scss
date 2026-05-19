@@ -8,19 +8,25 @@
 
   .v-data-table, .custom-table {
     tr:hover {
-      box-shadow: 0 0 6px black;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
     }
   }
 
   .custom-table {
     td {
-      border-bottom: thin solid rgba(black, 0.12);
+      border-bottom: thin solid rgba(0, 0, 0, 0.1);
+    }
+
+    th {
+      // Override para temas light — usar primary ao invés de gold
+      color: rgb(var(--v-theme-primary)) !important;
     }
   }
 
   .v-btn {
     &.v-tab {
-      color: rgba(black, 0.54);
+      color: rgba(0, 0, 0, 0.54);
+      font-family: var(--w3-font-heading) !important;
 
       &.v-tab--selected {
         color: rgb(var(--v-theme-primary));
@@ -38,10 +44,10 @@
   }
 
   .w3-gray-gold-text {
-    color: rgba(black, 0.54);  // #0000008a
+    color: rgb(var(--v-theme-primary)) !important;
   }
-  
+
   .w3-mid-emphasis {
-    color: rgba(black, 0.75); // #000000bf
+    color: rgba(0, 0, 0, 0.75);
   }
 }

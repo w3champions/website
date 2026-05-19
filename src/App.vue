@@ -35,14 +35,14 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :class="{ darkmode: isDarkTheme.get() }" class="pr-3">
+    <v-app-bar class="pr-3 w3-app-bar" elevation="0">
       <!-- toggle button for drawer menu, only for lower than lg -->
       <v-app-bar-nav-icon class="d-lg-none" @click="setNavigationDrawerOpen(true)" />
-      <v-toolbar-title class="ms-4">
+      <v-toolbar-title class="ms-2">
         <router-link class="d-inline-flex w-auto" :to="{ name: EMainRouteName.HOME }">
           <brand-logo
             :is-dark-theme="isDarkTheme.get()"
-            style="max-height: 30px"
+            style="max-height: 34px"
             class="ml-2 d-none d-sm-flex"
           />
         </router-link>

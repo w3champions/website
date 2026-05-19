@@ -1,5 +1,5 @@
 .v-application.orc {
-  --w3-bg-glass: rgba(199, 186, 161, 0.9);
+  --w3-bg-glass: rgba(200, 180, 145, 0.92);
 
   .w3-won {
     color: rgb(var(--v-theme-success-darken-2)) !important;
@@ -13,6 +13,7 @@
 
   .v-card {
     background-color: var(--w3-bg-glass);
+    border: 1px solid rgba(167, 108, 58, 0.3);
   }
 
   .w3-glass {
@@ -22,16 +23,14 @@
 
 // Dialogs are not placed in the dom as a child of .v-application.orc, so we need to define this class here as well.
 .v-theme--orc {
-  --w3-bg-glass: rgba(199, 186, 161, 0.9);
+  --w3-bg-glass: rgba(200, 180, 145, 0.92);
+
   .w3-glass {
     background-color: var(--w3-bg-glass);
   }
 
-  // Make tonal chip backgrounds opaque by pre-multiplying the color instead of using opacity.
-  // This prevents the chip background from blending with whatever is behind it.
-  // Dark themes blend toward black; light themes blend toward white.
   .v-chip--variant-tonal .v-chip__underlay {
-    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #c7baa1);
+    background: color-mix(in srgb, currentColor calc(var(--v-activated-opacity) * 100%), #c8b488);
     opacity: 1;
     position: absolute;
     z-index: 0;
@@ -42,7 +41,16 @@
       background: transparent !important;
     }
   }
-}
 
-// #c12b12 orc red
-// #5c2604 orc brown
+  .v-card-title, h3 {
+    color: #3a1a08;
+  }
+
+  .w3-gray-gold-text {
+    color: #8a4623 !important;
+  }
+
+  .w3-mid-emphasis {
+    color: rgba(0, 0, 0, 0.72);
+  }
+}

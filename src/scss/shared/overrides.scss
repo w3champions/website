@@ -1,28 +1,43 @@
+// ── W3C Medieval Design Tokens ─────────────────────────────────────
+:root {
+  --w3-font-heading:  "Cinzel", "Friz Quadrata Std Medium", serif;
+  --w3-font-body:     "Cormorant Garamond", Georgia, serif;
+  --w3-font-mono:     "JetBrains Mono", "Consolas", monospace;
+
+  --w3-nav-bg-top:    #f2ead6;
+  --w3-nav-bg-bot:    #e4d9be;
+  --w3-nav-border:    #b8943c;
+  --w3-nav-text:      #3a2c14;
+  --w3-nav-text-soft: #5a4628;
+  --w3-nav-gold:      #7a5c10;
+  --w3-nav-trim:      #c8a548;
+}
+
 .v-card-title {
-  font-family: "Friz Quadrata Std Medium" !important;
+  font-family: var(--w3-font-heading) !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
 }
 
 .v-btn {
-  font-family: "Friz Quadrata Std Medium" !important;
+  font-family: var(--w3-font-heading) !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
 }
 
 .v-application, .v-btn.v-tab, .v-card-text, .v-tooltip {
-  font-family: "Inter Variable" !important;
+  font-family: var(--w3-font-body) !important;
 }
 
 h3 {
-  font-family: "Friz Quadrata Std Bold" !important;
-  font-weight: 400 !important;
+  font-family: var(--w3-font-heading) !important;
+  font-weight: 600 !important;
   letter-spacing: 1.56px !important;
   text-transform: uppercase !important;
 }
 
 .v-autocomplete {
-  font-family: "Friz Quadrata Std Medium" !important;
+  font-family: var(--w3-font-heading) !important;
   letter-spacing: 1.56px !important;
 }
 

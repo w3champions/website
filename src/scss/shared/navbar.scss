@@ -1,0 +1,189 @@
+// ── W3C Navbar (v-app-bar) Medieval Redesign ────────────────────────
+//
+// Parchment background so the black logo pops.
+// Gold border trim at the bottom. Cinzel for all nav labels.
+
+.v-app-bar {
+  background: linear-gradient(180deg, var(--w3-nav-bg-top), var(--w3-nav-bg-bot)) !important;
+  border-bottom: 2px solid var(--w3-nav-border) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28) !important;
+
+  // Gold metallic trim line below the border
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--w3-nav-trim),
+      #e8c96a,
+      var(--w3-nav-trim),
+      transparent
+    );
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  // All text buttons inside the bar
+  .v-btn {
+    color: var(--w3-nav-text-soft) !important;
+    font-family: var(--w3-font-heading) !important;
+    letter-spacing: 0.14em !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: color 0.2s ease !important;
+
+    &:hover {
+      color: var(--w3-nav-text) !important;
+    }
+
+    // Active route (router-link-active)
+    &.v-btn--active {
+      color: var(--w3-nav-gold) !important;
+    }
+  }
+
+  // Icon buttons (search, profile, theme, language)
+  .v-btn.v-btn--icon {
+    color: var(--w3-nav-text-soft) !important;
+
+    &:hover {
+      color: var(--w3-nav-gold) !important;
+      background: rgba(184, 148, 60, 0.12) !important;
+    }
+  }
+
+  // Vertical divider between nav links and tools
+  .v-divider--vertical {
+    border-color: rgba(184, 148, 60, 0.35) !important;
+    margin: 8px 4px !important;
+  }
+
+  // Toolbar title / brand area
+  .v-toolbar__title {
+    a {
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+}
+
+// Navigation drawer (mobile) — same parchment palette
+.v-navigation-drawer {
+  background: linear-gradient(180deg, var(--w3-nav-bg-top), var(--w3-nav-bg-bot)) !important;
+  border-right: 2px solid var(--w3-nav-border) !important;
+
+  .v-list-item {
+    color: var(--w3-nav-text-soft) !important;
+    font-family: var(--w3-font-heading) !important;
+    letter-spacing: 0.1em !important;
+
+    &:hover {
+      color: var(--w3-nav-text) !important;
+      background: rgba(184, 148, 60, 0.08) !important;
+    }
+
+    &--active {
+      color: var(--w3-nav-gold) !important;
+    }
+  }
+
+  .v-divider {
+    border-color: rgba(184, 148, 60, 0.3) !important;
+  }
+
+  .v-icon {
+    color: var(--w3-nav-text-soft) !important;
+  }
+}
+
+// Dark themes override — keep parchment on navbar even in dark mode
+.v-theme--nightelf,
+.v-theme--undead {
+  .v-app-bar {
+    background: linear-gradient(180deg, #1e1826, #160f22) !important;
+    border-bottom-color: #6b3da0 !important;
+
+    &::after {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        #8c6fcc,
+        #b39adb,
+        #8c6fcc,
+        transparent
+      );
+    }
+
+    .v-btn {
+      color: rgba(231, 224, 241, 0.65) !important;
+
+      &:hover { color: #e7e0f1 !important; }
+      &.v-btn--active { color: #b39adb !important; }
+    }
+
+    .v-btn.v-btn--icon {
+      color: rgba(231, 224, 241, 0.55) !important;
+      &:hover {
+        color: #b39adb !important;
+        background: rgba(107, 61, 160, 0.15) !important;
+      }
+    }
+
+    .v-divider--vertical {
+      border-color: rgba(139, 111, 204, 0.35) !important;
+    }
+  }
+
+  .v-navigation-drawer {
+    background: linear-gradient(180deg, #1e1826, #160f22) !important;
+    border-right-color: #6b3da0 !important;
+  }
+}
+
+// Nightelf gets a forest-green accent
+.v-theme--nightelf {
+  .v-app-bar {
+    background: linear-gradient(180deg, #0f1f18, #0a160f) !important;
+    border-bottom-color: #2e6e4d !important;
+
+    &::after {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        #5a9e7a,
+        #9ac8b0,
+        #5a9e7a,
+        transparent
+      );
+    }
+
+    .v-btn {
+      color: rgba(230, 238, 228, 0.65) !important;
+      &:hover { color: #e6eee4 !important; }
+      &.v-btn--active { color: #9ac8b0 !important; }
+    }
+
+    .v-btn.v-btn--icon {
+      color: rgba(230, 238, 228, 0.55) !important;
+      &:hover {
+        color: #9ac8b0 !important;
+        background: rgba(46, 110, 77, 0.15) !important;
+      }
+    }
+
+    .v-divider--vertical {
+      border-color: rgba(90, 158, 122, 0.35) !important;
+    }
+  }
+
+  .v-navigation-drawer {
+    background: linear-gradient(180deg, #0f1f18, #0a160f) !important;
+    border-right-color: #2e6e4d !important;
+  }
+}
