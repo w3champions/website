@@ -1,0 +1,162 @@
+// ── Faction Switcher Dropdown ─────────────────────────────────────────
+
+.faction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px 5px 7px;
+  background: linear-gradient(180deg, var(--w3-nav-bg-top), var(--w3-nav-bg-bot));
+  border: 1px solid var(--w3-nav-border);
+  color: var(--w3-nav-text);
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: var(--w3-font-ui);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-weight: 700;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover {
+    border-color: var(--w3-nav-trim);
+    color: var(--w3-nav-gold);
+  }
+
+  .faction-sigil {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(var(--v-theme-primary));
+    border: 1px solid var(--w3-nav-border);
+    border-radius: 50%;
+    font-size: 12px;
+    line-height: 1;
+    color: #fff;
+  }
+
+  .faction-caret {
+    font-size: 9px;
+    opacity: 0.6;
+    margin-left: 1px;
+  }
+}
+
+// Teleported to <body> — position/bg/border set via inline style
+.faction-dropdown {
+  border: 1px solid;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  padding: 6px;
+  width: 240px;
+
+  // Chain border top decoration
+  &::before {
+    content: "⛓⛓⛓⛓⛓⛓⛓⛓⛓⛓⛓⛓";
+    display: block;
+    font-size: 8px;
+    letter-spacing: 5px;
+    text-align: center;
+    overflow: hidden;
+    padding: 2px 0 4px;
+    opacity: 0.45;
+  }
+}
+
+.faction-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: var(--w3-font-ui);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: #5a4628;
+  text-transform: none;
+  font-weight: 700;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: #7a5c10;
+    border-color: rgba(184, 148, 60, 0.25);
+    background: rgba(184, 148, 60, 0.08);
+  }
+
+  .faction-opt-swatch {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(184, 148, 60, 0.45);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .faction-opt-name {
+    display: block;
+    font-family: var(--w3-font-ui);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .faction-opt-desc {
+    display: block;
+    font-family: var(--w3-font-body);
+    font-size: 11px;
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+}
+
+// ── Dark theme overrides (t-{name} class on the teleported element) ───
+
+.faction-dropdown.t-undead,
+.faction-dropdown.t-nightelf {
+  .faction-opt {
+    color: rgba(220, 210, 240, 0.75);
+  }
+}
+
+.faction-dropdown.t-undead {
+  &::before { color: #6b3da0; }
+
+  .faction-opt:hover {
+    color: #c9b8f0;
+    background: rgba(107, 61, 160, 0.18);
+    border-color: rgba(107, 61, 160, 0.3);
+  }
+}
+
+.faction-dropdown.t-nightelf {
+  &::before { color: #2e6e4d; }
+
+  .faction-opt {
+    color: rgba(200, 220, 210, 0.75);
+
+    &:hover {
+      color: #9ac8b0;
+      background: rgba(46, 110, 77, 0.18);
+      border-color: rgba(46, 110, 77, 0.3);
+    }
+  }
+}
+
+.faction-dropdown.t-orc {
+  .faction-opt:hover {
+    color: #8a4623;
+    background: rgba(138, 70, 35, 0.08);
+    border-color: rgba(138, 70, 35, 0.2);
+  }
+}

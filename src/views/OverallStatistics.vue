@@ -2,10 +2,8 @@
   <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
-        <v-card class="overflow-x-auto" tile>
-          <v-card-title class="pt-3">
-            <span>{{ $t("views_statistics.w3cstats") }}</span>
-          </v-card-title>
+        <v-card class="overflow-x-auto w3-plaque">
+          <page-hero :title="$t('views_app.statistics')" />
           <v-tabs>
             <v-tab
               exact
@@ -44,10 +42,11 @@ import { useOauthStore } from "@/store/oauth/store";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { usePlayerStore } from "@/store/player/store";
 import { EStatisticsRouteName } from "@/router/types";
+import PageHero from "@/components/common/PageHero.vue";
 
 export default defineComponent({
   name: "OverallStatisticsView",
-  components: {},
+  components: { PageHero },
   setup() {
     const oauthStore = useOauthStore();
     const overallStatsStore = useOverallStatsStore();

@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-3 w3-container-width">
-    <v-card>
-      <v-card-title class="pt-3">Tournaments</v-card-title>
+    <v-card class="w3-plaque">
+      <page-hero :title="$t('views_app.tournaments')" />
       <v-card-text>
         <div class="mb-4">
           <h3>Upcoming</h3>
@@ -26,11 +26,13 @@ import { getTournamentUrl } from "@/helpers/url-functions";
 import { ETournamentState } from "@/store/tournaments/types";
 import { useTournamentsStore } from "@/store/tournaments/store";
 import { useRouter } from "vue-router";
+import PageHero from "@/components/common/PageHero.vue";
 
 export default defineComponent({
   name: "TournamentsList",
   components: {
     TournamentsTable,
+    PageHero,
   },
   setup() {
     const router = useRouter();

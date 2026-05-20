@@ -1,20 +1,17 @@
 <template>
-  <v-card tile class="socials-card">
-    <v-card-text class="text-center w3-mid-emphasis">
-      {{ $t("views_home.partners") }}
-    </v-card-text>
-    <v-card
-      v-for="(partner, index) in partners"
-      :key="'partner_card_' + index"
-      class="socials-subcard"
-      tile
-      :href="partner.link"
-      target="_blank"
-      border
-      flat
-    >
-      <v-img :src="`/assets/partners/${partner.img}.jpg`" :alt="partner.img" />
-    </v-card>
+  <v-card class="w3-plaque partners-card">
+    <h2 class="banner pt-3 px-4">{{ $t("views_home.partners") }}</h2>
+    <div class="partners-list">
+      <a
+        v-for="(partner, index) in partners"
+        :key="'partner_' + index"
+        :href="partner.link"
+        target="_blank"
+        class="partner-logo"
+      >
+        <img :src="`/assets/partners/${partner.img}.jpg`" :alt="partner.img" />
+      </a>
+    </div>
   </v-card>
 </template>
 
@@ -27,12 +24,31 @@ const partners = [
 </script>
 
 <style lang="scss" scoped>
-.socials-subcard {
-  border: none;
-  padding: 2px;
+.partners-card {
+  padding-bottom: 16px;
 }
 
-.socials-card {
-  padding: 2px;
+.partners-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px 0;
+}
+
+.partner-logo {
+  display: block;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 2px;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>

@@ -2,6 +2,7 @@
 :root {
   --w3-font-heading:  "Cinzel", "Friz Quadrata Std Medium", serif;
   --w3-font-body:     "Cormorant Garamond", Georgia, serif;
+  --w3-font-ui:       "Philosopher", Georgia, serif;
   --w3-font-mono:     "JetBrains Mono", "Consolas", monospace;
 
   --w3-nav-bg-top:    #f2ead6;
@@ -13,32 +14,61 @@
   --w3-nav-trim:      #c8a548;
 }
 
+// Cinzel: only for large display titles
 .v-card-title {
   font-family: var(--w3-font-heading) !important;
-  letter-spacing: 1.56px !important;
+  letter-spacing: 0.07em !important;
   text-transform: uppercase !important;
 }
 
+// Philosopher: nav buttons, tabs, selects, chips, filter controls
 .v-btn {
+  font-family: var(--w3-font-ui) !important;
+  letter-spacing: 0.04em !important;
+  text-transform: none !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+// Keep join-button with Cinzel since it's a display element
+.v-btn.join-button {
   font-family: var(--w3-font-heading) !important;
-  letter-spacing: 1.56px !important;
+  letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
 }
 
 .v-application, .v-btn.v-tab, .v-card-text, .v-tooltip {
   font-family: var(--w3-font-body) !important;
+  font-size: 1.05rem !important;
+  line-height: 1.7 !important;
+}
+
+.v-tab {
+  font-family: var(--w3-font-ui) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: none !important;
+  font-size: 14px !important;
 }
 
 h3 {
   font-family: var(--w3-font-heading) !important;
   font-weight: 600 !important;
-  letter-spacing: 1.56px !important;
+  letter-spacing: 0.1em !important;
   text-transform: uppercase !important;
 }
 
 .v-autocomplete {
-  font-family: var(--w3-font-heading) !important;
-  letter-spacing: 1.56px !important;
+  font-family: var(--w3-font-ui) !important;
+  letter-spacing: 0.02em !important;
+}
+
+.v-select, .v-chip {
+  font-family: var(--w3-font-ui) !important;
+}
+
+.v-list-item-title, .v-list-item-subtitle {
+  font-family: var(--w3-font-ui) !important;
 }
 
 .v-data-table,
@@ -78,4 +108,43 @@ h3 {
 .dropdown-menu-title {
   padding: 0 8px 8px;
   font-size: 1.05rem;
+}
+
+// ── Tabs — gold active indicator ──────────────────────────────────────
+.v-tab.v-tab--selected {
+  color: rgb(var(--v-theme-w3-gold)) !important;
+}
+
+.v-tabs .v-tabs-slider {
+  background: rgb(var(--v-theme-w3-gold)) !important;
+}
+
+// ── Expansion panels — medieval typography ────────────────────────────
+.v-expansion-panel-title {
+  font-family: var(--w3-font-heading) !important;
+  font-size: 14px !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 600 !important;
+  min-height: 52px !important;
+}
+
+.v-expansion-panel-text__wrapper {
+  font-family: var(--w3-font-body) !important;
+  font-size: 1rem !important;
+  line-height: 1.75 !important;
+  padding-top: 8px !important;
+}
+
+// ── Dropdown button (Rankings / Matches selectors) ────────────────────
+.w3-dropdown-button.v-btn {
+  border: 1px solid rgb(var(--v-theme-w3-gold) / 0.35) !important;
+  letter-spacing: 0.1em !important;
+
+  h2 {
+    font-family: var(--w3-font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 }

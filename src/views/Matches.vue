@@ -2,20 +2,13 @@
   <v-container class="pa-3 w3-container-width">
     <v-row>
       <v-col cols="12">
-        <v-card tile>
-          <v-card-title class="pt-3">
-            <v-row no-gutters align="start">
-              <v-col cols="auto">
-                {{ $t("views_app.matches") }}
-              </v-col>
-              <v-spacer />
-              <v-col cols="auto" class="d-flex align-start">
-                <div class="matches-season-slot" :class="{ 'matches-season-slot--hidden': unfinished }">
-                  <season-select @seasonSelected="selectSeason" />
-                </div>
-              </v-col>
-            </v-row>
-          </v-card-title>
+        <v-card class="w3-plaque">
+          <page-hero :title="$t('views_app.matches')" />
+          <div class="d-flex justify-end px-4 pb-2 mt-n4">
+            <div class="matches-season-slot" :class="{ 'matches-season-slot--hidden': unfinished }">
+              <season-select @seasonSelected="selectSeason" />
+            </div>
+          </div>
           <v-card-text class="pt-2">
             <div class="matches-filter-scroll">
               <div class="matches-filter-row d-flex align-center">
@@ -31,6 +24,7 @@
               </div>
             </div>
           </v-card-text>
+          <hr class="w3-gilt-rule mx-4 mb-0 mt-1" />
           <v-card-text v-if="isMatchesLoading" class="d-flex justify-center py-10">
             <v-progress-circular indeterminate color="primary" size="40" />
           </v-card-text>
@@ -73,6 +67,7 @@ import SeasonSelect from "@/components/common/SeasonSelect.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import SpoilerFreeToggle from "@/components/matches/SpoilerFreeToggle.vue";
+import PageHero from "@/components/common/PageHero.vue";
 
 export default defineComponent({
   name: "MatchesView",
@@ -88,6 +83,7 @@ export default defineComponent({
     SpoilerFreeToggle,
     HeroSelect,
     DurationSelect,
+    PageHero,
   },
   setup() {
     const overallStatsStore = useOverallStatsStore();

@@ -1,19 +1,17 @@
 export const orc = {
-  dark: false,
+  dark: true,
   colors: {
-    // Horde rust/brown as primary
-    primary: "#7a3010",
-    secondary: "#5a3a1a",
-    surface: "rgba(200, 180, 145, 0.92)",
-    background: "#b89870",
-    "w3-gold": "#d99356",
-    "w3-race-bg": "#c8b488",
-    // Semantic
-    success: "#3d6b3a",
-    "success-darken-2": "#2a4e28",
-    lost: "#BF0025",
-    warning: "#c07a10",
-    "on-warning": "#5c3208",
+    primary:              "#c8501e",  // vivid rust-red — text/accents on dark bg
+    secondary:            "#7a3a12",
+    surface:              "rgba(28, 14, 6, 0.92)",   // dark leather-brown
+    background:           "#120804",                  // near-black brown
+    "w3-gold":            "#d97a2a",  // deep orange-gold (Horde signature)
+    "w3-race-bg":         "#251208",
+    success:              "#3d6b3a",
+    "success-darken-2":   "#2a4e28",
+    lost:                 "#d63030",
+    warning:              "#c07a10",
+    "on-warning":         "#f5e0c0",
   },
   variables: {
     "hover-opacity": 0.08,

@@ -1,0 +1,99 @@
+// ── Side pendants — fixed decorative cloth banners ───────────────────
+
+.w3-pendant {
+  position: fixed;
+  top: 64px;
+  width: 36px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+
+  &--left  { left: 24px; }
+  &--right { right: 24px; }
+
+  .rope {
+    width: 2px;
+    height: 18px;
+    background: rgb(var(--v-theme-w3-gold));
+    opacity: 0.7;
+  }
+
+  .ring {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgb(var(--v-theme-w3-gold));
+    border-radius: 50%;
+    margin: -1px 0;
+    opacity: 0.85;
+  }
+
+  .cloth {
+    width: 36px;
+    height: 200px;
+    border: 1px solid rgb(var(--v-theme-w3-gold));
+    position: relative;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.33), 0 8px 24px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(var(--v-theme-w3-gold));
+    font-size: 22px;
+
+    // Swallowtail bottom
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -18px;
+      left: -1px;
+      right: -1px;
+      height: 20px;
+      background: conic-gradient(
+        from -45deg at 50% 0%,
+        var(--w3-pendant-cloth-top) 25%,
+        transparent 25% 75%,
+        var(--w3-pendant-cloth-top) 75%
+      );
+      -webkit-mask: linear-gradient(to bottom, black 0, transparent 100%);
+              mask: linear-gradient(to bottom, black 0, transparent 100%);
+      filter: brightness(0.75);
+    }
+
+    // Inner dashed border
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 1px dashed rgb(var(--v-theme-w3-gold));
+      opacity: 0.45;
+    }
+  }
+}
+
+// Cloth colors per faction
+.v-theme--human .w3-pendant .cloth {
+  --w3-pendant-cloth-top: #1a5fa8;
+  background: linear-gradient(180deg, #1a5fa8, #0d3060);
+}
+
+.v-theme--orc .w3-pendant .cloth {
+  --w3-pendant-cloth-top: #7a3010;
+  background: linear-gradient(180deg, #7a3010, #3d1508);
+}
+
+.v-theme--undead .w3-pendant .cloth {
+  --w3-pendant-cloth-top: #5b2c8c;
+  background: linear-gradient(180deg, #5b2c8c, #2d1646);
+}
+
+.v-theme--nightelf .w3-pendant .cloth {
+  --w3-pendant-cloth-top: #265c43;
+  background: linear-gradient(180deg, #265c43, #133021);
+}
+
+@media (max-width: 1100px) {
+  .w3-pendant {
+    display: none;
+  }
+}

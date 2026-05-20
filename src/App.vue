@@ -1,5 +1,17 @@
 <template>
   <v-app :class="getTheme">
+    <!-- Pendants — fixed decorative banners on the sides -->
+    <div class="w3-pendant w3-pendant--left" aria-hidden="true">
+      <div class="rope"></div>
+      <div class="ring"></div>
+      <div class="cloth">{{ pendantSigil }}</div>
+    </div>
+    <div class="w3-pendant w3-pendant--right" aria-hidden="true">
+      <div class="rope"></div>
+      <div class="ring"></div>
+      <div class="cloth">⚜</div>
+    </div>
+
     <v-navigation-drawer
       v-model="navigationDrawerOpen"
       temporary
@@ -101,27 +113,7 @@
         <v-icon size="x-large">{{ mdiTreasureChest }}</v-icon>
       </v-btn>
 
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-btn variant="text" tile class="right-menu" v-bind="props">
-            <v-icon size="x-large">{{ mdiInvertColors }}</v-icon>
-          </v-btn>
-        </template>
-        <v-list max-height="400" class="theme-selector overflow-y-auto">
-          <v-list-item @click="setTheme('human')">
-            <v-list-item-title>{{ $t("races.HUMAN") }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="setTheme('orc')">
-            <v-list-item-title>{{ $t("races.ORC") }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="setTheme('nightelf')">
-            <v-list-item-title>{{ $t("races.NIGHT_ELF") }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="setTheme('undead')">
-            <v-list-item-title>{{ $t("races.UNDEAD") }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <faction-switcher @select="setTheme" />
 
       <v-menu>
         <template v-slot:activator="{ props }">
@@ -141,10 +133,10 @@
       </v-menu>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="pb-6">
       <router-view />
     </v-main>
-    <v-footer class="pa-0 flex-0-0 w3-glass">
+    <v-footer class="flex-0-0 w3-glass" style="padding: 0; border-top: 1px solid rgb(var(--v-theme-w3-gold) / 0.25);">
       <v-row justify="center" no-gutters>
         <v-btn variant="text" tile class="my-2" to="/imprint">Imprint</v-btn>
       </v-row>
@@ -158,6 +150,7 @@ import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
+import FactionSwitcher from "@/components/common/FactionSwitcher.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRoute, useRouter } from "vue-router";
@@ -178,7 +171,6 @@ import {
   mdiCog,
   mdiControllerClassic,
   mdiHelpCircleOutline,
-  mdiInvertColors,
   mdiLogout,
   mdiTreasureChest,
   mdiTrophy,
@@ -199,6 +191,7 @@ export default defineComponent({
     SignInDialog,
     GlobalSearch,
     LocaleIcon,
+    FactionSwitcher,
   },
   setup() {
     const { locale } = useI18n();
@@ -326,9 +319,19 @@ export default defineComponent({
 
     const isDarkTheme = ({
       get: () => {
-        const isDark = getTheme.value === "nightelf" || getTheme.value === "undead";
+        const isDark = getTheme.value === "nightelf" || getTheme.value === "undead" || getTheme.value === "orc";
         return isDark;
       },
+    });
+
+    const pendantSigil = computed(() => {
+      const sigils: Record<string, string> = {
+        human:    "⚔",
+        orc:      "⚒",
+        undead:   "☠",
+        nightelf: "🌙",
+      };
+      return sigils[selectedTheme.value] ?? "⚔";
     });
 
     // Check if given ItemType element is visible for the current user
@@ -379,9 +382,9 @@ export default defineComponent({
       mdiAccountCircleOutline,
       mdiAccountCircle,
       mdiCog,
-      mdiInvertColors,
       mdiLogout,
       mdiTreasureChest,
+      pendantSigil,
       oauthStore,
       savedLanguage,
       setNavigationDrawerOpen,

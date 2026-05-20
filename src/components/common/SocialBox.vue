@@ -1,37 +1,18 @@
 <template>
-  <v-card tile class="socials-card">
-    <v-card-text class="text-center w3-mid-emphasis">
-      {{ $t("views_home.joinus") }}
-    </v-card-text>
+  <v-card class="w3-plaque socials-card">
+    <h2 class="banner pt-3 px-4">{{ $t("views_home.joinus") }}</h2>
+    <div class="socials-list">
+      <a href="https://discord.gg/uJmQxG2" target="_blank" class="social-logo">
+        <img src="/assets/socials/Discord_button.png" alt="Discord" />
+      </a>
+    </div>
 
-    <!-- DISCORD -->
-    <v-card
-      class="socials-subcard"
-      href="https://discord.gg/uJmQxG2"
-      target="_blank"
-      tile
-      border
-      flat
-      style="padding-bottom: 0px"
-    >
-      <v-img src="/assets/socials/Discord_button.png" alt="Discord" />
-    </v-card>
-
-    <v-card-text class="text-center w3-mid-emphasis">
-      {{ $t("views_home.socialmedia") }}
-    </v-card-text>
-
-    <!-- TWITTER -->
-    <v-card
-      class="socials-subcard"
-      href="https://twitter.com/W3ChampionsTeam"
-      target="_blank"
-      tile
-      border
-      flat
-    >
-      <v-img src="/assets/socials/Twitter_button.png" alt="Twitter" />
-    </v-card>
+    <h2 class="banner px-4">{{ $t("views_home.socialmedia") }}</h2>
+    <div class="socials-list">
+      <a href="https://twitter.com/W3ChampionsTeam" target="_blank" class="social-logo">
+        <img src="/assets/socials/Twitter_button.png" alt="Twitter" />
+      </a>
+    </div>
   </v-card>
 </template>
 
@@ -45,12 +26,31 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.socials-subcard {
-  border: none;
-  margin: 2px;
+.socials-card {
+  padding-bottom: 12px;
 }
 
-.socials-card {
-  padding: 2px;
+.socials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 12px 4px;
+}
+
+.social-logo {
+  display: block;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 2px;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>

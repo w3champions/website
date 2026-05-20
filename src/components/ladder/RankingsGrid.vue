@@ -2,8 +2,8 @@
   <div class="elevation-1">
     <table class="custom-table">
       <thead>
-        <tr class="w3-mid-emphasis">
-          <td
+        <tr>
+          <th
             v-for="header in headers"
             :key="header.name"
             class="header"
@@ -19,7 +19,7 @@
               <v-icon v-if="isSortedAsc">{{ mdiChevronUp }}</v-icon>
               <v-icon v-if="!isSortedAsc">{{ mdiChevronDown }}</v-icon>
             </div>
-          </td>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -32,7 +32,7 @@
             'w3-mid-emphasis': true,
           }"
         >
-          <td class="number-text">{{ item.rankNumber }}.</td>
+          <td class="number-text" :class="{ 'rank-one': item.rankNumber === 1 }">{{ item.rankNumber }}.</td>
           <td class="d-md-flex">
             <div
               v-for="(playerId, index) in item.player.playerIds"
@@ -558,7 +558,7 @@ export default defineComponent({
   flex-wrap: wrap;
 }
 
-td.header {
+th.header {
   position: relative;
 
   .sort-icon {
@@ -566,6 +566,12 @@ td.header {
     bottom: 10px;
     right: -7px;
   }
+}
+
+.rank-one {
+  color: rgb(var(--v-theme-w3-gold));
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .swords {

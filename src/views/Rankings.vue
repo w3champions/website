@@ -1,9 +1,7 @@
 <template>
   <v-container class="pa-3 w3-container-width">
-    <v-card class="overflow-x-auto" tile>
-      <v-card-title class="pt-3">
-        {{ $t("views_app.rankings") }}
-      </v-card-title>
+    <v-card class="overflow-x-auto w3-plaque">
+      <page-hero :title="$t('views_app.rankings')" />
       <v-card-text class="pt-2 pb-0 d-flex align-center flex-wrap">
         <v-menu location="right" transition="fade-transition">
           <template v-slot:activator="{ props }">
@@ -146,6 +144,7 @@
           </v-autocomplete>
         </div>
       </v-card-text>
+      <hr class="w3-gilt-rule mx-4 mb-0 mt-1" />
       <v-card-text>
         <div v-if="isRankingsLoading" class="d-flex justify-center py-10">
           <v-progress-circular indeterminate color="primary" size="40" />
@@ -178,6 +177,7 @@ import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
+import PageHero from "@/components/common/PageHero.vue";
 import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
@@ -195,6 +195,7 @@ export default defineComponent({
     GameModeSelect,
     RankingsGrid,
     RankingsRaceDistribution,
+    PageHero,
   },
   props: {
     season: {

@@ -12,19 +12,74 @@
   th {
     padding: 10px 16px;
     font-family: var(--w3-font-heading) !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     letter-spacing: 0.18em !important;
     text-transform: uppercase !important;
     color: rgb(var(--v-theme-w3-gold)) !important;
-    border-bottom: 1px solid rgba(var(--v-theme-primary), 0.35) !important;
+    border-bottom: 1px solid rgb(var(--v-theme-primary) / 0.3) !important;
   }
 
   td {
     padding: 6px 16px;
-    font-size: 0.875rem;
+    font-size: 1rem;
     height: 48px;
     font-family: var(--w3-font-body) !important;
+  }
+
+  tbody tr {
+    transition: background 0.12s;
+
+    &:nth-child(even) {
+      background: rgb(var(--v-theme-primary) / 0.04);
+    }
+
+    &:hover {
+      background: rgb(var(--v-theme-primary) / 0.1) !important;
+    }
+  }
+}
+
+// ── Banner heading — h2 with metallic lines on sides ─────────────────
+h2.banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--w3-font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--v-theme-w3-gold));
+  margin: 16px 0 12px;
+
+  &::before, &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(var(--v-theme-w3-gold)), transparent);
+    opacity: 0.45;
+  }
+}
+
+// ── Season badge ──────────────────────────────────────────────────────
+.w3-season-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px;
+  border: 1px solid rgb(var(--v-theme-w3-gold) / 0.5);
+  font-family: var(--w3-font-heading);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(var(--v-theme-w3-gold));
+
+  &::before, &::after {
+    content: "◆";
+    font-size: 7px;
+    opacity: 0.65;
   }
 }
 
@@ -74,6 +129,26 @@
   }
 }
 
+// ── Setup Guide / alt CTA button ────────────────────────────────────
+.v-btn.join-button--alt {
+  color: rgb(var(--v-theme-w3-gold)) !important;
+  font-family: var(--w3-font-heading) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  background: linear-gradient(180deg, rgb(var(--v-theme-surface) / 0.85), rgb(var(--v-theme-surface))) !important;
+  border: 1px solid rgb(var(--v-theme-w3-gold) / 0.45) !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease !important;
+
+  &:hover {
+    border-color: rgb(var(--v-theme-w3-gold)) !important;
+  }
+}
+
 // ── Plaque card — golden border with raised look ─────────────────────
 .v-card.w3-plaque {
   border: 2px solid rgb(var(--v-theme-w3-gold)) !important;
@@ -107,8 +182,8 @@
 p {
   margin-bottom: 16px;
   font-family: var(--w3-font-body);
-  font-size: 1.05rem;
-  line-height: 1.65;
+  font-size: 1.1rem;
+  line-height: 1.7;
 }
 
 ul, ol {
@@ -136,6 +211,20 @@ ul, ol {
   .v-field__clearable {
     color: rgb(var(--v-theme-primary));
   }
+}
+
+// ── Stone texture overlay (on faction backgrounds) ───────────────────
+.v-application::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(115deg, transparent 0 7px, rgba(0, 0, 0, 1) 7px 8px),
+    repeating-linear-gradient(35deg,  transparent 0 11px, rgba(0, 0, 0, 1) 11px 12px);
+  opacity: 0.07;
+  mix-blend-mode: overlay;
 }
 
 // ── Gold separator ────────────────────────────────────────────────────

@@ -32,10 +32,10 @@
   // All text buttons inside the bar
   .v-btn {
     color: var(--w3-nav-text-soft) !important;
-    font-family: var(--w3-font-heading) !important;
-    letter-spacing: 0.14em !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
+    font-family: var(--w3-font-ui) !important;
+    letter-spacing: 0.02em !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
     transition: color 0.2s ease !important;
 
     &:hover {
@@ -80,8 +80,8 @@
 
   .v-list-item {
     color: var(--w3-nav-text-soft) !important;
-    font-family: var(--w3-font-heading) !important;
-    letter-spacing: 0.1em !important;
+    font-family: var(--w3-font-ui) !important;
+    letter-spacing: 0.02em !important;
 
     &:hover {
       color: var(--w3-nav-text) !important;
@@ -102,47 +102,80 @@
   }
 }
 
-// Dark themes override — keep parchment on navbar even in dark mode
+// Dark theme CSS variable overrides — cascade to all themed children
+.v-theme--undead {
+  --w3-nav-bg-top:    #1e1826;
+  --w3-nav-bg-bot:    #160f22;
+  --w3-nav-border:    #6b3da0;
+  --w3-nav-text:      rgba(231, 224, 241, 0.9);
+  --w3-nav-text-soft: rgba(231, 224, 241, 0.65);
+  --w3-nav-gold:      #b39adb;
+  --w3-nav-trim:      #8c6fcc;
+}
+
+.v-theme--nightelf {
+  --w3-nav-bg-top:    #0f1f18;
+  --w3-nav-bg-bot:    #0a160f;
+  --w3-nav-border:    #2e6e4d;
+  --w3-nav-text:      rgba(230, 238, 228, 0.9);
+  --w3-nav-text-soft: rgba(230, 238, 228, 0.65);
+  --w3-nav-gold:      #9ac8b0;
+  --w3-nav-trim:      #5a9e7a;
+}
+
+// Orc CSS variable overrides
+.v-theme--orc {
+  --w3-nav-bg-top:    #5c2a10;
+  --w3-nav-bg-bot:    #4a2008;
+  --w3-nav-border:    #c86030;
+  --w3-nav-text:      rgba(255, 230, 200, 0.95);
+  --w3-nav-text-soft: rgba(255, 210, 170, 0.75);
+  --w3-nav-gold:      #e8922a;
+  --w3-nav-trim:      #c86030;
+}
+
+// Dark themes — navbar uses the per-theme CSS variables set above
+.v-theme--orc,
 .v-theme--nightelf,
 .v-theme--undead {
   .v-app-bar {
-    background: linear-gradient(180deg, #1e1826, #160f22) !important;
-    border-bottom-color: #6b3da0 !important;
+    background: linear-gradient(180deg, var(--w3-nav-bg-top), var(--w3-nav-bg-bot)) !important;
+    border-bottom-color: var(--w3-nav-border) !important;
 
     &::after {
       background: linear-gradient(
         90deg,
         transparent,
-        #8c6fcc,
-        #b39adb,
-        #8c6fcc,
+        var(--w3-nav-trim),
+        var(--w3-nav-gold),
+        var(--w3-nav-trim),
         transparent
       );
     }
 
     .v-btn {
-      color: rgba(231, 224, 241, 0.65) !important;
+      color: var(--w3-nav-text-soft) !important;
 
-      &:hover { color: #e7e0f1 !important; }
-      &.v-btn--active { color: #b39adb !important; }
+      &:hover { color: var(--w3-nav-text) !important; }
+      &.v-btn--active { color: var(--w3-nav-gold) !important; }
     }
 
     .v-btn.v-btn--icon {
-      color: rgba(231, 224, 241, 0.55) !important;
+      color: var(--w3-nav-text-soft) !important;
       &:hover {
-        color: #b39adb !important;
-        background: rgba(107, 61, 160, 0.15) !important;
+        color: var(--w3-nav-gold) !important;
+        background: rgba(160, 64, 24, 0.15) !important;
       }
     }
 
     .v-divider--vertical {
-      border-color: rgba(139, 111, 204, 0.35) !important;
+      border-color: rgba(160, 64, 24, 0.35) !important;
     }
   }
 
   .v-navigation-drawer {
-    background: linear-gradient(180deg, #1e1826, #160f22) !important;
-    border-right-color: #6b3da0 !important;
+    background: linear-gradient(180deg, var(--w3-nav-bg-top), var(--w3-nav-bg-bot)) !important;
+    border-right-color: var(--w3-nav-border) !important;
   }
 }
 

@@ -1,8 +1,6 @@
 <template>
-  <v-card class="support-card" tile>
-    <v-card-text class="text-center w3-mid-emphasis">
-      {{ $t("views_home.supportus") }}
-    </v-card-text>
+  <v-card class="support-card w3-plaque">
+    <h2 class="banner pt-3 px-4">{{ $t("views_home.supportus") }}</h2>
 
     <!-- PATREON -->
     <v-card
@@ -86,12 +84,12 @@ const alternates = ref<{ name: string; dialog: boolean }[]>([
 </script>
 
 <style lang="scss" scoped>
-.support-subcard {
-  border: none;
-  padding: 1px 2px;
+.support-card {
+  padding-bottom: 12px;
 }
 
-.support-card {
-  padding: 2px;
+.support-subcard {
+  border: none;
+  margin: 4px 12px;
 }
 </style>

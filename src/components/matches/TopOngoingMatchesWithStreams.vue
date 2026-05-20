@@ -1,8 +1,9 @@
 <template>
-  <v-card>
-    <v-card-title>
+  <v-card class="w3-plaque">
+    <div class="live-title px-4 pt-3 pb-2">
+      <span class="live-dot"></span>
       {{ $t("components_matches_topongoingmatcheswithstreams.toplive1v1matches") }}
-    </v-card-title>
+    </div>
     <v-container>
       <v-row
         v-for="match in matchesSortedByMMR"
@@ -93,3 +94,30 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.live-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--w3-font-heading);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #c9534a;
+  text-transform: uppercase;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c9534a;
+  box-shadow: 0 0 8px #c9534a;
+  animation: blink 1.4s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+</style>
