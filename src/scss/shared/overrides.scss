@@ -1,8 +1,8 @@
 // ── W3C Medieval Design Tokens ─────────────────────────────────────
 :root {
   --w3-font-heading:  "Cinzel", "Friz Quadrata Std Medium", serif;
-  --w3-font-body:     "Cormorant Garamond", Georgia, serif;
-  --w3-font-ui:       "Philosopher", Georgia, serif;
+  --w3-font-body:     "Lora", Georgia, serif;
+  --w3-font-ui:       "Inter Variable", "Inter", system-ui, sans-serif;
   --w3-font-mono:     "JetBrains Mono", "Consolas", monospace;
 
   --w3-nav-bg-top:    #f2ead6;
@@ -21,7 +21,7 @@
   text-transform: uppercase !important;
 }
 
-// Philosopher: nav buttons, tabs, selects, chips, filter controls
+// Inter Variable: nav buttons, tabs, selects, chips, filter controls
 .v-btn {
   font-family: var(--w3-font-ui) !important;
   letter-spacing: 0.04em !important;
