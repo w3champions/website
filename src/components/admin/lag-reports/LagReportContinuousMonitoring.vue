@@ -96,6 +96,10 @@
               <th class="text-center" colspan="4">Client Ping</th>
               <th class="text-center">Loss</th>
               <th class="text-center" colspan="3">Server Ping</th>
+              <th class="text-center">Transport</th>
+              <th class="text-center" colspan="2">Action Latency</th>
+              <th class="text-center">Disconnects</th>
+              <th class="text-center">Crashed</th>
             </tr>
             <tr class="text-caption text-medium-emphasis">
               <th></th><th></th>
@@ -103,6 +107,10 @@
               <th class="text-center">max</th><th class="text-center">stddev</th>
               <th class="text-center">rate</th>
               <th class="text-center">min</th><th class="text-center">avg</th><th class="text-center">max</th>
+              <th></th>
+              <th class="text-center">p50</th><th class="text-center">p99</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -121,6 +129,28 @@
               <td class="text-center">{{ summary.serverPing.min ?? '—' }}</td>
               <td class="text-center">{{ summary.serverPing.avg ?? '—' }}</td>
               <td class="text-center">{{ summary.serverPing.max ?? '—' }}</td>
+              <td class="text-center">{{ summary.telemetry?.connectionType ?? '—' }}</td>
+              <td
+                class="text-center"
+                :title="summary.telemetry ? aggregateTooltip(summary.telemetry) : ''"
+              >
+                {{ summary.telemetry?.actionLatencyAggregate.p50Ms ?? '—' }}
+              </td>
+              <td
+                class="text-center"
+                :title="summary.telemetry ? aggregateTooltip(summary.telemetry) : ''"
+              >
+                {{ summary.telemetry?.actionLatencyAggregate.p99Ms ?? '—' }}
+              </td>
+              <td class="text-center">
+                {{ summary.telemetry ? formatDisconnects(summary.telemetry.disconnects) : '—' }}
+              </td>
+              <td
+                class="text-center"
+                :class="summary.telemetry?.crashed ? 'text-error' : ''"
+              >
+                {{ summary.telemetry ? (summary.telemetry.crashed ? 'Yes' : 'No') : '—' }}
+              </td>
             </tr>
           </tbody>
         </v-table>
@@ -133,6 +163,8 @@
 import { computed, defineComponent, type PropType, reactive, ref, watch } from "vue";
 import { useTheme } from "vuetify";
 import { EConnectionEventType, EConnectionType, type LagReportDetail } from "@/store/admin/lagReports/types";
+import type { IPlayerMatchTelemetry, IPlayerMatchTelemetryEntry } from "@/store/admin/playerMatchTelemetry/types";
+import { decodeU8, decodeU16LE, decodeU32LE } from "@/store/admin/playerMatchTelemetry/binDataDecoder";
 import { mdiCircle } from "@mdi/js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import type { ChartData, ChartOptions } from "chart.js";
@@ -166,6 +198,7 @@ export default defineComponent({
     playerColors: { type: Array as PropType<string[]>, required: true },
     inspectorLeftMs: { type: Number as PropType<number | null>, default: null },
     inspectorRightMs: { type: Number as PropType<number | null>, default: null },
+    telemetry: { type: Object as PropType<IPlayerMatchTelemetry | null>, default: null },
   },
   emits: ["update:inspectorLeftMs", "update:inspectorRightMs", "openInspector"],
   setup(props, { emit }) {
@@ -387,6 +420,10 @@ export default defineComponent({
         });
       }
 
+      for (const ds of actionLatencyDatasets.value) {
+        datasets.push(ds);
+      }
+
       datasets.forEach((ds, i) => {
         const base = (ds.playerColor as string | undefined) ?? (ds.borderColor as string | undefined) ?? "#888888";
         const dimmed = hoveredDatasetIndex.value != null && hoveredDatasetIndex.value !== i;
@@ -404,6 +441,52 @@ export default defineComponent({
       });
 
       return { datasets };
+    });
+
+    // ── Action latency per-player traces ─────────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const actionLatencyDatasets = computed<any[]>(() => {
+      if (!props.telemetry) return [];
+      const r = props.report;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const out: any[] = [];
+      props.telemetry.players.forEach((p) => {
+        if (p.bucketCount === 0) return;
+        const pi = r.players.findIndex((rp) => rp.battleTag === p.battleTag);
+        if (pi >= 0 && !visiblePlayers[pi]) return;
+        const color = pi >= 0
+          ? PLAYER_COLORS[pi % PLAYER_COLORS.length]
+          : PLAYER_COLORS[0];
+        const gameTimes = decodeU32LE(p.gameTimeOffsetsMs);
+        const means = decodeU16LE(p.meansMs);
+        const counts = decodeU8(p.sampleCounts);
+        const points: Array<{ x: number; y: number | null }> = [];
+        for (let i = 0; i < p.bucketCount; i++) {
+          points.push({
+            x: gameTimeToWallClockMs(gameTimes[i] / 1000),
+            y: counts[i] > 0 ? means[i] : null,
+          });
+        }
+        out.push({
+          type: "line",
+          label: `${playerName(p.battleTag)} action latency`,
+          metric: "action-latency",
+          playerColor: color,
+          data: points,
+          borderColor: color,
+          backgroundColor: "transparent",
+          borderWidth: 1.5,
+          borderDash: p.connectionType === "QUIC" ? [] : [4, 2],
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointHitRadius: 12,
+          tension: 0.2,
+          spanGaps: false,
+          yAxisID: "y",
+          order: 1,
+        });
+      });
+      return out;
     });
 
     const eventMarkers = computed<EventMarkerInfo[]>(() => {
@@ -650,6 +733,7 @@ export default defineComponent({
             : "Direct",
           clientPing: { ...clientStats, stddev: computeStddev(ping.map((p) => p.avg).filter((v): v is number => v != null)), lossRate: avgLoss },
           serverPing: serverStats,
+          telemetry: findTelemetryFor(player.battleTag),
         };
       });
     });
@@ -862,6 +946,31 @@ export default defineComponent({
       pingChartRef.value?.chart?.resetZoom();
     }
 
+    // ── Telemetry helpers ────────────────────────────────────────────
+    function findTelemetryFor(battleTag: string): IPlayerMatchTelemetryEntry | null {
+      return props.telemetry?.players.find((p) => p.battleTag === battleTag) ?? null;
+    }
+
+    function formatDisconnects(d: IPlayerMatchTelemetryEntry["disconnects"]): string {
+      if (d.count === 0) return "0";
+      const meanSec = (d.meanDurationMs / 1000).toFixed(1);
+      return `${d.count} (${meanSec}s avg)`;
+    }
+
+    function aggregateTooltip(entry: IPlayerMatchTelemetryEntry): string {
+      const a = entry.actionLatencyAggregate;
+      return [
+        `samples: ${a.sampleCount}`,
+        `p10: ${a.p10Ms} ms`,
+        `p50: ${a.p50Ms} ms`,
+        `p99: ${a.p99Ms} ms`,
+        `p99.9: ${a.p999Ms} ms`,
+        `mean: ${a.meanMs} ms`,
+        `stddev: ${a.stddevMs} ms`,
+        `dropped: ${entry.droppedUnmatchedCount}`,
+      ].join("\n");
+    }
+
     // Initialize visible players when report data arrives
     watch(() => props.report.players, (players) => {
       players.forEach((_, i) => {
@@ -886,6 +995,10 @@ export default defineComponent({
       playerSummaries,
       mdiCircle,
       zoomPlugin,
+      actionLatencyDatasets,
+      findTelemetryFor,
+      formatDisconnects,
+      aggregateTooltip,
     };
   },
 });
