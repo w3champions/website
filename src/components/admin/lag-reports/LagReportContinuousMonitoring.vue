@@ -142,14 +142,20 @@
               >
                 {{ summary.telemetry?.actionLatencyAggregate.p99Ms ?? '—' }}
               </td>
-              <td class="text-center">
-                {{ summary.telemetry ? formatDisconnects(summary.telemetry.disconnects) : '—' }}
+              <td
+                class="text-center"
+                :title="summary.telemetry ? disconnectsTooltip(summary.telemetry.disconnectEvents) : ''"
+              >
+                {{ summary.telemetry ? formatDisconnects(summary.telemetry.disconnectEvents) : '—' }}
               </td>
               <td
                 class="text-center"
-                :class="summary.telemetry?.crashed ? 'text-error' : ''"
+                :class="summary.telemetry?.crashedAt ? 'text-error' : ''"
+                :title="summary.telemetry?.crashedAt ? summary.telemetry.crashedAt.toISOString() : ''"
               >
-                {{ summary.telemetry ? (summary.telemetry.crashed ? 'Yes' : 'No') : '—' }}
+                <span v-if="summary.telemetry?.crashedAt">❌</span>
+                <span v-else-if="summary.telemetry">—</span>
+                <span v-else>—</span>
               </td>
             </tr>
           </tbody>
@@ -163,11 +169,14 @@
 import { computed, defineComponent, type PropType, reactive, ref, watch } from "vue";
 import { useTheme } from "vuetify";
 import { EConnectionEventType, EConnectionType, type LagReportDetail } from "@/store/admin/lagReports/types";
-import type { IPlayerMatchTelemetry, IPlayerMatchTelemetryEntry } from "@/store/admin/playerMatchTelemetry/types";
-import { decodeU8, decodeU16LE, decodeU32LE } from "@/store/admin/playerMatchTelemetry/binDataDecoder";
+import type {
+  IDisconnectEvent,
+  IPlayerMatchTelemetry,
+  IPlayerMatchTelemetryEntry,
+} from "@/store/admin/playerMatchTelemetry/types";
 import { mdiCircle } from "@mdi/js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import type { ChartData, ChartOptions } from "chart.js";
+import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle, type SemanticColors } from "@/helpers/lag-report-colors";
 
@@ -190,6 +199,35 @@ type HoveredEventTooltip = {
   swatchColor?: string;
 };
 
+type PingChartType = "line" | "bar";
+
+type PingDataset = ChartDataset<PingChartType> & {
+  metric?: string;
+  playerColor?: string;
+};
+
+type PingChartRef = {
+  chart?: {
+    canvas: HTMLCanvasElement;
+    data: { datasets: PingDataset[] };
+    scales?: {
+      x?: {
+        min: number;
+        max: number;
+        getValueForPixel(px: number): number;
+        getPixelForValue(value: number): number;
+      };
+    };
+    getElementsAtEventForMode(
+      event: Event,
+      mode: string,
+      options: { intersect: boolean; axis: string },
+      useFinalPosition: boolean,
+    ): Array<{ datasetIndex: number; index: number; element: { x: number; y: number } }>;
+    resetZoom(): void;
+  };
+};
+
 export default defineComponent({
   name: "LagReportContinuousMonitoring",
   components: { BarChart },
@@ -203,8 +241,7 @@ export default defineComponent({
   emits: ["update:inspectorLeftMs", "update:inspectorRightMs", "openInspector"],
   setup(props, { emit }) {
     const theme = useTheme();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pingChartRef = ref<any>(null);
+    const pingChartRef = ref<PingChartRef | null>(null);
     const zoomRangeMs = ref<{ min: number; max: number } | null>(null);
     const chartNavigating = ref(false);
     const draggingMarker = ref<"left" | "right" | null>(null);
@@ -323,11 +360,9 @@ export default defineComponent({
     }
 
     // ── Ping + Loss combined chart ──────────────────────────────────
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pingChartData = computed<ChartData<any>>(() => {
+    const pingChartData = computed<ChartData<PingChartType>>(() => {
       const r = props.report;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const datasets: any[] = [];
+      const datasets: PingDataset[] = [];
 
       r.players.forEach((player, pi) => {
         if (!visiblePlayers[pi]) return;
@@ -425,7 +460,7 @@ export default defineComponent({
       }
 
       datasets.forEach((ds, i) => {
-        const base = (ds.playerColor as string | undefined) ?? (ds.borderColor as string | undefined) ?? "#888888";
+        const base = ds.playerColor ?? (typeof ds.borderColor === "string" ? ds.borderColor : undefined) ?? "#888888";
         const dimmed = hoveredDatasetIndex.value != null && hoveredDatasetIndex.value !== i;
 
         ds.borderColor = withAlpha(base, dimmed ? 0.2 : 1);
@@ -444,12 +479,10 @@ export default defineComponent({
     });
 
     // ── Action latency per-player traces ─────────────────────────────
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const actionLatencyDatasets = computed<any[]>(() => {
+    const actionLatencyDatasets = computed<PingDataset[]>(() => {
       if (!props.telemetry) return [];
       const r = props.report;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const out: any[] = [];
+      const out: PingDataset[] = [];
       props.telemetry.players.forEach((p) => {
         if (p.bucketCount === 0) return;
         const pi = r.players.findIndex((rp) => rp.battleTag === p.battleTag);
@@ -457,9 +490,10 @@ export default defineComponent({
         const color = pi >= 0
           ? PLAYER_COLORS[pi % PLAYER_COLORS.length]
           : PLAYER_COLORS[0];
-        const gameTimes = decodeU32LE(p.gameTimeOffsetsMs);
-        const means = decodeU16LE(p.meansMs);
-        const counts = decodeU8(p.sampleCounts);
+        // Backend now returns plain number arrays — no BinData decoding needed.
+        const gameTimes = p.gameTimeOffsetsMs;
+        const means = p.meansMs;
+        const counts = p.sampleCounts;
         const points: Array<{ x: number; y: number | null }> = [];
         for (let i = 0; i < p.bucketCount; i++) {
           points.push({
@@ -600,8 +634,7 @@ export default defineComponent({
       return markers;
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pingChartOptions = computed<ChartOptions<any>>(() => {
+    const pingChartOptions = computed<ChartOptions<PingChartType>>(() => {
       const annotations: Record<string, unknown> = {};
       for (const marker of eventMarkers.value) {
         const dimmed = hoveredMarkerId.value != null && hoveredMarkerId.value !== marker.id;
@@ -862,20 +895,15 @@ export default defineComponent({
       )[0];
 
       if (nearestPoint) {
-        const pointEl = nearestPoint.element as { x: number; y: number };
+        const pointEl = nearestPoint.element;
         const dx = mouseX - pointEl.x;
         const dy = mouseY - pointEl.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const POINT_HOVER_THRESHOLD_PX = 20;
 
         if (dist <= POINT_HOVER_THRESHOLD_PX) {
-          const ds = chart.data.datasets[nearestPoint.datasetIndex] as {
-            label?: string;
-            metric?: string;
-            playerColor?: string;
-            data?: Array<{ x?: number; y?: number }>;
-          };
-          const dp = ds.data?.[nearestPoint.index];
+          const ds = chart.data.datasets[nearestPoint.datasetIndex];
+          const dp = ds.data?.[nearestPoint.index] as { x?: number; y?: number } | undefined;
           const xMs = typeof dp?.x === "number" ? dp.x : null;
           const yVal = typeof dp?.y === "number" ? dp.y : null;
           const pStyle = playerColorTonalStyle(ds.playerColor ?? "#888888");
@@ -951,10 +979,18 @@ export default defineComponent({
       return props.telemetry?.players.find((p) => p.battleTag === battleTag) ?? null;
     }
 
-    function formatDisconnects(d: IPlayerMatchTelemetryEntry["disconnects"]): string {
-      if (d.count === 0) return "0";
-      const meanSec = (d.meanDurationMs / 1000).toFixed(1);
-      return `${d.count} (${meanSec}s avg)`;
+    function formatDisconnects(events: IDisconnectEvent[]): string {
+      if (events.length === 0) return "0";
+      const totalMs = events.reduce((acc, e) => acc + e.durationMs, 0);
+      const maxMs = Math.max(...events.map((e) => e.durationMs));
+      return `${events.length} (total ${(totalMs / 1000).toFixed(1)}s, max ${(maxMs / 1000).toFixed(1)}s)`;
+    }
+
+    function disconnectsTooltip(events: IDisconnectEvent[]): string {
+      if (events.length === 0) return "no disconnects";
+      return events
+        .map((e, i) => `#${i + 1}: ${e.startedAt.toISOString()} for ${(e.durationMs / 1000).toFixed(1)}s`)
+        .join("\n");
     }
 
     function aggregateTooltip(entry: IPlayerMatchTelemetryEntry): string {
@@ -998,6 +1034,7 @@ export default defineComponent({
       actionLatencyDatasets,
       findTelemetryFor,
       formatDisconnects,
+      disconnectsTooltip,
       aggregateTooltip,
     };
   },

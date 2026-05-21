@@ -1,9 +1,11 @@
-import type { IBinData } from "./binDataDecoder";
+// Mirror of the GET /api/player-match-telemetry/by-game/{gameId} response shape.
+// camelCase field names + plain typed arrays (backend decodes BinData on its side).
 
-export interface IDisconnectStats {
-  count: number;
-  totalDurationMs: number;
-  meanDurationMs: number;
+export type FloNodeTransport = "TCP" | "QUIC";
+
+export interface IDisconnectEvent {
+  startedAt: Date;
+  durationMs: number;
 }
 
 export interface IActionLatencyAggregate {
@@ -18,27 +20,23 @@ export interface IActionLatencyAggregate {
 
 export interface IPlayerMatchTelemetryEntry {
   battleTag: string;
-  floPlayerId: number;
-  connectionType: string; // "TCP" | "QUIC"
-  serverNodeId: number | null;
-  serverNodeName: string | null;
+  connectionType: FloNodeTransport;
   gameLengthMs: number;
-  crashed: boolean;
-  disconnects: IDisconnectStats;
+  crashedAt: Date | null;
+  disconnectEvents: IDisconnectEvent[];
   actionLatencyAggregate: IActionLatencyAggregate;
   bucketCount: number;
-  gameTimeOffsetsMs: IBinData; // u32 LE packed
-  meansMs: IBinData; // u16 LE packed
-  sampleCounts: IBinData; // u8 packed
+  gameTimeOffsetsMs: number[];
+  meansMs: number[];
+  sampleCounts: number[];
   droppedUnmatchedCount: number;
-  submittedAt: string; // ISO 8601
+  submittedAt: Date;
 }
 
 export interface IPlayerMatchTelemetry {
   gameId: number;
-  matchWallStart: string; // ISO 8601
-  bucketMs: number;
+  matchWallStart: Date;
   players: IPlayerMatchTelemetryEntry[];
-  createdAt: string;
-  expiresAt: string;
+  createdAt: Date;
+  expiresAt: Date;
 }
