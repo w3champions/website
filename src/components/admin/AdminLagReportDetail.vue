@@ -24,7 +24,7 @@
           :player-colors="playerColors"
           :inspector-left-ms="inspectorLeftMs"
           :inspector-right-ms="inspectorRightMs"
-          :telemetry="playerMatchTelemetryStore.telemetry"
+          :telemetry="telemetry"
           @update:inspector-left-ms="inspectorLeftMs = $event"
           @update:inspector-right-ms="inspectorRightMs = $event"
           @open-inspector="openInspector"
@@ -88,6 +88,7 @@ export default defineComponent({
 
     const report = computed(() => lagReportsStore.selectedReport);
     const loading = computed(() => lagReportsStore.selectedReportLoading);
+    const telemetry = computed(() => playerMatchTelemetryStore.telemetry);
 
     const expandedPanels = ref(["continuous", "inspector"]);
     const inspectorLeftMs = ref<number | null>(null);
@@ -118,6 +119,7 @@ export default defineComponent({
     return {
       report,
       loading,
+      telemetry,
       expandedPanels,
       inspectorLeftMs,
       inspectorRightMs,
