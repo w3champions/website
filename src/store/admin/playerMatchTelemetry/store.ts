@@ -10,7 +10,14 @@ interface State {
   error: string | null;
 }
 
-const service = new PlayerMatchTelemetryService({ endpoint: API_URL });
+// Lazy singleton: API_URL lives in @/main and the module graph touches us before
+// main.ts has finished initializing its own exports. Constructing the service at
+// module-load time would trip a Temporal Dead Zone error on API_URL. Defer
+// construction to first call — by then all modules are fully initialized.
+let _service: PlayerMatchTelemetryService | null = null;
+function getService(): PlayerMatchTelemetryService {
+  return _service ??= new PlayerMatchTelemetryService({ endpoint: API_URL });
+}
 
 export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", {
   state: (): State => ({
@@ -24,7 +31,7 @@ export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", 
       this.error = null;
       try {
         const oauthStore = useOauthStore();
-        this.telemetry = await service.getByGame(oauthStore.token, gameId);
+        this.telemetry = await getService().getByGame(oauthStore.token, gameId);
       } catch (e) {
         this.error = e instanceof Error ? e.message : String(e);
         this.telemetry = null;
