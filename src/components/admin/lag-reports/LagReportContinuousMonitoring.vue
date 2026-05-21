@@ -204,6 +204,10 @@ type PingChartType = "line" | "bar";
 type PingDataset = ChartDataset<PingChartType> & {
   metric?: string;
   playerColor?: string;
+  // Line-only point styling — declared optional so the hover-dim loop can mutate
+  // both bar and line datasets without per-type narrowing. Bar datasets ignore them.
+  pointBorderColor?: ChartDataset<"line">["pointBorderColor"];
+  pointBackgroundColor?: ChartDataset<"line">["pointBackgroundColor"];
 };
 
 type PingChartRef = {
