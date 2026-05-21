@@ -13,10 +13,18 @@ function base64ToBytes(b64: string): Uint8Array {
   return bytes;
 }
 
+/** Decode BSON BinData into a raw `Uint8Array` (no endianness to worry about). */
 export function decodeU8(bin: IBinData): Uint8Array {
   return base64ToBytes(bin.$binary.base64);
 }
 
+/**
+ * Decode BSON BinData into a `Uint16Array` of little-endian u16 values.
+ *
+ * Relies on host byte order being little-endian (true on x86 and ARM in
+ * TypedArray mode — universal in browsers and modern Node). Throws if the
+ * byte length isn't divisible by 2.
+ */
 export function decodeU16LE(bin: IBinData): Uint16Array {
   const bytes = base64ToBytes(bin.$binary.base64);
   if (bytes.byteLength % 2 !== 0) {
@@ -25,6 +33,13 @@ export function decodeU16LE(bin: IBinData): Uint16Array {
   return new Uint16Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 2);
 }
 
+/**
+ * Decode BSON BinData into a `Uint32Array` of little-endian u32 values.
+ *
+ * Relies on host byte order being little-endian (true on x86 and ARM in
+ * TypedArray mode — universal in browsers and modern Node). Throws if the
+ * byte length isn't divisible by 4.
+ */
 export function decodeU32LE(bin: IBinData): Uint32Array {
   const bytes = base64ToBytes(bin.$binary.base64);
   if (bytes.byteLength % 4 !== 0) {
