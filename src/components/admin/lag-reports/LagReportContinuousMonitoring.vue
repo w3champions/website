@@ -487,6 +487,18 @@ export default defineComponent({
       if (!props.telemetry) return [];
       const r = props.report;
       const out: PingDataset[] = [];
+      // Action-latency buckets are anchored to telemetry.matchWallStart (the
+      // wall-clock at game-time = 0, set by flo-client at game start). This
+      // is a distinct reference frame from the lag report's gameStartMs, which
+      // is derived from the first ping-history sample and may precede the
+      // actual game start by seconds. Using matchWallStart keeps the buckets
+      // aligned with the wall-clock x-axis the lag-event markers also use.
+      //
+      // Pauses are not corrected here: gameTimeOffsetsMs freezes during a
+      // pause (by design in flo's pause-corrected telemetry), so adding the
+      // offset directly produces a naive wall-clock that visualizes the pause
+      // as a vertical flatline — the intended behavior on this axis.
+      const matchStartMs = props.telemetry.matchWallStart.getTime();
       props.telemetry.players.forEach((p) => {
         if (p.bucketCount === 0) return;
         const pi = r.players.findIndex((rp) => rp.battleTag === p.battleTag);
@@ -501,7 +513,7 @@ export default defineComponent({
         const points: Array<{ x: number; y: number | null }> = [];
         for (let i = 0; i < p.bucketCount; i++) {
           points.push({
-            x: gameTimeToWallClockMs(gameTimes[i] / 1000),
+            x: matchStartMs + gameTimes[i],
             y: counts[i] > 0 ? means[i] : null,
           });
         }
