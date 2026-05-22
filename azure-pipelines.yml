@@ -36,16 +36,16 @@ steps:
       command: 'install'
 
   - task: Npm@1
-    displayName: dprint
-    inputs:
-      command: 'custom'
-      customCommand: 'run dprint'
-
-  - task: Npm@1
     displayName: eslint
     inputs:
       command: 'custom'
       customCommand: 'run lint'
+
+  - task: Npm@1
+    displayName: dprint
+    inputs:
+      command: 'custom'
+      customCommand: 'run dprint'
 
   - task: Npm@1
     displayName: vue-tsc

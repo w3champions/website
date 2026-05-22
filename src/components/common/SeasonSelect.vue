@@ -19,31 +19,22 @@
   </v-menu>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { Season } from "@/store/ranking/types";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 
-export default defineComponent({
-  name: "SeasonSelect",
-  setup: (_, context) => {
-    const rankingsStore = useRankingStore();
-    const matchStore = useMatchStore();
-    const selectedSeason = computed<Season>(() => matchStore.selectedSeason);
-    const seasons = computed<Season[]>(() => rankingsStore.seasons);
+const emit = defineEmits<{
+  seasonSelected: [season: Season];
+}>();
 
-    function selectSeason(season: Season): void {
-      context.emit("seasonSelected", season);
-    }
+const rankingsStore = useRankingStore();
+const matchStore = useMatchStore();
+const selectedSeason = computed<Season>(() => matchStore.selectedSeason);
+const seasons = computed<Season[]>(() => rankingsStore.seasons);
 
-    return {
-      selectedSeason,
-      seasons,
-      selectSeason,
-    };
-  },
-});
+function selectSeason(season: Season): void {
+  emit("seasonSelected", season);
+}
 </script>
-
-<style></style>

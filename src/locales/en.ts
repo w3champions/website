@@ -509,6 +509,12 @@ const en = {
     hideHeroIcons: "Hide Heroes",
   },
 
+  components_matches_spoilerfreetoggle: {
+    title: "Spoiler-Free Mode",
+    winner: "Winner",
+    duration: "Duration",
+  },
+
   components_matches_playermatchinfo: {
     calibrating: "Calibrating",
   },

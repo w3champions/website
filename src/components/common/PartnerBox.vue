@@ -4,7 +4,7 @@
       {{ $t("views_home.partners") }}
     </v-card-text>
     <v-card
-      v-for="(partner, index) in partners()"
+      v-for="(partner, index) in partners"
       :key="'partner_card_' + index"
       class="socials-subcard"
       tile
@@ -13,44 +13,17 @@
       border
       flat
     >
-      <v-img :src="imgSource(partner.img)" :alt="partner.img" />
+      <v-img :src="`/assets/partners/${partner.img}.jpg`" :alt="partner.img" />
     </v-card>
   </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "PartnerBox",
-  components: {},
-  setup() {
-    function partners() {
-      return [
-        {
-          img: "hive",
-          link: "https://www.hiveworkshop.com/",
-        },
-        {
-          img: "gym",
-          link: "https://warcraft-gym.com",
-        },
-        {
-          img: "msfds",
-          link: "#"
-        }
-      ];
-    }
-    function imgSource(name: string): string {
-      return `/assets/partners/${name}.jpg`;
-    }
-
-    return {
-      partners,
-      imgSource,
-    };
-  },
-});
+<script setup lang="ts">
+const partners = [
+  { img: "hive", link: "https://www.hiveworkshop.com/" },
+  { img: "gym", link: "https://warcraft-gym.com" },
+  { img: "msfds", link: "#" },
+];
 </script>
 
 <style lang="scss" scoped>

@@ -26,67 +26,50 @@
   </v-menu>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
 import { activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
+import { onMounted } from "vue";
 
-export default defineComponent({
-  name: "GameModeSelect",
-  components: {},
-  props: {
-    gameMode: {
-      type: Number as PropType<EGameMode>,
-      required: false,
-      default: EGameMode.UNDEFINED,
-    },
-    disabledModes: {
-      type: Array<EGameMode>,
-      required: false,
-      default: () => [],
-    }
-  },
-  setup: (props, context) => {
-    function gameModes(): Array<{ name: string; id: number }> {
-      let modes = activeGameModesWithAT();
+const { gameMode = EGameMode.UNDEFINED, disabledModes = [] } = defineProps<{
+  gameMode?: EGameMode;
+  disabledModes?: EGameMode[];
+}>();
 
-      if (props.disabledModes) {
-        modes = modes?.filter((x) => !props.disabledModes?.includes(x.id));
-      }
+const emit = defineEmits<{
+  gameModeChanged: [gameMode: EGameMode];
+}>();
 
-      return modes;
-    }
+function gameModes(): Array<{ name: string; id: number }> {
+  let modes = activeGameModesWithAT();
 
-    function gameModeName(): string {
-      if (!props.gameMode) {
-        return "";
-      }
+  if (disabledModes) {
+    modes = modes?.filter((x) => !disabledModes?.includes(x.id));
+  }
 
-      const mode = activeGameModesWithAT()?.filter((g) => g.id == props.gameMode)[0];
+  return modes;
+}
 
-      if (!mode) {
-        return "Not Supported";
-      }
+function gameModeName(): string {
+  if (!gameMode) {
+    return "";
+  }
 
-      return mode.name;
-    }
+  const mode = activeGameModesWithAT()?.filter((g) => g.id == gameMode)[0];
 
-    function selectGameMode(gameMode: EGameMode): void {
-      context.emit("gameModeChanged", gameMode);
-    }
+  if (!mode) {
+    return "Not Supported";
+  }
 
-    return {
-      mdiControllerClassic,
-      gameModes,
-      gameModeName,
-      selectGameMode,
-    };
-  },
-  mounted: async (): Promise<void> => {
-    await loadActiveGameModes();
-  },
+  return mode.name;
+}
+
+function selectGameMode(gameMode: EGameMode): void {
+  emit("gameModeChanged", gameMode);
+}
+
+onMounted(async (): Promise<void> => {
+  await loadActiveGameModes();
 });
 </script>
-
-<style></style>

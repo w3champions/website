@@ -74,7 +74,6 @@
     "eslint-plugin-vue": "^10.9.1",
     "eslint-plugin-vuetify": "^2.7.2",
     "google-spreadsheet": "^5.2.0",
-    "jiti": "^2.7.0",
     "prettier": "2.8.8",
     "sass": "~1.99.0",
     "terser": "^5.29.2",
