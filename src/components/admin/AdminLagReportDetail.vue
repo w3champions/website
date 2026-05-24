@@ -24,6 +24,7 @@
           :player-colors="playerColors"
           :inspector-left-ms="inspectorLeftMs"
           :inspector-right-ms="inspectorRightMs"
+          :telemetry="telemetry"
           @update:inspector-left-ms="inspectorLeftMs = $event"
           @update:inspector-right-ms="inspectorRightMs = $event"
           @open-inspector="openInspector"
@@ -53,6 +54,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
+import { usePlayerMatchTelemetryStore } from "@/store/admin/playerMatchTelemetry/store";
 import { mdiArrowLeft } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
@@ -80,11 +82,13 @@ export default defineComponent({
   },
   setup(props) {
     const lagReportsStore = useLagReportsStore();
+    const playerMatchTelemetryStore = usePlayerMatchTelemetryStore();
     const router = useRouter();
     const route = useRoute();
 
     const report = computed(() => lagReportsStore.selectedReport);
     const loading = computed(() => lagReportsStore.selectedReportLoading);
+    const telemetry = computed(() => playerMatchTelemetryStore.telemetry);
 
     const expandedPanels = ref(["continuous", "inspector"]);
     const inspectorLeftMs = ref<number | null>(null);
@@ -106,11 +110,16 @@ export default defineComponent({
 
     onMounted(async () => {
       await lagReportsStore.loadReport(props.id);
+      const gameId = lagReportsStore.selectedReport?.gameId;
+      if (gameId !== undefined && gameId !== null) {
+        await playerMatchTelemetryStore.fetchByGame(gameId);
+      }
     });
 
     return {
       report,
       loading,
+      telemetry,
       expandedPanels,
       inspectorLeftMs,
       inspectorRightMs,
