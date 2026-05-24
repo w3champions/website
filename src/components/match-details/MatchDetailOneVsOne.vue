@@ -35,7 +35,7 @@
         </v-tooltip>
       </div>
     </div>
-    <div class="ovo-player-names">
+    <div class="ovo-name-league-grid">
       <div class="ovo-name ovo-name--left">
         <country-flag-extended
           v-if="player(0).countryCode || player(0).location"
@@ -44,7 +44,8 @@
           class="mr-2"
         />
         <a
-          class="text-primary cursor-pointer"
+          class="cursor-pointer ovo-name-link"
+          :class="player(0).won ? 'ovo-name-link--winner' : 'text-primary'"
           @click="goToPlayer(player(0).battleTag)"
         >
           {{ player(0).name }}
@@ -63,7 +64,8 @@
       />
       <div class="ovo-name ovo-name--right">
         <a
-          class="text-primary cursor-pointer"
+          class="cursor-pointer ovo-name-link"
+          :class="player(1).won ? 'ovo-name-link--winner' : 'text-primary'"
           @click="goToPlayer(player(1).battleTag)"
         >
           {{ player(1).name }}
@@ -75,8 +77,6 @@
           class="ml-2"
         />
       </div>
-    </div>
-    <div class="ovo-league-row">
       <div class="ovo-league ovo-league--left">
         <template v-if="player(0).ranking?.leagueOrder != null">
           <router-link
@@ -96,13 +96,16 @@
               #{{ player(0).ranking?.rank }}
             </span>
           </router-link>
-          <span v-if="player(0).won" class="ovo-crown">👑</span>
+          <img
+            v-if="player(0).won"
+            src="/assets/icons/winner-fist.png"
+            class="ovo-winner-fist"
+            alt="winner"
+          />
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
       </div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div class="ovo-vs-spacer"></div>
       <div class="ovo-league ovo-league--right">
         <template v-if="player(1).ranking?.leagueOrder != null">
           <router-link
@@ -122,7 +125,12 @@
               #{{ player(1).ranking?.rank }}
             </span>
           </router-link>
-          <span v-if="player(1).won" class="ovo-crown">👑</span>
+          <img
+            v-if="player(1).won"
+            src="/assets/icons/winner-fist.png"
+            class="ovo-winner-fist"
+            alt="winner"
+          />
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
       </div>
@@ -206,7 +214,7 @@ import PlayerIcon from "@/components/matches/PlayerIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { leagueNameFromOrder } from "@/helpers/leagues";
-import { formatDuration, intervalToDuration } from "date-fns";
+import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
 import { mdiChatProcessingOutline } from "@mdi/js";
 
 export default defineComponent({
@@ -262,8 +270,8 @@ export default defineComponent({
       router.push({ path: getProfileUrl(battleTag) });
     }
 
-    const gameDurationLong = computed<string>(() => formatDuration(intervalToDuration({ start: 0, end: props.match.durationInSeconds * 1000 })));
-    const gameStartTime = computed<string>(() => new Date(props.match.startTime).toLocaleString());
+    const gameDurationLong = computed<string>(() => formatSecondsToDuration(props.match.durationInSeconds));
+    const gameStartTime = computed<string>(() => formatTimestampStringToDateTime(props.match.startTime));
 
     return {
       player,
@@ -308,11 +316,12 @@ export default defineComponent({
   }
 }
 
-.ovo-player-names {
+.ovo-name-league-grid {
   display: grid;
   grid-template-columns: 1fr auto auto auto 1fr;
   align-items: center;
   grid-column-gap: 10px;
+  grid-row-gap: 16px;
   margin-bottom: 4px;
 }
 
@@ -326,8 +335,8 @@ export default defineComponent({
   overflow: hidden;
 
   :deep(.flag) {
-    transform: scale(0.5);
-    margin: -8px -6px;
+    transform: scale(0.2);
+    margin: -5px -15px;
   }
 
   a {
@@ -362,14 +371,6 @@ export default defineComponent({
   padding: 0 8px;
 }
 
-.ovo-league-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto 1fr;
-  align-items: center;
-  grid-column-gap: 10px;
-  margin-top: 16px;
-}
-
 .ovo-league {
   display: flex;
   align-items: center;
@@ -377,12 +378,13 @@ export default defineComponent({
 }
 
 .ovo-league--left {
+  grid-column: 1 / span 2;
   justify-content: flex-end;
 }
 
 .ovo-league--right {
+  grid-column: 4 / span 2;
   justify-content: flex-start;
-  padding-left: 12px;
 }
 
 .ovo-league-icon {
@@ -455,9 +457,19 @@ export default defineComponent({
   opacity: 0.6;
 }
 
-.ovo-crown {
-  font-size: 1.5em;
-  padding-right: 13px;
+.ovo-winner-fist {
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+
+  @media (max-width: 850px) {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.ovo-name-link--winner {
+  color: rgb(var(--v-theme-w3-gold));
 }
 
 .ovo-map-stats {
