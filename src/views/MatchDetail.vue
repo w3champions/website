@@ -636,16 +636,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@media (max-width: 850px) {
+@media (max-width: 750px) {
   .w3-container-width {
     padding: 0 !important;
     max-width: 100% !important;
-  }
-}
 
-.small-title {
-  margin-top: -25px !important;
-  margin-bottom: -25px !important;
+    :deep(> .v-row) {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    :deep(> .v-row > .v-col) {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
 }
 
 .jubilee {

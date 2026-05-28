@@ -13,7 +13,7 @@
       <v-row justify="center" class="mt-4">
         <v-col cols="auto" class="text-center">
           <div class="d-flex justify-center align-center ga-6">
-            <span class="text-body-2 text-medium-emphasis score-name text-right">{{ playerName }}</span>
+            <span class="text-body-2 score-name text-primary text-right">{{ playerName }}</span>
             <div class="text-h4">
               <span class="w3-won">{{ stats.wins }}</span>
               <span class="text-medium-emphasis mx-2">-</span>
