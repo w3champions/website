@@ -112,6 +112,8 @@ export default class MatchService {
     gateway: Gateways,
     season: number,
     heroes?: number[],
+    playerIncludeRandom: boolean = false,
+    opponentIncludeRandom: boolean = false
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
     let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(battleTag)}&gateway=${gateway}`;
@@ -135,6 +137,9 @@ export default class MatchService {
     if (opponentRace !== ERaceEnum.TOTAL) {
       url += `&opponentRace=${opponentRace}`;
     }
+
+    url += `&playerIncludeRandom=${String(playerIncludeRandom)}`;
+    url += `&opponentIncludeRandom=${String(opponentIncludeRandom)}`;
 
     if (Array.isArray(heroes) && heroes.length > 0) {
       const heroParams = heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("");
