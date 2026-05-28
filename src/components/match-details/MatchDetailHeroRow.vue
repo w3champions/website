@@ -1,6 +1,6 @@
 <template>
   <div class="match-stats-layout">
-    <div class="mobile-heroes-row">
+    <div v-if="heroesOfWinner.length || heroesOfLoser.length" class="mobile-heroes-row">
       <div class="heroes-icons heroes-icons--left">
         <div
           v-for="(hero, i) of winnersReversed"
@@ -300,11 +300,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.match-stats-layout {
+  --hero-icon-size: 64px;
+}
+
 .mobile-heroes-row {
   display: none;
 }
 
-.mobile-rates-section {
+.game-stats-section.mobile-rates-section {
   display: none;
 }
 
@@ -332,8 +336,8 @@ export default defineComponent({
 .heroes-icons {
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: 64px;
-  grid-auto-columns: 64px;
+  grid-template-rows: var(--hero-icon-size);
+  grid-auto-columns: var(--hero-icon-size);
   column-gap: 16px;
   padding-bottom: 30px;
 }
@@ -396,7 +400,11 @@ export default defineComponent({
   gap: 6px;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 750px) {
+  .match-stats-layout {
+    --hero-icon-size: 40px;
+  }
+
   .mobile-heroes-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -405,10 +413,16 @@ export default defineComponent({
   }
 
   .mobile-heroes-row .heroes-icons {
-    grid-auto-columns: 40px;
-    grid-template-rows: 40px;
     column-gap: 6px;
     padding-bottom: 20px;
+  }
+
+  .mobile-heroes-row :deep(.hero-level-flag-first-hero) {
+    font-size: 0.9em;
+  }
+
+  .mobile-heroes-row :deep(.hero-level-flag-second-hero) {
+    font-size: 0.75em;
   }
 
   .game-stats-section.mobile-rates-section {

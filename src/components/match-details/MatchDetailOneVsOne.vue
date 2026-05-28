@@ -1,10 +1,11 @@
 <template>
   <div class="ovo-header">
     <div class="ovo-season-bar">
-      <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-        <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} ·
-        </span>
-        <span>{{ $t(`views_matchdetail.season`) }}: {{ season }}</span>
+      <v-card-subtitle class="pa-0 text-uppercase opacity-100 d-flex align-center ga-2">
+        <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} ·</span>
+        <div class="ml-2 d-inline-block">
+          <season-badge :season="seasonObject" />
+        </div>
       </v-card-subtitle>
       <host-icon
         v-if="match.serverInfo && match.serverInfo.provider"
@@ -12,7 +13,9 @@
         style="padding-right: 0px"
       />
       <div class="subicon">
-        <download-replay-icon :gameId="matchId" />
+        <span class="mr-2">
+          <download-replay-icon :gameId="matchId" />
+        </span>
         <v-tooltip
           v-if="showChatLogShortcut"
           location="left"
@@ -41,31 +44,29 @@
           v-if="player(0).countryCode || player(0).location"
           :countryCode="player(0).countryCode"
           :location="player(0).location"
-          class="mr-2"
+          class="ovo-flag"
         />
         <a
-          class="cursor-pointer ovo-name-link"
-          :class="player(0).won ? 'ovo-name-link--winner' : 'text-primary'"
+          class="cursor-pointer ovo-name-link text-primary"
           @click="goToPlayer(player(0).battleTag)"
         >
           {{ player(0).name }}
         </a>
+        <player-icon
+          :race="player(0).race"
+          :rndRace="player(0).rndRace"
+          :big="true"
+        />
       </div>
-      <player-icon
-        :race="player(0).race"
-        :rndRace="player(0).rndRace"
-        :big="true"
-      />
       <div class="ovo-vs">VS</div>
-      <player-icon
-        :race="player(1).race"
-        :rndRace="player(1).rndRace"
-        :big="true"
-      />
       <div class="ovo-name ovo-name--right">
+        <player-icon
+          :race="player(1).race"
+          :rndRace="player(1).rndRace"
+          :big="true"
+        />
         <a
-          class="cursor-pointer ovo-name-link"
-          :class="player(1).won ? 'ovo-name-link--winner' : 'text-primary'"
+          class="cursor-pointer ovo-name-link text-primary"
           @click="goToPlayer(player(1).battleTag)"
         >
           {{ player(1).name }}
@@ -74,7 +75,7 @@
           v-if="player(1).countryCode || player(1).location"
           :countryCode="player(1).countryCode"
           :location="player(1).location"
-          class="ml-2"
+          class="ovo-flag"
         />
       </div>
       <div class="ovo-league ovo-league--left">
@@ -105,7 +106,6 @@
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
       </div>
-      <div class="ovo-vs-spacer"></div>
       <div class="ovo-league ovo-league--right">
         <template v-if="player(1).ranking?.leagueOrder != null">
           <router-link
@@ -152,9 +152,6 @@
           {{ $t("components_matches_playermatchinfo.calibrating") }}
         </template>
       </div>
-      <div></div>
-      <div></div>
-      <div></div>
       <div class="ovo-mmr ovo-mmr--right">
         <template v-if="player(1).oldMmr">
           {{ Math.floor(player(1).oldMmr!) }}
@@ -191,12 +188,12 @@
         {{ mapNameFromMatch(match) }}
       </div>
       <div>
-        <span class="ovo-mmr-label">Duration:</span>
-        {{ gameDurationLong }}
+        <span class="ovo-mmr-label">Start:</span>
+        {{ gameStartTime }}
       </div>
       <div>
-        <span class="ovo-mmr-label">Start time:</span>
-        {{ gameStartTime }}
+        <span class="ovo-mmr-label">Duration:</span>
+        {{ gameDurationLong }}
       </div>
     </div>
   </div>
@@ -211,6 +208,7 @@ import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchDetailHeroRow from "@/components/match-details/MatchDetailHeroRow.vue";
 import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
 import PlayerIcon from "@/components/matches/PlayerIcon.vue";
+import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { leagueNameFromOrder } from "@/helpers/leagues";
@@ -225,6 +223,7 @@ export default defineComponent({
     MatchDetailHeroRow,
     CountryFlagExtended,
     PlayerIcon,
+    SeasonBadge,
   },
   props: {
     match: { type: Object as PropType<Match>, required: true },
@@ -272,6 +271,7 @@ export default defineComponent({
 
     const gameDurationLong = computed<string>(() => formatSecondsToDuration(props.match.durationInSeconds));
     const gameStartTime = computed<string>(() => formatTimestampStringToDateTime(props.match.startTime));
+    const seasonObject = computed(() => ({ id: props.season }));
 
     return {
       player,
@@ -281,6 +281,7 @@ export default defineComponent({
       goToPlayer,
       gameDurationLong,
       gameStartTime,
+      seasonObject,
       mapNameFromMatch,
       mdiChatProcessingOutline,
     };
@@ -289,18 +290,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.subicon {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-
 .ovo-header {
+  --ovo-icon-size: 36px;
   padding: 8px 16px;
-  position: relative;
 }
 
 .ovo-season-bar {
@@ -310,15 +302,16 @@ export default defineComponent({
   margin-bottom: 8px;
 
   .subicon {
-    position: static;
-    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
     flex-direction: row;
+    margin-left: auto;
   }
 }
 
 .ovo-name-league-grid {
   display: grid;
-  grid-template-columns: 1fr auto auto auto 1fr;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   grid-column-gap: 10px;
   grid-row-gap: 16px;
@@ -328,10 +321,9 @@ export default defineComponent({
 .ovo-name {
   font-weight: bold;
   font-size: 1.5em;
-
-  @media (max-width: 850px) {
-    font-size: 1.1em;
-  }
+  display: flex;
+  align-items: center;
+  gap: 8px;
   overflow: hidden;
 
   :deep(.flag) {
@@ -339,12 +331,13 @@ export default defineComponent({
     margin: -5px -15px;
   }
 
-  a {
+  .ovo-name-link {
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
+    min-width: 0;
+
     &:hover {
       text-decoration: underline;
     }
@@ -353,15 +346,11 @@ export default defineComponent({
 
 .ovo-name--left {
   text-align: right;
-  display: flex;
-  align-items: center;
   justify-content: flex-end;
 }
 
 .ovo-name--right {
   text-align: left;
-  display: flex;
-  align-items: center;
   justify-content: flex-start;
 }
 
@@ -369,6 +358,8 @@ export default defineComponent({
   font-size: 1.2em;
   font-weight: bold;
   padding: 0 8px;
+  align-self: center;
+  line-height: 1;
 }
 
 .ovo-league {
@@ -378,19 +369,22 @@ export default defineComponent({
 }
 
 .ovo-league--left {
-  grid-column: 1 / span 2;
   justify-content: flex-end;
 }
 
 .ovo-league--right {
-  grid-column: 4 / span 2;
+  grid-column: 3;
   justify-content: flex-start;
 }
 
-.ovo-league-icon {
-  width: 32px;
-  height: 32px;
+.ovo-league-icon,
+.ovo-winner-fist,
+:deep(.race-icon-big) {
+  width: var(--ovo-icon-size);
+  height: var(--ovo-icon-size);
+}
 
+.ovo-league-icon {
   &.ovo-league-glow--0 { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
   &.ovo-league-glow--1 { filter: drop-shadow(0 0 5px rgba(180, 130, 255, 0.5)); }
   &.ovo-league-glow--2 { filter: drop-shadow(0 0 5px rgba(0, 200, 200, 0.5)); }
@@ -400,23 +394,6 @@ export default defineComponent({
   &.ovo-league-glow--6 { filter: drop-shadow(0 0 5px rgba(192, 192, 192, 0.5)); }
   &.ovo-league-glow--7 { filter: drop-shadow(0 0 5px rgba(205, 127, 50, 0.5)); }
   &.ovo-league-glow--8 { filter: drop-shadow(0 0 5px rgba(100, 200, 100, 0.5)); }
-}
-
-.ovo-league-name {
-  @media (max-width: 850px) {
-    display: none;
-  }
-}
-
-@media (max-width: 850px) {
-  .ovo-league-icon {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-.ovo-rank-num {
-  opacity: 1;
 }
 
 .ovo-league-link {
@@ -435,7 +412,8 @@ export default defineComponent({
 
 .ovo-mmr-row {
   display: grid;
-  grid-template-columns: 1fr 10px 141px 10px 1fr;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 161px;
   align-items: center;
   margin-top: 15px;
   margin-bottom: 1px;
@@ -458,18 +436,7 @@ export default defineComponent({
 }
 
 .ovo-winner-fist {
-  width: 40px;
-  height: 40px;
   vertical-align: middle;
-
-  @media (max-width: 850px) {
-    width: 48px;
-    height: 48px;
-  }
-}
-
-.ovo-name-link--winner {
-  color: rgb(var(--v-theme-w3-gold));
 }
 
 .ovo-map-stats {
@@ -478,5 +445,50 @@ export default defineComponent({
   align-items: center;
   gap: 2px;
   padding: 16px 0 8px;
+}
+
+@media (max-width: 750px) {
+  .ovo-header {
+    --ovo-icon-size: 28px;
+    padding: 8px 4px;
+  }
+
+  .ovo-name-league-grid {
+    grid-row-gap: 22px;
+  }
+
+  .ovo-name {
+    font-size: 1em;
+    flex-wrap: wrap;
+    row-gap: 2px;
+
+    .ovo-name-link {
+      order: -1;
+      flex-basis: 100%;
+    }
+  }
+
+  .ovo-vs {
+    font-size: 0.95em;
+    padding: 0 4px;
+  }
+
+  .ovo-league {
+    font-size: 0.75em;
+    gap: 4px;
+  }
+
+  .ovo-league-link {
+    gap: 4px;
+  }
+
+  .ovo-mmr-row {
+    column-gap: 88px;
+  }
+
+  .ovo-mmr--left,
+  .ovo-mmr--right {
+    font-size: 0.75em;
+  }
 }
 </style>
