@@ -17,6 +17,9 @@
     </template>
     <span>{{ tooltip }}</span>
   </v-tooltip>
+  <v-snackbar v-model="showError" color="error" timeout="4000" location="top">
+    {{ errorMessage }}
+  </v-snackbar>
 </template>
 
 <script setup lang="ts">
@@ -35,16 +38,46 @@ const { gameId } = defineProps({
 const { t } = useI18n();
 const downloading = ref(false);
 const tooltip = ref<string>(t("components_matches_replayicon.download"));
+const showError = ref(false);
+const errorMessage = ref("");
 
-function downloadReplay(): void {
+async function downloadReplay(): Promise<void> {
   downloading.value = true;
 
   try {
-    // Download the replay
     const url = `${API_URL}api/replays/${gameId}`;
-    window.open(url, "_self");
+    const response = await fetch(url);
+    const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+
+    if (response.status === 429) {
+      throw new Error(t("components_matches_replayicon.rateLimited"));
+    }
+
+    if (response.status === 404) {
+      throw new Error(t("components_matches_replayicon.notFound"));
+    }
+
+    if (!response.ok || contentType.includes("json")) {
+      throw new Error(t("components_matches_replayicon.unavailable"));
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = `${gameId}.w3g`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(downloadUrl);
   } catch (error) {
     console.error("Error downloading replay:", error);
+    errorMessage.value = error instanceof Error ? error.message : t("components_matches_replayicon.unavailable");
+    showError.value = true;
+    tooltip.value = errorMessage.value;
+    window.setTimeout(() => {
+      tooltip.value = t("components_matches_replayicon.download");
+    }, 4000);
   } finally {
     downloading.value = false;
   }
