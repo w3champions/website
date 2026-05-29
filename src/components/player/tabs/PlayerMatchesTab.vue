@@ -51,13 +51,25 @@
         <v-col cols="auto" class="pa-0">
           <v-menu location="right">
             <template v-slot:activator="{ props }">
-              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+              <v-btn
+                tile
+                class="w3-dropdown-button w-100"
+                style="background-color: transparent"
+                v-bind="props"
+              >
                 {{ playerRaceButtonText }}
                 <img
                   v-if="selectedPlayerRaceIcon"
                   :src="selectedPlayerRaceIcon"
                   :alt="playerRaceButtonText"
                   class="race-filter-icon ml-2"
+                />
+                <span v-if="showPlayerRandomIcon"> / </span>
+                <img
+                  v-if="showPlayerRandomIcon"
+                  :src="selectedPlayerRaceRandomIcon"
+                  :alt="playerRaceButtonText + ' Random'"
+                  class="race-filter-icon"
                 />
               </v-btn>
             </template>
@@ -119,13 +131,25 @@
         <v-col cols="auto" class="pa-0">
           <v-menu location="right">
             <template v-slot:activator="{ props }">
-              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+              <v-btn
+                tile
+                class="w3-dropdown-button w-100"
+                style="background-color: transparent"
+                v-bind="props"
+              >
                 {{ opponentRaceButtonText }}
                 <img
                   v-if="selectedOpponentRaceIcon"
                   :src="selectedOpponentRaceIcon"
                   :alt="opponentRaceButtonText"
                   class="race-filter-icon ml-2"
+                />
+                <span v-if="showOpponentRandomIcon"> / </span>
+                <img
+                  v-if="showOpponentRandomIcon"
+                  :src="selectedOpponentRaceRandomIcon"
+                  :alt="opponentRaceButtonText + ' Random'"
+                  class="race-filter-icon"
                 />
               </v-btn>
             </template>
@@ -311,16 +335,73 @@ export default defineComponent({
       },
     ]);
 
+    const isPlayerRandomRace = computed(() => {
+      return playerStore.playerRace === ERaceEnum.RANDOM;
+    });
 
-    // Rehydrate FIRST, before any reactive setup or store calls
-    const savedPlayerRandom = localStorage.getItem("playerIncludeRandom");
-    const savedOpponentRandom = localStorage.getItem("opponentIncludeRandom");
-    if (savedPlayerRandom !== null) {
-      playerStore.SET_PLAYER_INCLUDE_RANDOM(savedPlayerRandom === "true");
-    }
-    if (savedOpponentRandom !== null) {
-      playerStore.SET_OPPONENT_INCLUDE_RANDOM(savedOpponentRandom === "true");
-    }
+    const showPlayerRandomIcon = computed(() => {
+      return (
+        playerIncludeRandom.value &&
+    !!selectedPlayerRaceIcon.value &&
+    playerStore.playerRace !== ERaceEnum.TOTAL &&
+    !isPlayerRandomRace.value
+      );
+    });
+
+    const isOpponentRandomRace = computed(() => {
+      return playerStore.opponentRace === ERaceEnum.RANDOM;
+    });
+
+    const showOpponentRandomIcon = computed(() => {
+      return (
+        opponentIncludeRandom.value &&
+    !!selectedOpponentRaceIcon.value &&
+    playerStore.opponentRace !== ERaceEnum.TOTAL &&
+    !isOpponentRandomRace.value
+      );
+    });
+
+    const raceFileNameMap: Record<ERaceEnum, string> = {
+      [ERaceEnum.HUMAN]: "Human",
+      [ERaceEnum.ORC]: "Orc",
+      [ERaceEnum.NIGHT_ELF]: "NightElf",
+      [ERaceEnum.UNDEAD]: "Undead",
+      [ERaceEnum.RANDOM]: "Random",
+      [ERaceEnum.TOTAL]: "Any",
+      [ERaceEnum.STARTER]: "Starter",
+    };
+
+    const selectedPlayerRaceRandomIcon = computed<string | undefined>(() => {
+      const race = playerStore.playerRace;
+
+      if (
+        race == null ||
+    race === ERaceEnum.TOTAL ||
+    race === ERaceEnum.RANDOM
+      ) {
+        return;
+      }
+
+      const baseName = raceFileNameMap[race];
+
+      return getAsset(`raceIcons/${baseName}Random.png`);
+    });
+
+    const selectedOpponentRaceRandomIcon = computed<string | undefined>(() => {
+      const race = playerStore.opponentRace;
+
+      if (
+        race == null ||
+    race === ERaceEnum.TOTAL ||
+    race === ERaceEnum.RANDOM
+      ) {
+        return;
+      }
+
+      const baseName = raceFileNameMap[race];
+
+      return getAsset(`raceIcons/${baseName}Random.png`);
+    });
 
     const playerIncludeRandom = computed({
       get: () => !!playerStore.playerIncludeRandom,
@@ -566,7 +647,11 @@ export default defineComponent({
       heroChanged,
       selectedHeroes,
       playerIncludeRandom,
-      opponentIncludeRandom
+      opponentIncludeRandom,
+      selectedPlayerRaceRandomIcon,
+      showPlayerRandomIcon,
+      selectedOpponentRaceRandomIcon,
+      showOpponentRandomIcon
     };
   },
 });
