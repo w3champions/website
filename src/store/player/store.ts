@@ -191,7 +191,7 @@ export const usePlayerStore = defineStore("player", {
               this.selectedSeason?.id ?? -1,
               this.selectedHeroes,
               this.playerIncludeRandom,
-              this.opponentIncludeRandom
+              this.opponentIncludeRandom,
             );
             playerMatchesInFlight.set(key, request);
           }
@@ -409,7 +409,7 @@ export const usePlayerStore = defineStore("player", {
         JSON.stringify({
           playerIncludeRandom: this.playerIncludeRandom,
           opponentIncludeRandom: this.opponentIncludeRandom,
-        })
+        }),
       );
     },
     RESET_PROFILE_MATCH_FILTERS(): void {
