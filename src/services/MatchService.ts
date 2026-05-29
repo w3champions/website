@@ -113,7 +113,7 @@ export default class MatchService {
     season: number,
     heroes?: number[],
     playerIncludeRandom: boolean = false,
-    opponentIncludeRandom: boolean = false
+    opponentIncludeRandom: boolean = false,
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * 50;
     let url = `${API_URL}api/matches/search?playerId=${encodeURIComponent(battleTag)}&gateway=${gateway}`;
