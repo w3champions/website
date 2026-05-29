@@ -1,13 +1,13 @@
 window._env_ = {
   //* website-backend URL
   // BASE_URL: "http://localhost:5000/",
-  BASE_URL: "https://website-backend.test.w3champions.com/",
+  BASE_URL: "https://localhost:60687/",
   // BASE_URL: "https://website-backend.w3champions.com/",
 
   //* identification-service URL
   // IDENTIFICATION_URL: "http://localhost:5000/",
   // IDENTIFICATION_URL: "https://identification-service.w3champions.com/",
-  IDENTIFICATION_URL: "https://identification-service.test.w3champions.com/",
+  IDENTIFICATION_URL: "https://localhost:60687/",
 
   //* update-service URL
   LAUNCHER_UPDATE_URL: "https://update-service.test.w3champions.com/api/",

@@ -15,22 +15,6 @@ const playerMatchesCache = new Map<string, PlayerMatchesResponse>();
 const playerMatchesInFlight = new Map<string, Promise<PlayerMatchesResponse>>();
 const recentPerformanceCache = new Map<string, Match[]>();
 const recentPerformanceInFlight = new Map<string, Promise<Match[]>>();
-const MATCH_FILTER_SETTINGS_KEY = "w3c-match-filter-settings";
-
-function loadMatchFilterSettings(): { playerIncludeRandom: boolean; opponentIncludeRandom: boolean } {
-  if (typeof window === "undefined") return { playerIncludeRandom: false, opponentIncludeRandom: false };
-  try {
-    const raw = window.localStorage.getItem(MATCH_FILTER_SETTINGS_KEY);
-    if (!raw) return { playerIncludeRandom: false, opponentIncludeRandom: false };
-    const parsed = JSON.parse(raw);
-    return {
-      playerIncludeRandom: Boolean(parsed.playerIncludeRandom),
-      opponentIncludeRandom: Boolean(parsed.opponentIncludeRandom),
-    };
-  } catch {
-    return { playerIncludeRandom: false, opponentIncludeRandom: false };
-  }
-}
 
 function buildPlayerMatchesCacheKey(params: {
   page: number;
@@ -102,8 +86,8 @@ export const usePlayerStore = defineStore("player", {
     mmrRpTimeline: {} as PlayerMmrRpTimeline,
     playerGameLengthStats: {} as PlayerGameLengthStats | undefined,
     loadProfileError: undefined,
-    playerIncludeRandom: loadMatchFilterSettings().playerIncludeRandom,
-    opponentIncludeRandom: loadMatchFilterSettings().opponentIncludeRandom,
+    playerIncludeRandom: false,
+    opponentIncludeRandom: false,
   }),
   actions: {
     async loadProfile(params: { battleTag: string; freshLogin: boolean }) {
@@ -396,21 +380,9 @@ export const usePlayerStore = defineStore("player", {
     },
     SET_PLAYER_INCLUDE_RANDOM(value: boolean): void {
       this.playerIncludeRandom = value;
-      this.persistMatchFilterSettings();
     },
     SET_OPPONENT_INCLUDE_RANDOM(value: boolean): void {
       this.opponentIncludeRandom = value;
-      this.persistMatchFilterSettings();
-    },
-    persistMatchFilterSettings(): void {
-      if (typeof window === "undefined") return;
-      window.localStorage.setItem(
-        MATCH_FILTER_SETTINGS_KEY,
-        JSON.stringify({
-          playerIncludeRandom: this.playerIncludeRandom,
-          opponentIncludeRandom: this.opponentIncludeRandom,
-        }),
-      );
     },
     RESET_PROFILE_MATCH_FILTERS(): void {
       this.SET_OPPONENT_TAG("");
