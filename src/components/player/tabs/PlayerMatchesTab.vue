@@ -311,6 +311,17 @@ export default defineComponent({
       },
     ]);
 
+
+    // Rehydrate FIRST, before any reactive setup or store calls
+    const savedPlayerRandom = localStorage.getItem("playerIncludeRandom");
+    const savedOpponentRandom = localStorage.getItem("opponentIncludeRandom");
+    if (savedPlayerRandom !== null) {
+      playerStore.SET_PLAYER_INCLUDE_RANDOM(savedPlayerRandom === "true");
+    }
+    if (savedOpponentRandom !== null) {
+      playerStore.SET_OPPONENT_INCLUDE_RANDOM(savedOpponentRandom === "true");
+    }
+
     const playerIncludeRandom = computed({
       get: () => !!playerStore.playerIncludeRandom,
       set: (val: boolean) => playerStore.SET_PLAYER_INCLUDE_RANDOM(val)
@@ -441,11 +452,17 @@ export default defineComponent({
 
     function setPlayerRaceForSearch(race: ERaceEnum): void {
       playerStore.SET_PLAYER_RACE(race);
+      if (race === ERaceEnum.TOTAL || race === ERaceEnum.RANDOM) {
+        playerStore.SET_PLAYER_INCLUDE_RANDOM(false);
+      }
       getMatches();
     }
 
     function setOpponentRaceForSearch(race: ERaceEnum): void {
       playerStore.SET_OPPONENT_RACE(race);
+      if (race === ERaceEnum.TOTAL || race === ERaceEnum.RANDOM) {
+        playerStore.SET_OPPONENT_INCLUDE_RANDOM(false);
+      }
       getMatches();
     }
 
