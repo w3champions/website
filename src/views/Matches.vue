@@ -26,7 +26,7 @@
                 <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
                 <sort-select v-if="unfinished" />
                 <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
-                <hero-icon-toggle :showHeroes="showHeroIcons" :unfinished="unfinished" @update:showHeroes="toggleShowHeroIcons" />
+                <table-options-menu :unfinished="unfinished" />
                 <spoiler-free-toggle :unfinished="unfinished" />
               </div>
             </div>
@@ -42,6 +42,9 @@
             :unfinished="unfinished"
             :is-player-profile="false"
             :show-heroes="showHeroIcons"
+            :show-country-flags="showCountryFlags"
+            :show-server-info="showServerInfo"
+            :show-player-aliases="showPlayerAliases"
             :selectedHeroes="selectedHeroes"
             @pageChanged="onPageChanged"
           />
@@ -71,8 +74,9 @@ import { useMatchStore } from "@/store/match/store";
 import type { MapInfo } from "@/store/common/types";
 import SeasonSelect from "@/components/common/SeasonSelect.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
-import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import SpoilerFreeToggle from "@/components/matches/SpoilerFreeToggle.vue";
+import TableOptionsMenu from "@/components/matches/TableOptionsMenu.vue";
+import { useTableOptionsStore } from "@/store/tableOptions/store";
 
 export default defineComponent({
   name: "MatchesView",
@@ -84,15 +88,16 @@ export default defineComponent({
     MapSelect,
     MmrSelect,
     SortSelect,
-    HeroIconToggle,
     SpoilerFreeToggle,
     HeroSelect,
     DurationSelect,
+    TableOptionsMenu,
   },
   setup() {
     const overallStatsStore = useOverallStatsStore();
     const rankingsStore = useRankingStore();
     const matchStore = useMatchStore();
+    const tableOptionsStore = useTableOptionsStore();
     const isInitializing = ref<boolean>(true);
     let _intervalRefreshHandle: NodeJS.Timeout;
 
@@ -108,7 +113,10 @@ export default defineComponent({
     const duration = computed<{ min: number; max: number }>(() => matchStore.duration);
 
 
-    const showHeroIcons = computed<boolean>(() => matchStore.showHeroIcons);
+    const showHeroIcons = computed<boolean>(() => tableOptionsStore.showHeroes);
+    const showCountryFlags = computed<boolean>(() => tableOptionsStore.showCountryFlags);
+    const showServerInfo = computed<boolean>(() => tableOptionsStore.showServerInfo);
+    const showPlayerAliases = computed<boolean>(() => tableOptionsStore.showPlayerAliases);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
 
     const maps = computed<Array<MapInfo>>(() => {
@@ -215,10 +223,6 @@ export default defineComponent({
     async function selectSeason(season: Season): Promise<void> {
       await matchStore.setSeason(season);
     }
-    function toggleShowHeroIcons(showHeroIcons: boolean): void {
-      matchStore.setShowHeroIcons(showHeroIcons);
-    }
-
     async function heroChanged(heroes: number[]): Promise<void> {
       await matchStore.setSelectedHeroFilter(heroes);
     }
@@ -242,7 +246,9 @@ export default defineComponent({
       selectedHeroes,
       onPageChanged,
       showHeroIcons,
-      toggleShowHeroIcons,
+      showCountryFlags,
+      showServerInfo,
+      showPlayerAliases,
       showHeroSelect,
       heroChanged,
     };

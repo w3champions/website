@@ -131,7 +131,7 @@
           />
         </v-col>
         <v-col class="pa-0 d-flex justify-end align-end player-match-search-col">
-          <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
+          <table-options-menu />
           <spoiler-free-toggle />
         </v-col>
       </v-row>
@@ -161,6 +161,9 @@
       only-show-enemy
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
+      :show-country-flags="showCountryFlags"
+      :show-server-info="showServerInfo"
+      :show-player-aliases="showPlayerAliases"
       :selectedHeroes="selectedHeroes"
       @pageChanged="onPageChanged"
     />
@@ -177,12 +180,13 @@ import { EGameMode, ERaceEnum, type Match, type PlayerInTeam, type Team } from "
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
-import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import { useCommonStore } from "@/store/common/store";
 import { getAsset } from "@/helpers/url-functions";
 import { mdiControllerClassic } from "@mdi/js";
 import SpoilerFreeToggle from "@/components/matches/SpoilerFreeToggle.vue";
+import TableOptionsMenu from "@/components/matches/TableOptionsMenu.vue";
+import { useTableOptionsStore } from "@/store/tableOptions/store";
 
 interface RaceFilterOption {
   raceName: string;
@@ -195,9 +199,9 @@ export default defineComponent({
   components: {
     MatchesGrid,
     PlayerSearch,
-    HeroIconToggle,
     HeroSelect,
     SpoilerFreeToggle,
+    TableOptionsMenu,
   },
   props: {
     id: {
@@ -210,15 +214,19 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const rankingsStore = useRankingStore();
     const commonStore = useCommonStore();
+    const tableOptionsStore = useTableOptionsStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
-    const showHeroIcons = ref<boolean>(false);
     const hasResolvedInitialMatches = ref<boolean>(false);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
     const matches = computed<Match[]>(() => playerStore.matches);
     const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
+    const showHeroIcons = computed<boolean>(() => tableOptionsStore.showHeroes);
+    const showCountryFlags = computed<boolean>(() => tableOptionsStore.showCountryFlags);
+    const showServerInfo = computed<boolean>(() => tableOptionsStore.showServerInfo);
+    const showPlayerAliases = computed<boolean>(() => tableOptionsStore.showPlayerAliases);
 
     const selectedGameModeName = ref<string>("All Modes");
 
@@ -468,6 +476,9 @@ export default defineComponent({
       battleTag,
       onPageChanged,
       showHeroIcons,
+      showCountryFlags,
+      showServerInfo,
+      showPlayerAliases,
       heroChanged,
       selectedHeroes,
     };

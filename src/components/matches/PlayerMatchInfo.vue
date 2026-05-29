@@ -8,7 +8,7 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span>
-        <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
+        <span v-if="showCountryFlags && !left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
@@ -24,7 +24,7 @@
               @click.middle="openProfileInNewTab()"
               @click.right="openProfileInNewTab()"
             >
-              {{ nameWithoutBtag }}<span v-if="displayRating !== null" :class="{ 'spoiler-mask': hideWinnerSpoilers }"> ({{ displayRating }})<span v-if="displayMmrChange !== 0" class="number-text rating-text" :class="playerColorClass">
+              {{ nameWithoutBtag }}<span v-if="aliasName" class="alias-text"> ({{ aliasName }})</span><span v-if="displayRating !== null" :class="{ 'spoiler-mask': hideWinnerSpoilers }"> ({{ displayRating }})<span v-if="displayMmrChange !== 0" class="number-text rating-text" :class="playerColorClass">
                 <span v-if="displayMmrChange > 0">+</span>{{ displayMmrChange }}
               </span></span>
             </a>
@@ -34,6 +34,7 @@
               <span v-if="displayMmrChange > 0">+</span>{{ displayMmrChange }}
             </span></span></div>
             <div v-else>MMR: {{ $t("components_matches_playermatchinfo.calibrating") }}</div>
+            <div v-if="aliasName">{{ $t("components_matches_playermatchinfo.alias") }}: {{ aliasName }}</div>
             <div v-if="topPercentage !== null">Top: {{ topPercentage }}%</div>
             <div class="d-flex align-center">
               <img v-if="leagueName !== null" :src="`/assets/leagueIcons/${player.ranking?.leagueOrder}.png`" style="width: 16px; height: 16px; margin-right: 4px;" />
@@ -41,7 +42,7 @@
             </div>
           </div>
         </v-tooltip>
-        <span v-if="left && (player.countryCode || player.location)" class="ml-1">
+        <span v-if="showCountryFlags && left && (player.countryCode || player.location)" class="ml-1">
           <country-flag-extended
             :countryCode="player.countryCode"
             :location="player.location"
@@ -125,6 +126,16 @@ export default defineComponent({
       required: false,
       default: () => [],
     },
+    showCountryFlags: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    showPlayerAliases: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -149,6 +160,22 @@ export default defineComponent({
     const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));
     const leagueDivision = ref<number | null>(props.player.ranking?.division || null);
     const leagueRank = ref<number | null>(props.player.ranking?.rank || null);
+
+    const aliasName = computed<string>(() => {
+      if (!props.showPlayerAliases) return "";
+
+      const alias = stripTag(props.player.inviteName);
+      if (!alias) return "";
+
+      const playerName = stripTag(props.player.name);
+      const battleTagName = stripTag(props.player.battleTag);
+
+      if (alias === playerName || alias === battleTagName) {
+        return "";
+      }
+
+      return alias;
+    });
 
     const mmrChange = computed<number>(() => {
       if (props.player.oldMmr && props.player.currentMmr) {
@@ -240,6 +267,14 @@ export default defineComponent({
         });
     }
 
+    function stripTag(value?: string): string {
+      if (!value) return "";
+
+      const hashIndex = value.indexOf("#");
+      if (hashIndex != -1) return value.substring(0, hashIndex);
+      return value;
+    }
+
     return {
       won,
       race,
@@ -247,6 +282,7 @@ export default defineComponent({
       currentRating,
       displayRating,
       displayMmrChange,
+      aliasName,
       textClass,
       nameWithoutBtag,
       mmrChange,
@@ -312,6 +348,12 @@ export default defineComponent({
 
 .ranking-text {
   font-size: 0.925em;
+}
+
+.alias-text {
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  font-size: 0.9em;
+  font-style: italic;
 }
 
 .secondary-line {

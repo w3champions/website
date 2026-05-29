@@ -505,8 +505,14 @@ const en = {
   components_matches_matchesgrid: {
     replay: "Replay",
     floNode: "Flo Node",
-    showHeroIcons: "Show Heroes",
-    hideHeroIcons: "Hide Heroes",
+  },
+
+  components_matches_tableoptions: {
+    title: "Table Options",
+    countryFlags: "Country Flags",
+    serverInfo: "Server & Pings",
+    heroes: "Heroes",
+    playerAliases: "Player Aliases",
   },
 
   components_matches_spoilerfreetoggle: {
@@ -516,6 +522,7 @@ const en = {
   },
 
   components_matches_playermatchinfo: {
+    alias: "Alias",
     calibrating: "Calibrating",
   },
 

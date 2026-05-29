@@ -19,6 +19,8 @@
           :spoiler-free-winner="spoilerFreeWinner"
           :show-heroes="showHeroes"
           :selectedHeroes="selectedHeroes"
+          :show-country-flags="showCountryFlags"
+          :show-player-aliases="showPlayerAliases"
         />
       </div>
     </div>
@@ -86,6 +88,16 @@ export default defineComponent({
       type: Array as PropType<number[]>,
       required: false,
       default: () => [],
+    },
+    showCountryFlags: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    showPlayerAliases: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup() {
