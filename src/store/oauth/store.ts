@@ -15,24 +15,33 @@ export const useOauthStore = defineStore("oauth", {
   actions: {
     async authorizeWithCode(code: string) {
       const region = AuthorizationService.loadAuthRegionCookie();
+      // Only the exchange itself can fail the login: authorize() throws on !response.ok
+      // (surfacing the IdP error code). Once it resolves, the IdP issued a valid token.
       const bearer = await AuthorizationService.authorize(code, region);
 
       this.SET_BEARER(bearer.jwt);
 
-      // Persist the cookie as soon as the code exchange succeeds: the IdP issued a
-      // valid token, so persistence must NOT depend on the secondary profile fetch.
-      // Otherwise a transient 5xx during getProfile would leave the user with a valid
-      // session that was never saved -> a redirect to /sso-continue finds no cookie
-      // -> re-login loop. saveAuthToken only writes the cookie/region (no network).
+      // Persist the cookie immediately on a successful exchange — the login IS
+      // successful at this point; persistence must NOT depend on the secondary
+      // profile fetch. saveAuthToken only writes the cookie/region (no network).
       AuthorizationService.saveAuthToken(bearer);
 
-      const profile = await AuthorizationService.getProfile(bearer.jwt);
-      if (profile) {
-        this.SET_PROFILE_NAME(profile.battleTag);
-        this.SET_IS_ADMIN(profile.isAdmin);
-        if (profile.isAdmin) {
-          this.SET_PERMISSIONS(profile.permissions);
+      // The profile fetch is BEST-EFFORT: it only fills the in-memory battletag/admin
+      // state. A transient failure (5xx, network/CORS, JSON throw) must NOT reject
+      // authorizeWithCode and thereby fail a login whose session is already valid and
+      // saved. The battletag fills later via App.vue's status-aware bootstrap on the
+      // destination route. So swallow any error here and treat a null profile as a no-op.
+      try {
+        const profile = await AuthorizationService.getProfile(bearer.jwt);
+        if (profile) {
+          this.SET_PROFILE_NAME(profile.battleTag);
+          this.SET_IS_ADMIN(profile.isAdmin);
+          if (profile.isAdmin) {
+            this.SET_PERMISSIONS(profile.permissions);
+          }
         }
+      } catch {
+        // Best-effort — ignore; the session is already valid and persisted.
       }
     },
     async authorizeWithTwitch() {

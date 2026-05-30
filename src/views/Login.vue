@@ -71,7 +71,6 @@ export default defineComponent({
     const errorMessage = ref("");
 
     const account = computed<string>(() => oauthStore.blizzardVerifiedBtag);
-    const authCode = computed<string>(() => oauthStore.token);
 
     function goHome(): void {
       router.replace({ name: EMainRouteName.HOME });
@@ -123,27 +122,16 @@ export default defineComponent({
       }
 
       try {
+        // A resolved authorizeWithCode means the code exchange succeeded and the
+        // cookie was persisted — the login IS successful. The profile load inside it
+        // is best-effort, so a transient profile/validation blip does NOT fail the
+        // login. Redirect unconditionally on success; only a genuine EXCHANGE failure
+        // (authorize() throwing) lands in the catch below. authorizeWithCode already
+        // loaded the profile best-effort, so we don't call loadBlizzardBtag again here
+        // (App.vue's status-aware bootstrap fills the battletag on the destination if
+        // that best-effort load blipped).
         await oauthStore.authorizeWithCode(props.code);
-
-        // Only redirect once the session is verified. authorizeWithCode already
-        // persisted the cookie on a successful exchange, so loadBlizzardBtag is the
-        // profile-load step: "valid" means the session is fully hydrated -> redirect.
-        // "error" is a transient backend blip (5xx/network) -> show a retryable error
-        // and DO NOT redirect, so we never bounce into /sso-continue mid-outage (which
-        // would otherwise loop). "invalid" means the just-issued token was rejected
-        // -> treat as a failed login. Both non-valid paths clear LOGIN_RETURN_TO_KEY
-        // like the other failure exits so a stale return path can't be consumed later.
-        const status = await oauthStore.loadBlizzardBtag(authCode.value);
-
-        if (status === "valid") {
-          openRequestedReturnPath();
-          return;
-        }
-
-        // Both "error" (transient) and "invalid" (rejected token) are unexpected here
-        // and map to the generic error card.
-        window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
-        mapErrorCode("GENERIC");
+        openRequestedReturnPath();
       } catch (error: unknown) {
         // Login failed (id-service error code or generic). As above, clear the saved
         // return path so the abandoned SSO continuation can't redirect a future login.
