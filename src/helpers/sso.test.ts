@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { isAllowedReturnUrl } from "./sso";
+import { isAllowedReturnUrl, isJwtExpired } from "./sso";
 
 const PROD_ORIGIN = "https://identification-service.w3champions.com";
 const TEST_ORIGIN = "https://identification-service.test.w3champions.com";
@@ -88,5 +88,38 @@ describe("isAllowedReturnUrl", () => {
       isAllowedReturnUrl("javascript:alert(1)", PROD_ORIGIN),
       false,
     );
+  });
+});
+
+// Build a JWT-shaped string ("header.payload.signature") whose payload is the
+// base64url encoding of the given claims. The signature is a dummy — isJwtExpired
+// only reads the payload and does not verify the signature.
+function makeJwt(claims: Record<string, unknown>): string {
+  const base64url = (obj: Record<string, unknown>): string =>
+    Buffer.from(JSON.stringify(obj))
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  return `${base64url({ alg: "HS256", typ: "JWT" })}.${base64url(claims)}.sig`;
+}
+
+describe("isJwtExpired", () => {
+  it("returns false for an unexpired token", () => {
+    const exp = Math.floor(Date.now() / 1000) + 3600; // 1h in the future
+    assert.equal(isJwtExpired(makeJwt({ exp })), false);
+  });
+
+  it("returns true for an expired token", () => {
+    const exp = Math.floor(Date.now() / 1000) - 3600; // 1h in the past
+    assert.equal(isJwtExpired(makeJwt({ exp })), true);
+  });
+
+  it("returns true for a token with no exp claim", () => {
+    assert.equal(isJwtExpired(makeJwt({ sub: "someone" })), true);
+  });
+
+  it("returns true for a malformed / non-JWT string", () => {
+    assert.equal(isJwtExpired("not-a-jwt"), true);
   });
 });

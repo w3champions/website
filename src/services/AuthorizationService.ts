@@ -1,5 +1,6 @@
 import { BnetOAuthRegion, type TwitchToken, type W3cToken } from "@/store/oauth/types";
 import { REDIRECT_URL } from "@/main";
+import { isJwtExpired } from "@/helpers/sso";
 import Cookies from "js-cookie";
 
 const w3CAuth = "W3ChampionsJWT";
@@ -94,16 +95,23 @@ export default class AuthorizationService {
   }
 
   /**
-   * Status-aware session check against the same /api/oauth/user-info endpoint as
-   * getProfile (which collapses every non-200 to null, hiding the difference
-   * between a genuinely invalid token and a transient outage). Distinguishes:
-   *   - "valid":   200 — the JWT is accepted.
-   *   - "invalid": 401/403 — genuine auth failure; the cookie is stale/revoked.
+   * Status-aware session check. First enforces exp client-side (the user-info
+   * endpoint does not — see below), then queries the same /api/oauth/user-info
+   * endpoint as getProfile (which collapses every non-200 to null, hiding the
+   * difference between a genuinely invalid token and a transient outage). Distinguishes:
+   *   - "valid":   not expired AND 200 — the JWT is accepted.
+   *   - "invalid": expired OR 401/403 — genuine auth failure; the cookie is stale/revoked.
    *   - "error":   5xx, any other non-ok status, or a thrown fetch (network/DNS/
    *                CORS) — transient; the cookie must NOT be cleared on this.
    * Caller decides what to do (e.g. only log out on "invalid").
    */
   public static async validateSession(jwt: string): Promise<"valid" | "invalid" | "error"> {
+    // The legacy /api/oauth/user-info endpoint validates the signature but NOT the
+    // lifetime, so it returns 200 for an expired-but-present cookie. The handoff DOES
+    // enforce exp and would 401. Reject an expired token up front (→ "invalid" → the
+    // caller logs out + cold-logins) so it's never submitted to the handoff.
+    if (isJwtExpired(jwt)) return "invalid";
+
     try {
       const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${encodeURIComponent(jwt)}`;
       const response = await fetch(url, {
