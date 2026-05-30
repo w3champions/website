@@ -52,6 +52,7 @@ import { useRoute, useRouter } from "vue-router";
 import { EMainRouteName } from "@/router/types";
 import { handoffEndpoint, identificationOrigin, isAllowedReturnUrl } from "@/helpers/sso";
 import { LOGIN_RETURN_TO_KEY, OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
+import { useOauthStore } from "@/store/oauth/store";
 import AuthorizationService from "@/services/AuthorizationService";
 import { mdiAlertCircle } from "@mdi/js";
 
@@ -62,6 +63,7 @@ export default defineComponent({
     const { t } = useI18n();
     const route = useRoute();
     const router = useRouter();
+    const oauthStore = useOauthStore();
 
     const errorMessage = ref("");
     const jwt = ref("");
@@ -71,6 +73,21 @@ export default defineComponent({
 
     function goHome(): void {
       router.replace({ name: EMainRouteName.HOME });
+    }
+
+    // Bring the user through the Battle.net sign-in flow, then back to
+    // /sso-continue to complete the handoff once a fresh cookie is set. Store a
+    // PATH (not a full URL) so the post-login router.replace(returnTo) in
+    // Login.vue matches this route. Shared by the "no cookie" and the
+    // "stale cookie" cases so the cold-login branch isn't duplicated.
+    function startColdLogin(returnParam: string): void {
+      const selfUrl = `/sso-continue?return=${encodeURIComponent(returnParam)}`;
+      window.sessionStorage.setItem(LOGIN_RETURN_TO_KEY, selfUrl);
+      window.dispatchEvent(
+        new CustomEvent(OPEN_SIGN_IN_DIALOG_EVENT, {
+          detail: { returnTo: selfUrl },
+        }),
+      );
     }
 
     async function init(): Promise<void> {
@@ -83,31 +100,39 @@ export default defineComponent({
 
       const cookieJwt = AuthorizationService.loadAuthCookie();
 
-      if (cookieJwt) {
-        // User is already logged in — submit the handoff form
-        jwt.value = cookieJwt;
-        validatedReturn.value = returnParam;
-        await nextTick();
-        if (!formRef.value) {
-          // The hidden form should exist once jwt + validatedReturn are set; if it
-          // is somehow missing (future regression), surface an error instead of
-          // silently doing nothing.
-          errorMessage.value = t("views_sso_continue.error_invalid_return");
-          return;
-        }
-        formRef.value.submit();
-      } else {
-        // User is not logged in — store a PATH (not a full URL) so the post-login
-        // router.replace(returnTo) in Login.vue matches this route, then bring it
-        // back to /sso-continue to complete the handoff once the cookie is set.
-        const selfUrl = `/sso-continue?return=${encodeURIComponent(returnParam)}`;
-        window.sessionStorage.setItem(LOGIN_RETURN_TO_KEY, selfUrl);
-        window.dispatchEvent(
-          new CustomEvent(OPEN_SIGN_IN_DIALOG_EVENT, {
-            detail: { returnTo: selfUrl },
-          }),
-        );
+      if (!cookieJwt) {
+        // No session at all — send the user through the sign-in flow.
+        startColdLogin(returnParam);
+        return;
       }
+
+      // A W3ChampionsJWT cookie can still be expired or revoked. The id-service
+      // handoff validates exp + signature and returns 401, which would strand the
+      // user on a 401 error page. Validate the cookie first using the SAME check the
+      // app uses on startup (getProfile → null on invalid; the oauth store logs out
+      // on null). Only submit the handoff for a confirmed-valid cookie.
+      const profile = await AuthorizationService.getProfile(cookieJwt);
+
+      if (!profile) {
+        // Stale cookie — clear it the way the app does (store logout deletes the
+        // cookie + resets oauth state), then fall through to the cold-login flow.
+        oauthStore.logout();
+        startColdLogin(returnParam);
+        return;
+      }
+
+      // Valid session — submit the handoff form.
+      jwt.value = cookieJwt;
+      validatedReturn.value = returnParam;
+      await nextTick();
+      if (!formRef.value) {
+        // The hidden form should exist once jwt + validatedReturn are set; if it
+        // is somehow missing (future regression), surface an error instead of
+        // silently doing nothing.
+        errorMessage.value = t("views_sso_continue.error_invalid_return");
+        return;
+      }
+      formRef.value.submit();
     }
 
     onMounted((): void => {
