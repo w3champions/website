@@ -14,7 +14,7 @@
               <p>{{ $t("views_sso_continue.submitting") }}</p>
             </div>
 
-            <div v-else-if="errorMessage">
+            <div v-else-if="errorMessage" role="alert" aria-live="assertive">
               <v-icon color="error" size="100" class="mb-4">
                 {{ mdiAlertCircle }}
               </v-icon>
@@ -51,6 +51,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { EMainRouteName } from "@/router/types";
 import { handoffEndpoint, identificationOrigin, isAllowedReturnUrl } from "@/helpers/sso";
+import { LOGIN_RETURN_TO_KEY, OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import AuthorizationService from "@/services/AuthorizationService";
 import { mdiAlertCircle } from "@mdi/js";
 
@@ -87,15 +88,22 @@ export default defineComponent({
         jwt.value = cookieJwt;
         validatedReturn.value = returnParam;
         await nextTick();
-        formRef.value?.submit();
+        if (!formRef.value) {
+          // The hidden form should exist once jwt + validatedReturn are set; if it
+          // is somehow missing (future regression), surface an error instead of
+          // silently doing nothing.
+          errorMessage.value = t("views_sso_continue.error_invalid_return");
+          return;
+        }
+        formRef.value.submit();
       } else {
         // User is not logged in — store a PATH (not a full URL) so the post-login
         // router.replace(returnTo) in Login.vue matches this route, then bring it
         // back to /sso-continue to complete the handoff once the cookie is set.
         const selfUrl = `/sso-continue?return=${encodeURIComponent(returnParam)}`;
-        window.sessionStorage.setItem("w3-login-return-to", selfUrl);
+        window.sessionStorage.setItem(LOGIN_RETURN_TO_KEY, selfUrl);
         window.dispatchEvent(
-          new CustomEvent("w3-open-sign-in-dialog", {
+          new CustomEvent(OPEN_SIGN_IN_DIALOG_EVENT, {
             detail: { returnTo: selfUrl },
           }),
         );

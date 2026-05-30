@@ -13,7 +13,7 @@
       </template>
 
       <template v-else>
-        <v-card-text>
+        <v-card-text role="alert" aria-live="assertive">
           <v-icon color="error" size="100" class="mb-4">
             {{ mdiAlertCircle }}
           </v-icon>
@@ -34,12 +34,19 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { isAllowedReturnUrl, identificationOrigin } from "@/helpers/sso";
+import { LOGIN_RETURN_TO_KEY } from "@/constants/sso";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router";
 import { EMainRouteName } from "@/router/types";
 import { mdiAlertCircle } from "@mdi/js";
 
-const ERROR_CODE_MAP: Record<string, string> = {
+type IdServiceErrorCode =
+  | "MISSING_WARCRAFT_3"
+  | "MISSING_PLAYABLE_TITLES_SCOPE"
+  | "UNSUPPORTED_VERSION"
+  | "PLAYABLE_TITLES_API_FAILED";
+
+const ERROR_CODE_MAP: Record<IdServiceErrorCode, string> = {
   MISSING_WARCRAFT_3: "views_login.error_missing_warcraft3",
   MISSING_PLAYABLE_TITLES_SCOPE: "views_login.error_missing_playable_titles_scope",
   UNSUPPORTED_VERSION: "views_login.error_unsupported_version",
@@ -60,7 +67,6 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const oauthStore = useOauthStore();
-    const loginReturnToKey = "w3-login-return-to";
 
     const errorMessage = ref("");
 
@@ -78,9 +84,9 @@ export default defineComponent({
     }
 
     function openRequestedReturnPath(): void {
-      const returnTo = window.sessionStorage.getItem(loginReturnToKey);
+      const returnTo = window.sessionStorage.getItem(LOGIN_RETURN_TO_KEY);
       if (returnTo) {
-        window.sessionStorage.removeItem(loginReturnToKey);
+        window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
         if (isAllowedReturnUrl(returnTo, identificationOrigin())) {
           window.location.href = returnTo;
           return;
@@ -92,13 +98,15 @@ export default defineComponent({
       openPlayerProfile();
     }
 
-    function setErrorFromCode(rawCode: string): void {
+    function mapErrorCode(rawCode: string): void {
       const upper = rawCode.trim().toUpperCase();
       if (upper === "BNET_CANCELLED") {
         errorMessage.value = t("views_login.error_bnet_cancelled");
         return;
       }
-      const i18nKey = ERROR_CODE_MAP[upper];
+      // Intentional generic fallback: unmapped codes (e.g. the IdP's UNKNOWN_ERROR,
+      // a "GENERIC" sentinel, or any future/renamed code) resolve to error_generic.
+      const i18nKey = ERROR_CODE_MAP[upper as IdServiceErrorCode];
       errorMessage.value = i18nKey ? t(i18nKey) : t("views_login.error_generic");
     }
 
@@ -106,7 +114,7 @@ export default defineComponent({
       // Handle Battle.net cancel or OAuth error passed as query param
       const queryError = route.query.error as string | undefined;
       if (queryError) {
-        setErrorFromCode("BNET_CANCELLED");
+        mapErrorCode("BNET_CANCELLED");
         return;
       }
 
@@ -116,7 +124,7 @@ export default defineComponent({
         openRequestedReturnPath();
       } catch (error: unknown) {
         const rawCode = error instanceof Error ? error.message.trim() : "";
-        setErrorFromCode(rawCode || "GENERIC");
+        mapErrorCode(rawCode || "GENERIC");
       }
     }
 
