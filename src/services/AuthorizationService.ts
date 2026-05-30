@@ -17,6 +17,17 @@ export default class AuthorizationService {
       },
     });
 
+    // fetch() does not reject on 4xx/5xx, so surface the IdP's error code (e.g.
+    // MISSING_WARCRAFT_3) as a thrown Error for the caller's try/catch. Without
+    // this the body would parse as an undefined token and the failure would be
+    // swallowed (hanging spinner). A non-JSON / shapeless error body maps to
+    // "GENERIC" so Login.vue falls back to the generic error message.
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      const code = body && typeof body.errorCode === "string" ? body.errorCode : "GENERIC";
+      throw new Error(code);
+    }
+
     return await response.json();
   }
 
