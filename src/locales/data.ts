@@ -328,6 +328,17 @@ const data = {
     components_matches_replayicon: {
       download: "Download Replay",
     },
+    components_matches_tableoptions: {
+      title: "Settings",
+      button: "Settings",
+      hideWinner: "Hide Winner",
+      hideDuration: "Hide Duration",
+      serverInfo: "Server & Pings",
+      heroes: "Heroes",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Calibrating",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Picked Heroes",
       mode: "Mode",
@@ -547,6 +558,7 @@ const data = {
     },
     heroNames: {
       all: "Any hero selection",
+      allfilter: "All Heroes",
       none: "No hero selection",
       archmage: "Archmage",
       alchemist: "Goblin Alchemist",
@@ -895,6 +907,17 @@ const data = {
       toplive1v1matches: "Топ онлайн матчей 1vs1",
     },
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "Настройки",
+      button: "Настройки",
+      hideWinner: "Скрыть победителя",
+      hideDuration: "Скрыть длительность",
+      serverInfo: "Сервер и пинг",
+      heroes: "Герои",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Калибровка",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Выбранные герои",
       mode: "Режим",
@@ -1073,6 +1096,7 @@ const data = {
     },
     heroNames: {
       all: "Любой герой",
+      allfilter: "Все герои",
       none: "Нет героя",
       archmage: "Верховный маг",
       alchemist: "Алхимик",
@@ -1393,6 +1417,17 @@ const data = {
     components_matches_sortselect: {},
     components_matches_topongoingmatcheswithstreams: {},
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "설정",
+      button: "설정",
+      hideWinner: "승자 숨기기",
+      hideDuration: "시간 숨기기",
+      serverInfo: "서버 및 핑",
+      heroes: "영웅",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "보정 중",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "영웅 선택",
     },
@@ -1531,6 +1566,7 @@ const data = {
     },
     heroNames: {
       all: "영웅 선택",
+      allfilter: "모든 영웅",
       none: "영웅 선택 없음",
       archmage: "아크메이지",
       alchemist: "고블린 알케미스트",
@@ -1864,6 +1900,17 @@ const data = {
       toplive1v1matches: "置顶进行中的1V1比赛",
     },
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "设置",
+      button: "设置",
+      hideWinner: "隐藏胜者",
+      hideDuration: "隐藏时长",
+      serverInfo: "服务器和延迟",
+      heroes: "英雄",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "校准中",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "选择英雄",
       mode: "模式",
@@ -2052,6 +2099,7 @@ const data = {
     },
     heroNames: {
       all: "任何英雄",
+      allfilter: "所有英雄",
       none: "未选择英雄",
       archmage: "大法师",
       alchemist: "炼金术师",
@@ -2372,6 +2420,17 @@ const data = {
     components_matches_sortselect: {},
     components_matches_topongoingmatcheswithstreams: {},
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "Einstellungen",
+      button: "Einstellungen",
+      hideWinner: "Sieger ausblenden",
+      hideDuration: "Dauer ausblenden",
+      serverInfo: "Server & Ping",
+      heroes: "Helden",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Kalibrierung",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Ausgewählte Helden",
     },
@@ -2516,6 +2575,7 @@ const data = {
     },
     heroNames: {
       all: "Jegliche Heldenauswahl",
+      allfilter: "Alle Helden",
       none: "Keine Heldenauswahl",
       archmage: "Erzmagier",
       alchemist: "Goblin Alchemist",
@@ -2879,6 +2939,17 @@ const data = {
       toplive1v1matches: "Najlepsze streamowane mecze 1v1",
     },
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "Ustawienia",
+      button: "Ustawienia",
+      hideWinner: "Ukryj zwycięzcę",
+      hideDuration: "Ukryj czas trwania",
+      serverInfo: "Serwer i ping",
+      heroes: "Bohaterowie",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Kalibracja",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Wybrani bohaterowie",
       mode: "Tryb",
@@ -3069,6 +3140,7 @@ const data = {
     },
     heroNames: {
       all: "Jakikolwiek bohater",
+      allfilter: "Wszyscy bohaterowie",
       none: "Bez bohaterów",
       archmage: "Arcymag",
       alchemist: "Gobliński Alchemik",
@@ -3417,6 +3489,17 @@ const data = {
       toplive1v1matches: "Топ онлайн матчів 1v1",
     },
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "Налаштування",
+      button: "Налаштування",
+      hideWinner: "Приховати переможця",
+      hideDuration: "Приховати тривалість",
+      serverInfo: "Сервер і пінг",
+      heroes: "Герої",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Калібрування",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Обрані герої",
       mode: "Режим",
@@ -3595,6 +3678,7 @@ const data = {
     },
     heroNames: {
       all: "Будь-який герой",
+      allfilter: "Усі герої",
       none: "Немає героя",
       archmage: "Верховний маг",
       alchemist: "Алхімік",
@@ -3943,6 +4027,17 @@ const data = {
       toplive1v1matches: "Top partidas de 1v1 ao vivo",
     },
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "Configurações",
+      button: "Configurações",
+      hideWinner: "Ocultar vencedor",
+      hideDuration: "Ocultar duração",
+      serverInfo: "Servidor e ping",
+      heroes: "Heróis",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Calibrando",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Heróis escolhidos",
       mode: "Modo",
@@ -4119,6 +4214,7 @@ const data = {
     },
     heroNames: {
       all: "Qualquer seleção de herói",
+      allfilter: "Todos os heróis",
       none: "Sem seleção de herói",
       archmage: "Arquimago",
       alchemist: "Alquimista",
@@ -4474,6 +4570,17 @@ const data = {
       toplive1v1matches: "Top matchs 1v1 en cours",
     },
     components_matches_replayicon: {},
+    components_matches_tableoptions: {
+      title: "Paramètres",
+      button: "Paramètres",
+      hideWinner: "Masquer le vainqueur",
+      hideDuration: "Masquer la durée",
+      serverInfo: "Serveur et ping",
+      heroes: "Héros",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Calibration",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Héros choisis",
       mode: "Mode",
@@ -4653,6 +4760,7 @@ const data = {
     },
     heroNames: {
       all: "N'importe quel héros",
+      allfilter: "Tous les héros",
       none: "Pas de héros sélectionné",
       archmage: "Archimage",
       alchemist: "Alchimiste Gobelin",
@@ -5020,6 +5128,17 @@ const data = {
     components_matches_replayicon: {
       download: "Preuzmite riplej",
     },
+    components_matches_tableoptions: {
+      title: "Podešavanja",
+      button: "Podešavanja",
+      hideWinner: "Sakrij pobednika",
+      hideDuration: "Sakrij trajanje",
+      serverInfo: "Server i ping",
+      heroes: "Heroji",
+    },
+    components_matches_playermatchinfo: {
+      calibrating: "Kalibracija",
+    },
     "components_overall-statistics_tabs_herotab": {
       pickedheroes: "Odabrani heroji",
       mode: "Mod",
@@ -5214,6 +5333,7 @@ const data = {
     },
     heroNames: {
       all: "Bilo koji izbor heroja",
+      allfilter: "Svi heroji",
       none: "Nijedan izbor heroja",
       archmage: "Vrhovni Čarobnjak",
       alchemist: "Goblin Alhemičar",

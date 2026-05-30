@@ -1,6 +1,6 @@
 <template>
   <v-menu
-    location="right"
+    location="bottom start"
     :close-on-content-click="false"
     @update:model-value="onMenuToggled"
   >
@@ -13,6 +13,7 @@
       >
         <v-icon size="x-large" start>{{ mdiTimerSand }}</v-icon>
         {{ selected }}
+        <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
       </v-btn>
     </template>
 
@@ -50,7 +51,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, PropType, ref } from "vue";
-import { mdiTimerSand } from "@mdi/js";
+import { mdiChevronDown, mdiTimerSand } from "@mdi/js";
 
 export default defineComponent({
   name: "DurationSelect",
@@ -117,6 +118,7 @@ export default defineComponent({
 
     return {
       mdiTimerSand,
+      mdiChevronDown,
       selected,
       currentMinMax,
       onMenuToggled,
