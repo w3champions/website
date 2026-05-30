@@ -309,6 +309,7 @@ const data = {
       gamemode: "Game Mode",
       map: "Map",
       starttime: "Start time",
+      timeSince: "Time since",
       duration: "Duration",
       replay: "Replay",
       showHeroIcons: "Show Heroes",
@@ -333,7 +334,7 @@ const data = {
       button: "Settings",
       hideWinner: "Hide Winner",
       hideDuration: "Hide Duration",
-      serverInfo: "Server & Pings",
+      timeSince: "Time since",
       heroes: "Heroes",
     },
     components_matches_playermatchinfo: {
@@ -897,6 +898,7 @@ const data = {
       players: "Игроки",
       map: "Карта",
       starttime: "Время начала",
+      timeSince: "Прошло времени",
       duration: "Длительность",
     },
     components_matches_matchesstatusselect: {
@@ -912,7 +914,7 @@ const data = {
       button: "Настройки",
       hideWinner: "Скрыть победителя",
       hideDuration: "Скрыть длительность",
-      serverInfo: "Сервер и пинг",
+      timeSince: "Прошло времени",
       heroes: "Герои",
     },
     components_matches_playermatchinfo: {
@@ -1410,6 +1412,7 @@ const data = {
     components_matches_hosticon: {},
     components_matches_matchesgrid: {
       nomatchesfound: "경기를 찾을수 없음",
+      timeSince: "지난 시간",
     },
     components_matches_matchesstatusselect: {
       selectstatus: "상태 선택",
@@ -1422,7 +1425,7 @@ const data = {
       button: "설정",
       hideWinner: "승자 숨기기",
       hideDuration: "시간 숨기기",
-      serverInfo: "서버 및 핑",
+      timeSince: "지난 시간",
       heroes: "영웅",
     },
     components_matches_playermatchinfo: {
@@ -1886,6 +1889,7 @@ const data = {
       gamemode: "游戏模式",
       map: "地图",
       starttime: "开始时间",
+      timeSince: "已过时间",
       duration: "游戏持续时长",
     },
     components_matches_matchesstatusselect: {
@@ -1905,7 +1909,7 @@ const data = {
       button: "设置",
       hideWinner: "隐藏胜者",
       hideDuration: "隐藏时长",
-      serverInfo: "服务器和延迟",
+      timeSince: "已过时间",
       heroes: "英雄",
     },
     components_matches_playermatchinfo: {
@@ -2413,6 +2417,7 @@ const data = {
     components_matches_hosticon: {},
     components_matches_matchesgrid: {
       nomatchesfound: "Keine Matches gefunden",
+      timeSince: "Zeit seitdem",
     },
     components_matches_matchesstatusselect: {
       selectstatus: "Status auswählen:",
@@ -2425,7 +2430,7 @@ const data = {
       button: "Einstellungen",
       hideWinner: "Sieger ausblenden",
       hideDuration: "Dauer ausblenden",
-      serverInfo: "Server & Ping",
+      timeSince: "Zeit seitdem",
       heroes: "Helden",
     },
     components_matches_playermatchinfo: {
@@ -2925,6 +2930,7 @@ const data = {
       gamemode: "Tryb gry",
       map: "Mapa",
       starttime: "Czas rozpoczęcia",
+      timeSince: "Czas od",
       duration: "Czas trwania",
     },
     components_matches_matchesstatusselect: {
@@ -2944,7 +2950,7 @@ const data = {
       button: "Ustawienia",
       hideWinner: "Ukryj zwycięzcę",
       hideDuration: "Ukryj czas trwania",
-      serverInfo: "Serwer i ping",
+      timeSince: "Czas od",
       heroes: "Bohaterowie",
     },
     components_matches_playermatchinfo: {
@@ -3479,6 +3485,7 @@ const data = {
       players: "Гравці",
       map: "Мапа",
       starttime: "Час початку",
+      timeSince: "Минуло часу",
       duration: "Тривалість",
     },
     components_matches_matchesstatusselect: {
@@ -3494,7 +3501,7 @@ const data = {
       button: "Налаштування",
       hideWinner: "Приховати переможця",
       hideDuration: "Приховати тривалість",
-      serverInfo: "Сервер і пінг",
+      timeSince: "Минуло часу",
       heroes: "Герої",
     },
     components_matches_playermatchinfo: {
@@ -4017,6 +4024,7 @@ const data = {
       players: "Jogadores",
       map: "Mapas Atuais",
       starttime: "Hora de início",
+      timeSince: "Tempo decorrido",
       duration: "Duração",
     },
     components_matches_matchesstatusselect: {
@@ -4032,7 +4040,7 @@ const data = {
       button: "Configurações",
       hideWinner: "Ocultar vencedor",
       hideDuration: "Ocultar duração",
-      serverInfo: "Servidor e ping",
+      timeSince: "Tempo decorrido",
       heroes: "Heróis",
     },
     components_matches_playermatchinfo: {
@@ -4560,6 +4568,7 @@ const data = {
       players: "Joueurs",
       map: "Carte",
       starttime: "Heure de début",
+      timeSince: "Temps écoulé",
       duration: "Durée",
     },
     components_matches_matchesstatusselect: {
@@ -4575,7 +4584,7 @@ const data = {
       button: "Paramètres",
       hideWinner: "Masquer le vainqueur",
       hideDuration: "Masquer la durée",
-      serverInfo: "Serveur et ping",
+      timeSince: "Temps écoulé",
       heroes: "Héros",
     },
     components_matches_playermatchinfo: {
@@ -5109,6 +5118,7 @@ const data = {
       gamemode: "Mod",
       map: "Mapa",
       starttime: "Vreme početka",
+      timeSince: "Proteklo vreme",
       duration: "Trajanje",
       replay: "Riplej",
       showHeroIcons: "Prikaži heroje",
@@ -5133,7 +5143,7 @@ const data = {
       button: "Podešavanja",
       hideWinner: "Sakrij pobednika",
       hideDuration: "Sakrij trajanje",
-      serverInfo: "Server i ping",
+      timeSince: "Proteklo vreme",
       heroes: "Heroji",
     },
     components_matches_playermatchinfo: {

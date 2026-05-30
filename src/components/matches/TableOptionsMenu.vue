@@ -59,17 +59,17 @@
 
           <v-list-item class="px-0">
             <template v-slot:prepend>
-              <v-icon size="20">{{ mdiServerNetwork }}</v-icon>
+              <v-icon size="20">{{ mdiClockOutline }}</v-icon>
             </template>
-            <v-list-item-title>{{ $t("components_matches_tableoptions.serverInfo") }}</v-list-item-title>
+            <v-list-item-title>{{ $t("components_matches_tableoptions.timeSince") }}</v-list-item-title>
             <template v-slot:append>
               <v-switch
-                :model-value="showServerInfo"
+                :model-value="showRelativeStartTime"
                 hide-details
                 density="compact"
                 color="primary"
-                :aria-label="$t('components_matches_tableoptions.serverInfo')"
-                @update:model-value="onServerInfoChanged"
+                :aria-label="$t('components_matches_tableoptions.timeSince')"
+                @update:model-value="onRelativeStartTimeChanged"
               />
             </template>
           </v-list-item>
@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { mdiChevronDown, mdiEye, mdiServerNetwork, mdiTableCog, mdiTimerOutline, mdiTrophy } from "@mdi/js";
+import { mdiChevronDown, mdiClockOutline, mdiEye, mdiTableCog, mdiTimerOutline, mdiTrophy } from "@mdi/js";
 import { useTableOptionsStore } from "@/store/tableOptions/store";
 import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
 
@@ -111,8 +111,8 @@ const spoilerFreeStore = useSpoilerFreeStore();
 
 const hideWinner = computed<boolean>(() => spoilerFreeStore.hideWinner);
 const hideDuration = computed<boolean>(() => spoilerFreeStore.hideDuration);
-const showServerInfo = computed<boolean>(() => tableOptionsStore.showServerInfo);
 const showHeroes = computed<boolean>(() => tableOptionsStore.showHeroes);
+const showRelativeStartTime = computed<boolean>(() => tableOptionsStore.showRelativeStartTime);
 
 function onHideWinnerChanged(value: boolean | null): void {
   if (value !== null) {
@@ -126,9 +126,9 @@ function onHideDurationChanged(value: boolean | null): void {
   }
 }
 
-function onServerInfoChanged(value: boolean | null): void {
+function onRelativeStartTimeChanged(value: boolean | null): void {
   if (value !== null) {
-    tableOptionsStore.setShowServerInfo(value);
+    tableOptionsStore.setShowRelativeStartTime(value);
   }
 }
 
