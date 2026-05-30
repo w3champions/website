@@ -114,6 +114,10 @@ export default defineComponent({
       // Handle Battle.net cancel or OAuth error passed as query param
       const queryError = route.query.error as string | undefined;
       if (queryError) {
+        // The login was cancelled/failed, so the SSO continuation is abandoned. Drop
+        // any saved return path so it can't hijack a later unrelated login (only a
+        // successful login should consume it, via openRequestedReturnPath()).
+        window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
         mapErrorCode("BNET_CANCELLED");
         return;
       }
@@ -123,6 +127,9 @@ export default defineComponent({
         await oauthStore.loadBlizzardBtag(authCode.value);
         openRequestedReturnPath();
       } catch (error: unknown) {
+        // Login failed (id-service error code or generic). As above, clear the saved
+        // return path so the abandoned SSO continuation can't redirect a future login.
+        window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
         const rawCode = error instanceof Error ? error.message.trim() : "";
         mapErrorCode(rawCode || "GENERIC");
       }
