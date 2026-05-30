@@ -90,6 +90,25 @@ export default class AuthorizationService {
     Cookies.remove(w3CAuthRegion);
   }
 
+  /**
+   * Ends the identification-service OIDC SSO session by clearing its
+   * `__Host-w3c-idp-session` cookie, so logging out of the website also ends SSO. That
+   * cookie is HttpOnly on the id-service host, so it can only be cleared server-side; a
+   * hidden `<img>` GET is enough — the browser honours the response's clearing
+   * `Set-Cookie` even though it can't read the (204) body, and an image load needs no
+   * CORS. Best-effort and fire-and-forget: a failure here must never break local logout.
+   * Without it, a fresh OIDC login (e.g. Quackback) would silently reuse the up-to-30-min
+   * IdP session after a website logout instead of re-prompting for Battle.net.
+   */
+  public static clearIdpSession(): void {
+    try {
+      const image = new Image();
+      image.src = `${IDENTIFICATION_URL}connect/idp-logout?t=${Date.now()}`;
+    } catch {
+      // best-effort: never let SSO-logout cleanup throw out of logout()
+    }
+  }
+
   public static async getProfile(bearer: string): Promise<W3cToken | null> {
     const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${bearer}`;
     const response = await fetch(url, {
