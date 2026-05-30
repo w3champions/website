@@ -351,6 +351,18 @@ export default defineComponent({
     async function init() {
       rootStateStore.loadLocale();
       locale.value = savedLocale.get();
+
+      // Skip the auth bootstrap on /sso-continue: that view is the sole cookie
+      // authority there and validates the W3ChampionsJWT itself (it must keep the
+      // cookie on a transient user-info error and clear it on an expired/invalid
+      // one). Because this onMounted runs AFTER SsoContinueView's onMounted, the
+      // app-shell restore here would otherwise race it — deleting the cookie on a
+      // 5xx (getProfile maps it to null -> logout) or restoring a stale token.
+      // Locale setup above is still needed for the view's text, so guard only the
+      // bootstrap, not the whole init; the sign-in listener (onBeforeMount) is
+      // unaffected so the cold-login dialog still opens.
+      if (route.name === EMainRouteName.SSO_CONTINUE) return;
+
       oauthStore.loadAuthCodeToState();
 
       if (authCode.value) {

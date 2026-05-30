@@ -81,6 +81,15 @@ export default defineComponent({
     // Login.vue matches this route. Shared by the "no cookie" and the
     // "stale cookie" cases so the cold-login branch isn't duplicated.
     function startColdLogin(returnParam: string): void {
+      // Always clear the session first: logout() deletes any (stale) cookie AND
+      // resets the in-memory oauth store token. App.vue renders <sign-in-dialog>
+      // only under v-if="!authCode", so a leftover store token (e.g. cookie cleared
+      // in another tab but token still in memory) would keep the dialog unmounted
+      // and the OPEN_SIGN_IN_DIALOG_EVENT would flip showSignInDialog on nothing.
+      // Clearing it makes authCode falsy so the dialog mounts and actually opens.
+      // logout() is synchronous, so this preserves the expired-path's sync clear.
+      oauthStore.logout();
+
       const selfUrl = `/sso-continue?return=${encodeURIComponent(returnParam)}`;
       window.sessionStorage.setItem(LOGIN_RETURN_TO_KEY, selfUrl);
       window.dispatchEvent(
@@ -123,10 +132,10 @@ export default defineComponent({
         }
 
         if (isJwtExpired(cookieJwt)) {
-          // Expired cookie (the most common stale case). Clear it SYNCHRONOUSLY —
-          // before any await — so App.vue's later onMounted bootstrap can't read it
-          // back. logout() deletes the cookie + resets oauth state; then cold-login.
-          oauthStore.logout();
+          // Expired cookie (the most common stale case). Handle it SYNCHRONOUSLY —
+          // before any await. startColdLogin() calls oauthStore.logout() first
+          // (deletes the cookie + resets oauth state, all sync), so App.vue's later
+          // onMounted can't read the stale cookie back.
           startColdLogin(returnParam);
           return;
         }
@@ -140,9 +149,8 @@ export default defineComponent({
 
         if (sessionState === "invalid") {
           // Genuine auth failure (401/403, e.g. revoked/forged) — the cookie is
-          // stale. Clear it the way the app does (store logout deletes the cookie +
-          // resets oauth state), then fall through to the cold-login flow.
-          oauthStore.logout();
+          // stale. startColdLogin() clears it (logout deletes the cookie + resets
+          // oauth state), then opens the sign-in flow.
           startColdLogin(returnParam);
           return;
         }
