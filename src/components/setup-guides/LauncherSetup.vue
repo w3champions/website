@@ -20,9 +20,6 @@
               <v-tab value="windows-setup">
                 {{ $t("views_gettingstarted.manualwin") }}
               </v-tab>
-              <v-tab value="mac-setup">
-                {{ $t("views_gettingstarted.manualmac") }}
-              </v-tab>
             </v-tabs>
           </v-col>
 
@@ -38,18 +35,29 @@
                     <v-btn
                       :href="launcherEUrl"
                       target="_blank"
+                      rel="noopener"
                       class="join-button mt-0 mb-4"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
                       <span class="mr-2">Windows</span>
                     </v-btn>
                     <v-btn
-                      :href="launcherUrlMac"
+                      :href="launcherEMacArm64Url"
                       target="_blank"
+                      rel="noopener"
                       class="join-button mt-0 mb-4 ml-8"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2">Mac</span>
+                      <span class="mr-2">macOS (Apple Silicon)</span>
+                    </v-btn>
+                    <v-btn
+                      :href="launcherEMacIntelUrl"
+                      target="_blank"
+                      rel="noopener"
+                      class="join-button mt-0 mb-4 ml-8"
+                    >
+                      <v-icon>{{ mdiDownload }}</v-icon>
+                      <span class="mr-2">macOS (Intel)</span>
                     </v-btn>
                   </v-card-text>
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
@@ -106,90 +114,6 @@
                   </div>
                 </v-card-text>
               </v-window-item>
-
-              <!-- MAC SETUP TAB -->
-              <v-window-item value="mac-setup">
-                <v-card-text class="pt-0 px-3">
-                  <v-alert variant="outlined" type="info" prominent border="start">
-                    {{ alertMessage }}
-                  </v-alert>
-                  <h3 class="mt-10">{{ $t("views_gettingstarted.manualmactitle") }}</h3>
-                  <p>{{ $t("views_gettingstarted.manualmacbody1") }}</p>
-                  <v-btn
-                    color="primary"
-                    :href="webUiLink"
-                    target="_blank"
-                    variant="outlined"
-                  >
-                    <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs">
-                      {{ $t("views_gettingstarted.manualmacbody2") }}
-                    </span>
-                  </v-btn>
-                  <p class="mt-2">
-                    {{ $t("views_gettingstarted.manualmacbody3") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody4") }}</code>
-                  </p>
-                  <p>
-                    {{ $t("views_gettingstarted.manualmacbody5") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody6") }}</code>
-                  </p>
-                  <p>{{ $t("views_gettingstarted.manualmacbody7") }}</p>
-                  <v-btn
-                    color="primary"
-                    :href="mapsLink"
-                    target="_blank"
-                    variant="outlined"
-                  >
-                    <v-icon>{{ mdiDownload }}</v-icon>
-                    <span class="mr-2 hidden-xs">
-                      {{ $t("views_gettingstarted.manualmacbody8") }}
-                    </span>
-                  </v-btn>
-                  <p class="mt-2">
-                    {{ $t("views_gettingstarted.manualmacbody9") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody10") }}</code>
-                  </p>
-                  <p>
-                    <i style="color: red">{{ $t("views_gettingstarted.manualmacbody11") }}</i>
-                    <br />
-                    {{ $t("views_gettingstarted.manualmacbody12") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody13") }}</code>
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody14") }}</code>
-                    <br />
-                    {{ $t("views_gettingstarted.manualmacbody15") }}
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody16") }}</code>
-                    <br />
-                    <code>{{ $t("views_gettingstarted.manualmacbody17") }}</code>
-                    <br />
-                  </p>
-                  <p class="mt-2">{{ $t("views_gettingstarted.manualmacbody18") }}</p>
-                  <div>
-                    <ul>
-                      <li>
-                        {{ $t("views_gettingstarted.manualmacbody19") }}
-                        <code>{{ $t("views_gettingstarted.manualmacbody19_1") }}</code>
-                      </li>
-                      <li>{{ $t("views_gettingstarted.manualmacbody20") }}</li>
-                      <li>{{ $t("views_gettingstarted.manualmacbody21") }}</li>
-                      <li>{{ $t("views_gettingstarted.manualmacbody22") }}</li>
-                    </ul>
-                  </div>
-                  <div class="mt-10 video-container">
-                    <iframe
-                      src="https://www.youtube.com/embed/8s53BHfKPLs"
-                      frameborder="0"
-                      allowfullscreen
-                    ></iframe>
-                  </div>
-                </v-card-text>
-              </v-window-item>
             </v-window>
           </v-col>
         </v-row>
@@ -210,10 +134,9 @@ export default defineComponent({
   setup() {
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
-    const webUiLink = ref<string>(LAUNCHER_UPDATE_URL + "webui");
-    const mapsLink = ref<string>(LAUNCHER_UPDATE_URL + "maps");
-    const launcherUrlMac = ref<string>(LAUNCHER_UPDATE_URL + "launcher/mac");
     const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
+    const launcherEMacArm64Url = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e/mac-arm64");
+    const launcherEMacIntelUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e/mac-x64");
     const route = useRoute();
     const router = useRouter();
     const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
@@ -234,10 +157,9 @@ export default defineComponent({
       ingameAddonLink,
       alertMessage,
       mdiDownload,
-      webUiLink,
-      mapsLink,
-      launcherUrlMac,
-      launcherEUrl
+      launcherEUrl,
+      launcherEMacArm64Url,
+      launcherEMacIntelUrl
     };
   },
 });
