@@ -50,7 +50,7 @@ import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { EMainRouteName } from "@/router/types";
-import { handoffEndpoint, identificationOrigin, isAllowedReturnUrl } from "@/helpers/sso";
+import { handoffEndpoint, identificationOrigin, isAllowedReturnUrl, isJwtExpired } from "@/helpers/sso";
 import { LOGIN_RETURN_TO_KEY, OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import { useOauthStore } from "@/store/oauth/store";
 import AuthorizationService from "@/services/AuthorizationService";
@@ -91,10 +91,21 @@ export default defineComponent({
     }
 
     async function init(): Promise<void> {
+      // The first part of this function MUST stay synchronous (no await before the
+      // expired-cookie clear). Vue mounts children before parents, so this
+      // SsoContinue onMounted runs BEFORE App.vue's onMounted auth bootstrap
+      // (loadAuthCodeToState / loadBlizzardBtag). If we awaited before clearing an
+      // expired cookie, control would yield back to the event loop and App's
+      // bootstrap could read the stale cookie and — because /api/oauth/user-info
+      // accepts expired JWTs (200) — re-save it and unmount the sign-in dialog we
+      // just opened. Clearing the expired cookie synchronously here means App's
+      // later onMounted sees no cookie, so it never restores the stale token.
+      //
       // validateSession() handles its own fetch throw internally (returns "error"),
       // so a transient failure deterministically shows the error card without an
       // unhandled rejection. This outer try/catch is defense in depth for any other
-      // unexpected throw, so the error card renders instead of a hung spinner.
+      // unexpected throw (incl. a sync throw), so the error card renders instead of
+      // a hung spinner.
       try {
         const returnParam = route.query["return"] as string | undefined;
 
@@ -106,22 +117,31 @@ export default defineComponent({
         const cookieJwt = AuthorizationService.loadAuthCookie();
 
         if (!cookieJwt) {
-          // No session at all — send the user through the sign-in flow.
+          // No session at all — send the user through the sign-in flow (sync).
           startColdLogin(returnParam);
           return;
         }
 
-        // A W3ChampionsJWT cookie can still be expired or revoked. The id-service
-        // handoff validates exp + signature and returns 401, which would strand the
-        // user on a 401 error page. Validate the cookie first against the same
-        // /api/oauth/user-info endpoint, but status-aware so a transient outage
-        // (5xx / network) isn't mistaken for a stale cookie.
+        if (isJwtExpired(cookieJwt)) {
+          // Expired cookie (the most common stale case). Clear it SYNCHRONOUSLY —
+          // before any await — so App.vue's later onMounted bootstrap can't read it
+          // back. logout() deletes the cookie + resets oauth state; then cold-login.
+          oauthStore.logout();
+          startColdLogin(returnParam);
+          return;
+        }
+
+        // Cookie present and not yet expired. Only now is it safe to await: this is
+        // the normal logged-in case where App's bootstrap restoring the cookie is
+        // correct. Confirm the signature/validity against /api/oauth/user-info,
+        // status-aware so a transient outage (5xx / network) isn't mistaken for a
+        // stale cookie. (validateSession re-checks exp too — harmless belt-and-braces.)
         const sessionState = await AuthorizationService.validateSession(cookieJwt);
 
         if (sessionState === "invalid") {
-          // Genuine auth failure (401/403) — the cookie is stale. Clear it the way
-          // the app does (store logout deletes the cookie + resets oauth state),
-          // then fall through to the cold-login flow.
+          // Genuine auth failure (401/403, e.g. revoked/forged) — the cookie is
+          // stale. Clear it the way the app does (store logout deletes the cookie +
+          // resets oauth state), then fall through to the cold-login flow.
           oauthStore.logout();
           startColdLogin(returnParam);
           return;
