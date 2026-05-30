@@ -26,6 +26,15 @@
                 class="my-3"
                 @click="goToMatchDetailPage(item)"
               >
+                <div v-if="hasServerInfo(item) && showServerInfo" class="server-info-text server-info-text--ffa">
+                  <div class="server-info-title">{{ getServerLabel(item.serverInfo) }}</div>
+                  <div v-if="getServerPingEntries(item.serverInfo).length" class="server-info-pings">
+                    <div v-for="ping in getServerPingEntries(item.serverInfo)" :key="ping.key" class="server-info-ping">
+                      <span v-if="ping.name" class="server-info-ping-name">{{ ping.name }}</span>
+                      <span class="server-info-ping-value">{{ ping.name ? ` (${ping.ping} ms)` : `${ping.ping} ms` }}</span>
+                    </div>
+                  </div>
+                </div>
                 <v-row v-if="alwaysLeftName" justify="center">
                   <v-col offset="4" class="py-1">
                     <team-match-info
@@ -60,7 +69,7 @@
                 class="force-no-wrap"
                 @click="goToMatchDetailPage(item)"
               >
-                <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
+                <v-col :cols="teamColumnWidth" class="team-match-info-container left-side" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
@@ -72,11 +81,20 @@
                     :selectedHeroes="selectedHeroes"
                   />
                 </v-col>
-                <v-col cols="1" class="py-2 d-flex flex-column justify-center align-center">
+                <v-col :cols="serverColumnWidth" class="py-2 d-flex flex-column justify-center align-center">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
+                  <host-icon v-if="hasServerInfo(item) && !showServerInfo" :host="item.serverInfo" />
+                  <div v-if="hasServerInfo(item) && showServerInfo" class="server-info-text">
+                    <div class="server-info-title">{{ getServerLabel(item.serverInfo) }}</div>
+                    <div v-if="getServerPingEntries(item.serverInfo).length" class="server-info-pings">
+                      <div v-for="ping in getServerPingEntries(item.serverInfo)" :key="ping.key" class="server-info-ping">
+                        <span v-if="ping.name" class="server-info-ping-name">{{ ping.name }}</span>
+                        <span class="server-info-ping-value">{{ ping.name ? ` (${ping.ping} ms)` : `${ping.ping} ms` }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </v-col>
-                <v-col cols="5.5" class="team-match-info-container" align-self="center">
+                <v-col :cols="teamColumnWidth" class="team-match-info-container" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
@@ -107,12 +125,12 @@
                 ></div>
               </div>
             </td>
-            <td v-if="showReplayDownload(item)" class="text-center">
-              <download-replay-icon :gameId="item.id" />
+            <td v-if="!unfinished" class="text-center">
+              <download-replay-icon v-if="showReplayDownload(item)" :gameId="item.id" />
             </td>
           </tr>
           <tr v-if="!matches || matches.length == 0">
-            <td colspan="4" class="text-center">
+            <td :colspan="emptyStateColspan" class="text-center">
               {{ $t("components_matches_matchesgrid.nomatchesfound") }}
             </td>
           </tr>
@@ -132,7 +150,7 @@
 <script lang="ts">
 import { computed, defineComponent, type StyleValue, type PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { EGameMode, type Match, type PlayerInTeam, type Team } from "@/store/types";
+import { EGameMode, type Match, type PlayerInTeam, type ServerInfo, type Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
@@ -150,6 +168,12 @@ interface MatchesGridHeader {
   sortable: boolean;
   value: string;
   style: StyleValue;
+}
+
+interface ServerPingDisplay {
+  key: string;
+  name: string;
+  ping: number;
 }
 
 export default defineComponent({
@@ -196,6 +220,11 @@ export default defineComponent({
       required: false,
       default: () => [],
     },
+    showServerInfo: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, context) {
     const { t } = useI18n();
@@ -225,6 +254,10 @@ export default defineComponent({
       if (!props.totalMatches) return 1;
       return Math.ceil(props.totalMatches / 50);
     });
+
+    const emptyStateColspan = computed<number>(() => props.unfinished ? headers.length : headers.length + 1);
+    const teamColumnWidth = computed<number>(() => props.showServerInfo ? 5 : 5.5);
+    const serverColumnWidth = computed<number>(() => props.showServerInfo ? 2 : 1);
 
     function onPageChanged(page: number): void {
       context.emit("pageChanged", page);
@@ -305,6 +338,49 @@ export default defineComponent({
       return !props.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
     }
 
+    function hasServerInfo(match: Match): boolean {
+      return Boolean(match.serverInfo?.provider);
+    }
+
+    function getServerLabel(serverInfo: ServerInfo): string {
+      if (serverInfo.provider === "BNET") {
+        return t("components_matches_hosticon.hostedonbnet").toString();
+      }
+
+      return serverInfo.name || t("components_matches_hosticon.hostedonflo").toString();
+    }
+
+    function getServerPingEntries(serverInfo: ServerInfo): ServerPingDisplay[] {
+      if (!serverInfo.playerServerInfos?.length) {
+        return [];
+      }
+
+      return serverInfo.playerServerInfos
+        .map((playerInfo) => {
+          const ping = playerInfo.averagePing ?? playerInfo.currentPing;
+          if (ping === null || ping === undefined) return null;
+
+          const pingValue = Number(ping);
+          if (!Number.isFinite(pingValue)) return null;
+
+          const name = stripTag(playerInfo.battleTag);
+          return {
+            key: `${playerInfo.battleTag}:${pingValue}`,
+            name: name && name !== "*" ? name : "",
+            ping: Math.round(pingValue),
+          };
+        })
+        .filter((ping): ping is ServerPingDisplay => ping !== null);
+    }
+
+    function stripTag(tag: string): string {
+      if (!tag) return "";
+
+      const hashIndex = tag.indexOf("#");
+      if (hashIndex != -1) return tag.substring(0, hashIndex);
+      return tag;
+    }
+
     const headers: MatchesGridHeader[] = [
       {
         name: "Players",
@@ -358,6 +434,9 @@ export default defineComponent({
       currentMatchesHighRange,
       onPageChanged,
       getTotalPages,
+      emptyStateColspan,
+      teamColumnWidth,
+      serverColumnWidth,
       goToMatchDetailPage,
       getWinner,
       getLoser,
@@ -369,6 +448,9 @@ export default defineComponent({
       getDuration,
       getDurationBarWidth,
       showReplayDownload,
+      hasServerInfo,
+      getServerLabel,
+      getServerPingEntries,
       hideDurationSpoilers,
     };
   },
@@ -391,6 +473,50 @@ export default defineComponent({
   height: 3px;
   border-radius: 2px;
   margin-top: 2px;
+}
+
+.server-info-text {
+  max-width: 160px;
+  margin-top: 3px;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.server-info-title {
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.server-info-pings {
+  color: rgba(var(--v-theme-on-surface), 0.65);
+  font-size: 0.68rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.server-info-ping {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.server-info-ping-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.server-info-ping-value {
+  flex: none;
+}
+
+.server-info-text--ffa {
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .spoiler-mask {
