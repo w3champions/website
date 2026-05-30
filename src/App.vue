@@ -167,6 +167,7 @@ import noop from "lodash/noop";
 import { useTheme } from "vuetify";
 import { battleTagToName } from "./helpers/profile";
 import { EMainRouteName } from "@/router/types";
+import { LOGIN_RETURN_TO_KEY, OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import LocaleIcon from "@/components/common/LocaleIcon.vue";
 
 import {
@@ -209,7 +210,6 @@ export default defineComponent({
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
     const theme = useTheme();
-    const loginReturnToKey = "w3-login-return-to";
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -267,13 +267,13 @@ export default defineComponent({
 
     function openSignInDialog(returnTo?: string): void {
       if (returnTo) {
-        window.sessionStorage.setItem(loginReturnToKey, returnTo);
+        window.sessionStorage.setItem(LOGIN_RETURN_TO_KEY, returnTo);
       }
       showSignInDialog.value = true;
     }
 
     function clearLoginReturnTo(): void {
-      window.sessionStorage.removeItem(loginReturnToKey);
+      window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
     }
 
     function setNavigationDrawerOpen(val: boolean): void {
@@ -353,18 +353,25 @@ export default defineComponent({
       locale.value = savedLocale.get();
       oauthStore.loadAuthCodeToState();
 
+      // Runs on every route, including /sso-continue. loadBlizzardBtag is now
+      // status-aware (it only logs out on a definitive 401/403, never on a transient
+      // 5xx/network), so this bootstrap no longer races SsoContinue's keep-cookie
+      // intent: a transient error keeps the cookie, and an expired cookie is already
+      // cleared synchronously by SsoContinue's onMounted (which runs before this
+      // one), so loadAuthCodeToState reads empty there. Hydrating here means a valid
+      // session is restored app-wide even when SsoContinue exits via a cookie-
+      // preserving error path (invalid-return / transient "error").
       if (authCode.value) {
         await oauthStore.loadBlizzardBtag(authCode.value);
       }
     }
 
     onMounted(async () => {
-      window.addEventListener("w3-open-sign-in-dialog", handleOpenSignInDialog);
       await init();
     });
 
     onBeforeUnmount(() => {
-      window.removeEventListener("w3-open-sign-in-dialog", handleOpenSignInDialog);
+      window.removeEventListener(OPEN_SIGN_IN_DIALOG_EVENT, handleOpenSignInDialog);
     });
 
     onBeforeMount(() => {
@@ -372,6 +379,13 @@ export default defineComponent({
       if (t && t.length > 0) {
         setTheme(t);
       }
+      // Register the sign-in dialog listener before any child component mounts.
+      // Vue mounts children before parents, so if a child (e.g. SsoContinueView)
+      // dispatches OPEN_SIGN_IN_DIALOG_EVENT from its own onMounted hook, it would
+      // fire before App's onMounted and the event would be dropped. onBeforeMount
+      // runs before the component's subtree is mounted, guaranteeing the listener
+      // is in place when any child dispatches the event.
+      window.addEventListener(OPEN_SIGN_IN_DIALOG_EVENT, handleOpenSignInDialog);
     });
 
     return {

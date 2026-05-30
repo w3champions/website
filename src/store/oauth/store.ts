@@ -1,6 +1,6 @@
 import type { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
 import { defineStore } from "pinia";
-import AuthorizationService from "@/services/AuthorizationService";
+import AuthorizationService, { type SessionStatus } from "@/services/AuthorizationService";
 
 export const useOauthStore = defineStore("oauth", {
   state: (): OauthState => ({
@@ -15,18 +15,33 @@ export const useOauthStore = defineStore("oauth", {
   actions: {
     async authorizeWithCode(code: string) {
       const region = AuthorizationService.loadAuthRegionCookie();
+      // Only the exchange itself can fail the login: authorize() throws on !response.ok
+      // (surfacing the IdP error code). Once it resolves, the IdP issued a valid token.
       const bearer = await AuthorizationService.authorize(code, region);
 
       this.SET_BEARER(bearer.jwt);
 
-      const profile = await AuthorizationService.getProfile(bearer.jwt);
-      if (profile) {
-        this.SET_PROFILE_NAME(profile.battleTag);
-        this.SET_IS_ADMIN(profile.isAdmin);
-        if (profile.isAdmin) {
-          this.SET_PERMISSIONS(profile.permissions);
+      // Persist the cookie immediately on a successful exchange — the login IS
+      // successful at this point; persistence must NOT depend on the secondary
+      // profile fetch. saveAuthToken only writes the cookie/region (no network).
+      AuthorizationService.saveAuthToken(bearer);
+
+      // The profile fetch is BEST-EFFORT: it only fills the in-memory battletag/admin
+      // state. A transient failure (5xx, network/CORS, JSON throw) must NOT reject
+      // authorizeWithCode and thereby fail a login whose session is already valid and
+      // saved. The battletag fills later via App.vue's status-aware bootstrap on the
+      // destination route. So swallow any error here and treat a null profile as a no-op.
+      try {
+        const profile = await AuthorizationService.getProfile(bearer.jwt);
+        if (profile) {
+          this.SET_PROFILE_NAME(profile.battleTag);
+          this.SET_IS_ADMIN(profile.isAdmin);
+          if (profile.isAdmin) {
+            this.SET_PERMISSIONS(profile.permissions);
+          }
         }
-        AuthorizationService.saveAuthToken(bearer);
+      } catch {
+        // Best-effort — ignore; the session is already valid and persisted.
       }
     },
     async authorizeWithTwitch() {
@@ -37,22 +52,40 @@ export const useOauthStore = defineStore("oauth", {
       const bearer = AuthorizationService.loadAuthCookie();
       this.SET_BEARER(bearer);
     },
-    async loadBlizzardBtag(bearerToken: string) {
-      if (this.isLoadingBlizzardBtag) return;
+    async loadBlizzardBtag(bearerToken: string): Promise<SessionStatus> {
+      // Already in flight — report transient so callers don't treat it as a verified
+      // session (the in-flight call owns the real outcome).
+      if (this.isLoadingBlizzardBtag) return "error";
       this.SET_IS_LOADING_BLIZZARD_BTAG(true);
-      const profile = await AuthorizationService.getProfile(bearerToken);
+      try {
+        // ONE status-aware user-info fetch that yields both status AND profile, so we
+        // never throw and never claim "valid" without a hydrated profile. A transient
+        // backend blip (5xx / network / 200-but-unparseable) must NOT log the user out;
+        // only a DEFINITIVE auth failure (401/403, or client-side expired) clears state.
+        const { status, profile } = await AuthorizationService.getSessionProfile(bearerToken);
 
-      if (profile) {
+        if (status === "invalid") {
+          this.logout();
+          return "invalid";
+        }
+
+        if (status === "error" || !profile) {
+          // Transient (or no profile body) — leave the session untouched, don't hydrate,
+          // and don't claim valid. The cookie/state stay as-is; battletag fills later.
+          return "error";
+        }
+
+        // Valid AND profile present — hydrate.
         this.SET_PROFILE_NAME(profile.battleTag);
         this.SET_IS_ADMIN(profile.isAdmin);
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
         AuthorizationService.saveAuthToken(profile);
-      } else {
-        this.logout();
+        return "valid";
+      } finally {
+        this.SET_IS_LOADING_BLIZZARD_BTAG(false);
       }
-      this.SET_IS_LOADING_BLIZZARD_BTAG(false);
     },
     saveLoginRegion(region: BnetOAuthRegion) {
       AuthorizationService.saveAuthRegion(region);
