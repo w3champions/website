@@ -359,7 +359,6 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      window.addEventListener(OPEN_SIGN_IN_DIALOG_EVENT, handleOpenSignInDialog);
       await init();
     });
 
@@ -372,6 +371,13 @@ export default defineComponent({
       if (t && t.length > 0) {
         setTheme(t);
       }
+      // Register the sign-in dialog listener before any child component mounts.
+      // Vue mounts children before parents, so if a child (e.g. SsoContinueView)
+      // dispatches OPEN_SIGN_IN_DIALOG_EVENT from its own onMounted hook, it would
+      // fire before App's onMounted and the event would be dropped. onBeforeMount
+      // runs before the component's subtree is mounted, guaranteeing the listener
+      // is in place when any child dispatches the event.
+      window.addEventListener(OPEN_SIGN_IN_DIALOG_EVENT, handleOpenSignInDialog);
     });
 
     return {
