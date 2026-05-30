@@ -19,6 +19,13 @@ export const useOauthStore = defineStore("oauth", {
 
       this.SET_BEARER(bearer.jwt);
 
+      // Persist the cookie as soon as the code exchange succeeds: the IdP issued a
+      // valid token, so persistence must NOT depend on the secondary profile fetch.
+      // Otherwise a transient 5xx during getProfile would leave the user with a valid
+      // session that was never saved -> a redirect to /sso-continue finds no cookie
+      // -> re-login loop. saveAuthToken only writes the cookie/region (no network).
+      AuthorizationService.saveAuthToken(bearer);
+
       const profile = await AuthorizationService.getProfile(bearer.jwt);
       if (profile) {
         this.SET_PROFILE_NAME(profile.battleTag);
@@ -26,7 +33,6 @@ export const useOauthStore = defineStore("oauth", {
         if (profile.isAdmin) {
           this.SET_PERMISSIONS(profile.permissions);
         }
-        AuthorizationService.saveAuthToken(bearer);
       }
     },
     async authorizeWithTwitch() {
@@ -37,8 +43,10 @@ export const useOauthStore = defineStore("oauth", {
       const bearer = AuthorizationService.loadAuthCookie();
       this.SET_BEARER(bearer);
     },
-    async loadBlizzardBtag(bearerToken: string) {
-      if (this.isLoadingBlizzardBtag) return;
+    async loadBlizzardBtag(bearerToken: string): Promise<"valid" | "invalid" | "error"> {
+      // Already in flight — report transient so callers don't treat it as a verified
+      // session (the in-flight call owns the real outcome).
+      if (this.isLoadingBlizzardBtag) return "error";
       this.SET_IS_LOADING_BLIZZARD_BTAG(true);
       try {
         // Status-aware so a transient backend blip (5xx / network) does NOT log the
@@ -50,12 +58,12 @@ export const useOauthStore = defineStore("oauth", {
 
         if (status === "invalid") {
           this.logout();
-          return;
+          return "invalid";
         }
 
         if (status === "error") {
           // Transient — leave the session as-is, don't clear the cookie/state.
-          return;
+          return "error";
         }
 
         // Valid token — fetch and apply the profile. (getProfile re-hits user-info;
@@ -70,6 +78,7 @@ export const useOauthStore = defineStore("oauth", {
           }
           AuthorizationService.saveAuthToken(profile);
         }
+        return "valid";
       } finally {
         this.SET_IS_LOADING_BLIZZARD_BTAG(false);
       }
