@@ -541,6 +541,24 @@ const en = {
     africa_east_via_sg: "Africa East via Singapore",
     africa_east_via_sg_azure_via_simple_cloud: "Africa East via Singapore via simplecloud",
   },
+  views_login: {
+    loggingyouin: "Logging you in...",
+    error_title: "Login Failed",
+    error_cta: "Back to Home",
+    error_missing_warcraft3: "Your Battle.net account does not own Warcraft III. Please purchase the game to continue.",
+    error_missing_playable_titles_scope: "W3Champions requires access to your Warcraft III license. Please re-authorize and grant the required permissions.",
+    error_unsupported_version: "Your Warcraft III version is not supported. Please update the game.",
+    error_playable_titles_api_failed: "We could not verify your Warcraft III license due to a Battle.net service error. Please try again later.",
+    error_bnet_cancelled: "Battle.net login was cancelled. Please try again.",
+    error_generic: "An unexpected error occurred during login. Please try again.",
+  },
+
+  views_sso_continue: {
+    submitting: "Signing you in to the W3Champions feedback portal...",
+    error_title: "Sign-In Error",
+    error_invalid_return: "The sign-in request is invalid or has expired. Please return to the feedback portal and try again.",
+    error_cta: "Back to Home",
+  },
 };
 
 export default en;

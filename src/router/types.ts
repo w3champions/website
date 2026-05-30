@@ -54,6 +54,7 @@ export enum EMainRouteName {
   PATREON_CALLBACK = "PatreonCallback",
   TOURNAMENTS = "Tournaments",
   TOURNAMENT = "Tournament",
+  SSO_CONTINUE = "SsoContinue",
 }
 
 export enum EPlayerRouteName {
