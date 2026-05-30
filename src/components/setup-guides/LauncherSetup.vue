@@ -35,6 +35,7 @@
                     <v-btn
                       :href="launcherEUrl"
                       target="_blank"
+                      rel="noopener"
                       class="join-button mt-0 mb-4"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
@@ -43,6 +44,7 @@
                     <v-btn
                       :href="launcherEMacArm64Url"
                       target="_blank"
+                      rel="noopener"
                       class="join-button mt-0 mb-4 ml-8"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
@@ -51,6 +53,7 @@
                     <v-btn
                       :href="launcherEMacIntelUrl"
                       target="_blank"
+                      rel="noopener"
                       class="join-button mt-0 mb-4 ml-8"
                     >
                       <v-icon>{{ mdiDownload }}</v-icon>
