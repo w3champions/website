@@ -82,9 +82,11 @@ export default defineComponent({
       });
     }
 
-    function openRequestedReturnPath(): void {
+    async function openRequestedReturnPath(): Promise<void> {
       const returnTo = window.sessionStorage.getItem(LOGIN_RETURN_TO_KEY);
       if (returnTo) {
+        // SSO / internal return path: only needs the cookie (already persisted), NOT
+        // the battletag. Redirect exactly as before — don't couple it to the profile.
         window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
         if (isAllowedReturnUrl(returnTo, identificationOrigin())) {
           window.location.href = returnTo;
@@ -94,7 +96,25 @@ export default defineComponent({
         return;
       }
 
-      openPlayerProfile();
+      // Default destination is the player profile, whose URL NEEDS the battletag.
+      // authorizeWithCode's profile load is best-effort, so a transient failure can
+      // leave it empty -> getProfileUrl("") would produce a broken /player/ route.
+      // Retry the load once (round-10 status-aware loadBlizzardBtag), then fall back
+      // to home if it's still missing rather than navigating to a broken profile URL.
+      if (!account.value) {
+        await oauthStore.loadBlizzardBtag(oauthStore.token);
+      }
+
+      if (account.value) {
+        openPlayerProfile();
+        return;
+      }
+
+      // Still no battletag (persistent transient failure). The user IS logged in
+      // (cookie persisted); land on home instead of a broken /player/ URL. The
+      // battletag hydrates later via App's status-aware bootstrap on navigation.
+      // replace() (matching goHome) so the login callback isn't left in history.
+      router.replace({ name: EMainRouteName.HOME });
     }
 
     function mapErrorCode(rawCode: string): void {
@@ -126,12 +146,11 @@ export default defineComponent({
         // cookie was persisted — the login IS successful. The profile load inside it
         // is best-effort, so a transient profile/validation blip does NOT fail the
         // login. Redirect unconditionally on success; only a genuine EXCHANGE failure
-        // (authorize() throwing) lands in the catch below. authorizeWithCode already
-        // loaded the profile best-effort, so we don't call loadBlizzardBtag again here
-        // (App.vue's status-aware bootstrap fills the battletag on the destination if
-        // that best-effort load blipped).
+        // (authorize() throwing) lands in the catch below. openRequestedReturnPath
+        // handles the two destinations' real needs (SSO return = cookie only; default
+        // player profile = battletag, retried + safe home fallback).
         await oauthStore.authorizeWithCode(props.code);
-        openRequestedReturnPath();
+        await openRequestedReturnPath();
       } catch (error: unknown) {
         // Login failed (id-service error code or generic). As above, clear the saved
         // return path so the abandoned SSO continuation can't redirect a future login.
