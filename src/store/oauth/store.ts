@@ -92,6 +92,9 @@ export const useOauthStore = defineStore("oauth", {
     },
     logout() {
       AuthorizationService.deleteAuthCookie();
+      // Also end the OIDC SSO session at the identification-service, so a fresh OIDC
+      // login (e.g. Quackback) re-prompts instead of silently reusing the IdP session.
+      AuthorizationService.clearIdpSession();
       this.SET_PROFILE_NAME("");
       this.SET_IS_ADMIN(false);
       this.SET_BEARER("");
