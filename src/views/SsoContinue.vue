@@ -91,48 +91,60 @@ export default defineComponent({
     }
 
     async function init(): Promise<void> {
-      const returnParam = route.query["return"] as string | undefined;
+      // getProfile() returns null on a 4xx (handled below as a stale cookie), but its
+      // underlying fetch can THROW on a network/DNS/CORS failure. Catch any thrown
+      // error so the error card renders instead of leaving the spinner hung with an
+      // unhandled rejection. The internal early-returns (allowlist reject, cold-login)
+      // don't throw, so they keep their existing behaviour.
+      try {
+        const returnParam = route.query["return"] as string | undefined;
 
-      if (!returnParam || !isAllowedReturnUrl(returnParam, identificationOrigin())) {
-        errorMessage.value = t("views_sso_continue.error_invalid_return");
-        return;
+        if (!returnParam || !isAllowedReturnUrl(returnParam, identificationOrigin())) {
+          errorMessage.value = t("views_sso_continue.error_invalid_return");
+          return;
+        }
+
+        const cookieJwt = AuthorizationService.loadAuthCookie();
+
+        if (!cookieJwt) {
+          // No session at all — send the user through the sign-in flow.
+          startColdLogin(returnParam);
+          return;
+        }
+
+        // A W3ChampionsJWT cookie can still be expired or revoked. The id-service
+        // handoff validates exp + signature and returns 401, which would strand the
+        // user on a 401 error page. Validate the cookie first using the SAME check the
+        // app uses on startup (getProfile → null on invalid; the oauth store logs out
+        // on null). Only submit the handoff for a confirmed-valid cookie.
+        const profile = await AuthorizationService.getProfile(cookieJwt);
+
+        if (!profile) {
+          // Stale cookie — clear it the way the app does (store logout deletes the
+          // cookie + resets oauth state), then fall through to the cold-login flow.
+          oauthStore.logout();
+          startColdLogin(returnParam);
+          return;
+        }
+
+        // Valid session — submit the handoff form.
+        jwt.value = cookieJwt;
+        validatedReturn.value = returnParam;
+        await nextTick();
+        if (!formRef.value) {
+          // The hidden form should exist once jwt + validatedReturn are set; if it
+          // is somehow missing (future regression), surface an error instead of
+          // silently doing nothing.
+          errorMessage.value = t("views_sso_continue.error_invalid_return");
+          return;
+        }
+        formRef.value.submit();
+      } catch (e) {
+        // Genuine thrown exception (e.g. getProfile's fetch failed on network/CORS).
+        // Surface the generic error card so the user isn't stuck on the spinner.
+        console.error("[sso-continue] init failed", e);
+        errorMessage.value = t("views_sso_continue.error_generic");
       }
-
-      const cookieJwt = AuthorizationService.loadAuthCookie();
-
-      if (!cookieJwt) {
-        // No session at all — send the user through the sign-in flow.
-        startColdLogin(returnParam);
-        return;
-      }
-
-      // A W3ChampionsJWT cookie can still be expired or revoked. The id-service
-      // handoff validates exp + signature and returns 401, which would strand the
-      // user on a 401 error page. Validate the cookie first using the SAME check the
-      // app uses on startup (getProfile → null on invalid; the oauth store logs out
-      // on null). Only submit the handoff for a confirmed-valid cookie.
-      const profile = await AuthorizationService.getProfile(cookieJwt);
-
-      if (!profile) {
-        // Stale cookie — clear it the way the app does (store logout deletes the
-        // cookie + resets oauth state), then fall through to the cold-login flow.
-        oauthStore.logout();
-        startColdLogin(returnParam);
-        return;
-      }
-
-      // Valid session — submit the handoff form.
-      jwt.value = cookieJwt;
-      validatedReturn.value = returnParam;
-      await nextTick();
-      if (!formRef.value) {
-        // The hidden form should exist once jwt + validatedReturn are set; if it
-        // is somehow missing (future regression), surface an error instead of
-        // silently doing nothing.
-        errorMessage.value = t("views_sso_continue.error_invalid_return");
-        return;
-      }
-      formRef.value.submit();
     }
 
     onMounted((): void => {

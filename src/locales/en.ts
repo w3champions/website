@@ -557,6 +557,7 @@ const en = {
     submitting: "Signing you in to the W3Champions feedback portal...",
     error_title: "Sign-In Error",
     error_invalid_return: "The sign-in request is invalid or has expired. Please return to the feedback portal and try again.",
+    error_generic: "Something went wrong while signing you in. Please try again.",
     error_cta: "Back to Home",
   },
 };
