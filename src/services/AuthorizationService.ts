@@ -92,4 +92,33 @@ export default class AuthorizationService {
 
     return response.status === 200 ? await response.json() : null;
   }
+
+  /**
+   * Status-aware session check against the same /api/oauth/user-info endpoint as
+   * getProfile (which collapses every non-200 to null, hiding the difference
+   * between a genuinely invalid token and a transient outage). Distinguishes:
+   *   - "valid":   200 — the JWT is accepted.
+   *   - "invalid": 401/403 — genuine auth failure; the cookie is stale/revoked.
+   *   - "error":   5xx, any other non-ok status, or a thrown fetch (network/DNS/
+   *                CORS) — transient; the cookie must NOT be cleared on this.
+   * Caller decides what to do (e.g. only log out on "invalid").
+   */
+  public static async validateSession(jwt: string): Promise<"valid" | "invalid" | "error"> {
+    try {
+      const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${encodeURIComponent(jwt)}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) return "valid";
+      if (response.status === 401 || response.status === 403) return "invalid";
+      return "error";
+    } catch {
+      return "error";
+    }
+  }
 }

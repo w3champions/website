@@ -91,11 +91,10 @@ export default defineComponent({
     }
 
     async function init(): Promise<void> {
-      // getProfile() returns null on a 4xx (handled below as a stale cookie), but its
-      // underlying fetch can THROW on a network/DNS/CORS failure. Catch any thrown
-      // error so the error card renders instead of leaving the spinner hung with an
-      // unhandled rejection. The internal early-returns (allowlist reject, cold-login)
-      // don't throw, so they keep their existing behaviour.
+      // validateSession() handles its own fetch throw internally (returns "error"),
+      // so a transient failure deterministically shows the error card without an
+      // unhandled rejection. This outer try/catch is defense in depth for any other
+      // unexpected throw, so the error card renders instead of a hung spinner.
       try {
         const returnParam = route.query["return"] as string | undefined;
 
@@ -114,16 +113,25 @@ export default defineComponent({
 
         // A W3ChampionsJWT cookie can still be expired or revoked. The id-service
         // handoff validates exp + signature and returns 401, which would strand the
-        // user on a 401 error page. Validate the cookie first using the SAME check the
-        // app uses on startup (getProfile → null on invalid; the oauth store logs out
-        // on null). Only submit the handoff for a confirmed-valid cookie.
-        const profile = await AuthorizationService.getProfile(cookieJwt);
+        // user on a 401 error page. Validate the cookie first against the same
+        // /api/oauth/user-info endpoint, but status-aware so a transient outage
+        // (5xx / network) isn't mistaken for a stale cookie.
+        const sessionState = await AuthorizationService.validateSession(cookieJwt);
 
-        if (!profile) {
-          // Stale cookie — clear it the way the app does (store logout deletes the
-          // cookie + resets oauth state), then fall through to the cold-login flow.
+        if (sessionState === "invalid") {
+          // Genuine auth failure (401/403) — the cookie is stale. Clear it the way
+          // the app does (store logout deletes the cookie + resets oauth state),
+          // then fall through to the cold-login flow.
           oauthStore.logout();
           startColdLogin(returnParam);
+          return;
+        }
+
+        if (sessionState === "error") {
+          // Transient failure (5xx / network / CORS) — do NOT clear the cookie or
+          // start a login loop. Show the error card so the user can retry with
+          // their session intact.
+          errorMessage.value = t("views_sso_continue.error_generic");
           return;
         }
 
@@ -140,7 +148,7 @@ export default defineComponent({
         }
         formRef.value.submit();
       } catch (e) {
-        // Genuine thrown exception (e.g. getProfile's fetch failed on network/CORS).
+        // Unexpected thrown exception (validateSession already absorbs fetch throws).
         // Surface the generic error card so the user isn't stuck on the spinner.
         console.error("[sso-continue] init failed", e);
         errorMessage.value = t("views_sso_continue.error_generic");
