@@ -40,19 +40,39 @@ export const useOauthStore = defineStore("oauth", {
     async loadBlizzardBtag(bearerToken: string) {
       if (this.isLoadingBlizzardBtag) return;
       this.SET_IS_LOADING_BLIZZARD_BTAG(true);
-      const profile = await AuthorizationService.getProfile(bearerToken);
+      try {
+        // Status-aware so a transient backend blip (5xx / network) does NOT log the
+        // user out: getProfile collapses every non-200 to null, which previously
+        // triggered logout() on any error. Only a DEFINITIVE auth failure (401/403)
+        // means the token is stale and should be cleared; on a transient "error" we
+        // keep the existing session untouched (battletag fills on a later load).
+        const status = await AuthorizationService.validateSession(bearerToken);
 
-      if (profile) {
-        this.SET_PROFILE_NAME(profile.battleTag);
-        this.SET_IS_ADMIN(profile.isAdmin);
-        if (profile.isAdmin) {
-          this.SET_PERMISSIONS(profile.permissions);
+        if (status === "invalid") {
+          this.logout();
+          return;
         }
-        AuthorizationService.saveAuthToken(profile);
-      } else {
-        this.logout();
+
+        if (status === "error") {
+          // Transient — leave the session as-is, don't clear the cookie/state.
+          return;
+        }
+
+        // Valid token — fetch and apply the profile. (getProfile re-hits user-info;
+        // null here would only happen on a race where the token just became invalid,
+        // in which case we deliberately do nothing rather than log out on ambiguity.)
+        const profile = await AuthorizationService.getProfile(bearerToken);
+        if (profile) {
+          this.SET_PROFILE_NAME(profile.battleTag);
+          this.SET_IS_ADMIN(profile.isAdmin);
+          if (profile.isAdmin) {
+            this.SET_PERMISSIONS(profile.permissions);
+          }
+          AuthorizationService.saveAuthToken(profile);
+        }
+      } finally {
+        this.SET_IS_LOADING_BLIZZARD_BTAG(false);
       }
-      this.SET_IS_LOADING_BLIZZARD_BTAG(false);
     },
     saveLoginRegion(region: BnetOAuthRegion) {
       AuthorizationService.saveAuthRegion(region);
