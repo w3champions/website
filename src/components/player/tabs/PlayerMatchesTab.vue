@@ -163,7 +163,7 @@
       only-show-enemy
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
-      :show-server-info="showServerInfo"
+      :show-relative-start-time="showRelativeStartTime"
       :selectedHeroes="selectedHeroes"
       @pageChanged="onPageChanged"
     />
@@ -222,7 +222,7 @@ export default defineComponent({
     const matches = computed<Match[]>(() => playerStore.matches);
     const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
     const showHeroIcons = computed<boolean>(() => tableOptionsStore.showHeroes);
-    const showServerInfo = computed<boolean>(() => tableOptionsStore.showServerInfo);
+    const showRelativeStartTime = computed<boolean>(() => tableOptionsStore.showRelativeStartTime);
     const selectedGameModeName = ref<string>("All Modes");
 
     const races = computed<RaceFilterOption[]>(() => [
@@ -472,7 +472,7 @@ export default defineComponent({
       battleTag,
       onPageChanged,
       showHeroIcons,
-      showServerInfo,
+      showRelativeStartTime,
       heroChanged,
       selectedHeroes,
     };

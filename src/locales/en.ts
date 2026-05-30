@@ -505,6 +505,7 @@ const en = {
   components_matches_matchesgrid: {
     replay: "Replay",
     floNode: "Flo Node",
+    timeSince: "Time since",
   },
 
   components_matches_tableoptions: {
@@ -512,7 +513,7 @@ const en = {
     button: "Settings",
     hideWinner: "Hide Winner",
     hideDuration: "Hide Duration",
-    serverInfo: "Server & Pings",
+    timeSince: "Time since",
     heroes: "Heroes",
   },
 

@@ -5,8 +5,8 @@ const MATCH_TABLE_OPTIONS_KEY = "w3c-match-table-options";
 
 function getDefaultMatchTableOptions(): MatchTableOptionsState {
   return {
-    showServerInfo: false,
     showHeroes: false,
+    showRelativeStartTime: false,
   };
 }
 
@@ -24,8 +24,8 @@ function loadMatchTableOptions(): MatchTableOptionsState {
     const parsedSettings = JSON.parse(rawSettings) as Partial<MatchTableOptionsState>;
 
     return {
-      showServerInfo: Boolean(parsedSettings.showServerInfo),
       showHeroes: Boolean(parsedSettings.showHeroes),
+      showRelativeStartTime: Boolean(parsedSettings.showRelativeStartTime),
     };
   } catch {
     return getDefaultMatchTableOptions();
@@ -35,12 +35,12 @@ function loadMatchTableOptions(): MatchTableOptionsState {
 export const useTableOptionsStore = defineStore("tableOptions", {
   state: (): MatchTableOptionsState => loadMatchTableOptions(),
   actions: {
-    setShowServerInfo(value: boolean): void {
-      this.showServerInfo = value;
-      this.persist();
-    },
     setShowHeroes(value: boolean): void {
       this.showHeroes = value;
+      this.persist();
+    },
+    setShowRelativeStartTime(value: boolean): void {
+      this.showRelativeStartTime = value;
       this.persist();
     },
     persist(): void {
@@ -51,8 +51,8 @@ export const useTableOptionsStore = defineStore("tableOptions", {
       window.localStorage.setItem(
         MATCH_TABLE_OPTIONS_KEY,
         JSON.stringify({
-          showServerInfo: this.showServerInfo,
           showHeroes: this.showHeroes,
+          showRelativeStartTime: this.showRelativeStartTime,
         }),
       );
     },

@@ -43,7 +43,7 @@
             :unfinished="unfinished"
             :is-player-profile="false"
             :show-heroes="showHeroIcons"
-            :show-server-info="showServerInfo"
+            :show-relative-start-time="showRelativeStartTime"
             :selectedHeroes="selectedHeroes"
             @pageChanged="onPageChanged"
           />
@@ -111,7 +111,7 @@ export default defineComponent({
 
 
     const showHeroIcons = computed<boolean>(() => tableOptionsStore.showHeroes);
-    const showServerInfo = computed<boolean>(() => tableOptionsStore.showServerInfo);
+    const showRelativeStartTime = computed<boolean>(() => tableOptionsStore.showRelativeStartTime);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
     const maps = computed<Array<MapInfo>>(() => {
       if (!unfinished.value) {
@@ -240,7 +240,7 @@ export default defineComponent({
       selectedHeroes,
       onPageChanged,
       showHeroIcons,
-      showServerInfo,
+      showRelativeStartTime,
       showHeroSelect,
       heroChanged,
     };

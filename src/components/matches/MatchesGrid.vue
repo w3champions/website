@@ -26,14 +26,8 @@
                 class="my-3"
                 @click="goToMatchDetailPage(item)"
               >
-                <div v-if="hasServerInfo(item) && showServerInfo" class="server-info-text server-info-text--ffa">
-                  <div class="server-info-title">{{ getServerLabel(item.serverInfo) }}</div>
-                  <div v-if="getServerPingEntries(item.serverInfo).length" class="server-info-pings">
-                    <div v-for="ping in getServerPingEntries(item.serverInfo)" :key="ping.key" class="server-info-ping">
-                      <span v-if="ping.name" class="server-info-ping-name">{{ ping.name }}</span>
-                      <span class="server-info-ping-value">{{ ping.name ? ` (${ping.ping} ms)` : `${ping.ping} ms` }}</span>
-                    </div>
-                  </div>
+                <div v-if="hasServerInfo(item)" class="server-icon-row server-icon-row--ffa">
+                  <host-icon :host="item.serverInfo" />
                 </div>
                 <v-row v-if="alwaysLeftName" justify="center">
                   <v-col offset="4" class="py-1">
@@ -83,16 +77,7 @@
                 </v-col>
                 <v-col :cols="serverColumnWidth" class="py-2 d-flex flex-column justify-center align-center">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="hasServerInfo(item) && !showServerInfo" :host="item.serverInfo" />
-                  <div v-if="hasServerInfo(item) && showServerInfo" class="server-info-text">
-                    <div class="server-info-title">{{ getServerLabel(item.serverInfo) }}</div>
-                    <div v-if="getServerPingEntries(item.serverInfo).length" class="server-info-pings">
-                      <div v-for="ping in getServerPingEntries(item.serverInfo)" :key="ping.key" class="server-info-ping">
-                        <span v-if="ping.name" class="server-info-ping-name">{{ ping.name }}</span>
-                        <span class="server-info-ping-value">{{ ping.name ? ` (${ping.ping} ms)` : `${ping.ping} ms` }}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <host-icon v-if="hasServerInfo(item)" :host="item.serverInfo" />
                 </v-col>
                 <v-col :cols="teamColumnWidth" class="team-match-info-container" align-self="center">
                   <team-match-info
@@ -112,7 +97,12 @@
               <span class="text-caption">{{ mapNameFromMatch(item) }}</span>
             </td>
             <td class="text-right">
-              {{ getStartTime(item) }}
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props: tooltipProps }">
+                  <span class="start-time-text" v-bind="tooltipProps">{{ getStartTime(item) }}</span>
+                </template>
+                <span>{{ getStartTimeTooltip(item) }}</span>
+              </v-tooltip>
             </td>
             <td class="text-right">
               <div class="d-flex flex-column text-right align-end">
@@ -150,14 +140,19 @@
 <script lang="ts">
 import { computed, defineComponent, type StyleValue, type PropType } from "vue";
 import { useI18n } from "vue-i18n";
-import { EGameMode, type Match, type PlayerInTeam, type ServerInfo, type Team } from "@/store/types";
+import { EGameMode, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { useRouter } from "vue-router";
-import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
+import {
+  formatSecondsToDuration,
+  formatTimestampStringToDateTime,
+  formatTimestampStringToRelativeTime,
+  formatTimestampStringToUnixTime,
+} from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
@@ -168,12 +163,6 @@ interface MatchesGridHeader {
   sortable: boolean;
   value: string;
   style: StyleValue;
-}
-
-interface ServerPingDisplay {
-  key: string;
-  name: string;
-  ping: number;
 }
 
 export default defineComponent({
@@ -220,14 +209,14 @@ export default defineComponent({
       required: false,
       default: () => [],
     },
-    showServerInfo: {
+    showRelativeStartTime: {
       type: Boolean,
       required: false,
       default: false,
     },
   },
   setup(props, context) {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
     const router = useRouter();
     const matchStore = useMatchStore();
     const playerStore = usePlayerStore();
@@ -255,9 +244,9 @@ export default defineComponent({
       return Math.ceil(props.totalMatches / 50);
     });
 
-    const emptyStateColspan = computed<number>(() => props.unfinished ? headers.length : headers.length + 1);
-    const teamColumnWidth = computed<number>(() => props.showServerInfo ? 5 : 5.5);
-    const serverColumnWidth = computed<number>(() => props.showServerInfo ? 2 : 1);
+    const emptyStateColspan = computed<number>(() => props.unfinished ? headers.value.length : headers.value.length + 1);
+    const teamColumnWidth = 5.5;
+    const serverColumnWidth = 1;
 
     function onPageChanged(page: number): void {
       context.emit("pageChanged", page);
@@ -311,7 +300,19 @@ export default defineComponent({
     }
 
     function getStartTime(match: Match): string {
+      if (props.showRelativeStartTime) {
+        return formatTimestampStringToRelativeTime(match.startTime, locale.value);
+      }
+
       return formatTimestampStringToDateTime(match.startTime);
+    }
+
+    function getStartTimeTooltip(match: Match): string {
+      if (props.showRelativeStartTime) {
+        return formatTimestampStringToDateTime(match.startTime);
+      }
+
+      return formatTimestampStringToRelativeTime(match.startTime, locale.value);
     }
 
     function getDuration(match: Match): string {
@@ -342,46 +343,7 @@ export default defineComponent({
       return Boolean(match.serverInfo?.provider);
     }
 
-    function getServerLabel(serverInfo: ServerInfo): string {
-      if (serverInfo.provider === "BNET") {
-        return t("components_matches_hosticon.hostedonbnet").toString();
-      }
-
-      return serverInfo.name || t("components_matches_hosticon.hostedonflo").toString();
-    }
-
-    function getServerPingEntries(serverInfo: ServerInfo): ServerPingDisplay[] {
-      if (!serverInfo.playerServerInfos?.length) {
-        return [];
-      }
-
-      return serverInfo.playerServerInfos
-        .map((playerInfo) => {
-          const ping = playerInfo.averagePing ?? playerInfo.currentPing;
-          if (ping === null || ping === undefined) return null;
-
-          const pingValue = Number(ping);
-          if (!Number.isFinite(pingValue)) return null;
-
-          const name = stripTag(playerInfo.battleTag);
-          return {
-            key: `${playerInfo.battleTag}:${pingValue}`,
-            name: name && name !== "*" ? name : "",
-            ping: Math.round(pingValue),
-          };
-        })
-        .filter((ping): ping is ServerPingDisplay => ping !== null);
-    }
-
-    function stripTag(tag: string): string {
-      if (!tag) return "";
-
-      const hashIndex = tag.indexOf("#");
-      if (hashIndex != -1) return tag.substring(0, hashIndex);
-      return tag;
-    }
-
-    const headers: MatchesGridHeader[] = [
+    const headers = computed<MatchesGridHeader[]>(() => [
       {
         name: "Players",
         text: t("components_matches_matchesgrid.players"),
@@ -404,7 +366,11 @@ export default defineComponent({
       },
       {
         name: "Starttime",
-        text: t("components_matches_matchesgrid.starttime"),
+        text: t(
+          props.showRelativeStartTime
+            ? "components_matches_matchesgrid.timeSince"
+            : "components_matches_matchesgrid.starttime",
+        ),
         sortable: false,
         value: "startTime",
         style: {
@@ -421,7 +387,7 @@ export default defineComponent({
           textAlign: "end",
         },
       },
-    ];
+    ]);
 
     return {
       page,
@@ -445,12 +411,11 @@ export default defineComponent({
       getOpponentTeams,
       nameIfNonSolo,
       getStartTime,
+      getStartTimeTooltip,
       getDuration,
       getDurationBarWidth,
       showReplayDownload,
       hasServerInfo,
-      getServerLabel,
-      getServerPingEntries,
       hideDurationSpoilers,
     };
   },
@@ -475,48 +440,19 @@ export default defineComponent({
   margin-top: 2px;
 }
 
-.server-info-text {
-  max-width: 160px;
-  margin-top: 3px;
-  line-height: 1.15;
-  text-align: center;
-}
-
-.server-info-title {
-  font-size: 0.74rem;
-  font-weight: 600;
-}
-
-.server-info-pings {
-  color: rgba(var(--v-theme-on-surface), 0.65);
-  font-size: 0.68rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-
-.server-info-ping {
+.server-icon-row {
   display: flex;
   justify-content: center;
-  max-width: 100%;
-  line-height: 1.15;
-  white-space: nowrap;
 }
 
-.server-info-ping-name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.server-info-ping-value {
-  flex: none;
-}
-
-.server-info-text--ffa {
+.server-icon-row--ffa {
   margin-right: auto;
   margin-left: auto;
+}
+
+.start-time-text {
+  cursor: default;
+  white-space: nowrap;
 }
 
 .spoiler-mask {
