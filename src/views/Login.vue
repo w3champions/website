@@ -82,28 +82,42 @@ export default defineComponent({
       });
     }
 
+    // Best-effort retry of the profile load, only when it didn't already load (so it's
+    // not a duplicate fetch in the normal case). authorizeWithCode's profile load is
+    // best-effort, so a transient failure can leave blizzardVerifiedBtag/isAdmin/
+    // permissions unset; this gives any in-SPA destination one more chance to hydrate.
+    // loadBlizzardBtag is status-aware (round-10): it won't throw or logout on a
+    // transient error, so this never blocks or fails the redirect.
+    async function ensureProfileLoaded(): Promise<void> {
+      if (!account.value) {
+        await oauthStore.loadBlizzardBtag(oauthStore.token);
+      }
+    }
+
     async function openRequestedReturnPath(): Promise<void> {
       const returnTo = window.sessionStorage.getItem(LOGIN_RETURN_TO_KEY);
       if (returnTo) {
-        // SSO / internal return path: only needs the cookie (already persisted), NOT
-        // the battletag. Redirect exactly as before — don't couple it to the profile.
         window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
         if (isAllowedReturnUrl(returnTo, identificationOrigin())) {
+          // External IdP handoff: a full page navigation that reloads the app, so
+          // App's bootstrap reruns and hydrates there. No hydration needed here.
           window.location.href = returnTo;
           return;
         }
+        // Internal SPA route (admin pages, /sso-continue, …): App's bootstrap already
+        // ran on /login and won't rerun after this router.replace, so the destination
+        // would render unhydrated (blank admin page) on a transient profile failure.
+        // Hydrate first. (/sso-continue only needs the cookie, so the extra best-effort
+        // load is harmless and doesn't block or loop the handoff.)
+        await ensureProfileLoaded();
         router.replace(returnTo);
         return;
       }
 
       // Default destination is the player profile, whose URL NEEDS the battletag.
-      // authorizeWithCode's profile load is best-effort, so a transient failure can
-      // leave it empty -> getProfileUrl("") would produce a broken /player/ route.
-      // Retry the load once (round-10 status-aware loadBlizzardBtag), then fall back
-      // to home if it's still missing rather than navigating to a broken profile URL.
-      if (!account.value) {
-        await oauthStore.loadBlizzardBtag(oauthStore.token);
-      }
+      // Hydrate, then redirect — or fall back to home rather than a broken /player/
+      // URL (getProfileUrl("") -> /player/) if the battletag is still missing.
+      await ensureProfileLoaded();
 
       if (account.value) {
         openPlayerProfile();
