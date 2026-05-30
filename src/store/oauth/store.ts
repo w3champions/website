@@ -1,6 +1,6 @@
 import type { BnetOAuthRegion, OauthState, TwitchToken } from "@/store/oauth/types";
 import { defineStore } from "pinia";
-import AuthorizationService from "@/services/AuthorizationService";
+import AuthorizationService, { type SessionStatus } from "@/services/AuthorizationService";
 
 export const useOauthStore = defineStore("oauth", {
   state: (): OauthState => ({
@@ -52,41 +52,36 @@ export const useOauthStore = defineStore("oauth", {
       const bearer = AuthorizationService.loadAuthCookie();
       this.SET_BEARER(bearer);
     },
-    async loadBlizzardBtag(bearerToken: string): Promise<"valid" | "invalid" | "error"> {
+    async loadBlizzardBtag(bearerToken: string): Promise<SessionStatus> {
       // Already in flight — report transient so callers don't treat it as a verified
       // session (the in-flight call owns the real outcome).
       if (this.isLoadingBlizzardBtag) return "error";
       this.SET_IS_LOADING_BLIZZARD_BTAG(true);
       try {
-        // Status-aware so a transient backend blip (5xx / network) does NOT log the
-        // user out: getProfile collapses every non-200 to null, which previously
-        // triggered logout() on any error. Only a DEFINITIVE auth failure (401/403)
-        // means the token is stale and should be cleared; on a transient "error" we
-        // keep the existing session untouched (battletag fills on a later load).
-        const status = await AuthorizationService.validateSession(bearerToken);
+        // ONE status-aware user-info fetch that yields both status AND profile, so we
+        // never throw and never claim "valid" without a hydrated profile. A transient
+        // backend blip (5xx / network / 200-but-unparseable) must NOT log the user out;
+        // only a DEFINITIVE auth failure (401/403, or client-side expired) clears state.
+        const { status, profile } = await AuthorizationService.getSessionProfile(bearerToken);
 
         if (status === "invalid") {
           this.logout();
           return "invalid";
         }
 
-        if (status === "error") {
-          // Transient — leave the session as-is, don't clear the cookie/state.
+        if (status === "error" || !profile) {
+          // Transient (or no profile body) — leave the session untouched, don't hydrate,
+          // and don't claim valid. The cookie/state stay as-is; battletag fills later.
           return "error";
         }
 
-        // Valid token — fetch and apply the profile. (getProfile re-hits user-info;
-        // null here would only happen on a race where the token just became invalid,
-        // in which case we deliberately do nothing rather than log out on ambiguity.)
-        const profile = await AuthorizationService.getProfile(bearerToken);
-        if (profile) {
-          this.SET_PROFILE_NAME(profile.battleTag);
-          this.SET_IS_ADMIN(profile.isAdmin);
-          if (profile.isAdmin) {
-            this.SET_PERMISSIONS(profile.permissions);
-          }
-          AuthorizationService.saveAuthToken(profile);
+        // Valid AND profile present — hydrate.
+        this.SET_PROFILE_NAME(profile.battleTag);
+        this.SET_IS_ADMIN(profile.isAdmin);
+        if (profile.isAdmin) {
+          this.SET_PERMISSIONS(profile.permissions);
         }
+        AuthorizationService.saveAuthToken(profile);
         return "valid";
       } finally {
         this.SET_IS_LOADING_BLIZZARD_BTAG(false);

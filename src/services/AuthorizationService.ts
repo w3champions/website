@@ -7,6 +7,15 @@ const w3CAuth = "W3ChampionsJWT";
 const w3CAuthRegion = "W3ChampionsAuthRegion";
 const IDENTIFICATION_URL = window._env_.IDENTIFICATION_URL;
 
+/**
+ * Outcome of a single /api/oauth/user-info check:
+ *   - "valid":   not expired AND 200 — the JWT is accepted.
+ *   - "invalid": expired OR 401/403 — genuine auth failure; the cookie is stale/revoked.
+ *   - "error":   5xx, any other non-ok status, a JSON parse failure on a 200, or a thrown
+ *                fetch (network/DNS/CORS) — transient; the cookie must NOT be cleared.
+ */
+export type SessionStatus = "valid" | "invalid" | "error";
+
 export default class AuthorizationService {
   public static async authorize(code: string, region: BnetOAuthRegion = BnetOAuthRegion.eu): Promise<W3cToken> {
     const url = `${IDENTIFICATION_URL}api/oauth/token?code=${code}&redirectUri=${REDIRECT_URL}&region=${region}`;
@@ -95,22 +104,15 @@ export default class AuthorizationService {
   }
 
   /**
-   * Status-aware session check. First enforces exp client-side (the user-info
-   * endpoint does not — see below), then queries the same /api/oauth/user-info
-   * endpoint as getProfile (which collapses every non-200 to null, hiding the
-   * difference between a genuinely invalid token and a transient outage). Distinguishes:
-   *   - "valid":   not expired AND 200 — the JWT is accepted.
-   *   - "invalid": expired OR 401/403 — genuine auth failure; the cookie is stale/revoked.
-   *   - "error":   5xx, any other non-ok status, or a thrown fetch (network/DNS/
-   *                CORS) — transient; the cookie must NOT be cleared on this.
-   * Caller decides what to do (e.g. only log out on "invalid").
+   * Single status-aware /api/oauth/user-info call returning BOTH the status and the
+   * parsed profile, so callers never need a second fetch (which would double the
+   * transient-failure surface and could throw or falsely report "valid"). Enforces
+   * exp client-side first (the endpoint validates the signature but NOT lifetime, so
+   * it returns 200 for an expired-but-present cookie; the handoff DOES enforce exp).
+   * A "valid" result always carries a parsed profile; "invalid"/"error" carry null.
    */
-  public static async validateSession(jwt: string): Promise<"valid" | "invalid" | "error"> {
-    // The legacy /api/oauth/user-info endpoint validates the signature but NOT the
-    // lifetime, so it returns 200 for an expired-but-present cookie. The handoff DOES
-    // enforce exp and would 401. Reject an expired token up front (→ "invalid" → the
-    // caller logs out + cold-logins) so it's never submitted to the handoff.
-    if (isJwtExpired(jwt)) return "invalid";
+  public static async getSessionProfile(jwt: string): Promise<{ status: SessionStatus; profile: W3cToken | null }> {
+    if (isJwtExpired(jwt)) return { status: "invalid", profile: null };
 
     try {
       const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${encodeURIComponent(jwt)}`;
@@ -122,11 +124,26 @@ export default class AuthorizationService {
         },
       });
 
-      if (response.ok) return "valid";
-      if (response.status === 401 || response.status === 403) return "invalid";
-      return "error";
+      if (response.ok) {
+        try {
+          return { status: "valid", profile: (await response.json()) as W3cToken };
+        } catch {
+          // 200 but the body didn't parse — treat as transient, not a hydrated session.
+          return { status: "error", profile: null };
+        }
+      }
+      if (response.status === 401 || response.status === 403) return { status: "invalid", profile: null };
+      return { status: "error", profile: null };
     } catch {
-      return "error";
+      return { status: "error", profile: null }; // network / CORS / DNS
     }
+  }
+
+  /**
+   * Status-only session check (SsoContinue needs the status, not the body). Thin
+   * wrapper over getSessionProfile so there is ONE user-info request implementation.
+   */
+  public static async validateSession(jwt: string): Promise<SessionStatus> {
+    return (await AuthorizationService.getSessionProfile(jwt)).status;
   }
 }
