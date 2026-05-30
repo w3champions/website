@@ -89,8 +89,10 @@ export default defineComponent({
         await nextTick();
         formRef.value?.submit();
       } else {
-        // User is not logged in — store the return URL and open the sign-in dialog
-        const selfUrl = window.location.href;
+        // User is not logged in — store a PATH (not a full URL) so the post-login
+        // router.replace(returnTo) in Login.vue matches this route, then bring it
+        // back to /sso-continue to complete the handoff once the cookie is set.
+        const selfUrl = `/sso-continue?return=${encodeURIComponent(returnParam)}`;
         window.sessionStorage.setItem("w3-login-return-to", selfUrl);
         window.dispatchEvent(
           new CustomEvent("w3-open-sign-in-dialog", {
