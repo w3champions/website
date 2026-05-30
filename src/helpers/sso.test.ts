@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
-import assert from "node:assert/strict";
-import { isAllowedReturnUrl } from "./sso.ts";
+import { strict as assert } from "node:assert";
+import { isAllowedReturnUrl } from "./sso";
 
 const PROD_ORIGIN = "https://identification-service.w3champions.com";
 const TEST_ORIGIN = "https://identification-service.test.w3champions.com";
