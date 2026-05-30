@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -8,6 +9,7 @@
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "module": "esnext",
     "moduleResolution": "bundler",
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
     },
