@@ -167,6 +167,7 @@ import noop from "lodash/noop";
 import { useTheme } from "vuetify";
 import { battleTagToName } from "./helpers/profile";
 import { EMainRouteName } from "@/router/types";
+import { LOGIN_RETURN_TO_KEY, OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import LocaleIcon from "@/components/common/LocaleIcon.vue";
 
 import {
@@ -209,7 +210,6 @@ export default defineComponent({
     const savedLanguage = "en";
     const navigationDrawerOpen = ref(false);
     const theme = useTheme();
-    const loginReturnToKey = "w3-login-return-to";
 
     const showSignInDialog = ref(false);
     const selectedTheme = ref("human");
@@ -267,13 +267,13 @@ export default defineComponent({
 
     function openSignInDialog(returnTo?: string): void {
       if (returnTo) {
-        window.sessionStorage.setItem(loginReturnToKey, returnTo);
+        window.sessionStorage.setItem(LOGIN_RETURN_TO_KEY, returnTo);
       }
       showSignInDialog.value = true;
     }
 
     function clearLoginReturnTo(): void {
-      window.sessionStorage.removeItem(loginReturnToKey);
+      window.sessionStorage.removeItem(LOGIN_RETURN_TO_KEY);
     }
 
     function setNavigationDrawerOpen(val: boolean): void {
@@ -359,12 +359,12 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      window.addEventListener("w3-open-sign-in-dialog", handleOpenSignInDialog);
+      window.addEventListener(OPEN_SIGN_IN_DIALOG_EVENT, handleOpenSignInDialog);
       await init();
     });
 
     onBeforeUnmount(() => {
-      window.removeEventListener("w3-open-sign-in-dialog", handleOpenSignInDialog);
+      window.removeEventListener(OPEN_SIGN_IN_DIALOG_EVENT, handleOpenSignInDialog);
     });
 
     onBeforeMount(() => {

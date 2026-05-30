@@ -37,6 +37,7 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
+import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import { useRoute } from "vue-router";
 
 export default defineComponent({
@@ -80,7 +81,7 @@ export default defineComponent({
     }
 
     function promptLogin(): void {
-      window.dispatchEvent(new CustomEvent("w3-open-sign-in-dialog", {
+      window.dispatchEvent(new CustomEvent(OPEN_SIGN_IN_DIALOG_EVENT, {
         detail: {
           returnTo: route.fullPath,
         },
