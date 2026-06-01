@@ -10,6 +10,7 @@
           <v-text-field
             v-model="filters.battleTag"
             label="BattleTag"
+            placeholder="Starts with…"
             variant="underlined"
             color="primary"
             clearable
@@ -20,6 +21,7 @@
           <v-text-field
             v-model="filters.gameSearch"
             label="Game ID / Name"
+            placeholder="ID, or name starts with…"
             variant="underlined"
             color="primary"
             clearable
@@ -30,6 +32,7 @@
           <v-text-field
             v-model="filters.serverName"
             label="Server Name"
+            placeholder="Starts with…"
             variant="underlined"
             color="primary"
             clearable
@@ -40,6 +43,7 @@
           <v-text-field
             v-model="filters.proxyName"
             label="Proxy Name"
+            placeholder="Starts with…"
             variant="underlined"
             color="primary"
             clearable
@@ -50,6 +54,7 @@
           <v-text-field
             v-model="filters.proxyIp"
             label="Proxy IP"
+            placeholder="Starts with…"
             variant="underlined"
             color="primary"
             clearable
