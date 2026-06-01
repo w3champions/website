@@ -19,6 +19,7 @@ import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
 import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
+import SsoContinue from "@/views/SsoContinue.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
 import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivityTab.vue";
@@ -290,6 +291,11 @@ const routes: RouteRecordRaw[] = [
     path: "/patreon/callback",
     name: EMainRouteName.PATREON_CALLBACK,
     component: PatreonCallback,
+  },
+  {
+    path: "/sso-continue",
+    name: EMainRouteName.SSO_CONTINUE,
+    component: SsoContinue,
   },
   {
     path: "/tournaments",
