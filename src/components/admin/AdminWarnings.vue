@@ -9,6 +9,7 @@
         <player-search
           search-label="Search player"
           @playerFound="onPlayerFound"
+          @searchRequested="onPlayerFound"
           @searchCleared="onPlayerSearchCleared"
         />
       </div>
@@ -25,6 +26,10 @@
         hide-details
       />
       <v-spacer />
+      <v-btn variant="text" :loading="loading" @click="loadWarnings">
+        <v-icon start>{{ mdiRefresh }}</v-icon>
+        Refresh
+      </v-btn>
       <v-btn class="bg-primary text-w3-race-bg" @click="openCreateDialog">
         New warning
       </v-btn>
@@ -56,8 +61,10 @@
       @update:options="onTableOptionsUpdate"
     >
       <template v-slot:item.title="{ item }">
-        <div class="font-weight-medium">{{ getDefinitionText(item.title, "en") }}</div>
-        <div class="text-medium-emphasis text-caption">{{ getDefinitionText(item.body, "en") }}</div>
+        <div class="warning-summary">
+          <div class="font-weight-medium warning-summary-title">{{ getDefinitionText(item.title, "en") }}</div>
+          <div class="text-medium-emphasis text-caption warning-summary-body">{{ getDefinitionText(item.body, "en") }}</div>
+        </div>
       </template>
 
       <template v-slot:item.status="{ item }">
@@ -74,7 +81,20 @@
       </template>
 
       <template v-slot:item.createdAt="{ item }">
-        {{ formatDate(item.createdAt) }}
+        <div class="warning-timeline">
+          <div>
+            <span class="text-medium-emphasis">Created:</span>
+            {{ formatDate(item.createdAt) }}
+          </div>
+          <div>
+            <span class="text-medium-emphasis">Sent:</span>
+            {{ item.sentAt ? formatDate(item.sentAt) : "Not yet" }}
+          </div>
+          <div>
+            <span class="text-medium-emphasis">Ack:</span>
+            {{ acknowledgementText(item) }}
+          </div>
+        </div>
       </template>
 
       <template v-slot:item.actions="{ item }">
@@ -109,7 +129,7 @@
               </div>
             </v-col>
 
-            <v-col cols="12" md="7">
+            <v-col cols="12">
               <v-select
                 v-model="selectedWarningOption"
                 :items="definitionItems"
@@ -122,22 +142,9 @@
               />
             </v-col>
 
-            <v-col cols="12" md="5">
-              <v-select
-                v-model="previewLocale"
-                :items="previewLocaleItems"
-                item-title="title"
-                item-value="value"
-                label="Preview language"
-                variant="underlined"
-                color="primary"
-                :disabled="isCustomWarning"
-              />
-            </v-col>
-
             <v-col cols="12" md="4">
               <v-select
-                v-model="customSeverity"
+                :model-value="previewSeverity"
                 :items="severityItems"
                 item-title="title"
                 item-value="value"
@@ -145,6 +152,7 @@
                 variant="underlined"
                 color="primary"
                 :disabled="!isCustomWarning"
+                @update:model-value="customSeverity = $event as EPlayerWarningSeverity"
               >
                 <template v-slot:item="{ props, item }">
                   <v-list-item v-bind="props">
@@ -178,23 +186,6 @@
                 @update:model-value="customBody = String($event)"
               />
             </v-col>
-
-            <v-col cols="12">
-              <v-sheet class="warning-preview pa-4" rounded>
-                <div>
-                  <v-chip :color="severityColor(previewSeverity)" variant="tonal" size="small">
-                    <v-icon start size="small">{{ severityIcon(previewSeverity) }}</v-icon>
-                    {{ previewSeverity }}
-                  </v-chip>
-                  <div class="text-h6 mt-3 mb-2 warning-preview-title">
-                    {{ previewTitle || "Title preview" }}
-                  </div>
-                  <div class="warning-preview-body">
-                    {{ previewBody || "Message preview" }}
-                  </div>
-                </div>
-              </v-sheet>
-            </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
@@ -220,7 +211,7 @@ import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import AdminService from "@/services/admin/AdminService";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPlayerWarningSeverity, EPlayerWarningStatus, type CreatePlayerWarningRequest, type PlayerWarning, type PlayerWarningDefinition, type PlayerWarningTranslations } from "@/store/admin/types";
-import { mdiAlertCircleOutline, mdiAlertOctagonOutline, mdiInformationOutline } from "@mdi/js";
+import { mdiAlertCircleOutline, mdiAlertOctagonOutline, mdiInformationOutline, mdiRefresh } from "@mdi/js";
 
 type StatusFilter = EPlayerWarningStatus | "";
 type VuetifyTableUpdateOptions = {
@@ -248,7 +239,6 @@ export default defineComponent({
     const selectedBattleTag = ref<string>("");
     const statusFilter = ref<StatusFilter>("");
     const selectedWarningOption = ref<string>(CUSTOM_WARNING_OPTION);
-    const previewLocale = ref<string>(DEFAULT_PREVIEW_LOCALE);
     const customSeverity = ref<EPlayerWarningSeverity>(EPlayerWarningSeverity.Warning);
     const customTitle = ref<string>("");
     const customBody = ref<string>("");
@@ -261,31 +251,18 @@ export default defineComponent({
     });
 
     const headers = [
-      { title: "Player", key: "targetBattleTag", sortable: false },
-      { title: "Warning", key: "title", sortable: false },
+      { title: "Player", key: "targetBattleTag", sortable: false, width: "18%" },
+      { title: "Warning", key: "title", sortable: false, width: "34%" },
       { title: "Severity", key: "severity", sortable: false },
       { title: "Status", key: "status", sortable: false },
       { title: "Issued By", key: "issuedByBattleTag", sortable: false },
-      { title: "Created", key: "createdAt", sortable: false },
+      { title: "Timeline", key: "createdAt", sortable: false, width: "22%" },
       { title: "", key: "actions", sortable: false },
     ];
 
     const statusItems = [
       { title: "All", value: "" },
       ...Object.values(EPlayerWarningStatus).map((status) => ({ title: status, value: status })),
-    ];
-
-    const previewLocaleItems = [
-      { title: "English", value: "en" },
-      { title: "Deutsch", value: "de" },
-      { title: "Français", value: "fr" },
-      { title: "한국어", value: "kr" },
-      { title: "Polski", value: "pl" },
-      { title: "Português", value: "pt" },
-      { title: "Русский", value: "ru" },
-      { title: "Srpski", value: "sr" },
-      { title: "Українська", value: "ua" },
-      { title: "中文", value: "zh" },
     ];
 
     const severityItems = [
@@ -312,14 +289,6 @@ export default defineComponent({
       selectedDefinition.value?.severity ?? customSeverity.value
     );
 
-    const previewTitle = computed<string>(() =>
-      selectedDefinition.value ? getDefinitionText(selectedDefinition.value.title, previewLocale.value) : customTitle.value.trim()
-    );
-
-    const previewBody = computed<string>(() =>
-      selectedDefinition.value ? getDefinitionText(selectedDefinition.value.body, previewLocale.value) : customBody.value.trim()
-    );
-
     const titleFieldValue = computed<string>(() =>
       selectedDefinition.value ? getDefinitionText(selectedDefinition.value.title, DEFAULT_PREVIEW_LOCALE) : customTitle.value
     );
@@ -336,24 +305,31 @@ export default defineComponent({
       )
     );
 
+    let loadWarningsRequestId = 0;
+
     async function loadWarnings(): Promise<void> {
+      const requestId = ++loadWarningsRequestId;
       loading.value = true;
       errorMessage.value = "";
       try {
         const result = await AdminService.getWarnings(oauthStore.token, {
           page: tableOptions.value.page,
           itemsPerPage: tableOptions.value.itemsPerPage,
-          battleTag: selectedBattleTag.value,
+          battleTag: selectedBattleTag.value.trim(),
           status: statusFilter.value,
         });
+        if (requestId !== loadWarningsRequestId) return;
         warnings.value = result.warnings;
         total.value = result.total;
       } catch (error) {
+        if (requestId !== loadWarningsRequestId) return;
         warnings.value = [];
         total.value = 0;
         errorMessage.value = getErrorMessage(error);
       } finally {
-        loading.value = false;
+        if (requestId === loadWarningsRequestId) {
+          loading.value = false;
+        }
       }
     }
 
@@ -378,7 +354,7 @@ export default defineComponent({
     }
 
     function onPlayerFound(battleTag: string): void {
-      selectedBattleTag.value = battleTag;
+      selectedBattleTag.value = battleTag.trim();
     }
 
     function onPlayerSearchCleared(): void {
@@ -400,7 +376,6 @@ export default defineComponent({
       customSeverity.value = EPlayerWarningSeverity.Warning;
       customTitle.value = "";
       customBody.value = "";
-      previewLocale.value = DEFAULT_PREVIEW_LOCALE;
       createDialogOpen.value = true;
     }
 
@@ -485,8 +460,23 @@ export default defineComponent({
       return value ? new Date(value).toLocaleString() : "";
     }
 
+    function acknowledgementText(warning: PlayerWarning): string {
+      if (warning.acknowledgedAt) {
+        return formatDate(warning.acknowledgedAt);
+      }
+
+      if (warning.cancelledAt) {
+        return `Cancelled ${formatDate(warning.cancelledAt)}`;
+      }
+
+      return "Waiting";
+    }
+
     function getDefinitionText(translations: PlayerWarningTranslations, locale: string): string {
-      return translations[locale] || translations.en || Object.values(translations).find(Boolean) || "";
+      return translations[locale]?.trim()
+        || translations.en?.trim()
+        || Object.values(translations).find((value) => !!value?.trim())
+        || "";
     }
 
     function getErrorMessage(error: unknown): string {
@@ -513,7 +503,6 @@ export default defineComponent({
       selectedBattleTag,
       statusFilter,
       selectedWarningOption,
-      previewLocale,
       customSeverity,
       customTitle,
       customBody,
@@ -523,16 +512,15 @@ export default defineComponent({
       headers,
       statusItems,
       severityItems,
-      previewLocaleItems,
       definitionItems,
       isCustomWarning,
       selectedDefinition,
       previewSeverity,
-      previewTitle,
-      previewBody,
       titleFieldValue,
       bodyFieldValue,
       canCreate,
+      mdiRefresh,
+      loadWarnings,
       onTableOptionsUpdate,
       onPlayerFound,
       onPlayerSearchCleared,
@@ -545,6 +533,7 @@ export default defineComponent({
       severityColor,
       severityIcon,
       formatDate,
+      acknowledgementText,
       getDefinitionText,
     };
   },
@@ -552,17 +541,27 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.warning-preview {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  background: rgba(255, 255, 255, 0.65);
+.warning-summary {
+  max-width: min(380px, 34vw);
 }
 
-.warning-preview-title {
+.warning-summary-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.warning-summary-body {
+  display: -webkit-box;
   line-height: 1.35;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.warning-preview-body {
-  line-height: 1.55;
-  white-space: pre-line;
+.warning-timeline {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  min-width: 190px;
 }
 </style>

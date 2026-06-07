@@ -12,16 +12,16 @@ export interface IPermission {
 }
 
 export enum EPermission {
-  Permissions,
-  Moderation,
-  Queue,
-  Logs,
-  Maps,
-  Tournaments,
-  Content,
-  Proxies,
-  Warnings,
-  SmurfCheckerQuery,
-  SmurfCheckerQueryExplanation,
-  SmurfCheckerAdministration,
+  Permissions = 0,
+  Moderation = 1,
+  Queue = 2,
+  Logs = 3,
+  Maps = 4,
+  Tournaments = 5,
+  Content = 6,
+  Proxies = 7,
+  SmurfCheckerQuery = 8,
+  SmurfCheckerQueryExplanation = 9,
+  SmurfCheckerAdministration = 10,
+  Warnings = 11,
 }

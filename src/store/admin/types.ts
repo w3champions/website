@@ -127,8 +127,6 @@ export type PlayerWarning = {
   targetBattleTag: string;
   issuedByBattleTag: string;
   warningDefinitionId?: string;
-  rule?: string;
-  category?: string;
   severity: EPlayerWarningSeverity;
   title: PlayerWarningTranslations;
   body: PlayerWarningTranslations;
@@ -167,6 +165,16 @@ export type PlayerWarningDefinition = {
   body: PlayerWarningTranslations;
   enabled: boolean;
   sortOrder: number;
+  createdByBattleTag?: string;
+  updatedByBattleTag?: string;
+};
+
+export type PlayerWarningDefinitionRequest = {
+  severity: EPlayerWarningSeverity;
+  title: PlayerWarningTranslations;
+  body: PlayerWarningTranslations;
+  enabled: boolean;
+  sortOrder?: number;
 };
 
 export type CreatePlayerWarningResponse = {

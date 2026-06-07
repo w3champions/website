@@ -26,6 +26,8 @@
       autocomplete="off"
       clearable
       @click:clear="clearSearch"
+      @click:append-inner="submitSearch"
+      @keydown.enter.prevent="submitSearch"
     />
   </div>
 </template>
@@ -95,6 +97,16 @@ export default defineComponent({
       context.emit("playerFound", btag);
     }
 
+    function submitSearch(): void {
+      const searchValue = (input.value || selected.value || "").trim();
+      if (!searchValue) {
+        clearSearch();
+        return;
+      }
+
+      context.emit("searchRequested", searchValue);
+    }
+
     watch(input, onInput);
 
     function onInput(val: string): void {
@@ -130,6 +142,7 @@ export default defineComponent({
       isLoading,
       searchedPlayers,
       clearSearch,
+      submitSearch,
     };
   },
 });

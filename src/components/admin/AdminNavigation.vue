@@ -195,6 +195,13 @@ export default defineComponent({
             component: "admin-warnings",
             routeName: EAdminRouteName.PLAYER_WARNINGS,
           },
+          {
+            title: "Warning Templates",
+            icon: mdiTooltipTextOutline,
+            permission: EPermission.Warnings,
+            component: "admin-warning-templates",
+            routeName: EAdminRouteName.WARNING_TEMPLATES,
+          },
         ],
       },
       {
