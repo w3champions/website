@@ -341,7 +341,8 @@ const titleForRoute = (to: RouteLocationNormalized): string => {
 let initialNavigationTracked = false;
 
 router.afterEach((to: RouteLocationNormalized) => {
-  document.title = titleForRoute(to);
+  const title = titleForRoute(to);
+  document.title = title;
 
   if (!initialNavigationTracked) {
     initialNavigationTracked = true;
@@ -349,7 +350,7 @@ router.afterEach((to: RouteLocationNormalized) => {
   }
 
   nextTick(() => {
-    trackPageView(to.fullPath, document.title);
+    trackPageView(to.fullPath, title);
   });
 });
 

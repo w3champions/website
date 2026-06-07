@@ -17,12 +17,13 @@
 
   var GA4_MEASUREMENT_ID = "G-HQ4XC36WGT";
   var PROD_HOSTS = ["w3champions.com", "www.w3champions.com"];
-  var ANALYTICS_CONSENT_KEY = "stcm.consent.analytics"; // Silktide v2.0 key format
+  var ANALYTICS_CONSENT_KEY = "stcm.consent.analytics"; // Silktide key: stcm.consent.<id> (no namespace configured) — keep in sync with init() config
 
   window.dataLayer = window.dataLayer || [];
   function gtag() {
     window.dataLayer.push(arguments);
   }
+  // Guard: don't overwrite gtag if another script installed it first; both push to the shared window.dataLayer.
   window.gtag = window.gtag || gtag;
 
   function analyticsPreviouslyGranted() {
@@ -57,6 +58,7 @@
     s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA4_MEASUREMENT_ID;
     document.head.appendChild(s);
 
+    // gtag('js'/'config') push into window.dataLayer immediately; the async gtag.js replays the queue once it loads.
     window.gtag("js", new Date());
     window.gtag("config", GA4_MEASUREMENT_ID, { send_page_view: false });
 
@@ -110,5 +112,8 @@
         },
       },
     });
+  } else {
+    // Library failed to load: keep analytics disabled (correct privacy default) but make it visible.
+    console.warn("[w3c] Silktide Consent Manager unavailable; cookie banner not shown and analytics disabled.");
   }
 })();

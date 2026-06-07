@@ -5,7 +5,7 @@
  * in `public/analytics-consent.js`, which loads before the Vue app. This module
  * only:
  *   - forwards SPA page-view events to GA4 when analytics is active, and
- *   - re-opens the Silktide consent banner ("Cookie settings").
+ *   - opens the Silktide preferences modal ("Cookie settings").
  *
  * `window.__w3cAnalyticsActive` is set to true by `public/analytics-consent.js`
  * once GA4 has actually loaded (i.e. consent granted AND on a production host),
@@ -14,7 +14,12 @@
 
 type GtagFn = (...args: unknown[]) => void;
 
+interface SilktideInstance {
+  toggleModal?: (show: boolean) => void;
+}
+
 interface SilktideConsentManager {
+  getInstance?: () => SilktideInstance | null;
   resetConsent?: () => void;
 }
 
@@ -35,8 +40,8 @@ export function trackPageView(pagePath: string, pageTitle: string): void {
   });
 }
 
-/** Re-open the Silktide banner so the user can change or withdraw consent. */
+/** Open the Silktide preferences modal so the user can change or withdraw consent (non-destructive). */
 export function openCookieSettings(): void {
   const w = window as AnalyticsWindow;
-  w.silktideConsentManager?.resetConsent?.();
+  w.silktideConsentManager?.getInstance?.()?.toggleModal?.(true);
 }
