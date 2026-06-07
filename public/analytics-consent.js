@@ -17,7 +17,7 @@
 
   var GA4_MEASUREMENT_ID = "G-HQ4XC36WGT";
   var PROD_HOSTS = ["w3champions.com", "www.w3champions.com"];
-  var ANALYTICS_CONSENT_KEY = "stcm.consent.analytics"; // Silktide key: stcm.consent.<id> (no namespace configured) — keep in sync with init() config
+  var ANALYTICS_CONSENT_KEY = "stcm.consent.analytics"; // Silktide _buildConsentKey('analytics') with no namespace = stcm.consent.<id>; keep in sync with init() config
 
   window.dataLayer = window.dataLayer || [];
   function gtag() {
