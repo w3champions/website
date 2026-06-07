@@ -6,6 +6,8 @@ import CountryRankings from "@/views/CountryRankings.vue";
 import TournamentsList from "@/views/TournamentsList.vue";
 import Player from "@/views/Player.vue";
 import Imprint from "@/views/Imprint.vue";
+import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
+import CookiePolicy from "@/views/CookiePolicy.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import Faq from "@/views/Faq.vue";
@@ -124,6 +126,16 @@ const routes: RouteRecordRaw[] = [
     path: "/imprint",
     name: EMainRouteName.IMPRINT,
     component: Imprint,
+  },
+  {
+    path: "/privacy",
+    name: EMainRouteName.PRIVACY,
+    component: PrivacyPolicy,
+  },
+  {
+    path: "/cookies",
+    name: EMainRouteName.COOKIES,
+    component: CookiePolicy,
   },
   {
     path: "/rankings",
