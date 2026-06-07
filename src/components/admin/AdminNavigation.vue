@@ -60,6 +60,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
+  mdiAlertCircleOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -179,6 +180,20 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-launcher-chat",
             routeName: EAdminRouteName.LAUNCHER_CHAT,
+          },
+        ],
+      },
+      {
+        title: "Warnings",
+        icon: mdiAlertCircleOutline,
+        permission: EPermission.Warnings,
+        items: [
+          {
+            title: "Player Warnings",
+            icon: mdiAlertCircleOutline,
+            permission: EPermission.Warnings,
+            component: "admin-warnings",
+            routeName: EAdminRouteName.PLAYER_WARNINGS,
           },
         ],
       },

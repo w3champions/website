@@ -38,6 +38,7 @@ import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
 import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 import AdminLoungeMute from "@/components/admin/AdminLoungeMute.vue";
+import AdminWarnings from "@/components/admin/AdminWarnings.vue";
 import AdminViewGameChat from "@/components/admin/AdminViewGameChat.vue";
 import AdminProxies from "@/components/admin/AdminProxies.vue";
 import AdminNewsForLauncher from "@/components/admin/AdminNewsForLauncher.vue";
@@ -271,6 +272,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
+      { path: "admin-warnings", name: EAdminRouteName.PLAYER_WARNINGS, component: AdminWarnings },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
       { path: "admin-launcher-chat", name: EAdminRouteName.LAUNCHER_CHAT, component: AdminLauncherChat },
       { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: AdminProxies },
