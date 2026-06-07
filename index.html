@@ -7,6 +7,14 @@
   <title>W3Champions</title>
   <link rel="icon" href="/favicon.ico?v=5">
   <script type="text/javascript" src="/env.js?v=5"></script>
+  <!-- Cookie consent (Silktide, self-hosted) + analytics bootstrap.
+       Order matters: library CSS + JS first (synchronous, no defer), then our
+       Consent Mode default / GA4 loader / Silktide init. -->
+  <link rel="stylesheet" href="/silktide/silktide-consent-manager.css">
+  <!-- Hide Silktide's floating cookie icon; consent is re-opened via the footer "Cookie settings" link. -->
+  <style>#stcm-icon { display: none !important; }</style>
+  <script src="/silktide/silktide-consent-manager.js"></script>
+  <script src="/analytics-consent.js"></script>
 </head>
 
 <body>

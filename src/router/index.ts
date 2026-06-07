@@ -1,9 +1,13 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized, type RouteRecordRaw } from "vue-router";
+import { nextTick } from "vue";
+import { trackPageView } from "@/analytics/analytics";
 import Rankings from "@/views/Rankings.vue";
 import CountryRankings from "@/views/CountryRankings.vue";
 import TournamentsList from "@/views/TournamentsList.vue";
 import Player from "@/views/Player.vue";
 import Imprint from "@/views/Imprint.vue";
+import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
+import CookiePolicy from "@/views/CookiePolicy.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
 import Matches from "@/views/Matches.vue";
 import Faq from "@/views/Faq.vue";
@@ -122,6 +126,16 @@ const routes: RouteRecordRaw[] = [
     path: "/imprint",
     name: EMainRouteName.IMPRINT,
     component: Imprint,
+  },
+  {
+    path: "/privacy",
+    name: EMainRouteName.PRIVACY,
+    component: PrivacyPolicy,
+  },
+  {
+    path: "/cookies",
+    name: EMainRouteName.COOKIES,
+    component: CookiePolicy,
   },
   {
     path: "/rankings",
@@ -333,8 +347,23 @@ const titleForRoute = (to: RouteLocationNormalized): string => {
   return documentTitle(to.name as string);
 };
 
+// GA4 sends the initial page's view via the catch-up in public/analytics-consent.js,
+// so skip the router's very first afterEach to avoid double-counting; track every
+// subsequent navigation. trackPageView is a no-op until consent + GA4 are active.
+let initialNavigationTracked = false;
+
 router.afterEach((to: RouteLocationNormalized) => {
-  document.title = titleForRoute(to);
+  const title = titleForRoute(to);
+  document.title = title;
+
+  if (!initialNavigationTracked) {
+    initialNavigationTracked = true;
+    return;
+  }
+
+  nextTick(() => {
+    trackPageView(to.fullPath, title);
+  });
 });
 
 export default router;
