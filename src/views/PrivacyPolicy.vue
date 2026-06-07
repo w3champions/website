@@ -79,13 +79,38 @@
           <v-card-text>
             <h3>5. How long we keep data</h3>
             <p>
-              Your account is linked to your Battle.net BattleTag and we do not offer account deletion. Player
-              profiles, match history, rankings and similar gameplay data therefore form a permanent competitive
-              record and are retained <strong>indefinitely</strong>, as they are necessary to operate the service and
-              to provide a complete player history. Other personal data is kept for as long as necessary to meet our
-              legal, accounting, or billing obligations, or to protect the security and integrity of the platform
-              (preventing fraud and abuse). For these reasons, personal data generally cannot be erased on request.
-              Analytics data is retained according to our Google Analytics retention settings.
+              We deliberately collect as little personal data as possible. Most of the data we hold is
+              <strong>pseudonymous</strong> &mdash; it is linked to your Battle.net account (your BattleTag) rather than
+              to your name or contact details, and we do not collect names, postal addresses or similar details.
+              Pseudonymous data is still personal data under the GDPR; pseudonymisation is one of the safeguards we use
+              to keep it proportionate.
+            </p>
+            <p>We keep different data for different lengths of time, depending on why we hold it:</p>
+            <ul>
+              <li>
+                <strong>Gameplay and competitive records</strong> (match history, rankings, leaderboards, clan and
+                team data, public profile) &mdash; kept for as long as we operate W3Champions. A complete, continuous
+                competitive history is a core part of the service, so these records are not removed when an account
+                becomes inactive.
+              </li>
+              <li>
+                <strong>Security and anti-abuse data</strong> (such as IP addresses) &mdash; kept only as long as
+                necessary for security, fraud and abuse prevention and to enforce our Terms, and where relevant to
+                establish or defend legal claims, after which it is deleted or anonymised.
+              </li>
+              <li>
+                <strong>Patreon / Ko-Fi connection identifiers</strong> &mdash; kept while your supporter link is
+                active and for a short period afterwards for accounting and dispute-handling.
+              </li>
+              <li>
+                <strong>Analytics (Google Analytics 4)</strong> &mdash; collected only if you consent; you can withdraw
+                consent at any time, and we do not keep analytics data if you opt out.
+              </li>
+            </ul>
+            <p>
+              Where data has no fixed end date, we keep it no longer than necessary for these purposes and review
+              periodically whether continued retention is still justified. Where we no longer need data in an
+              identifiable form, we delete or anonymise it.
             </p>
           </v-card-text>
 
@@ -97,8 +122,15 @@
               time. To exercise these rights, contact us at
               <a href="mailto:w3champions.team@gmail.com" class="text-primary">w3champions.team@gmail.com</a>
               or our EU representative above. You also have the right to lodge a complaint with your data-protection
-              supervisory authority. Note that erasure does not apply to the gameplay and account data we are required
-              or have legitimate grounds to retain (see "How long we keep data" above).
+              supervisory authority.
+            </p>
+            <p>
+              We assess every erasure or objection request individually and will delete or <strong>anonymise</strong>
+              what we can. We may, however, keep certain data where data-protection law allows &mdash; in particular
+              your <strong>public competitive records</strong> (which form part of the service and the competitive
+              history, as an exercise of the right to freedom of expression and information) and
+              <strong>security data</strong> we need to protect the platform or to establish or defend legal claims.
+              Where we cannot fully erase data, we will explain what we are keeping and why.
             </p>
           </v-card-text>
 
