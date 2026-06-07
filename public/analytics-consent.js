@@ -80,14 +80,14 @@
       consentTypes: [
         {
           id: "essential",
-          name: "Essential",
+          label: "Essential",
           description:
             "<p>Required for the website to work — signing in, security (bot protection), and remembering your cookie choices and preferences (theme, language). These cannot be switched off.</p>",
           required: true,
         },
         {
           id: "analytics",
-          name: "Analytics",
+          label: "Analytics",
           description:
             "<p>Help us understand how visitors use the site so we can improve it, via Google Analytics. These stay off until you allow them.</p>",
           required: false,

@@ -42,8 +42,8 @@
               <em>Legal basis: performance of a contract (Art. 6(1)(b) GDPR).</em>
             </p>
             <p>
-              <strong>Security &amp; anti-abuse data</strong> (IP address, bot-protection checks via Cloudflare
-              Turnstile, VPN/proxy detection) &mdash; to keep the platform secure and fair.
+              <strong>Security &amp; anti-abuse data</strong> (IP address, diagnostic data, bot-protection checks via
+              Cloudflare Turnstile, VPN/proxy detection) &mdash; to keep the platform secure and fair.
               <em>Legal basis: our legitimate interests (Art. 6(1)(f) GDPR).</em>
             </p>
             <p>
@@ -59,7 +59,7 @@
               <li><strong>Google</strong> (Google Ireland Ltd. / Google LLC) &mdash; Google Analytics 4.</li>
               <li><strong>Blizzard Entertainment / Battle.net</strong> &mdash; account login (BattleTag).</li>
               <li><strong>Patreon</strong> and <strong>Ko-Fi</strong> &mdash; optional reward/subscription linking.</li>
-              <li><strong>Cloudflare</strong> &mdash; bot protection (Turnstile).</li>
+              <li><strong>Cloudflare</strong> &mdash; content delivery network (CDN) and bot protection (Turnstile).</li>
               <li><strong>getIPintel</strong> &mdash; VPN/proxy detection for anti-abuse.</li>
               <li>Hosting and infrastructure providers that operate our servers.</li>
             </ul>
@@ -79,9 +79,13 @@
           <v-card-text>
             <h3>5. How long we keep data</h3>
             <p>
-              We keep account and gameplay data for as long as your account is active, and afterwards only as needed for
-              legitimate purposes (e.g. abuse prevention, legal obligations) or until you ask us to delete it. Analytics
-              data is retained according to our Google Analytics retention settings.
+              Your account is linked to your Battle.net BattleTag and we do not offer account deletion. Player
+              profiles, match history, rankings and similar gameplay data therefore form a permanent competitive
+              record and are retained <strong>indefinitely</strong>, as they are necessary to operate the service and
+              to provide a complete player history. Other personal data is kept for as long as necessary to meet our
+              legal, accounting, or billing obligations, or to protect the security and integrity of the platform
+              (preventing fraud and abuse). For these reasons, personal data generally cannot be erased on request.
+              Analytics data is retained according to our Google Analytics retention settings.
             </p>
           </v-card-text>
 
@@ -93,7 +97,8 @@
               time. To exercise these rights, contact us at
               <a href="mailto:w3champions.team@gmail.com" class="text-primary">w3champions.team@gmail.com</a>
               or our EU representative above. You also have the right to lodge a complaint with your data-protection
-              supervisory authority.
+              supervisory authority. Note that erasure does not apply to the gameplay and account data we are required
+              or have legitimate grounds to retain (see "How long we keep data" above).
             </p>
           </v-card-text>
 

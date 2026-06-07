@@ -43,7 +43,7 @@
               <tbody>
                 <tr><td>w3CAuth</td><td>Cookie</td><td>Necessary</td><td>Authentication (sign-in token)</td><td>365 days</td></tr>
                 <tr><td>w3CAuthRegion</td><td>Cookie</td><td>Necessary</td><td>Selected sign-in region</td><td>365 days</td></tr>
-                <tr><td>Cloudflare Turnstile (cf_*)</td><td>Cookie</td><td>Necessary</td><td>Bot/abuse protection on sign-in</td><td>Session / short</td></tr>
+                <tr><td>Cloudflare (__cf_bm, cf_*)</td><td>Cookie</td><td>Necessary</td><td>CDN delivery + bot/abuse protection</td><td>Session / short</td></tr>
                 <tr><td>_ga, _ga_*</td><td>Cookie</td><td>Analytics (consent)</td><td>Google Analytics usage measurement</td><td>Up to 2 years</td></tr>
                 <tr><td>theme</td><td>localStorage</td><td>Necessary</td><td>Functional preference: interface theme</td><td>Persistent</td></tr>
                 <tr><td>w3c-locale</td><td>localStorage</td><td>Necessary</td><td>Functional preference: language</td><td>Persistent</td></tr>
