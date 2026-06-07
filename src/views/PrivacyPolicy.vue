@@ -122,7 +122,7 @@
           </v-card-text>
 
           <v-card-text>
-            <h3>10. Cookies</h3>
+            <h3>10. Managing cookies</h3>
             <p>
               We use cookies and similar technologies as described in our
               <router-link :to="{ name: EMainRouteName.COOKIES }" class="text-primary">Cookie Policy</router-link>.

@@ -146,7 +146,7 @@
     </v-main>
     <v-footer class="pa-0 flex-0-0 w3-glass">
       <v-row justify="center" no-gutters>
-        <v-btn variant="text" tile class="my-2" to="/imprint">Imprint</v-btn>
+        <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.IMPRINT }">Imprint</v-btn>
         <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.PRIVACY }">Privacy Policy</v-btn>
         <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.COOKIES }">Cookie Policy</v-btn>
         <v-btn variant="text" tile class="my-2" @click="openCookieSettings">Cookie settings</v-btn>

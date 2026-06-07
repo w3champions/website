@@ -33,11 +33,11 @@
             <v-table density="compact">
               <thead>
                 <tr>
-                  <th class="text-left">Name</th>
-                  <th class="text-left">Storage</th>
-                  <th class="text-left">Category</th>
-                  <th class="text-left">Purpose</th>
-                  <th class="text-left">Retention</th>
+                  <th class="text-left" scope="col">Name</th>
+                  <th class="text-left" scope="col">Storage</th>
+                  <th class="text-left" scope="col">Category</th>
+                  <th class="text-left" scope="col">Purpose</th>
+                  <th class="text-left" scope="col">Retention</th>
                 </tr>
               </thead>
               <tbody>

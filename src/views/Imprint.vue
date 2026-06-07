@@ -24,7 +24,7 @@
               <a href="mailto:w3champions.team@gmail.com" class="text-primary">w3champions.team@gmail.com</a>
               <br />
               Internet address:
-              <a href="https://w3champions.com" target="_blank" class="text-primary">https://w3champions.com</a>
+              <a href="https://w3champions.com" target="_blank" rel="noopener noreferrer" class="text-primary">https://w3champions.com</a>
             </p>
           </v-card-text>
           <v-card-text>
@@ -44,7 +44,7 @@
           <v-card-text class="py-0">
             <h3>Graphics and Image Sources</h3>
             <p>
-              <a href="https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit" target="_blank" class="text-primary">
+              <a href="https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit" target="_blank" rel="noopener noreferrer" class="text-primary">
                 https://blizzard.gamespress.com/de/Warcraft-III-Reforged-Launch-Press-Kit
               </a>
             </p>
