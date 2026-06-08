@@ -17,9 +17,18 @@ season (not a pre-resolved label) so a viewed past season resolves correctly. Pr
 flag in this repo: `GATEWAY_REQUIRED_UNTIL_SEASON` (`src/constants.ts`). At this stage the flag is typed
 but not yet read by any component.
 
+## New rank fields (`Ranking.progression`, `ModeStat.progression`)
+
+`Ranking` (`src/store/ranking/types.ts`) and `ModeStat` (`src/store/player/types.ts`) carry an optional
+`progression?: { league, division, points, apexPoints } | null` alongside the legacy RP fields, fetched
+over the existing ladder / game-mode-stats endpoints. `null` means the entity has no progression rank for
+that season/mode → render RP. The fields are typed but not yet rendered (the per-mode render branch is a
+later step). Additive: existing RP rendering is unaffected.
+
 ## File reference
 
 | Concern | Path |
 |---|---|
 | `ActiveGameMode` type | `src/store/ranking/types.ts` |
+| `ProgressionRank` type | `src/store/ranking/types.ts` |
 | Fetch + store | `src/services/RankingService.ts`, `src/store/ranking/store.ts` |

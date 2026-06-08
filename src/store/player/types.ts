@@ -1,5 +1,5 @@
 import { EGameMode, ERaceEnum, Match, timestampString } from "../types";
-import { Gateways, PlayerId, Season } from "@/store/ranking/types";
+import { Gateways, PlayerId, ProgressionRank, Season } from "@/store/ranking/types";
 
 export type PlayerState = {
   playerStatsRaceVersusRaceOnMap: PlayerStatsRaceOnMapVersusRace;
@@ -74,6 +74,7 @@ export type ModeStat = {
   rankingPoints: number;
   playerIds: PlayerId[];
   quantile: number;
+  progression?: ProgressionRank | null;
 };
 
 export interface WinLossesOnMap {
