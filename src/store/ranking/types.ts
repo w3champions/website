@@ -38,6 +38,7 @@ export type ActiveGameMode = {
   maps: MapShortInfo[];
   teamCount: number;
   teamSize: number;
+  progressionStartSeason: number | null;
 };
 
 export interface MapShortInfo {
