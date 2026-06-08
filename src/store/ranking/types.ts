@@ -55,6 +55,13 @@ export type League = {
   maxParticipantCount: number;
 };
 
+export type ProgressionRank = {
+  league: number;
+  division: number;
+  points: number;
+  apexPoints: number | null;
+};
+
 export type Ranking = {
   id: string;
   season: number;
@@ -69,6 +76,7 @@ export type Ranking = {
   gameMode: EGameMode;
   player: PlayerOverview;
   playersInfo: PlayerInfo[];
+  progression?: ProgressionRank | null;
 };
 
 export type CountryRanking = {
