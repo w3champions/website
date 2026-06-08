@@ -7,7 +7,7 @@
   >
     <h2 class="LadderSummaryShowcase-title">
       {{ leagueMode }} {{ leagueName }}
-      {{ modeStat.division !== 0 ? modeStat.division : null }}
+      {{ divisionLabel }}
     </h2>
     <div class="LadderSummaryShowcase-subtitle">
       <div v-if="showAtPartner">
@@ -17,8 +17,8 @@
         <br v-if="showAtPartner" />
       </div>
       <span v-if="isRanked">
-        <span v-if="!smallMode">Rank</span>
-        <span v-if="!smallMode" class="number-text">{{ modeStat.rank }} |</span>
+        <span v-if="!smallMode && !isProgression">Rank</span>
+        <span v-if="!smallMode && !isProgression" class="number-text">{{ modeStat.rank }} |</span>
         <span class="w3-won">{{ modeStat.wins }}</span>
         -
         <span class="w3-lost">{{ modeStat.losses }}</span>
@@ -36,7 +36,9 @@
         </span>
         <span class="ml-2" style="font-size: 13px">
           <v-col>
-            <level-progress :rp="modeStat.rankingPoints" />
+            <!-- A progression mode with no rank yet is unranked, so it never reaches here (gated by isRanked above). -->
+            <progression-rank v-if="hasProgressionRank && modeStat.progression" :progression="modeStat.progression" />
+            <level-progress v-else-if="!isProgression" :rp="modeStat.rankingPoints" />
           </v-col>
         </span>
       </div>
@@ -56,6 +58,10 @@ import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import ProgressionRank from "@/components/ladder/ProgressionRank.vue";
+import { useRankingSystem } from "@/composables/useRankingSystem";
+import { leagueName as leagueNameForOrder } from "@/helpers/progression-rank";
+import type { ProgressionRank as ProgressionRankType } from "@/store/ranking/types";
 import { usePlayerStore } from "@/store/player/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { Gateways, PlayerId, Season } from "@/store/ranking/types";
@@ -66,6 +72,7 @@ export default defineComponent({
   components: {
     RecentPerformance,
     LevelProgress,
+    ProgressionRank,
   },
   props: {
     modeStat: {
@@ -94,12 +101,21 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const rootStateStore = useRootStateStore();
 
+    const { resolveRankingSystem } = useRankingSystem();
+    const progression = computed<ProgressionRankType | null>(() => props.modeStat.progression ?? null);
+    const isProgression = computed<boolean>(
+      () => resolveRankingSystem(props.modeStat.gameMode, playerStore.selectedSeason?.id ?? -1) === "progression",
+    );
+    const hasProgressionRank = computed<boolean>(() => isProgression.value && progression.value != null);
+
     const matches = ref<Match[]>([]);
     const playerId = computed<string>(() => battleTag.value);
     const leagueMode = computed<string>(() => t(`gameModes.${EGameMode[props.modeStat.gameMode]}`));
     const gameMode = computed<EGameMode>(() => props.modeStat.gameMode);
     const league = computed<number>(() => props.modeStat.leagueId);
-    const isRanked = computed<boolean>(() => props.modeStat.rank > 0);
+    const isRanked = computed<boolean>(() =>
+      isProgression.value ? progression.value != null : props.modeStat.rank > 0
+    );
 
     const gateWay = computed<Gateways>(() => rootStateStore.gateway);
     const selectedSeason = computed<Season>(() => playerStore.selectedSeason);
@@ -136,31 +152,19 @@ export default defineComponent({
     }
 
     const leagueName = computed<string>(() => {
-      if (!props.modeStat) return "";
       if (!isRanked.value) return "unranked";
-
-      switch (props.modeStat.leagueOrder) {
-        case 0:
-          return "grandmaster";
-        case 1:
-          return "master";
-        case 2:
-          return "adept";
-        case 3:
-          return "diamond";
-        case 4:
-          return "platinum";
-        case 5:
-          return "gold";
-        case 6:
-          return "silver";
-        case 7:
-          return "bronze";
-        case 8:
-          return "grass";
-        default:
-          return "";
+      if (hasProgressionRank.value && progression.value) {
+        return leagueNameForOrder(progression.value.league);
       }
+      return leagueNameForOrder(props.modeStat.leagueOrder);
+    });
+
+    const divisionLabel = computed<number | null>(() => {
+      if (!isRanked.value) return null;
+      const division = hasProgressionRank.value && progression.value
+        ? progression.value.division
+        : props.modeStat.division;
+      return division !== 0 ? division : null;
     });
 
     const lastTenMatchesPerformance = computed<("W" | "L")[]>(() => {
@@ -179,6 +183,9 @@ export default defineComponent({
 
     return {
       isRanked,
+      isProgression,
+      hasProgressionRank,
+      divisionLabel,
       navigateToLeague,
       leagueMode,
       leagueName,
