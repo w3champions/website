@@ -38,8 +38,15 @@
           </div>
         </td>
         <td class="number-text text-center text-no-wrap" style="min-width: 100px">
-          <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />
-          <div v-else>-</div>
+          <template v-if="rowSystem(item) === 'progression'">
+            <progression-rank v-if="item.progression" :progression="item.progression" />
+            <!-- Profile grid uses "-" for no-rank rows (matching the RP path below), unlike the ladder's "Unranked". -->
+            <div v-else>-</div>
+          </template>
+          <template v-else>
+            <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />
+            <div v-else>-</div>
+          </template>
         </td>
       </tr>
     </template>
@@ -54,6 +61,9 @@ import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import ProgressionRank from "@/components/ladder/ProgressionRank.vue";
+import { useRankingSystem, type RankingSystem } from "@/composables/useRankingSystem";
+import { usePlayerStore } from "@/store/player/store";
 import isEmpty from "lodash/isEmpty";
 import { DataTableHeader } from "vuetify";
 
@@ -62,6 +72,7 @@ export default defineComponent({
   components: {
     RaceIcon,
     LevelProgress,
+    ProgressionRank,
   },
   props: {
     stats: {
@@ -71,6 +82,15 @@ export default defineComponent({
   },
   setup(props) {
     const { t } = useI18n();
+
+    const playerStore = usePlayerStore();
+    const { resolveRankingSystem } = useRankingSystem();
+
+    // Plain method, not a computed: it is called per-row inside the table's render, whose
+    // reactive effect tracks the activeModes / selectedSeason reads, so rows re-render on change.
+    function rowSystem(item: ModeStat): RankingSystem {
+      return resolveRankingSystem(item.gameMode, playerStore.selectedSeason?.id ?? -1);
+    }
 
     const isAtMode = (mode: EGameMode): boolean => AT_modes().includes(mode);
 
@@ -135,10 +155,10 @@ export default defineComponent({
         value: "mmr",
       },
       {
-        title: t("components_player_modestatsgrid.level"),
+        title: t("components_ladder_rankingsgrid.rank"),
         align: "center",
         sortable: false,
-        tooltip: t("components_player_modestatsgrid.leveldesc"),
+        tooltip: t("components_ladder_rankingsgrid.rank"),
         value: "level",
       },
     ];
@@ -148,6 +168,7 @@ export default defineComponent({
       gameModeStatsCombined,
       EGameMode,
       getTopPercent,
+      rowSystem,
     };
   },
 });
