@@ -15,7 +15,7 @@
             @click="sortRankings(header.name, header.sortFunction)"
           >
             {{ header.text }}
-            <div v-if="header.text === sortColumn" class="sort-icon">
+            <div v-if="header.name === sortColumn" class="sort-icon">
               <v-icon v-if="isSortedAsc">{{ mdiChevronUp }}</v-icon>
               <v-icon v-if="!isSortedAsc">{{ mdiChevronDown }}</v-icon>
             </div>
@@ -32,7 +32,7 @@
             'w3-mid-emphasis': true,
           }"
         >
-          <td class="number-text">{{ item.rankNumber }}.</td>
+          <td class="number-text">{{ rowRank(item) }}.</td>
           <td class="d-md-flex">
             <div
               v-for="(playerId, index) in item.player.playerIds"
@@ -113,7 +113,11 @@
             </div>
           </td>
           <td class="number-text text-end">
-            <level-progress :rp="item.rankingPoints" />
+            <template v-if="system === 'progression'">
+              <progression-rank v-if="item.progression" :progression="item.progression" />
+              <span v-else>{{ $t("views_rankings.unranked") }}</span>
+            </template>
+            <level-progress v-else :rp="item.rankingPoints" />
           </td>
           <td class="number-text text-end"><race-icon :race="item.race" /></td>
           <td class="number-text text-end">
@@ -144,6 +148,9 @@ import LevelProgress from "@/components/ladder/LevelProgress.vue";
 import { mdiChevronDown, mdiChevronUp, mdiTwitch } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { useRankingStore } from "@/store/ranking/store";
+import ProgressionRank from "@/components/ladder/ProgressionRank.vue";
+import { useRankingSystem } from "@/composables/useRankingSystem";
+import { assignDisplayRanks, compareProgressionRank } from "@/helpers/progression-rank";
 import { useGoTo } from "vuetify";
 import type { InternalGoToOptions } from "vuetify/lib/composables/goto.mjs";
 
@@ -155,6 +162,7 @@ export default defineComponent({
     PlayerRankInfo,
     CountryFlagExtended,
     LevelProgress,
+    ProgressionRank,
   },
   props: {
     rankings: {
@@ -192,7 +200,27 @@ export default defineComponent({
       },
     });
 
-    const headers = [
+    const { resolveRankingSystem } = useRankingSystem();
+    const system = computed(() => resolveRankingSystem(rankingsStore.gameMode, rankingsStore.selectedSeason.id));
+
+    const displayRankByPlayerId = computed<Map<string, number> | null>(() => {
+      if (system.value !== "progression") return null;
+      // Ranks are assigned over the current view order; tie-grouping is only meaningful when
+      // the list is ordered by rank. Do not add an internal sort here.
+      const ranked = assignDisplayRanks(rankingsRef.value, (r) => r.progression);
+      const map = new Map<string, number>();
+      ranked.forEach(({ item, displayRank }) => map.set(item.player.id, displayRank));
+      return map;
+    });
+
+    function rowRank(item: Ranking): number {
+      if (system.value === "progression") {
+        return displayRankByPlayerId.value?.get(item.player.id) ?? item.rankNumber;
+      }
+      return item.rankNumber;
+    }
+
+    const headers = computed(() => [
       {
         name: "Rank",
         text: t("components_ladder_rankingsgrid.rank"),
@@ -215,11 +243,19 @@ export default defineComponent({
       },
       {
         name: "Level",
-        text: t("components_ladder_rankingsgrid.level"),
+        text: system.value === "progression"
+          ? t("components_ladder_rankingsgrid.rank")
+          : t("components_ladder_rankingsgrid.level"),
         align: "center",
         sortable: false,
         width: "100px",
         sortFunction: (a: Ranking, b: Ranking): number => {
+          if (system.value === "progression") {
+            if (!a.progression || !b.progression) {
+              return Number(Boolean(b.progression)) - Number(Boolean(a.progression));
+            }
+            return compareProgressionRank(a.progression, b.progression);
+          }
           return b.rankingPoints - a.rankingPoints;
         },
       },
@@ -295,7 +331,7 @@ export default defineComponent({
           return b.player.mmr - a.player.mmr;
         },
       },
-    ];
+    ]);
 
     const selectedRankRef = toRefs(props).selectedRank;
     watch(selectedRankRef, onSelectedRankChanged);
@@ -372,6 +408,7 @@ export default defineComponent({
 
     function goToRank(rank: Ranking): void {
       setTimeout(() => {
+        // DOM ids are anchored to the server-assigned rankNumber, not the displayed rank.
         const elementId = `listitem_${rank.rankNumber}`;
         const listItemOfPlayer = document.getElementById(elementId);
 
@@ -518,6 +555,8 @@ export default defineComponent({
       getLiveOpponent,
       sortRankings,
       rankingsRef,
+      system,
+      rowRank,
     };
   }
 });
