@@ -1,5 +1,5 @@
 import { API_URL } from "@/main";
-import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PatreonMemberDetails, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
+import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreatePlayerWarningRequest, CreatePlayerWarningResponse, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PatreonMemberDetails, PlayerWarning, PlayerWarningDefinition, PlayerWarningDefinitionRequest, PlayerWarningsGetRequest, PlayerWarningsResponse, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -23,6 +23,78 @@ export default class AdminService {
     const url = `${API_URL}api/admin/bannedPlayers`;
     const response = await authorizedFetch("POST", url, token, JSON.stringify(bannedPlayer));
     return response.ok ? "" : await response.json();
+  }
+
+  public static async getWarnings(token: string, req: PlayerWarningsGetRequest): Promise<PlayerWarningsResponse> {
+    let url = `${API_URL}api/admin/warnings?page=${req.page}&itemsPerPage=${req.itemsPerPage}`;
+
+    if (req.battleTag) {
+      url += `&battleTag=${encodeURIComponent(req.battleTag)}`;
+    }
+
+    if (req.status) {
+      url += `&status=${encodeURIComponent(req.status)}`;
+    }
+
+    const response = await authorizedFetch("GET", url, token);
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to load warnings."));
+    }
+    return await response.json();
+  }
+
+  public static async createWarning(token: string, warning: CreatePlayerWarningRequest): Promise<CreatePlayerWarningResponse> {
+    const url = `${API_URL}api/admin/warnings`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(warning));
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to create warning."));
+    }
+    return await response.json();
+  }
+
+  public static async getWarningDefinitions(token: string, includeDisabled = false): Promise<PlayerWarningDefinition[]> {
+    const url = `${API_URL}api/admin/warning-definitions${includeDisabled ? "?includeDisabled=true" : ""}`;
+    const response = await authorizedFetch("GET", url, token);
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to load warning templates."));
+    }
+    return await response.json();
+  }
+
+  public static async createWarningDefinition(token: string, warningDefinition: PlayerWarningDefinitionRequest): Promise<PlayerWarningDefinition> {
+    const url = `${API_URL}api/admin/warning-definitions`;
+    const response = await authorizedFetch("POST", url, token, JSON.stringify(warningDefinition));
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to create warning template."));
+    }
+    return await response.json();
+  }
+
+  public static async updateWarningDefinition(token: string, id: string, warningDefinition: PlayerWarningDefinitionRequest): Promise<PlayerWarningDefinition> {
+    const url = `${API_URL}api/admin/warning-definitions/${encodeURIComponent(id)}`;
+    const response = await authorizedFetch("PUT", url, token, JSON.stringify(warningDefinition));
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to update warning template."));
+    }
+    return await response.json();
+  }
+
+  public static async deleteWarningDefinition(token: string, id: string): Promise<PlayerWarningDefinition> {
+    const url = `${API_URL}api/admin/warning-definitions/${encodeURIComponent(id)}`;
+    const response = await authorizedFetch("DELETE", url, token);
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to disable warning template."));
+    }
+    return await response.json();
+  }
+
+  public static async cancelWarning(token: string, warningId: string): Promise<PlayerWarning> {
+    const url = `${API_URL}api/admin/warnings/${encodeURIComponent(warningId)}/cancel`;
+    const response = await authorizedFetch("POST", url, token);
+    if (!response.ok) {
+      throw new Error(await getAdminErrorMessage(response, "Failed to cancel warning."));
+    }
+    return await response.json();
   }
 
   public static async getBanReasonTranslations(token: string): Promise<BanReasonTranslation[]> {
@@ -421,4 +493,9 @@ export default class AdminService {
     const data = await response.json();
     return data.globalChatBans || [];
   }
+}
+
+async function getAdminErrorMessage(response: Response, fallback: string): Promise<string> {
+  const body = await response.text();
+  return body || `${fallback} (${response.status})`;
 }

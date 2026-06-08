@@ -1,0 +1,15 @@
+export const clientLocaleItems = [
+  { title: "English", value: "en" },
+  { title: "Deutsch", value: "de" },
+  { title: "Español (EU)", value: "es-ES" },
+  { title: "Español (AL)", value: "es-419" },
+  { title: "Français", value: "fr" },
+  { title: "Italiano", value: "it" },
+  { title: "Polski", value: "pl" },
+  { title: "Português (BR)", value: "pt-BR" },
+  { title: "Português (PT)", value: "pt-PT" },
+  { title: "한국어", value: "ko" },
+  { title: "Русский", value: "ru" },
+  { title: "简体中文", value: "zh-CN" },
+  { title: "繁體中文", value: "zh-TW" },
+] as const;

@@ -7,6 +7,8 @@ export enum EAdminRouteName {
   SMURF_CHECKER_MANAGE_IDENTIFIERS = "Admin - Manage Identifiers",
   GLOBAL_MUTE = "Admin - Global Mute",
   LOUNGE_MUTE = "Admin - Lounge Mute",
+  PLAYER_WARNINGS = "Admin - Player Warnings",
+  WARNING_TEMPLATES = "Admin - Warning Templates",
   VIEW_GAME_CHAT = "Admin - View Game Chat",
   LAUNCHER_CHAT = "Admin - Launcher Game Chat",
   PROXY_SETTINGS = "Admin - Proxy Settings",

@@ -104,6 +104,87 @@ export interface BannedPlayersResponse {
   players: BannedPlayer[];
 }
 
+export enum EPlayerWarningStatus {
+  Pending = "Pending",
+  Sent = "Sent",
+  Acknowledged = "Acknowledged",
+  Cancelled = "Cancelled",
+  Undeliverable = "Undeliverable",
+}
+
+export enum EPlayerWarningSeverity {
+  Info = "Info",
+  Warning = "Warning",
+  Critical = "Critical",
+}
+
+export type PlayerWarningTranslations = {
+  en: string;
+  [locale: string]: string;
+};
+
+export type PlayerWarning = {
+  _id: string;
+  targetBattleTag: string;
+  issuedByBattleTag: string;
+  warningDefinitionId?: string;
+  severity: EPlayerWarningSeverity;
+  title: PlayerWarningTranslations;
+  body: PlayerWarningTranslations;
+  status: EPlayerWarningStatus;
+  createdAt: string;
+  sentAt?: string;
+  acknowledgedAt?: string;
+  cancelledAt?: string;
+  cancelledByBattleTag?: string;
+  undeliverableAt?: string;
+  undeliverableReason?: string;
+};
+
+export type PlayerWarningsGetRequest = {
+  page: number;
+  itemsPerPage: number;
+  battleTag?: string;
+  status?: EPlayerWarningStatus | "";
+};
+
+export type PlayerWarningsResponse = {
+  total: number;
+  warnings: PlayerWarning[];
+};
+
+export type CreatePlayerWarningRequest = {
+  targetBattleTag: string;
+  warningDefinitionId?: string;
+  severity?: EPlayerWarningSeverity;
+  title?: PlayerWarningTranslations;
+  body?: PlayerWarningTranslations;
+};
+
+export type PlayerWarningDefinition = {
+  _id: string;
+  severity: EPlayerWarningSeverity;
+  title: PlayerWarningTranslations;
+  body: PlayerWarningTranslations;
+  enabled: boolean;
+  sortOrder: number;
+  createdByBattleTag?: string;
+  updatedByBattleTag?: string;
+};
+
+export type PlayerWarningDefinitionRequest = {
+  severity: EPlayerWarningSeverity;
+  title: PlayerWarningTranslations;
+  body: PlayerWarningTranslations;
+  enabled: boolean;
+  sortOrder?: number;
+};
+
+export type CreatePlayerWarningResponse = {
+  warning: PlayerWarning;
+  delivered: boolean;
+};
+
 export interface AdminNavigationItem {
   title: string;
   icon?: string;
