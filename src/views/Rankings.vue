@@ -474,6 +474,7 @@ export default defineComponent({
       }
 
       await rankingsStore.retrieveSeasons();
+      await rankingsStore.retrieveActiveGameModes();
 
       // Check if season is defined (also allow the value 0), otherwise we can use the first season
       if (hasSeason) {
