@@ -427,6 +427,8 @@ export default defineComponent({
           return "success";
         case EPlayerWarningStatus.Cancelled:
           return "medium-emphasis";
+        case EPlayerWarningStatus.Undeliverable:
+          return "error";
         case EPlayerWarningStatus.Sent:
           return "info";
         default:
@@ -467,6 +469,10 @@ export default defineComponent({
 
       if (warning.cancelledAt) {
         return `Cancelled ${formatDate(warning.cancelledAt)}`;
+      }
+
+      if (warning.undeliverableAt) {
+        return `Undeliverable ${formatDate(warning.undeliverableAt)}`;
       }
 
       return "Waiting";

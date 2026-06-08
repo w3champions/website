@@ -109,6 +109,7 @@ export enum EPlayerWarningStatus {
   Sent = "Sent",
   Acknowledged = "Acknowledged",
   Cancelled = "Cancelled",
+  Undeliverable = "Undeliverable",
 }
 
 export enum EPlayerWarningSeverity {
@@ -136,6 +137,8 @@ export type PlayerWarning = {
   acknowledgedAt?: string;
   cancelledAt?: string;
   cancelledByBattleTag?: string;
+  undeliverableAt?: string;
+  undeliverableReason?: string;
 };
 
 export type PlayerWarningsGetRequest = {

@@ -206,9 +206,9 @@ import AdminService from "@/services/admin/AdminService";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPlayerWarningSeverity, type PlayerWarningDefinition, type PlayerWarningDefinitionRequest, type PlayerWarningTranslations } from "@/store/admin/types";
 import { mdiAlertCircleOutline, mdiAlertOctagonOutline, mdiDelete, mdiInformationOutline, mdiPencil } from "@mdi/js";
-import { warningLocaleItems } from "./warnings/warningLocaleItems";
+import { clientLocaleItems } from "@/locales/clientLocaleItems";
 
-const localeItems = warningLocaleItems;
+const localeItems = clientLocaleItems;
 
 function emptyTranslations(): PlayerWarningTranslations {
   return Object.fromEntries(localeItems.map((locale) => [locale.value, ""])) as PlayerWarningTranslations;

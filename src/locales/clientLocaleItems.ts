@@ -1,4 +1,4 @@
-export const warningLocaleItems = [
+export const clientLocaleItems = [
   { title: "English", value: "en" },
   { title: "Deutsch", value: "de" },
   { title: "Español (EU)", value: "es-ES" },
