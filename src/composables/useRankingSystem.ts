@@ -1,7 +1,9 @@
 import { useRankingStore } from "@/store/ranking/store";
 import { EGameMode } from "@/store/types";
+import { type RankingSystem, rankingSystemForSeason } from "@/helpers/progression-rank";
 
-export type RankingSystem = "rp" | "progression";
+// Re-exported so existing importers (e.g. ModeStatsGrid.vue) keep importing the type from here.
+export type { RankingSystem };
 
 interface UseRankingSystem {
   resolveRankingSystem: (gameMode: EGameMode, viewedSeason: number) => RankingSystem;
@@ -20,11 +22,7 @@ export function useRankingSystem(): UseRankingSystem {
   // resolves. Before activeModes is populated, every mode resolves to "rp".
   function resolveRankingSystem(gameMode: EGameMode, viewedSeason: number): RankingSystem {
     const mode = rankingsStore.activeModes.find((m) => m.id === gameMode);
-    const startSeason = mode?.progressionStartSeason;
-    if (startSeason != null && viewedSeason >= startSeason) {
-      return "progression";
-    }
-    return "rp";
+    return rankingSystemForSeason(mode?.progressionStartSeason, viewedSeason);
   }
 
   return { resolveRankingSystem };
