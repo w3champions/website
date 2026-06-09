@@ -39,6 +39,7 @@
             <!-- A progression mode with no rank yet is unranked, so it never reaches here (gated by isRanked above). -->
             <progression-rank v-if="hasProgressionRank && modeStat.progression" :progression="modeStat.progression" />
             <level-progress v-else-if="!isProgression" :rp="modeStat.rankingPoints" />
+            <milestone-progress v-if="isProgression && modeStat.milestone" :milestone-progress="modeStat.milestone" />
           </v-col>
         </span>
       </div>
@@ -58,6 +59,7 @@ import { ModeStat } from "@/store/player/types";
 import RecentPerformance from "@/components/player/RecentPerformance.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import MilestoneProgress from "@/components/ladder/MilestoneProgress.vue";
 import ProgressionRank from "@/components/ladder/ProgressionRank.vue";
 import { useRankingSystem } from "@/composables/useRankingSystem";
 import { leagueName as leagueNameForOrder } from "@/helpers/progression-rank";
@@ -72,6 +74,7 @@ export default defineComponent({
   components: {
     RecentPerformance,
     LevelProgress,
+    MilestoneProgress,
     ProgressionRank,
   },
   props: {

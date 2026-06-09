@@ -1,5 +1,12 @@
 <template>
-  <v-progress-linear class="milestone-progress" :model-value="fillPercent" :max="100" height="25" color="level-progress-gradient">
+  <v-progress-linear
+    class="milestone-progress"
+    :model-value="fillPercent"
+    :max="100"
+    height="25"
+    color="level-progress-gradient"
+    :aria-label="$t('components_ladder_milestoneprogress.ariawins')"
+  >
     <strong>{{ milestoneProgress.currentWins }} / {{ milestoneProgress.nextTarget }}</strong>
   </v-progress-linear>
 </template>

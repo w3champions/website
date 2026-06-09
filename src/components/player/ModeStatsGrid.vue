@@ -42,6 +42,7 @@
             <progression-rank v-if="item.progression" :progression="item.progression" />
             <!-- Profile grid uses "-" for no-rank rows (matching the RP path below), unlike the ladder's "Unranked". -->
             <div v-else>-</div>
+            <milestone-progress v-if="item.milestone" :milestone-progress="item.milestone" />
           </template>
           <template v-else>
             <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />
@@ -61,6 +62,7 @@ import { EGameMode } from "@/store/types";
 import { ModeStat } from "@/store/player/types";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import LevelProgress from "@/components/ladder/LevelProgress.vue";
+import MilestoneProgress from "@/components/ladder/MilestoneProgress.vue";
 import ProgressionRank from "@/components/ladder/ProgressionRank.vue";
 import { useRankingSystem, type RankingSystem } from "@/composables/useRankingSystem";
 import { usePlayerStore } from "@/store/player/store";
@@ -72,6 +74,7 @@ export default defineComponent({
   components: {
     RaceIcon,
     LevelProgress,
+    MilestoneProgress,
     ProgressionRank,
   },
   props: {
