@@ -278,9 +278,6 @@ const data = {
       rp: "RP",
       level: "Level",
     },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
-    },
     components_ladder_rankingsracedistribution: {
       race: "Race",
       numberofplayers: "Number of players",
@@ -858,9 +855,6 @@ const data = {
       mmr: "MMR",
       rp: "RP",
     },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
-    },
     components_ladder_rankingsracedistribution: {
       race: "Раса",
       numberofplayers: "Количество игроков",
@@ -1371,9 +1365,6 @@ const data = {
       mmr: "MMR",
       rp: "랭킹 포인트",
     },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
-    },
     components_ladder_rankingsracedistribution: {
       race: "종족",
       numberofplayers: "플레이어 수",
@@ -1827,9 +1818,6 @@ const data = {
       mmr: "MMR对战积分",
       rp: "RP活跃度积分",
       level: "等级",
-    },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "种族",
@@ -2356,9 +2344,6 @@ const data = {
       mmr: "MMR",
       rp: "RP",
     },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
-    },
     components_ladder_rankingsracedistribution: {
       race: "Rasse",
       numberofplayers: "Spieleranzahl",
@@ -2848,9 +2833,6 @@ const data = {
       winrate: "% wygranych",
       mmr: "MMR",
       rp: "RP",
-    },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Rasa",
@@ -3395,9 +3377,6 @@ const data = {
       mmr: "MMR",
       rp: "RP",
     },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
-    },
     components_ladder_rankingsracedistribution: {
       race: "Раса",
       numberofplayers: "Кількість гравців",
@@ -3923,9 +3902,6 @@ const data = {
       winrate: "Winrate",
       mmr: "MMR",
       rp: "RP",
-    },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Raça",
@@ -4457,9 +4433,6 @@ const data = {
       winrate: "Pourcentage de victoire",
       mmr: "MMR",
       rp: "RP",
-    },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Race",
@@ -4996,9 +4969,6 @@ const data = {
       mmr: "MMR",
       rp: "RP",
       level: "Nivo",
-    },
-    components_ladder_milestoneprogress: {
-      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Rasa",

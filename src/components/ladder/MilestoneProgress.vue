@@ -5,7 +5,7 @@
     :max="100"
     height="25"
     color="level-progress-gradient"
-    :aria-label="$t('components_ladder_milestoneprogress.arialabel', { current: milestoneProgress.currentWins, next: milestoneProgress.nextTarget })"
+    :aria-label="`${milestoneProgress.currentWins} / ${milestoneProgress.nextTarget}`"
   >
     <strong>{{ milestoneProgress.currentWins }} / {{ milestoneProgress.nextTarget }}</strong>
   </v-progress-linear>
