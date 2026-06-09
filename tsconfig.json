@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,

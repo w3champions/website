@@ -14,7 +14,7 @@ alongside the legacy "RP" ladder; each game mode uses exactly one, selected per 
 Selection rule, applied where rank is rendered: use the new system iff
 `progressionStartSeason != null && viewedSeason >= progressionStartSeason`, else RP. The value is the raw
 season (not a pre-resolved label) so a viewed past season resolves correctly. Precedent for a season-gated
-flag in this repo: `GATEWAY_REQUIRED_UNTIL_SEASON` (`src/constants.ts`). The rule is a pure, unit-tested
+flag in this repo: `GATEWAY_REQUIRED_UNTIL_SEASON` (`src/constants.ts`). The rule is a pure
 helper `rankingSystemForSeason(progressionStartSeason, viewedSeason)` (`src/helpers/progression-rank.ts`);
 the `useRankingSystem` composable (`src/composables/useRankingSystem.ts`) looks up the mode's flag and
 delegates to it, exposing `resolveRankingSystem(gameMode, viewedSeason)` and ensuring `activeModes` is loaded.

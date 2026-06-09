@@ -2,9 +2,6 @@ import { useRankingStore } from "@/store/ranking/store";
 import { EGameMode } from "@/store/types";
 import { type RankingSystem, rankingSystemForSeason } from "@/helpers/progression-rank";
 
-// Re-exported so existing importers (e.g. ModeStatsGrid.vue) keep importing the type from here.
-export type { RankingSystem };
-
 interface UseRankingSystem {
   resolveRankingSystem: (gameMode: EGameMode, viewedSeason: number) => RankingSystem;
 }
