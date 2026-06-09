@@ -62,6 +62,12 @@ export type ProgressionRank = {
   apexPoints: number | null;
 };
 
+export type MilestoneProgress = {
+  currentWins: number;
+  previousTarget: number;
+  nextTarget: number;
+};
+
 export type Ranking = {
   id: string;
   season: number;
