@@ -1,7 +1,6 @@
 import { useRankingStore } from "@/store/ranking/store";
 import { EGameMode } from "@/store/types";
-
-export type RankingSystem = "rp" | "progression";
+import { type RankingSystem, rankingSystemForSeason } from "@/helpers/progression-rank";
 
 interface UseRankingSystem {
   resolveRankingSystem: (gameMode: EGameMode, viewedSeason: number) => RankingSystem;
@@ -20,11 +19,7 @@ export function useRankingSystem(): UseRankingSystem {
   // resolves. Before activeModes is populated, every mode resolves to "rp".
   function resolveRankingSystem(gameMode: EGameMode, viewedSeason: number): RankingSystem {
     const mode = rankingsStore.activeModes.find((m) => m.id === gameMode);
-    const startSeason = mode?.progressionStartSeason;
-    if (startSeason != null && viewedSeason >= startSeason) {
-      return "progression";
-    }
-    return "rp";
+    return rankingSystemForSeason(mode?.progressionStartSeason, viewedSeason);
   }
 
   return { resolveRankingSystem };

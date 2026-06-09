@@ -1,5 +1,20 @@
 import type { ProgressionRank } from "@/store/ranking/types";
 
+export type RankingSystem = "rp" | "progression";
+
+// Resolves which ranking system a mode renders for a given viewed season, from the per-mode
+// `progressionStartSeason` flag. Pure (no store access): the useRankingSystem composable looks
+// up the mode's flag, then delegates here. A null/undefined flag, or a viewed season before the
+// opt-in season, renders the legacy RP ladder; at/after the opt-in season, the progression render.
+export function rankingSystemForSeason(
+  progressionStartSeason: number | null | undefined,
+  viewedSeason: number,
+): RankingSystem {
+  return progressionStartSeason != null && viewedSeason >= progressionStartSeason
+    ? "progression"
+    : "rp";
+}
+
 // League index matches the legacy `leagueOrder` scale: 0 = Grandmaster (best) … 8 = Grass (worst).
 export const LEAGUE_NAMES = [
   "grandmaster",
