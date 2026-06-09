@@ -39,7 +39,8 @@
             <!-- A progression mode with no rank yet is unranked, so it never reaches here (gated by isRanked above). -->
             <progression-rank v-if="hasProgressionRank && modeStat.progression" :progression="modeStat.progression" />
             <level-progress v-else-if="!isProgression" :rp="modeStat.rankingPoints" />
-            <milestone-progress v-if="isProgression && modeStat.milestone" :milestone-progress="modeStat.milestone" />
+            <!-- win-milestone bar shows in addition to the rank bar (decoupled lifetime track) -->
+            <milestone-progress v-if="isProgression && modeStat.milestone" class="mt-1" :milestone-progress="modeStat.milestone" />
           </v-col>
         </span>
       </div>

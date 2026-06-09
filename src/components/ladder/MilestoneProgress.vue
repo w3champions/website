@@ -5,14 +5,14 @@
     :max="100"
     height="25"
     color="level-progress-gradient"
-    :aria-label="$t('components_ladder_milestoneprogress.ariawins')"
+    :aria-label="$t('components_ladder_milestoneprogress.arialabel', { current: milestoneProgress.currentWins, next: milestoneProgress.nextTarget })"
   >
     <strong>{{ milestoneProgress.currentWins }} / {{ milestoneProgress.nextTarget }}</strong>
   </v-progress-linear>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, type PropType } from "vue";
+import { computed, defineComponent, type PropType } from "vue";
 import type { MilestoneProgress as MilestoneProgressType } from "@/store/ranking/types";
 
 export default defineComponent({

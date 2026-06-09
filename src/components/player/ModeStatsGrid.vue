@@ -42,7 +42,8 @@
             <progression-rank v-if="item.progression" :progression="item.progression" />
             <!-- Profile grid uses "-" for no-rank rows (matching the RP path below), unlike the ladder's "Unranked". -->
             <div v-else>-</div>
-            <milestone-progress v-if="item.milestone" :milestone-progress="item.milestone" />
+            <!-- win-milestone bar shows in addition to the rank bar (decoupled lifetime track) -->
+            <milestone-progress v-if="item.milestone" class="mt-1" :milestone-progress="item.milestone" />
           </template>
           <template v-else>
             <level-progress v-if="item.rank !== 0" :rp="item.rankingPoints" />

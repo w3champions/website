@@ -279,7 +279,7 @@ const data = {
       level: "Level",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Race",
@@ -859,7 +859,7 @@ const data = {
       rp: "RP",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Раса",
@@ -1372,7 +1372,7 @@ const data = {
       rp: "랭킹 포인트",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "종족",
@@ -1829,7 +1829,7 @@ const data = {
       level: "等级",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "种族",
@@ -2357,7 +2357,7 @@ const data = {
       rp: "RP",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Rasse",
@@ -2850,7 +2850,7 @@ const data = {
       rp: "RP",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Rasa",
@@ -3396,7 +3396,7 @@ const data = {
       rp: "RP",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Раса",
@@ -3925,7 +3925,7 @@ const data = {
       rp: "RP",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Raça",
@@ -4459,7 +4459,7 @@ const data = {
       rp: "RP",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Race",
@@ -4998,7 +4998,7 @@ const data = {
       level: "Nivo",
     },
     components_ladder_milestoneprogress: {
-      ariawins: "Wins to next milestone",
+      arialabel: "{current} / {next} wins to next milestone",
     },
     components_ladder_rankingsracedistribution: {
       race: "Rasa",
