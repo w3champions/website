@@ -1,3 +1,5 @@
+// Pure-helper unit tests, run with native Node (no bundler / test-runner dependency):
+//   node --experimental-strip-types --test src/helpers/progression-rank.test.ts
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { rankingSystemForSeason } from "./progression-rank.ts";
