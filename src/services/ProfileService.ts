@@ -1,4 +1,4 @@
-import { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/player/types";
+import { AliasData, ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/player/types";
 import { API_URL } from "@/main";
 import { Gateways } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum } from "@/store/types";
@@ -29,6 +29,18 @@ export default class ProfileService {
     }
 
     return await response.json();
+  }
+
+  public static async retrievePlayerAka(battleTag: string): Promise<AliasData | null> {
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/aka`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      return null;
+    }
+
+    const alias = await response.json() as AliasData;
+    return alias.name ? alias : null;
   }
 
   public static async searchPlayer(search: string): Promise<PlayerProfile[]> {

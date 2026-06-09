@@ -1,9 +1,10 @@
 <template>
-  <v-menu location="right" :close-on-content-click="false" @update:model-value="onMenuToggled">
+  <v-menu location="bottom start" :close-on-content-click="false" @update:model-value="onMenuToggled">
     <template v-slot:activator="{ props }">
       <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
         <v-icon size="x-large" start>{{ mdiChevronTripleUp }}</v-icon>
         {{ selected }}
+        <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
       </v-btn>
     </template>
     <v-card class="px-2">
@@ -31,7 +32,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { Mmr } from "@/store/match/types";
-import { mdiChevronTripleUp } from "@mdi/js";
+import { mdiChevronDown, mdiChevronTripleUp } from "@mdi/js";
 
 const { mmr } = defineProps<{
   mmr: Mmr;

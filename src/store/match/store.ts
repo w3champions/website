@@ -6,28 +6,83 @@ import { defineStore } from "pinia";
 import { useRootStateStore } from "@/store/rootState/store";
 import type { Season } from "@/store/ranking/types";
 
-export const useMatchStore = defineStore("match", {
-  state: (): MatchState => ({
-    page: 1,
-    totalMatches: 0,
-    loadingMatches: false,
-    loadingMatchDetail: true,
-    lastMatchesRequestId: 0,
-    matches: [] as Match[],
-    allOngoingMatches: [] as Match[],
-    matchDetail: {} as MatchDetail,
-    mapNames: [],
-    mapNamesCache: {},
-    status: MatchStatus.onGoing,
+const MATCH_VIEW_SETTINGS_KEY = "w3c-match-view-settings";
+
+type PersistedMatchViewSettings = {
+  gameMode: EGameMode;
+};
+
+function getDefaultMatchViewSettings(): PersistedMatchViewSettings {
+  return {
     gameMode: EGameMode.GM_1ON1,
-    map: "Overall",
-    mmr: { min: 0, max: 3000 },
-    duration: { min: 0, max: 14400 },
-    sort: "startTimeDescending",
-    selectedSeason: {} as Season,
-    showHeroIcons: false,
-    selectedHeroFilter: [],
-  }),
+  };
+}
+
+function loadMatchViewSettings(): PersistedMatchViewSettings {
+  if (typeof window === "undefined") {
+    return getDefaultMatchViewSettings();
+  }
+
+  const rawSettings = window.localStorage.getItem(MATCH_VIEW_SETTINGS_KEY);
+  if (!rawSettings) {
+    return getDefaultMatchViewSettings();
+  }
+
+  try {
+    const parsedSettings = JSON.parse(rawSettings) as Partial<PersistedMatchViewSettings>;
+    const defaults = getDefaultMatchViewSettings();
+    const gameMode = isGameMode(parsedSettings.gameMode) ? parsedSettings.gameMode : defaults.gameMode;
+
+    persistMatchViewSettings(gameMode);
+
+    return {
+      gameMode,
+    };
+  } catch {
+    return getDefaultMatchViewSettings();
+  }
+}
+
+function isGameMode(value: unknown): value is EGameMode {
+  return typeof value === "number" && EGameMode[value] !== undefined;
+}
+
+function persistMatchViewSettings(gameMode: EGameMode): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(
+    MATCH_VIEW_SETTINGS_KEY,
+    JSON.stringify({ gameMode }),
+  );
+}
+
+export const useMatchStore = defineStore("match", {
+  state: (): MatchState => {
+    const persistedViewSettings = loadMatchViewSettings();
+
+    return {
+      page: 1,
+      totalMatches: 0,
+      loadingMatches: false,
+      loadingMatchDetail: true,
+      lastMatchesRequestId: 0,
+      matches: [] as Match[],
+      allOngoingMatches: [] as Match[],
+      matchDetail: {} as MatchDetail,
+      mapNames: [],
+      mapNamesCache: {},
+      status: MatchStatus.onGoing,
+      gameMode: persistedViewSettings.gameMode,
+      map: "Overall",
+      mmr: { min: 0, max: 3000 },
+      duration: { min: 0, max: 14400 },
+      sort: "startTimeDescending",
+      selectedSeason: {} as Season,
+      selectedHeroFilter: [],
+    };
+  },
   actions: {
     async loadMatches(showSpinner = false) {
       const requestId = this.lastMatchesRequestId + 1;
@@ -175,10 +230,6 @@ export const useMatchStore = defineStore("match", {
     setPlayerScores(playerScores: PlayerScore[]) {
       this.SET_PLAYER_SCORES(playerScores);
     },
-    setShowHeroIcons(showHeroIcons: boolean) {
-      this.SET_SHOW_HERO_ICONS(showHeroIcons);
-    },
-
     async setSelectedHeroFilter(heroes: number[]) {
       this.SET_LOADING_MATCHES(true);
       this.SET_SELECTED_HERO_FILTER(heroes);
@@ -221,6 +272,7 @@ export const useMatchStore = defineStore("match", {
     },
     SET_GAME_MODE(gameMode: EGameMode): void {
       this.gameMode = gameMode;
+      persistMatchViewSettings(this.gameMode);
     },
     SET_MAP(map: string): void {
       this.map = map;
@@ -239,9 +291,6 @@ export const useMatchStore = defineStore("match", {
     },
     SET_SEASON(season: Season): void {
       this.selectedSeason = season;
-    },
-    SET_SHOW_HERO_ICONS(showHeroIcons: boolean): void {
-      this.showHeroIcons = showHeroIcons;
     },
     SET_SELECTED_HERO_FILTER(heroes: number[]): void {
       this.selectedHeroFilter = heroes;

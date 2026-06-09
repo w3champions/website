@@ -505,14 +505,16 @@ const en = {
   components_matches_matchesgrid: {
     replay: "Replay",
     floNode: "Flo Node",
-    showHeroIcons: "Show Heroes",
-    hideHeroIcons: "Hide Heroes",
+    timeSince: "Time since",
   },
 
-  components_matches_spoilerfreetoggle: {
-    title: "Spoiler-Free Mode",
-    winner: "Winner",
-    duration: "Duration",
+  components_matches_tableoptions: {
+    title: "Settings",
+    button: "Settings",
+    hideWinner: "Hide Winner",
+    hideDuration: "Hide Duration",
+    timeSince: "Time since",
+    heroes: "Heroes",
   },
 
   components_matches_playermatchinfo: {

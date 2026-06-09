@@ -26,6 +26,25 @@ export const formatTimestampStringToDateTime = (str: timestampString): string =>
   return format(parseJSON(str), "dd-MMM-yyyy HH:mm");
 };
 
+export const formatTimestampStringToRelativeTime = (str: timestampString, locale?: string): string => {
+  const secondsFromNow = (parseJSON(str).getTime() - Date.now()) / 1000;
+  const ranges: Array<{ maxSeconds: number; divisor: number; unit: Intl.RelativeTimeFormatUnit }> = [
+    { maxSeconds: 45, divisor: 1, unit: "second" },
+    { maxSeconds: 45 * 60, divisor: 60, unit: "minute" },
+    { maxSeconds: 22 * 60 * 60, divisor: 60 * 60, unit: "hour" },
+    { maxSeconds: 26 * 24 * 60 * 60, divisor: 24 * 60 * 60, unit: "day" },
+    { maxSeconds: 45 * 24 * 60 * 60, divisor: 7 * 24 * 60 * 60, unit: "week" },
+    { maxSeconds: 320 * 24 * 60 * 60, divisor: 30 * 24 * 60 * 60, unit: "month" },
+    { maxSeconds: Number.POSITIVE_INFINITY, divisor: 365 * 24 * 60 * 60, unit: "year" },
+  ];
+  const range = ranges.find((candidate) => Math.abs(secondsFromNow) < candidate.maxSeconds) ?? ranges[ranges.length - 1];
+
+  return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
+    Math.round(secondsFromNow / range.divisor),
+    range.unit,
+  );
+};
+
 export const formatTimestampString = (str: timestampString | Date, formatting: string): string => {
   return format(parseJSON(str), formatting);
 };

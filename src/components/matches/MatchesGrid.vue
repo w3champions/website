@@ -26,6 +26,9 @@
                 class="my-3"
                 @click="goToMatchDetailPage(item)"
               >
+                <div v-if="hasServerInfo(item)" class="server-icon-row server-icon-row--ffa">
+                  <host-icon :host="item.serverInfo" />
+                </div>
                 <v-row v-if="alwaysLeftName" justify="center">
                   <v-col offset="4" class="py-1">
                     <team-match-info
@@ -60,7 +63,7 @@
                 class="force-no-wrap"
                 @click="goToMatchDetailPage(item)"
               >
-                <v-col cols="5.5" class="team-match-info-container left-side" align-self="center">
+                <v-col :cols="teamColumnWidth" class="team-match-info-container left-side" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
@@ -72,11 +75,11 @@
                     :selectedHeroes="selectedHeroes"
                   />
                 </v-col>
-                <v-col cols="1" class="py-2 d-flex flex-column justify-center align-center">
+                <v-col :cols="serverColumnWidth" class="py-2 d-flex flex-column justify-center align-center">
                   <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="item.serverInfo && item.serverInfo.provider" :host="item.serverInfo" />
+                  <host-icon v-if="hasServerInfo(item)" :host="item.serverInfo" />
                 </v-col>
-                <v-col cols="5.5" class="team-match-info-container" align-self="center">
+                <v-col :cols="teamColumnWidth" class="team-match-info-container" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
                     :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
@@ -94,7 +97,12 @@
               <span class="text-caption">{{ mapNameFromMatch(item) }}</span>
             </td>
             <td class="text-right">
-              {{ getStartTime(item) }}
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
+                <template v-slot:activator="{ props: tooltipProps }">
+                  <span class="start-time-text" v-bind="tooltipProps">{{ getStartTime(item) }}</span>
+                </template>
+                <span>{{ getStartTimeTooltip(item) }}</span>
+              </v-tooltip>
             </td>
             <td class="text-right">
               <div class="d-flex flex-column text-right align-end">
@@ -107,12 +115,12 @@
                 ></div>
               </div>
             </td>
-            <td v-if="showReplayDownload(item)" class="text-center">
-              <download-replay-icon :gameId="item.id" />
+            <td v-if="!unfinished" class="text-center">
+              <download-replay-icon v-if="showReplayDownload(item)" :gameId="item.id" />
             </td>
           </tr>
           <tr v-if="!matches || matches.length == 0">
-            <td colspan="4" class="text-center">
+            <td :colspan="emptyStateColspan" class="text-center">
               {{ $t("components_matches_matchesgrid.nomatchesfound") }}
             </td>
           </tr>
@@ -139,7 +147,12 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import { useRouter } from "vue-router";
-import { formatSecondsToDuration, formatTimestampStringToDateTime, formatTimestampStringToUnixTime } from "@/helpers/date-functions";
+import {
+  formatSecondsToDuration,
+  formatTimestampStringToDateTime,
+  formatTimestampStringToRelativeTime,
+  formatTimestampStringToUnixTime,
+} from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import { usePlayerStore } from "@/store/player/store";
 import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
@@ -196,9 +209,14 @@ export default defineComponent({
       required: false,
       default: () => [],
     },
+    showRelativeStartTime: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, context) {
-    const { t } = useI18n();
+    const { t, locale } = useI18n();
     const router = useRouter();
     const matchStore = useMatchStore();
     const playerStore = usePlayerStore();
@@ -225,6 +243,10 @@ export default defineComponent({
       if (!props.totalMatches) return 1;
       return Math.ceil(props.totalMatches / 50);
     });
+
+    const emptyStateColspan = computed<number>(() => props.unfinished ? headers.value.length : headers.value.length + 1);
+    const teamColumnWidth = 5.5;
+    const serverColumnWidth = 1;
 
     function onPageChanged(page: number): void {
       context.emit("pageChanged", page);
@@ -278,7 +300,19 @@ export default defineComponent({
     }
 
     function getStartTime(match: Match): string {
+      if (props.showRelativeStartTime) {
+        return formatTimestampStringToRelativeTime(match.startTime, locale.value);
+      }
+
       return formatTimestampStringToDateTime(match.startTime);
+    }
+
+    function getStartTimeTooltip(match: Match): string {
+      if (props.showRelativeStartTime) {
+        return formatTimestampStringToDateTime(match.startTime);
+      }
+
+      return formatTimestampStringToRelativeTime(match.startTime, locale.value);
     }
 
     function getDuration(match: Match): string {
@@ -305,7 +339,11 @@ export default defineComponent({
       return !props.unfinished && formatTimestampStringToUnixTime(item.endTime) > 1664471820;
     }
 
-    const headers: MatchesGridHeader[] = [
+    function hasServerInfo(match: Match): boolean {
+      return Boolean(match.serverInfo?.provider);
+    }
+
+    const headers = computed<MatchesGridHeader[]>(() => [
       {
         name: "Players",
         text: t("components_matches_matchesgrid.players"),
@@ -328,7 +366,11 @@ export default defineComponent({
       },
       {
         name: "Starttime",
-        text: t("components_matches_matchesgrid.starttime"),
+        text: t(
+          props.showRelativeStartTime
+            ? "components_matches_matchesgrid.timeSince"
+            : "components_matches_matchesgrid.starttime",
+        ),
         sortable: false,
         value: "startTime",
         style: {
@@ -345,7 +387,7 @@ export default defineComponent({
           textAlign: "end",
         },
       },
-    ];
+    ]);
 
     return {
       page,
@@ -358,6 +400,9 @@ export default defineComponent({
       currentMatchesHighRange,
       onPageChanged,
       getTotalPages,
+      emptyStateColspan,
+      teamColumnWidth,
+      serverColumnWidth,
       goToMatchDetailPage,
       getWinner,
       getLoser,
@@ -366,9 +411,11 @@ export default defineComponent({
       getOpponentTeams,
       nameIfNonSolo,
       getStartTime,
+      getStartTimeTooltip,
       getDuration,
       getDurationBarWidth,
       showReplayDownload,
+      hasServerInfo,
       hideDurationSpoilers,
     };
   },
@@ -391,6 +438,21 @@ export default defineComponent({
   height: 3px;
   border-radius: 2px;
   margin-top: 2px;
+}
+
+.server-icon-row {
+  display: flex;
+  justify-content: center;
+}
+
+.server-icon-row--ffa {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.start-time-text {
+  cursor: default;
+  white-space: nowrap;
 }
 
 .spoiler-mask {
