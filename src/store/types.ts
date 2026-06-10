@@ -186,6 +186,20 @@ export enum EGameModeType {
   NON_MELEE = "NON_MELEE",
 }
 
+// Progression league index (matches the legacy `leagueOrder` scale: 0 = best, 8 = worst).
+// Grand Master and Master are the apex leagues (no divisions); the rest have divisions 1..4.
+export enum EProgressionLeague {
+  GrandMaster = 0,
+  Master = 1,
+  Adept = 2,
+  Diamond = 3,
+  Platinum = 4,
+  Gold = 5,
+  Silver = 6,
+  Bronze = 7,
+  Grass = 8,
+}
+
 export enum EPick {
   OVERALL,
   FIRST = 1,

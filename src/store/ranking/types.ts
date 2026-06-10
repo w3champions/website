@@ -1,5 +1,5 @@
 import { WinLoss } from "@/store/overallStats/types";
-import { EGameMode, EGameModeType, ERaceEnum } from "@/store/types";
+import { EGameMode, EGameModeType, EProgressionLeague, ERaceEnum } from "@/store/types";
 import { AliasData } from "../player/types";
 
 export type RankingState = {
@@ -133,7 +133,8 @@ export interface CountryType {
 export type ApexLeaderboardEntry = {
   playersInfo: PlayerInfo[];
   apexPoints: number;
-  league: number;
+  // 0 = Grand Master, 1 = Master (see EProgressionLeague).
+  league: EProgressionLeague;
   rankNumber: number;
 };
 

@@ -1,20 +1,29 @@
 import { LEAGUE_NAMES } from "@/helpers/progression-rank";
+import { EProgressionLeague } from "@/store/types";
 
 // Apex leagues (Grand Master, Master) have no divisions; every other league has 4.
-export const APEX_LEAGUES = [0, 1] as const;
+export const APEX_LEAGUES = [EProgressionLeague.GrandMaster, EProgressionLeague.Master] as const;
+export const FIRST_DIVISION = 1;
 export const DIVISIONS_PER_LEAGUE = 4;
-const LOWEST_LEAGUE = LEAGUE_NAMES.length - 1; // 8 = Grass
+// The regular (non-apex) league range, best to worst, driven by the enum.
+const FIRST_NON_APEX_LEAGUE = EProgressionLeague.Adept;
+const LOWEST_LEAGUE = EProgressionLeague.Grass;
 
 export type ProgressionTier = {
-  league: number;
+  league: EProgressionLeague;
   // Apex tiers (Grand Master / Master) carry no division.
   division?: number;
 };
 
-// True for the apex tiers (Grand Master = 0, Master = 1), which are rendered as the
-// apex leaderboard and have no divisions.
+// True for the apex leagues (Grand Master, Master), which render as the apex leaderboard and
+// have no divisions.
+export function isApexLeague(league: EProgressionLeague): boolean {
+  return league === EProgressionLeague.GrandMaster || league === EProgressionLeague.Master;
+}
+
+// True for the apex tiers (their league is an apex league).
 export function isApexTier(tier: ProgressionTier): boolean {
-  return APEX_LEAGUES.includes(tier.league as (typeof APEX_LEAGUES)[number]);
+  return isApexLeague(tier.league);
 }
 
 // The display label for a tier: the league name, plus the division number for non-apex tiers.
@@ -32,12 +41,12 @@ export function tierKey(tier: ProgressionTier): string {
 }
 
 // The ordered list of progression tiers, best to worst:
-//   Grand Master, Master, then leagues 2..8 each split into divisions 1..4.
+//   Grand Master, Master, then each remaining league split into divisions 1..DIVISIONS_PER_LEAGUE.
 export function progressionTiers(): ProgressionTier[] {
   const tiers: ProgressionTier[] = APEX_LEAGUES.map((league) => ({ league }));
 
-  for (let league = APEX_LEAGUES.length; league <= LOWEST_LEAGUE; league++) {
-    for (let division = 1; division <= DIVISIONS_PER_LEAGUE; division++) {
+  for (let league = FIRST_NON_APEX_LEAGUE; league <= LOWEST_LEAGUE; league++) {
+    for (let division = FIRST_DIVISION; division < FIRST_DIVISION + DIVISIONS_PER_LEAGUE; division++) {
       tiers.push({ league, division });
     }
   }
@@ -45,16 +54,22 @@ export function progressionTiers(): ProgressionTier[] {
   return tiers;
 }
 
+// The default landing tier for a progression mode: the first division of the first non-apex league.
+export const DEFAULT_PROGRESSION_TIER: ProgressionTier = {
+  league: FIRST_NON_APEX_LEAGUE,
+  division: FIRST_DIVISION,
+};
+
 // Tiers grouped by league for a grouped selector: an ordered list of leagues, each with its
 // label, league index (icon), and the tiers under it (a single tier for apex leagues).
 export type ProgressionTierGroup = {
-  league: number;
+  league: EProgressionLeague;
   label: string;
   tiers: ProgressionTier[];
 };
 
 export function progressionTierGroups(): ProgressionTierGroup[] {
-  const groups = new Map<number, ProgressionTierGroup>();
+  const groups = new Map<EProgressionLeague, ProgressionTierGroup>();
   for (const tier of progressionTiers()) {
     let group = groups.get(tier.league);
     if (!group) {

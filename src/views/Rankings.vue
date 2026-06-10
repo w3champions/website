@@ -280,7 +280,14 @@ import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRankingSystem } from "@/composables/useRankingSystem";
-import { type ProgressionTier, isApexTier, progressionTierGroups, tierKey, tierLabel } from "@/helpers/progression-leagues";
+import {
+  DEFAULT_PROGRESSION_TIER,
+  isApexTier,
+  type ProgressionTier,
+  progressionTierGroups,
+  tierKey,
+  tierLabel,
+} from "@/helpers/progression-leagues";
 import { mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router";
 import noop from "lodash/noop";
@@ -336,9 +343,7 @@ export default defineComponent({
     const isProgrammaticSelection = ref<boolean>(false);
 
     const { resolveRankingSystem } = useRankingSystem();
-    // The first non-apex tier (Adept I) — the default landing tier for a progression mode.
-    const defaultProgressionTier: ProgressionTier = { league: 2, division: 1 };
-    const selectedTier = ref<ProgressionTier>(defaultProgressionTier);
+    const selectedTier = ref<ProgressionTier>(DEFAULT_PROGRESSION_TIER);
     const selectedRace = ref<ERaceEnum>(ERaceEnum.HUMAN);
 
     const isProgressionMode = computed<boolean>(() =>
@@ -588,7 +593,7 @@ export default defineComponent({
       if (resolveRankingSystem(gameMode, rankingsStore.selectedSeason.id) === "progression") {
         rankingsStore.SET_GAME_MODE(gameMode);
         rankingsStore.SET_PAGE(0);
-        selectedTier.value = defaultProgressionTier;
+        selectedTier.value = DEFAULT_PROGRESSION_TIER;
         await loadProgressionView();
         return;
       }
@@ -661,7 +666,7 @@ export default defineComponent({
       if (isProgressionMode.value) {
         // Progression modes render the apex leaderboard or progression league ladder rather than
         // the RP ladder. Start at the default tier and load its view.
-        selectedTier.value = defaultProgressionTier;
+        selectedTier.value = DEFAULT_PROGRESSION_TIER;
         await loadProgressionView();
       } else if (alreadyLoaded) {
         // Data is already current — scroll immediately, then silently refresh in background
@@ -719,7 +724,7 @@ export default defineComponent({
       // If the current mode renders the progression system in the newly selected season, load the
       // progression view (reset to the default tier) and skip the RP league selection below.
       if (resolveRankingSystem(rankingsStore.gameMode, season.id) === "progression") {
-        selectedTier.value = defaultProgressionTier;
+        selectedTier.value = DEFAULT_PROGRESSION_TIER;
         await loadProgressionView();
         return;
       }
