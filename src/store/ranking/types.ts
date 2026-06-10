@@ -90,6 +90,7 @@ export type CountryRanking = {
 };
 
 export interface PlayerInfo {
+  battleTag: string;
   calculatedRace: ERaceEnum;
   selectedRace: number;
   pictureId: number;
