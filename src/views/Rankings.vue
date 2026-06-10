@@ -651,6 +651,13 @@ export default defineComponent({
         rankingsStore.setLeague(ladders.value[0].id);
       }
 
+      // Apply the route's game mode to the store before the load branch, so isProgressionMode
+      // resolves against the requested mode (not the store default) on a direct URL load / refresh.
+      // Plain mutation (no RP fetch here); the branch below performs the actual load.
+      if (hasGameMode) {
+        rankingsStore.SET_GAME_MODE(props.gamemode);
+      }
+
       if (isProgressionMode.value) {
         // Progression modes render the apex leaderboard or progression league ladder rather than
         // the RP ladder. Start at the default tier and load its view.
