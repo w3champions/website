@@ -567,6 +567,11 @@ const en = {
     cutoff: "GM Cutoff",
     noplayers: "No players found.",
   },
+
+  components_ladder_progressionladdergrid: {
+    position: "#",
+    noplayers: "No players found.",
+  },
 };
 
 export default en;
