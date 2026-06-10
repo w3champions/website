@@ -1,5 +1,5 @@
-import type { ActiveGameMode, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
-import { type DataTableOptions, EGameMode } from "../types";
+import type { ActiveGameMode, ApexLeaderboard, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
+import { type DataTableOptions, EGameMode, ERaceEnum } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";
 import RankingService from "@/services/RankingService";
@@ -23,6 +23,8 @@ export const useRankingStore = defineStore("ranking", {
     selectedSeason: {} as Season,
     selectedCountry: "",
     activeModes: [] as ActiveGameMode[],
+    apexLeaderboard: null,
+    apexLoading: false,
   }),
   actions: {
     async retrieveRankings(options?: DataTableOptions, showLoading: boolean = true) {
@@ -122,6 +124,31 @@ export const useRankingStore = defineStore("ranking", {
         this.SET_ACTIVE_MODES(modes);
       }
     },
+    async retrieveApexLeaderboard(season: number, gameMode: EGameMode) {
+      this.SET_APEX_LOADING(true);
+      try {
+        const leaderboard = await RankingService.retrieveApexLeaderboard(season, gameMode);
+        this.SET_APEX_LEADERBOARD(leaderboard);
+      } finally {
+        this.SET_APEX_LOADING(false);
+      }
+    },
+    async retrieveProgressionLadder(
+      season: number,
+      gameMode: EGameMode,
+      league: number,
+      division: number,
+      race?: ERaceEnum,
+    ) {
+      this.SET_LOADING(true);
+      try {
+        const ladder = await RankingService.retrieveProgressionLadder(season, gameMode, league, division, race);
+        this.SET_TOTAL_RANKS(ladder.length);
+        this.SET_RANKINGS(ladder);
+      } finally {
+        this.SET_LOADING(false);
+      }
+    },
     SET_RANKINGS(rankings: Ranking[]): void {
       this.rankings = rankings;
     },
@@ -166,6 +193,12 @@ export const useRankingStore = defineStore("ranking", {
     },
     SET_LOADING(isLoading: boolean): void {
       this.loading = isLoading;
+    },
+    SET_APEX_LEADERBOARD(leaderboard: ApexLeaderboard | null): void {
+      this.apexLeaderboard = leaderboard;
+    },
+    SET_APEX_LOADING(isLoading: boolean): void {
+      this.apexLoading = isLoading;
     },
   },
 });

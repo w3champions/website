@@ -15,7 +15,8 @@ export function rankingSystemForSeason(
     : "rp";
 }
 
-// League index matches the legacy `leagueOrder` scale: 0 = Grandmaster (best) … 8 = Grass (worst).
+// Display labels indexed by `EProgressionLeague` (0 = Grand Master … 8 = Grass), which also
+// matches the legacy `leagueOrder` scale.
 export const LEAGUE_NAMES = [
   "grandmaster",
   "master",

@@ -44,7 +44,8 @@
           :gameMode="selectedGameMode"
           @gameModeChanged="onGameModeChanged"
         />
-        <v-menu location="right" transition="fade-transition">
+        <!-- RP league selector (legacy ranking system) -->
+        <v-menu v-if="!isProgressionMode" location="right" transition="fade-transition">
           <template v-slot:activator="{ props }">
             <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
               <league-icon :league="selectedLeagueOrder" />
@@ -72,6 +73,70 @@
                     <league-icon :league="listLeagueIcon(item)" />
                     {{ item.name }}
                     {{ item.division !== 0 ? item.division : null }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <!-- Progression tier selector (Grand Master / Master / league + division) -->
+        <v-menu v-else location="right" transition="fade-transition">
+          <template v-slot:activator="{ props }">
+            <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
+              <league-icon :league="selectedTier.league" />
+              <span class="text-capitalize">{{ selectedTierLabel }}</span>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list>
+                <v-list-item>
+                  <v-list-item-title>
+                    {{ $t("views_rankings.selectleague") }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+              <v-divider />
+              <v-list density="compact" class="overflow-y-auto" style="max-height: 650px">
+                <template v-for="group in tierGroups" :key="group.league">
+                  <v-list-subheader class="text-capitalize d-flex align-center">
+                    <league-icon :league="group.league" />
+                    {{ group.label }}
+                  </v-list-subheader>
+                  <v-list-item
+                    v-for="tier in group.tiers"
+                    :key="tierKey(tier)"
+                    :active="tierKey(tier) === tierKey(selectedTier)"
+                    @click="selectTier(tier)"
+                  >
+                    <v-list-item-title class="text-capitalize">
+                      {{ tierLabel(tier) }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </template>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+        <!-- Race selector (progression race-split ladders only) -->
+        <v-menu v-if="showRaceSelector" location="right" transition="fade-transition">
+          <template v-slot:activator="{ props }">
+            <v-btn tile class="ml-3 w3-dropdown-button" style="background-color: transparent" v-bind="props">
+              <race-icon :race="selectedRace" />
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-text>
+              <v-list density="compact">
+                <v-list-item
+                  v-for="race in races"
+                  :key="race"
+                  :active="race === selectedRace"
+                  @click="selectRace(race)"
+                >
+                  <v-list-item-title class="d-flex align-center">
+                    <race-icon :race="race" />
+                    <span class="ml-2">{{ $t(`races.${ERaceEnum[race]}`) }}</span>
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -147,15 +212,43 @@
         </div>
       </v-card-text>
       <v-card-text>
-        <div v-if="isRankingsLoading" class="d-flex justify-center py-10">
-          <v-progress-circular indeterminate color="primary" size="40" />
-        </div>
-        <rankings-grid
-          v-else
-          :rankings="rankings"
-          :ongoingMatches="ongoingMatchesMap"
-          :selectedRank="selectedRank"
-        />
+        <!-- Apex leaderboard (Grand Master / Master progression tiers) -->
+        <template v-if="isApexView">
+          <div v-if="isApexLoading" class="d-flex justify-center py-10">
+            <v-progress-circular indeterminate color="primary" size="40" />
+          </div>
+          <apex-leaderboard-grid v-else-if="apexLeaderboard" :apexLeaderboard="apexLeaderboard" />
+          <div v-else class="elevation-1">
+            <table class="custom-table">
+              <tbody>
+                <tr>
+                  <td colspan="4" class="text-center">
+                    {{ $t("components_ladder_apexleaderboardgrid.noplayers") }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+        <!-- Progression league ladder (league + division progression tiers) -->
+        <template v-else-if="isProgressionMode">
+          <div v-if="isRankingsLoading" class="d-flex justify-center py-10">
+            <v-progress-circular indeterminate color="primary" size="40" />
+          </div>
+          <progression-ladder-grid v-else :rankings="rankings" />
+        </template>
+        <!-- RP ladder (legacy ranking system) -->
+        <template v-else>
+          <div v-if="isRankingsLoading" class="d-flex justify-center py-10">
+            <v-progress-circular indeterminate color="primary" size="40" />
+          </div>
+          <rankings-grid
+            v-else
+            :rankings="rankings"
+            :ongoingMatches="ongoingMatchesMap"
+            :selectedRank="selectedRank"
+          />
+        </template>
         <v-row v-if="showRaceDistribution">
           <v-col cols="12">
             <div class="mt-10">
@@ -177,12 +270,24 @@ import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
 import GatewaySelect from "@/components/common/GatewaySelect.vue";
 import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
+import ProgressionLadderGrid from "@/components/ladder/ProgressionLadderGrid.vue";
+import ApexLeaderboardGrid from "@/components/ladder/ApexLeaderboardGrid.vue";
+import RaceIcon from "@/components/player/RaceIcon.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
-import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
+import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason, RACE_SPLIT_START_SEASON } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
+import { useRankingSystem } from "@/composables/useRankingSystem";
+import {
+  DEFAULT_PROGRESSION_TIER,
+  isApexTier,
+  type ProgressionTier,
+  progressionTierGroups,
+  tierKey,
+  tierLabel,
+} from "@/helpers/progression-leagues";
 import { mdiMagnify } from "@mdi/js";
 import { useRouter } from "vue-router";
 import noop from "lodash/noop";
@@ -194,6 +299,9 @@ export default defineComponent({
     GatewaySelect,
     GameModeSelect,
     RankingsGrid,
+    ProgressionLadderGrid,
+    ApexLeaderboardGrid,
+    RaceIcon,
     RankingsRaceDistribution,
   },
   props: {
@@ -234,15 +342,42 @@ export default defineComponent({
     const playerIdToScroll = ref<string | undefined>(undefined);
     const isProgrammaticSelection = ref<boolean>(false);
 
-    const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
+    const { resolveRankingSystem } = useRankingSystem();
+    const selectedTier = ref<ProgressionTier>(DEFAULT_PROGRESSION_TIER);
+    const selectedRace = ref<ERaceEnum>(ERaceEnum.HUMAN);
+
+    const isProgressionMode = computed<boolean>(() =>
+      resolveRankingSystem(rankingsStore.gameMode, rankingsStore.selectedSeason.id) === "progression"
+    );
+    // 1v1 is the only race-split ladder, and only from RACE_SPLIT_START_SEASON onward (mirrors the
+    // backend's UsesRaceInLadderKey: race-split mode AND season >= RaceSplitStartSeason).
+    const isRaceSplitMode = computed<boolean>(() =>
+      rankingsStore.gameMode === EGameMode.GM_1ON1 && rankingsStore.selectedSeason.id >= RACE_SPLIT_START_SEASON
+    );
+    const showRaceSelector = computed<boolean>(() => isProgressionMode.value && isRaceSplitMode.value);
+    const isApexView = computed<boolean>(() => isProgressionMode.value && isApexTier(selectedTier.value));
+    // The tier list is static (no reactive deps), so compute it once.
+    const tierGroups = progressionTierGroups();
+    const selectedTierLabel = computed<string>(() => tierLabel(selectedTier.value));
+
+    const races = [ERaceEnum.HUMAN, ERaceEnum.ORC, ERaceEnum.NIGHT_ELF, ERaceEnum.UNDEAD, ERaceEnum.RANDOM];
+
+    // Progression ladders are global (gateway-agnostic), so the gateway selector is hidden for them.
+    const isGatewayNeeded = computed<boolean>(() =>
+      !isProgressionMode.value && isGatewayNeededForSeason(rankingsStore.selectedSeason.id)
+    );
     const selectedSeason = computed<Season>(() => rankingsStore.selectedSeason);
     const seasons = computed<Season[]>(() => rankingsStore.seasons);
     const selectedGameMode = computed<EGameMode>(() => rankingsStore.gameMode);
     const selectedLeagueName = computed<string>(() => !selectedLeague.value?.name ? "" : selectedLeague.value?.name); // FIXME: selectedLeague.value?.name ?? ""
     const rankings = computed<Ranking[]>(() => rankingsStore.rankings);
     const searchRanks = computed<Ranking[]>(() => rankingsStore.searchRanks);
-    const showRaceDistribution = computed<boolean>(() => rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1);
+    const showRaceDistribution = computed<boolean>(() =>
+      !isProgressionMode.value && rankingsStore.gameMode == EGameMode.GM_1ON1 && rankingsStore.selectedSeason?.id > 1
+    );
     const isRankingsLoading = computed<boolean>(() => rankingsStore.loading);
+    const apexLeaderboard = computed(() => rankingsStore.apexLeaderboard);
+    const isApexLoading = computed<boolean>(() => rankingsStore.apexLoading);
 
     const ladders = computed<League[]>(() => {
       const league = rankingsStore.ladders?.filter((l) =>
@@ -292,6 +427,11 @@ export default defineComponent({
 
     async function refreshRankings() {
       await loadOngoingMatches();
+      // Progression modes use their own data sources (apex / progression ladder); the periodic
+      // refresh below is for the RP ladder only and would otherwise clobber the progression view.
+      if (isProgressionMode.value) {
+        return;
+      }
       await getRefreshRankings();
       await getLadders();
     }
@@ -313,6 +453,14 @@ export default defineComponent({
       if (!rank) return;
       // Don't trigger side effects when selectedRank is set programmatically for scrolling
       if (isProgrammaticSelection.value) return;
+
+      // Search returns RP rows with a populated player; in a progression mode the RP setLeague
+      // path would overwrite the progression ladder, so route to the player's profile instead.
+      // Scroll-to-position within the progression ladder is a follow-up.
+      if (isProgressionMode.value) {
+        routeToProfilePage(rank.player.playerIds[0].battleTag);
+        return;
+      }
 
       if (!playerIsRanked(rank)) {
         routeToProfilePage(rank.player.playerIds[0].battleTag);
@@ -440,6 +588,15 @@ export default defineComponent({
     }
 
     async function onGameModeChanged(gameMode: EGameMode) {
+      // Progression modes do not use the RP ladder fetch in setGameMode; set the mode directly
+      // and load the progression view (default tier) instead.
+      if (resolveRankingSystem(gameMode, rankingsStore.selectedSeason.id) === "progression") {
+        rankingsStore.SET_GAME_MODE(gameMode);
+        rankingsStore.SET_PAGE(0);
+        selectedTier.value = DEFAULT_PROGRESSION_TIER;
+        await loadProgressionView();
+        return;
+      }
       await rankingsStore.setGameMode(gameMode);
       if (ladders.value && ladders.value[0]) {
         await setLeague(ladders.value[0].id);
@@ -499,7 +656,19 @@ export default defineComponent({
         rankingsStore.setLeague(ladders.value[0].id);
       }
 
-      if (alreadyLoaded) {
+      // Apply the route's game mode to the store before the load branch, so isProgressionMode
+      // resolves against the requested mode (not the store default) on a direct URL load / refresh.
+      // Plain mutation (no RP fetch here); the branch below performs the actual load.
+      if (hasGameMode) {
+        rankingsStore.SET_GAME_MODE(props.gamemode);
+      }
+
+      if (isProgressionMode.value) {
+        // Progression modes render the apex leaderboard or progression league ladder rather than
+        // the RP ladder. Start at the default tier and load its view.
+        selectedTier.value = DEFAULT_PROGRESSION_TIER;
+        await loadProgressionView();
+      } else if (alreadyLoaded) {
         // Data is already current — scroll immediately, then silently refresh in background
         await handlePlayerScroll();
         getRefreshRankings();
@@ -552,6 +721,14 @@ export default defineComponent({
       rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
       await getLadders();
 
+      // If the current mode renders the progression system in the newly selected season, load the
+      // progression view (reset to the default tier) and skip the RP league selection below.
+      if (resolveRankingSystem(rankingsStore.gameMode, season.id) === "progression") {
+        selectedTier.value = DEFAULT_PROGRESSION_TIER;
+        await loadProgressionView();
+        return;
+      }
+
       // Try to maintain the same league if it exists in the new season
       let leagueToSelect = 0;
       if (ladders.value && ladders.value.length > 0) {
@@ -574,6 +751,38 @@ export default defineComponent({
       rankingsStore.setLeague(league);
       await getRankings();
       await handlePlayerScroll();
+    }
+
+    // Load the data for the currently selected progression tier: the apex leaderboard for the
+    // Grand Master / Master tiers, otherwise the progression league/division ladder.
+    async function loadProgressionView() {
+      const season = rankingsStore.selectedSeason.id;
+      const gameMode = rankingsStore.gameMode;
+      if (isApexView.value) {
+        await rankingsStore.retrieveApexLeaderboard(season, gameMode);
+        return;
+      }
+      // Clear any previously loaded apex data so switching back to an apex tier never flashes a
+      // stale leaderboard before the fresh fetch resolves.
+      rankingsStore.SET_APEX_LEADERBOARD(null);
+      const race = showRaceSelector.value ? selectedRace.value : undefined;
+      await rankingsStore.retrieveProgressionLadder(
+        season,
+        gameMode,
+        selectedTier.value.league,
+        selectedTier.value.division ?? 1,
+        race,
+      );
+    }
+
+    async function selectTier(tier: ProgressionTier) {
+      selectedTier.value = tier;
+      await loadProgressionView();
+    }
+
+    async function selectRace(race: ERaceEnum) {
+      selectedRace.value = race;
+      await loadProgressionView();
     }
 
     function playerIsRanked(rank: Ranking): boolean {
@@ -615,6 +824,20 @@ export default defineComponent({
       ongoingMatchesMap,
       showRaceDistribution,
       isRankingsLoading,
+      isProgressionMode,
+      isApexView,
+      apexLeaderboard,
+      isApexLoading,
+      showRaceSelector,
+      selectedRace,
+      selectRace,
+      races,
+      tierGroups,
+      selectedTier,
+      selectedTierLabel,
+      selectTier,
+      tierKey,
+      tierLabel,
     };
   },
 });

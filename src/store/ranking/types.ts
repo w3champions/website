@@ -1,5 +1,5 @@
 import { WinLoss } from "@/store/overallStats/types";
-import { EGameMode, EGameModeType, ERaceEnum } from "@/store/types";
+import { EGameMode, EGameModeType, EProgressionLeague, ERaceEnum } from "@/store/types";
 import { AliasData } from "../player/types";
 
 export type RankingState = {
@@ -18,6 +18,8 @@ export type RankingState = {
   selectedSeason: Season;
   selectedCountry: string;
   activeModes: ActiveGameMode[];
+  apexLeaderboard: ApexLeaderboard | null;
+  apexLoading: boolean;
 };
 
 export type Ladder = {
@@ -88,6 +90,7 @@ export type CountryRanking = {
 };
 
 export interface PlayerInfo {
+  battleTag: string;
   calculatedRace: ERaceEnum;
   selectedRace: number;
   pictureId: number;
@@ -126,3 +129,17 @@ export interface CountryType {
   country: string;
   countryCode: string;
 }
+
+export type ApexLeaderboardEntry = {
+  playersInfo: PlayerInfo[];
+  apexPoints: number;
+  // 0 = Grand Master, 1 = Master (see EProgressionLeague).
+  league: EProgressionLeague;
+  rankNumber: number;
+};
+
+export type ApexLeaderboard = {
+  cutoffApexPoints: number | null;
+  gmCount: number;
+  players: ApexLeaderboardEntry[];
+};

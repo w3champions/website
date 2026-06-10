@@ -47,6 +47,50 @@ The per-mode branch is applied wherever rank is shown:
 A progression mode is a clean cutover: it never shows the legacy RP "Level". An entity with no progression
 rank yet (`progression == null`) renders as Unranked.
 
+## Ladder navigation (progression modes)
+
+For a progression mode, the rankings view (`src/views/Rankings.vue`) replaces the legacy RP league selector
+with the progression tier list and routes the selection to one of two views. The selector lists, best to
+worst: **Grand Master**, **Master**, then each regular league (Adept … Grass) split into divisions I–IV.
+The tier list comes from `progressionTiers()` / `progressionTierGroups()` (`src/helpers/progression-leagues.ts`).
+
+- **Apex tiers (Grand Master, Master)** open the apex leaderboard view (below).
+- **Non-apex tiers (league + division)** open the progression league ladder, rendered by
+  `ProgressionLadderGrid` (`src/components/ladder/ProgressionLadderGrid.vue`) from
+  `GET /api/ladder/progression?season=&gameMode=&league=&division=&race=`.
+
+Two controls adapt to the progression system:
+
+- The **gateway selector is hidden** for progression modes — progression standings are global
+  (gateway-agnostic).
+- The **race selector appears only for the race-split 1v1 ladder**, i.e. from the race-split start season
+  onward (`RACE_SPLIT_START_SEASON`, `src/constants.ts`, mirroring the backend). Its value is passed to the
+  progression-ladder request; the apex leaderboard is pooled across races and ignores it.
+
+The legacy RP ladder navigation is unchanged: RP modes keep the existing league selector, gateway selector,
+and `RankingsGrid` render. The progression behaviour is purely additive and branched per mode.
+
+### Why a separate grid for the progression ladder
+
+The progression-ladder endpoint intentionally returns rows **without** the legacy per-player overview that
+the RP ladder carries — each row exposes only `playersInfo` plus the `progression` object. Because the
+legacy `RankingsGrid` is built around that per-player overview, the non-apex progression ladder uses a
+dedicated `ProgressionLadderGrid` that renders from `playersInfo` + `progression`, leaving the RP grid
+untouched. This is a deliberate contract choice; the two grids stay independent.
+
+## Apex leaderboard view
+
+`ApexLeaderboardGrid` (`src/components/ladder/ApexLeaderboardGrid.vue`) renders the public apex leaderboard:
+the **Grand Master** and **Master** cohort for a mode, ordered by apex points. A **cutoff line** marks the
+boundary between the Grand Master cohort and the Master cohort, labelled with the cutoff apex points. Each
+row shows the position, league icon, player cell (from `playersInfo`), and apex points. The view is reached
+by selecting the Grand Master or Master tier for a progression mode.
+
+Data comes from `GET /api/ladder/apex?season=&gameMode=` (anonymous, gateway-agnostic), fetched via
+`RankingService.retrieveApexLeaderboard` into `rankingStore.apexLeaderboard`
+(`{ cutoffApexPoints, gmCount, players }`). While loading or when there is no data, the view shows a loading
+or empty state rather than the grid.
+
 ## File reference
 
 | Concern | Path |
@@ -57,3 +101,7 @@ rank yet (`progression == null`) renders as Unranked.
 | Per-mode selection | `src/composables/useRankingSystem.ts`, `src/helpers/progression-rank.ts` |
 | Progression renderer | `src/components/ladder/ProgressionRank.vue` |
 | Render sites | `src/components/ladder/RankingsGrid.vue`, `src/components/player/PlayerLeague.vue`, `src/components/player/ModeStatsGrid.vue`, `src/views/Rankings.vue` |
+| Progression tier list | `src/helpers/progression-leagues.ts` |
+| Progression ladder grid | `src/components/ladder/ProgressionLadderGrid.vue` |
+| Apex leaderboard grid | `src/components/ladder/ApexLeaderboardGrid.vue` |
+| Race-split start season | `src/constants.ts` (`RACE_SPLIT_START_SEASON`) |

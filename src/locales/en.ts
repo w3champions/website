@@ -560,6 +560,18 @@ const en = {
     error_generic: "Something went wrong while signing you in. Please try again.",
     error_cta: "Back to Home",
   },
+
+  components_ladder_apexleaderboardgrid: {
+    league: "League",
+    apexpoints: "Apex Points",
+    cutoff: "GM Cutoff",
+    noplayers: "No players found.",
+  },
+
+  components_ladder_progressionladdergrid: {
+    position: "#",
+    noplayers: "No players found.",
+  },
 };
 
 export default en;
