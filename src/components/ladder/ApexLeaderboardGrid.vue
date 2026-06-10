@@ -20,32 +20,13 @@
               <league-icon :league="entry.league" />
             </td>
             <td>
-              <div
+              <ladder-player-cell
                 v-for="(playerInfo, pIndex) in entry.playersInfo"
                 :key="playerInfo.battleTag"
-                class="d-inline-block rank-icon-container"
+                :playerInfo="playerInfo"
+                class="rank-icon-container"
                 :class="{ 'ml-3': pIndex > 0 }"
-              >
-                <div
-                  class="player-avatar mr-1 pa-0 race-icon"
-                  :title="getAvatarTitle(playerInfo)"
-                  :style="{ 'background-image': `url(${getPlayerIcon(playerInfo)})` }"
-                ></div>
-                <player-rank-info
-                  :player-id="{ name: playerInfo.battleTag.split('#')[0], battleTag: playerInfo.battleTag }"
-                  :alias="playerInfo.playerAkaData?.name ?? ''"
-                />
-                <div
-                  v-if="playerInfo.countryCode || playerInfo.location"
-                  class="d-inline-block ml-1"
-                >
-                  <country-flag-extended
-                    :countryCode="playerInfo.countryCode"
-                    :location="playerInfo.location"
-                    size="small"
-                  />
-                </div>
-              </div>
+              />
             </td>
             <td class="number-text text-end apex-points">
               {{ entry.apexPoints }}
@@ -84,20 +65,16 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from "vue";
-import type { ApexLeaderboard, PlayerInfo } from "@/store/ranking/types";
-import { EAvatarCategory, ERaceEnum } from "@/store/types";
-import { getAsset, getAvatarUrl } from "@/helpers/url-functions";
+import type { ApexLeaderboard } from "@/store/ranking/types";
 import LeagueIcon from "@/components/ladder/LeagueIcon.vue";
-import PlayerRankInfo from "@/components/ladder/PlayerRankInfo.vue";
-import CountryFlagExtended from "@/components/common/CountryFlagExtended.vue";
+import LadderPlayerCell from "@/components/ladder/LadderPlayerCell.vue";
 import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "ApexLeaderboardGrid",
   components: {
     LeagueIcon,
-    PlayerRankInfo,
-    CountryFlagExtended,
+    LadderPlayerCell,
   },
   props: {
     apexLeaderboard: {
@@ -136,43 +113,9 @@ export default defineComponent({
         index < props.apexLeaderboard.players.length - 1;
     }
 
-    function getPlayerIcon(playerInfo: PlayerInfo): string {
-      if (hasSelectedIcon(playerInfo)) {
-        return getAvatarUrl(
-          playerInfo.selectedRace,
-          playerInfo.pictureId,
-          playerInfo.isClassicPicture,
-        );
-      }
-      return getRaceIcon(playerInfo.calculatedRace);
-    }
-
-    function getAvatarTitle(playerInfo: PlayerInfo): string {
-      if (hasSelectedIcon(playerInfo) && playerInfo.selectedRace <= ERaceEnum.UNDEAD) {
-        return ERaceEnum[playerInfo.selectedRace] ?? "";
-      }
-      return ERaceEnum[playerInfo.calculatedRace] ?? "";
-    }
-
-    function hasSelectedIcon(playerInfo: PlayerInfo): boolean {
-      return (
-        playerInfo.selectedRace !== undefined &&
-        playerInfo.selectedRace != null &&
-        playerInfo.pictureId !== undefined &&
-        playerInfo.pictureId != null &&
-        playerInfo.selectedRace !== EAvatarCategory.TOTAL
-      );
-    }
-
-    function getRaceIcon(race: ERaceEnum): string {
-      return getAsset(`raceIcons/${ERaceEnum[race]}.jpg`);
-    }
-
     return {
       headers,
       showCutoffAfter,
-      getPlayerIcon,
-      getAvatarTitle,
     };
   },
 });
