@@ -18,6 +18,8 @@ export type RankingState = {
   selectedSeason: Season;
   selectedCountry: string;
   activeModes: ActiveGameMode[];
+  apexLeaderboard: ApexLeaderboard | null;
+  apexLoading: boolean;
 };
 
 export type Ladder = {
@@ -126,3 +128,16 @@ export interface CountryType {
   country: string;
   countryCode: string;
 }
+
+export type ApexLeaderboardEntry = {
+  playersInfo: PlayerInfo[];
+  apexPoints: number;
+  league: number;
+  rankNumber: number;
+};
+
+export type ApexLeaderboard = {
+  cutoffApexPoints: number | null;
+  gmCount: number;
+  players: ApexLeaderboardEntry[];
+};
