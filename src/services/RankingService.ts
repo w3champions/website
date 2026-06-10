@@ -1,6 +1,6 @@
 import { ActiveGameMode, ApexLeaderboard, CountryRanking, Gateways, Ladder, Ranking, Season } from "@/store/ranking/types";
 import { API_URL } from "@/main";
-import { EGameMode } from "@/store/types";
+import { EGameMode, ERaceEnum } from "@/store/types";
 
 export default class RankingService {
   public static async retrieveRankings(
@@ -72,6 +72,25 @@ export default class RankingService {
     const response = await fetch(url);
     if (!response.ok) {
       return null;
+    }
+    return await response.json();
+  }
+
+  public static async retrieveProgressionLadder(
+    season: number,
+    gameMode: EGameMode,
+    league: number,
+    division: number,
+    race?: ERaceEnum,
+  ): Promise<Ranking[]> {
+    let url = `${API_URL}api/ladder/progression?season=${season}&gameMode=${gameMode}&league=${league}&division=${division}`;
+    if (race != null) {
+      url += `&race=${race}`;
+    }
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      return [];
     }
     return await response.json();
   }

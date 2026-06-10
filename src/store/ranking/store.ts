@@ -1,5 +1,5 @@
 import type { ActiveGameMode, ApexLeaderboard, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
-import { type DataTableOptions, EGameMode } from "../types";
+import { type DataTableOptions, EGameMode, ERaceEnum } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";
 import RankingService from "@/services/RankingService";
@@ -131,6 +131,22 @@ export const useRankingStore = defineStore("ranking", {
         this.SET_APEX_LEADERBOARD(leaderboard);
       } finally {
         this.SET_APEX_LOADING(false);
+      }
+    },
+    async retrieveProgressionLadder(
+      season: number,
+      gameMode: EGameMode,
+      league: number,
+      division: number,
+      race?: ERaceEnum,
+    ) {
+      this.SET_LOADING(true);
+      try {
+        const ladder = await RankingService.retrieveProgressionLadder(season, gameMode, league, division, race);
+        this.SET_TOTAL_RANKS(ladder.length);
+        this.SET_RANKINGS(ladder);
+      } finally {
+        this.SET_LOADING(false);
       }
     },
     SET_RANKINGS(rankings: Ranking[]): void {
