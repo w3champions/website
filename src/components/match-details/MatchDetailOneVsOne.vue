@@ -159,36 +159,42 @@
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
       </div>
       <div class="ovo-mmr ovo-mmr--left">
-        <template v-if="player(0).oldMmr">
-          {{ Math.floor(player(0).oldMmr!) }}
-          <span class="ovo-mmr-label">MMR</span>
-          <span
-            v-if="mmrChange(0) !== 0"
-            class="number-text"
-            :class="player(0).won ? 'w3-won' : 'w3-lost'"
-          >
-            ({{ mmrChange(0) > 0 ? "+" : "" }}{{ mmrChange(0) }})
-          </span>
-        </template>
-        <template v-else>
-          {{ $t("components_matches_playermatchinfo.calibrating") }}
-        </template>
+        <span class="ovo-mmr-text">
+          <template v-if="player(0).oldMmr">
+            {{ Math.floor(player(0).oldMmr!) }}
+            <span class="ovo-mmr-label">MMR</span>
+            <span
+              v-if="mmrChange(0) !== 0"
+              class="number-text"
+              :class="player(0).won ? 'w3-won' : 'w3-lost'"
+            >
+              ({{ mmrChange(0) > 0 ? "+" : "" }}{{ mmrChange(0) }})
+            </span>
+          </template>
+          <template v-else>
+            {{ $t("components_matches_playermatchinfo.calibrating") }}
+          </template>
+        </span>
+        <div class="ovo-fist-slot"></div>
       </div>
       <div class="ovo-mmr ovo-mmr--right">
-        <template v-if="player(1).oldMmr">
-          {{ Math.floor(player(1).oldMmr!) }}
-          <span class="ovo-mmr-label">MMR</span>
-          <span
-            v-if="mmrChange(1) !== 0"
-            class="number-text"
-            :class="player(1).won ? 'w3-won' : 'w3-lost'"
-          >
-            ({{ mmrChange(1) > 0 ? "+" : "" }}{{ mmrChange(1) }})
-          </span>
-        </template>
-        <template v-else>
-          {{ $t("components_matches_playermatchinfo.calibrating") }}
-        </template>
+        <div class="ovo-fist-slot"></div>
+        <span class="ovo-mmr-text">
+          <template v-if="player(1).oldMmr">
+            {{ Math.floor(player(1).oldMmr!) }}
+            <span class="ovo-mmr-label">MMR</span>
+            <span
+              v-if="mmrChange(1) !== 0"
+              class="number-text"
+              :class="player(1).won ? 'w3-won' : 'w3-lost'"
+            >
+              ({{ mmrChange(1) > 0 ? "+" : "" }}{{ mmrChange(1) }})
+            </span>
+          </template>
+          <template v-else>
+            {{ $t("components_matches_playermatchinfo.calibrating") }}
+          </template>
+        </span>
       </div>
     </div>
   </div>
@@ -454,22 +460,26 @@ export default defineComponent({
   }
 }
 
+.ovo-mmr {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85em;
+  opacity: 0.8;
+}
+
 .ovo-mmr--left {
   grid-column: 1;
   grid-row: 3;
+  justify-content: flex-end;
   text-align: right;
-  padding-right: calc(var(--ovo-icon-size) + 6px);
-  font-size: 0.85em;
-  opacity: 0.8;
 }
 
 .ovo-mmr--right {
   grid-column: 3;
   grid-row: 3;
+  justify-content: flex-start;
   text-align: left;
-  padding-left: calc(var(--ovo-icon-size) + 6px);
-  font-size: 0.85em;
-  opacity: 0.8;
 }
 
 .ovo-mmr-label {
@@ -495,7 +505,7 @@ export default defineComponent({
   }
 
   .ovo-name-league-grid {
-    grid-row-gap: 22px;
+    grid-row-gap: 8px;
   }
 
   .ovo-name {

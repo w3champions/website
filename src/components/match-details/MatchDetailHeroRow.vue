@@ -344,12 +344,12 @@ export default defineComponent({
 
 .heroes-icons--left {
   justify-content: flex-end;
-  margin-right: 30px;
+  margin-right: 25px;
 }
 
 .heroes-icons--right {
   justify-content: flex-start;
-  margin-left: 30px;
+  margin-left: 25px;
 }
 
 .resource-rates {
@@ -414,7 +414,6 @@ export default defineComponent({
   .mobile-heroes-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
     padding: 0 16px 16px;
   }
 
