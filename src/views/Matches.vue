@@ -252,10 +252,12 @@ export default defineComponent({
 .matches-filter-scroll {
   overflow-x: auto;
   overflow-y: hidden;
-  padding-top: 2px;
-  padding-bottom: 8px;
-  margin-top: -2px;
-  margin-bottom: -8px;
+  // Padding gives the dropdown buttons' box-shadows room inside the scroll
+  // viewport (otherwise the Settings button's shadow is clipped at the right
+  // edge); the matching negative margins keep the filters aligned with the
+  // surrounding content.
+  padding: 2px 8px 8px;
+  margin: -2px -8px -8px;
 }
 
 .matches-filter-row {
