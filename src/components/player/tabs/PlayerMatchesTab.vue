@@ -51,7 +51,12 @@
         <v-col cols="auto" class="pa-0">
           <v-menu location="right">
             <template v-slot:activator="{ props }">
-              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+              <v-btn
+                tile
+                class="w3-dropdown-button w-100"
+                style="background-color: transparent"
+                v-bind="props"
+              >
                 {{ playerRaceButtonText }}
                 <img
                   v-if="selectedPlayerRaceIcon"
@@ -59,11 +64,48 @@
                   :alt="playerRaceButtonText"
                   class="race-filter-icon ml-2"
                 />
+                <span v-if="showPlayerRandomIcon"> / </span>
+                <img
+                  v-if="showPlayerRandomIcon"
+                  :src="selectedPlayerRaceRandomIcon"
+                  :alt="playerRaceButtonText + ' Random'"
+                  class="race-filter-icon"
+                />
               </v-btn>
             </template>
             <v-card>
               <v-card-text class="dropdown-menu-content">
                 <div class="dropdown-menu-title">Player Race</div>
+                <v-tooltip
+                  location="top"
+                  transition="none"
+                  content-class="w3-tooltip elevation-1"
+                  max-width="260"
+                >
+                  <template v-slot:activator="{ props }">
+                    <div v-bind="props" class="px-3">
+                      <v-switch
+                        v-model="playerIncludeRandom"
+                        hide-details
+                        density="compact"
+                        color="primary"
+                        class="mb-0"
+                        @click.stop
+                      >
+                        <template v-slot:label>
+                          <span>With Random</span>
+                        </template>
+                      </v-switch>
+                    </div>
+                  </template>
+
+                  <div class="tooltip-content">
+                    <div>
+                      When enabled, includes matches where Random rolled the selected race.
+                      Ignored for Any or Random.
+                    </div>
+                  </div>
+                </v-tooltip>
                 <v-divider />
                 <v-list density="compact" max-height="400" class="overflow-y-auto">
                   <v-list-item
@@ -89,7 +131,12 @@
         <v-col cols="auto" class="pa-0">
           <v-menu location="right">
             <template v-slot:activator="{ props }">
-              <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
+              <v-btn
+                tile
+                class="w3-dropdown-button w-100"
+                style="background-color: transparent"
+                v-bind="props"
+              >
                 {{ opponentRaceButtonText }}
                 <img
                   v-if="selectedOpponentRaceIcon"
@@ -97,11 +144,48 @@
                   :alt="opponentRaceButtonText"
                   class="race-filter-icon ml-2"
                 />
+                <span v-if="showOpponentRandomIcon"> / </span>
+                <img
+                  v-if="showOpponentRandomIcon"
+                  :src="selectedOpponentRaceRandomIcon"
+                  :alt="opponentRaceButtonText + ' Random'"
+                  class="race-filter-icon"
+                />
               </v-btn>
             </template>
             <v-card>
               <v-card-text class="dropdown-menu-content">
                 <div class="dropdown-menu-title">Opponent Race</div>
+                <v-tooltip
+                  location="top"
+                  transition="none"
+                  content-class="w3-tooltip elevation-1"
+                  max-width="260"
+                >
+                  <template v-slot:activator="{ props }">
+                    <div v-bind="props" class="px-3">
+                      <v-switch
+                        v-model="opponentIncludeRandom"
+                        hide-details
+                        density="compact"
+                        color="primary"
+                        class="mb-0"
+                        @click.stop
+                      >
+                        <template v-slot:label>
+                          <span>With Random</span>
+                        </template>
+                      </v-switch>
+                    </div>
+                  </template>
+
+                  <div class="tooltip-content">
+                    <div>
+                      When enabled, includes matches where Random rolled the selected race.
+                      Ignored for Any or Random.
+                    </div>
+                  </div>
+                </v-tooltip>
                 <v-divider />
                 <v-list density="compact" max-height="400" class="overflow-y-auto">
                   <v-list-item
@@ -251,6 +335,92 @@ export default defineComponent({
       },
     ]);
 
+    const isPlayerRandomRace = computed(() => {
+      return playerStore.playerRace === ERaceEnum.RANDOM;
+    });
+
+    const showPlayerRandomIcon = computed(() => {
+      return (
+        playerIncludeRandom.value &&
+    !!selectedPlayerRaceIcon.value &&
+    playerStore.playerRace !== ERaceEnum.TOTAL &&
+    !isPlayerRandomRace.value
+      );
+    });
+
+    const isOpponentRandomRace = computed(() => {
+      return playerStore.opponentRace === ERaceEnum.RANDOM;
+    });
+
+    const showOpponentRandomIcon = computed(() => {
+      return (
+        opponentIncludeRandom.value &&
+    !!selectedOpponentRaceIcon.value &&
+    playerStore.opponentRace !== ERaceEnum.TOTAL &&
+    !isOpponentRandomRace.value
+      );
+    });
+
+    const raceFileNameMap: Record<ERaceEnum, string> = {
+      [ERaceEnum.HUMAN]: "Human",
+      [ERaceEnum.ORC]: "Orc",
+      [ERaceEnum.NIGHT_ELF]: "NightElf",
+      [ERaceEnum.UNDEAD]: "Undead",
+      [ERaceEnum.RANDOM]: "Random",
+      [ERaceEnum.TOTAL]: "Any",
+      [ERaceEnum.STARTER]: "Starter",
+    };
+
+    const selectedPlayerRaceRandomIcon = computed<string | undefined>(() => {
+      const race = playerStore.playerRace;
+
+      if (
+        race == null ||
+    race === ERaceEnum.TOTAL ||
+    race === ERaceEnum.RANDOM
+      ) {
+        return;
+      }
+
+      const baseName = raceFileNameMap[race];
+
+      return getAsset(`raceIcons/${baseName}Random.png`);
+    });
+
+    const selectedOpponentRaceRandomIcon = computed<string | undefined>(() => {
+      const race = playerStore.opponentRace;
+
+      if (
+        race == null ||
+    race === ERaceEnum.TOTAL ||
+    race === ERaceEnum.RANDOM
+      ) {
+        return;
+      }
+
+      const baseName = raceFileNameMap[race];
+
+      return getAsset(`raceIcons/${baseName}Random.png`);
+    });
+
+    const playerIncludeRandom = computed({
+      get: () => !!playerStore.playerIncludeRandom,
+      set: (val: boolean) => playerStore.SET_PLAYER_INCLUDE_RANDOM(val)
+    });
+
+    const opponentIncludeRandom = computed({
+      get: () => !!playerStore.opponentIncludeRandom,
+      set: (val: boolean) => playerStore.SET_OPPONENT_INCLUDE_RANDOM(val)
+    });
+
+    watch(
+      [playerIncludeRandom, opponentIncludeRandom],
+      () => {
+        getMatches();
+      },
+      { flush: "post" }
+    );
+
     function getRaceOption(race: ERaceEnum | undefined): RaceFilterOption {
       const selectedRace = race ?? ERaceEnum.TOTAL;
       return races.value.find((raceOption) => raceOption.raceId === selectedRace) ?? races.value[0];
@@ -363,11 +533,17 @@ export default defineComponent({
 
     function setPlayerRaceForSearch(race: ERaceEnum): void {
       playerStore.SET_PLAYER_RACE(race);
+      if (race === ERaceEnum.TOTAL || race === ERaceEnum.RANDOM) {
+        playerStore.SET_PLAYER_INCLUDE_RANDOM(false);
+      }
       getMatches();
     }
 
     function setOpponentRaceForSearch(race: ERaceEnum): void {
       playerStore.SET_OPPONENT_RACE(race);
+      if (race === ERaceEnum.TOTAL || race === ERaceEnum.RANDOM) {
+        playerStore.SET_OPPONENT_INCLUDE_RANDOM(false);
+      }
       getMatches();
     }
 
@@ -470,6 +646,12 @@ export default defineComponent({
       showHeroIcons,
       heroChanged,
       selectedHeroes,
+      playerIncludeRandom,
+      opponentIncludeRandom,
+      selectedPlayerRaceRandomIcon,
+      showPlayerRandomIcon,
+      selectedOpponentRaceRandomIcon,
+      showOpponentRandomIcon
     };
   },
 });

@@ -27,6 +27,8 @@ export type PlayerState = {
   mmrRpTimeline: PlayerMmrRpTimeline;
   playerGameLengthStats: PlayerGameLengthStats | undefined;
   loadProfileError: string | undefined;
+  playerIncludeRandom: boolean;
+  opponentIncludeRandom: boolean;
 };
 
 export type PlayerProfile = {
