@@ -2,8 +2,8 @@
   <div class="ovo-header">
     <div class="ovo-season-bar">
       <v-card-subtitle class="pa-0 text-uppercase opacity-100 d-flex align-center ga-2">
-        <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} ·</span>
-        <div class="ml-2 d-inline-block">
+        <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} · </span>
+        <div class="ml-2 d-inline-block vertical-middle">
           <season-badge :season="seasonObject" />
         </div>
       </v-card-subtitle>
