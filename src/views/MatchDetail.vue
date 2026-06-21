@@ -11,92 +11,122 @@
     <v-row v-else>
       <v-col cols="12">
         <v-card tile class="pb-5 pt-1">
-          <v-card-title class="justify-center">
-            <v-row justify="space-around">
-              <v-col cols="1" class="pl-0 pr-0">
-                <v-card-subtitle class="pa-0 text-uppercase opacity-100">
-                  <div v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }}</div>
-                  <div>{{ $t(`views_matchdetail.season`) }}: {{ season }}</div>
-                </v-card-subtitle>
-                <host-icon
-                  v-if="match.serverInfo && match.serverInfo.provider"
-                  :host="match.serverInfo"
-                  style="padding-right: 0px"
-                />
-              </v-col>
-              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
-                <team-match-info
-                  :big-race-icon="true"
-                  :left="true"
-                  :team="match.teams[0]"
-                />
-              </v-col>
-              <v-col cols="1" class="text-center" align-self="center">
-                <span v-if="!matchIsFFA">{{ $t(`views_matchdetail.vs`) }}</span>
-              </v-col>
-              <v-col v-if="!matchIsFFA" cols="4" align-self="center">
-                <team-match-info :big-race-icon="true" :team="match.teams[1]" />
-              </v-col>
-              <v-col v-if="matchIsFFA" cols="6" align-self="center">
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[0]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[1]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[2]"
-                />
-                <team-match-info
-                  class="ma-1"
-                  :big-race-icon="true"
-                  :team="match.teams[3]"
-                />
-              </v-col>
-              <v-col cols="1" />
-              <div class="subicon">
-                <download-replay-icon :gameId="matchId" />
-                <v-tooltip
-                  v-if="showChatLogShortcut"
-                  location="left"
-                  content-class="w3-tooltip elevation-1"
-                >
-                  <template v-slot:activator="{ props: activatorProps }">
-                    <span v-bind="activatorProps">
-                      <v-btn
-                        class="ma-2 w3-gray-gold-text"
-                        icon
-                        variant="outlined"
-                        size="small"
-                        @click="openChatLogDialog"
-                      >
-                        <v-icon size="x-large">{{ mdiChatProcessingOutline }}</v-icon>
-                      </v-btn>
-                    </span>
-                  </template>
-                  <span>View Chat Log</span>
-                </v-tooltip>
-              </div>
-            </v-row>
-          </v-card-title>
-          <div class="pb-2">
-            <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
-              {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
+          <match-detail-one-vs-one
+            v-if="isOneVsOne && !loading"
+            :match="match"
+            :match-id="matchId"
+            :season="season"
+            :gate-way="gateWay"
+            :is-gateway-needed="isGatewayNeeded"
+            :is-complete-game="!!isCompleteGame"
+            :scores-of-winners="scoresOfWinners"
+            :scores-of-losers="scoresOfLosers"
+            :show-chat-log-shortcut="showChatLogShortcut"
+            @open-chat-log="openChatLogDialog"
+          />
+          <div v-else-if="!loading && match.teams?.length">
+            <v-card-title class="justify-center">
+              <v-row justify="space-around">
+                <v-col cols="1" class="pl-0 pr-0">
+                  <v-card-subtitle class="pa-0 text-uppercase opacity-100">
+                    <div v-if="isGatewayNeeded">
+                      {{ $t(`gatewayNames.${gateWay}`) }}
+                    </div>
+                    <div>
+                      {{ $t(`views_matchdetail.season`) }}: {{ season }}
+                    </div>
+                  </v-card-subtitle>
+                  <host-icon
+                    v-if="match.serverInfo && match.serverInfo.provider"
+                    :host="match.serverInfo"
+                    style="padding-right: 0px"
+                  />
+                </v-col>
+                <v-col v-if="!matchIsFFA" cols="4" align-self="center">
+                  <team-match-info
+                    :big-race-icon="true"
+                    :left="true"
+                    :team="match.teams[0]"
+                  />
+                </v-col>
+                <v-col cols="1" class="text-center" align-self="center">
+                  <span v-if="!matchIsFFA">{{
+                    $t(`views_matchdetail.vs`)
+                  }}</span>
+                </v-col>
+                <v-col v-if="!matchIsFFA" cols="4" align-self="center">
+                  <team-match-info
+                    :big-race-icon="true"
+                    :team="match.teams[1]"
+                  />
+                </v-col>
+                <v-col v-if="matchIsFFA" cols="6" align-self="center">
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[0]"
+                  />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[1]"
+                  />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[2]"
+                  />
+                  <team-match-info
+                    class="ma-1"
+                    :big-race-icon="true"
+                    :team="match.teams[3]"
+                  />
+                </v-col>
+                <v-col cols="1" />
+                <div class="subicon">
+                  <download-replay-icon :gameId="matchId" />
+                  <v-tooltip
+                    v-if="showChatLogShortcut"
+                    location="left"
+                    content-class="w3-tooltip elevation-1"
+                  >
+                    <template v-slot:activator="{ props: activatorProps }">
+                      <span v-bind="activatorProps">
+                        <v-btn
+                          class="ma-2 w3-gray-gold-text"
+                          icon
+                          variant="outlined"
+                          size="small"
+                          @click="openChatLogDialog"
+                        >
+                          <v-icon size="x-large">{{
+                            mdiChatProcessingOutline
+                          }}</v-icon>
+                        </v-btn>
+                      </span>
+                    </template>
+                    <span>View Chat Log</span>
+                  </v-tooltip>
+                </div>
+              </v-row>
             </v-card-title>
-            <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
-              {{ $t(`views_matchdetail.jubileeGameMessage`) }}
-            </v-card-title>
-            <v-card-title class="d-flex justify-center">
-              {{ `${mapNameFromMatch(match)} (${matchDuration}) | ${playedDate}` }}
-            </v-card-title>
+            <div class="pb-2">
+              <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
+                {{ $t(`views_matchdetail.jubileeGameNumber`, { gameNumber }) }}
+              </v-card-title>
+              <v-card-title v-if="isJubileeGame" class="d-flex justify-center">
+                {{ $t(`views_matchdetail.jubileeGameMessage`) }}
+              </v-card-title>
+              <v-card-title class="d-flex justify-center">
+                {{
+                  `${mapNameFromMatch(
+                    match,
+                  )} (${matchDuration}) | ${playedDate}`
+                }}
+              </v-card-title>
+            </div>
           </div>
-          <div v-if="isCompleteGame">
+          <div v-else-if="isCompleteGame && !matchIsFFA">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
               :key="index"
@@ -105,40 +135,53 @@
               :scores-of-winner="scoresOfWinners[index]?.heroScore"
               :scores-of-loser="scoresOfLosers[index]?.heroScore"
             />
+            <v-row class="justify-center">
+              <v-col cols="5" class="mr-7">
+                <player-performance-on-match
+                  class="mt-4"
+                  :unit-score="scoresOfWinners.map((h) => h.unitScore)"
+                  :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
+                  :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
+                  :resource-score-opponent="
+                    scoresOfLosers.map((h) => h.resourceScore)
+                  "
+                  :left="true"
+                />
+              </v-col>
+              <v-col cols="5" class="ml-7">
+                <player-performance-on-match
+                  class="mt-4"
+                  :unit-score="scoresOfLosers.map((h) => h.unitScore)"
+                  :resource-score="scoresOfLosers.map((h) => h.resourceScore)"
+                  :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
+                  :resource-score-opponent="
+                    scoresOfWinners.map((h) => h.resourceScore)
+                  "
+                />
+              </v-col>
+            </v-row>
           </div>
-          <match-detail-hero-row
-            v-if="matchIsFFA && isCompleteGame"
-            :not-color-winner="true"
-            :heroes-of-winner="ffaLoser2?.heroes"
-            :heroes-of-loser="ffaLoser3?.heroes"
-            :scores-of-winner="ffaLoser2?.heroScore"
-            :scores-of-loser="ffaLoser3?.heroScore"
-          />
+          <div v-else-if="isCompleteGame && matchIsFFA">
+            <match-detail-hero-row
+              v-for="(player, index) in scoresOfWinners"
+              :key="index"
+              :heroes-of-winner="scoresOfWinners[index]?.heroes"
+              :heroes-of-loser="scoresOfLosers[index]?.heroes"
+              :scores-of-winner="scoresOfWinners[index]?.heroScore"
+              :scores-of-loser="scoresOfLosers[index]?.heroScore"
+            />
+            <match-detail-hero-row
+              :not-color-winner="true"
+              :heroes-of-winner="ffaLoser2?.heroes"
+              :heroes-of-loser="ffaLoser3?.heroes"
+              :scores-of-winner="ffaLoser2?.heroScore"
+              :scores-of-loser="ffaLoser3?.heroScore"
+            />
+          </div>
           <v-row v-if="!isCompleteGame" class="justify-center">
             <v-card-subtitle>
               {{ $t(`views_matchdetail.incompletedata`) }}
             </v-card-subtitle>
-          </v-row>
-          <v-row v-if="isCompleteGame && !matchIsFFA" class="justify-center">
-            <v-col cols="5" class="mr-7">
-              <player-performance-on-match
-                class="mt-4"
-                :unit-score="scoresOfWinners.map((h) => h.unitScore)"
-                :resource-score="scoresOfWinners.map((h) => h.resourceScore)"
-                :unit-score-opponent="scoresOfLosers.map((h) => h.unitScore)"
-                :resource-score-opponent="scoresOfLosers.map((h) => h.resourceScore)"
-                :left="true"
-              />
-            </v-col>
-            <v-col cols="5" class="ml-7">
-              <player-performance-on-match
-                class="mt-4"
-                :unit-score="scoresOfLosers.map((h) => h.unitScore)"
-                :resource-score="scoresOfLosers.map((h) => (h.resourceScore))"
-                :unit-score-opponent="scoresOfWinners.map((h) => h.unitScore)"
-                :resource-score-opponent="scoresOfWinners.map((h) => h.resourceScore)"
-              />
-            </v-col>
           </v-row>
           <match-head-to-head
             v-if="isCompleteGame && isOneVsOne && !previewMode"
@@ -187,7 +230,10 @@
 
         <v-dialog v-model="chatLogDialog" width="1500">
           <v-card>
-            <admin-replay-chat-log-messages v-if="chatLogDialog" :matchId="matchId" />
+            <admin-replay-chat-log-messages
+              v-if="chatLogDialog"
+              :matchId="matchId"
+            />
           </v-card>
         </v-dialog>
       </v-col>
@@ -206,16 +252,19 @@ import HostIcon from "@/components/matches/HostIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import MatchHeadToHead from "@/components/match-details/MatchHeadToHead.vue";
-import { formatSecondsToDuration, formatTimestampStringToDateTime } from "@/helpers/date-functions";
+import {
+  formatSecondsToDuration,
+  formatTimestampStringToDateTime,
+} from "@/helpers/date-functions";
 import { useMatchStore } from "@/store/match/store";
 import { isGatewayNeededForSeason } from "@/constants";
-import _keyBy from "lodash/keyBy";
 import { battleTagToName } from "@/helpers/profile";
 import { GAME_MODES_FFA } from "@/store/constants";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPermission } from "@/store/admin/permission/types";
 import AdminReplayChatLogMessages from "@/components/admin/replays/AdminReplayChatLogMessages.vue";
 import { mdiChatProcessingOutline } from "@mdi/js";
+import MatchDetailOneVsOne from "@/components/match-details/MatchDetailOneVsOne.vue";
 
 export default defineComponent({
   name: "MatchDetailView",
@@ -227,6 +276,7 @@ export default defineComponent({
     DownloadReplayIcon,
     MatchHeadToHead,
     AdminReplayChatLogMessages,
+    MatchDetailOneVsOne,
   },
   props: {
     matchId: {
@@ -296,13 +346,18 @@ export default defineComponent({
 
     // Helpers for matching player names/battleTags across data sources (team data vs score data)
     // Normalizes strings for case-insensitive comparison
-    const normalize = (value?: string): string => (value ?? "").trim().toLowerCase();
+    const normalize = (value?: string): string =>
+      (value ?? "").trim().toLowerCase();
     // Strips the discriminator (#number) from a BattleTag to match players who only have the character name
-    const stripTag = (value?: string): string => normalize(value).split("#", 1)[0];
+    const stripTag = (value?: string): string =>
+      normalize(value).split("#", 1)[0];
 
     // Determines if a player from team data matches a score record
     // Tries multiple matching strategies since score battleTags may be localized names or incomplete
-    function isDirectPlayerScoreMatch(player: PlayerInTeam, score: PlayerScore): boolean {
+    function isDirectPlayerScoreMatch(
+      player: PlayerInTeam,
+      score: PlayerScore,
+    ): boolean {
       const battleTag = normalize(player.battleTag);
       const inviteName = normalize(player.inviteName);
       const displayName = normalize(player.name);
@@ -318,12 +373,16 @@ export default defineComponent({
       // 4. Score matches BattleTag without discriminator (#number)
       // 5. Score matches invite name without discriminator
       // 6. Score matches display name without discriminator
-      return scoreBattleTag === battleTag ||
-          !!(inviteName && scoreBattleTag === inviteName) ||
-          !!(displayName && scoreBattleTag === displayName) ||
-          !!(battleTagStripped && scoreBattleTagStripped === battleTagStripped) ||
-          !!(inviteNameStripped && scoreBattleTagStripped === inviteNameStripped) ||
-          !!(displayName && scoreBattleTagStripped === displayName);
+      return (
+        scoreBattleTag === battleTag ||
+        !!(inviteName && scoreBattleTag === inviteName) ||
+        !!(displayName && scoreBattleTag === displayName) ||
+        !!(battleTagStripped && scoreBattleTagStripped === battleTagStripped) ||
+        !!(
+          inviteNameStripped && scoreBattleTagStripped === inviteNameStripped
+        ) ||
+        !!(displayName && scoreBattleTagStripped === displayName)
+      );
     }
 
     // Resolves which score data teamIndex corresponds to each displayed team.
@@ -334,8 +393,12 @@ export default defineComponent({
       const teams = match.value.teams ?? [];
 
       // Find the score teamIndex for a specific player by matching against all scores
-      const directMatchTeamIndexForPlayer = (player: PlayerInTeam): number | undefined => {
-        const score = playerScores.value.find((candidate) => isDirectPlayerScoreMatch(player, candidate));
+      const directMatchTeamIndexForPlayer = (
+        player: PlayerInTeam,
+      ): number | undefined => {
+        const score = playerScores.value.find((candidate) =>
+          isDirectPlayerScoreMatch(player, candidate),
+        );
 
         return score?.teamIndex;
       };
@@ -369,13 +432,19 @@ export default defineComponent({
       });
 
       // Fallback: assign remaining score teamIndexes to teams that didn't resolve via direct matching
-      const uniqueScoreTeamIndexes = [...new Set(playerScores.value.map((score) => score.teamIndex))];
-      const usedIndexes = new Set(resolvedIndexes.filter((index): index is number => index !== undefined));
+      const uniqueScoreTeamIndexes = [
+        ...new Set(playerScores.value.map((score) => score.teamIndex)),
+      ];
+      const usedIndexes = new Set(
+        resolvedIndexes.filter((index): index is number => index !== undefined),
+      );
 
       resolvedIndexes.forEach((index, teamIndex) => {
         if (index !== undefined) return; // Already resolved, skip
 
-        const nextAvailableIndex = uniqueScoreTeamIndexes.find((candidate) => !usedIndexes.has(candidate));
+        const nextAvailableIndex = uniqueScoreTeamIndexes.find(
+          (candidate) => !usedIndexes.has(candidate),
+        );
         if (nextAvailableIndex === undefined) return; // No more indexes to assign
 
         resolvedIndexes[teamIndex] = nextAvailableIndex;
@@ -395,25 +464,39 @@ export default defineComponent({
       return getPlayerScores(losingTeam, resolvedTeamIndexes.value[1]);
     });
 
-    const ffaWinner = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[0].players[0].battleTag
-    )!);
+    const ffaWinner = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[0].players[0].battleTag,
+        )!,
+    );
 
-    const ffaLosers = computed<PlayerScore[]>(() => playerScores.value.filter(
-      (s) => s.battleTag !== match.value.teams[0].players[0].battleTag
-    ));
+    const ffaLosers = computed<PlayerScore[]>(() =>
+      playerScores.value.filter(
+        (s) => s.battleTag !== match.value.teams[0].players[0].battleTag,
+      ),
+    );
 
-    const ffaLoser1 = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[1].players[0].battleTag
-    )!);
+    const ffaLoser1 = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[1].players[0].battleTag,
+        )!,
+    );
 
-    const ffaLoser2 = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[2].players[0].battleTag
-    )!);
+    const ffaLoser2 = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[2].players[0].battleTag,
+        )!,
+    );
 
-    const ffaLoser3 = computed<PlayerScore>(() => playerScores.value.find(
-      (s) => s.battleTag === match.value.teams[3].players[0].battleTag
-    )!);
+    const ffaLoser3 = computed<PlayerScore>(
+      () =>
+        playerScores.value.find(
+          (s) => s.battleTag === match.value.teams[3].players[0].battleTag,
+        )!,
+    );
 
     const gameNumber = computed<string>(() => {
       const number = match.value.number / 1000000;
@@ -447,11 +530,14 @@ export default defineComponent({
     // This handles cases where some scores have localized/incorrect names (e.g. Chinese characters instead of BattleTag)
     function getPlayerScores(team: Team, teamIndex?: number): PlayerScore[] {
       // Restrict to scores for this team if teamIndex is known, otherwise search all scores
-      const teamScores = teamIndex === undefined
-        ? playerScores.value
-        : playerScores.value.filter((score) => score.teamIndex === teamIndex);
+      const teamScores =
+        teamIndex === undefined
+          ? playerScores.value
+          : playerScores.value.filter((score) => score.teamIndex === teamIndex);
       const usedScores = new Set<number>();
-      const mappedScores: Array<PlayerScore | undefined> = new Array(team.players.length).fill(undefined);
+      const mappedScores: Array<PlayerScore | undefined> = new Array(
+        team.players.length,
+      ).fill(undefined);
 
       // Find the first unused score that matches a player
       function findDirectMatch(player: PlayerInTeam): number {
@@ -476,7 +562,9 @@ export default defineComponent({
         if (!score) unmatchedPlayerIndexes.push(playerIndex);
       });
 
-      const remainingScores = teamScores.filter((_, scoreIndex) => !usedScores.has(scoreIndex));
+      const remainingScores = teamScores.filter(
+        (_, scoreIndex) => !usedScores.has(scoreIndex),
+      );
 
       // Only use elimination if counts align (prevents misassignment when data is corrupted)
       if (remainingScores.length === unmatchedPlayerIndexes.length) {
@@ -486,7 +574,7 @@ export default defineComponent({
       }
 
       return team.players.map((player, playerIndex) => ({
-        ...mappedScores[playerIndex] ?? {} as PlayerScore,
+        ...(mappedScores[playerIndex] ?? ({} as PlayerScore)),
         battleTag: player.battleTag, // Use the battleTag from the Match (PlayerInTeam) record, since it is sometimes incorrect on the PlayerScore record
       }));
     }
@@ -548,9 +636,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.small-title {
-  margin-top: -25px !important;
-  margin-bottom: -25px !important;
+@media (max-width: 750px) {
+  .w3-container-width {
+    padding: 0 !important;
+    max-width: 100% !important;
+
+    :deep(> .v-row) {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    :deep(> .v-row > .v-col) {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
 }
 
 .jubilee {

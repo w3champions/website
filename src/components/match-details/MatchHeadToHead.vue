@@ -13,7 +13,7 @@
       <v-row justify="center" class="mt-4">
         <v-col cols="auto" class="text-center">
           <div class="d-flex justify-center align-center ga-6">
-            <span class="text-body-2 text-medium-emphasis score-name text-right">{{ playerName }}</span>
+            <span class="text-body-2 score-name text-primary text-right">{{ playerName }}</span>
             <div class="text-h4">
               <span class="w3-won">{{ stats.wins }}</span>
               <span class="text-medium-emphasis mx-2">-</span>
@@ -44,19 +44,23 @@
                   :class="{ 'current-match': isCurrentMatch(m.id) }"
                   @click="goToMatch(m.id)"
                 >
-                  <player-icon v-if="getMatchPlayerRace(m) !== null" :race="getMatchPlayerRace(m) as ERaceEnum" />
-                  <span class="mx-1 text-caption text-medium-emphasis">vs</span>
-                  <player-icon v-if="getMatchOpponentRace(m) !== null" :race="getMatchOpponentRace(m) as ERaceEnum" />
-                  <span
-                    class="text-body-2 flex-grow-1 ml-3"
-                    :class="playerWonMatch(m) ? 'w3-won' : 'w3-lost'"
-                  >
-                    {{ m.mapName || m.map }}
-                  </span>
-                  <span class="text-body-2 text-medium-emphasis time-ago">{{ formatTimeAgo(m.endTime) }}</span>
-                  <div class="d-flex flex-column align-end duration-cell">
-                    <span class="number-text text-body-2">{{ formatDuration(m.durationInSeconds) }}</span>
-                    <div class="duration-bar" :style="{ width: getDurationBarWidth(m.durationInSeconds) }"></div>
+                  <div class="match-left">
+                    <player-icon v-if="getMatchPlayerRace(m) !== null" :race="getMatchPlayerRace(m) as ERaceEnum" />
+                    <span class="mx-1 text-caption text-medium-emphasis">vs</span>
+                    <player-icon v-if="getMatchOpponentRace(m) !== null" :race="getMatchOpponentRace(m) as ERaceEnum" />
+                    <span
+                      class="text-body-2 flex-grow-1 map-name"
+                      :class="playerWonMatch(m) ? 'w3-won' : 'w3-lost'"
+                    >
+                      {{ m.mapName || m.map }}
+                    </span>
+                  </div>
+                  <div class="match-meta">
+                    <span class="text-body-2 text-medium-emphasis time-ago">{{ formatTimeAgo(m.endTime) }}</span>
+                    <div class="d-flex flex-column align-end duration-cell match-duration">
+                      <span class="number-text text-body-2">{{ formatDuration(m.durationInSeconds) }}</span>
+                      <div class="duration-bar" :style="{ width: getDurationBarWidth(m.durationInSeconds) }"></div>
+                    </div>
                   </div>
                 </div>
               </template>
@@ -407,6 +411,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .h2h-content {
   max-width: 550px;
+  container-type: inline-size;
+  container-name: h2h;
 }
 
 .season-header {
@@ -414,6 +420,7 @@ export default defineComponent({
   top: 0;
   background-color: rgb(var(--v-theme-surface));
   z-index: 1;
+  width: 100%;
   margin-left: -8px;
   margin-right: -20px;
   padding: 8px 8px 6px;
@@ -463,6 +470,31 @@ export default defineComponent({
   min-width: 120px;
 }
 
+.match-left {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 4px;
+  margin-left: 4px;
+}
+
+.map-name {
+  margin-left: 12px;
+}
+
+// Default (container has room): date and duration sit side by side as two
+// right-aligned columns, matching the original layout.
+.match-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.match-duration {
+  width: 75px;
+}
+
 .duration-cell {
   min-width: 48px;
   margin-right: 8px;
@@ -478,6 +510,52 @@ export default defineComponent({
 .time-ago {
   min-width: 80px;
   text-align: right;
+  white-space: nowrap;
   margin-right: 16px;
+  font-size: 0.75rem !important;
+}
+
+// Once the columns no longer fit (narrow phones), collapse the date column
+// and stack the date under the duration, trimming fonts so map names fit.
+@container h2h (max-width: 500px) {
+  .match-row {
+    gap: 2px;
+  }
+
+  // Wrap the left side so the map name drops onto its own line below the
+  // race icons, while the date/duration stay centered across the full row.
+  .match-left {
+    padding: 4px 0 4px 0;
+    flex-wrap: wrap;
+  }
+
+  .map-name {
+    order: 2;
+    flex-basis: 100%;
+    margin-left: 0;
+    font-size: 0.78rem;
+    line-height: 1.2;
+  }
+
+  .match-meta {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    margin-right: 4px;
+  }
+
+  .duration-cell {
+    min-width: 0;
+    margin-right: 0;
+  }
+
+  .duration-cell .number-text {
+    font-size: 0.78rem;
+  }
+
+  .time-ago {
+    min-width: 0;
+    margin-right: 0;
+    margin-top: 1px;
+  }
 }
 </style>

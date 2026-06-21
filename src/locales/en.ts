@@ -486,7 +486,7 @@ const en = {
   },
 
   components_matchdetails_matchheadtohead: {
-    headToHead: "Head-to-Head History",
+    headToHead: "Head-to-Head",
     gamesPlayed: "games played",
     noGames: "No matches between these players",
     loadMore: "Load more",
