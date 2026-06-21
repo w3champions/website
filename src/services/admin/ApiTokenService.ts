@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { authorizedFetch } from "@/helpers/general";
 import { ApiToken, CreateApiTokenRequest, UpdateApiTokenRequest } from "@/types/admin/ApiToken";
 

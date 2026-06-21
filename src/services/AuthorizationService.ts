@@ -1,5 +1,5 @@
 import { BnetOAuthRegion, type TwitchToken, type W3cToken } from "@/store/oauth/types";
-import { REDIRECT_URL } from "@/main";
+import { REDIRECT_URL } from "@/config/env";
 import { isJwtExpired } from "@/helpers/sso";
 import Cookies from "js-cookie";
 

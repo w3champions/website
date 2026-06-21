@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { LoadingScreenTip, MessageOfTheDay, NewsMessage } from "@/store/admin/infoMessages/types";
 import { authorizedFetch } from "@/helpers/general";
 

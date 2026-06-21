@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { Clan, ClanMembership } from "@/store/clan/types";
 import { authorizedFetch } from "@/helpers/general";
 

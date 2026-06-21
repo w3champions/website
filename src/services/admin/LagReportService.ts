@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { authorizedFetch } from "@/helpers/general";
 import { LagReportDetail, LagReportQueryParams, LagReportsResponse } from "@/store/admin/lagReports/types";
 

@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { authDownload, authorizedFetch } from "@/helpers/general";
 
 export default class ServerLogsService {

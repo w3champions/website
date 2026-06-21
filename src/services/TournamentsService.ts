@@ -1,7 +1,7 @@
 import pickBy from "lodash/pickBy";
 import isUndefined from "lodash/isUndefined";
 import { ITournament, ITournamentFloNode, ITournamentPlayer } from "@/store/tournaments/types";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { authorizedFetch } from "@/helpers/general";
 
 export interface ITournamentsResponse {

@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { PersonalSetting, ProfilePicture } from "@/store/personalSettings/types";
 import { authorizedFetch } from "@/helpers/general";
 

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { useOauthStore } from "@/store/oauth/store";
 import { PlayerMatchTelemetryService } from "@/services/admin/PlayerMatchTelemetryService";
 import type { IPlayerMatchTelemetry } from "./types";

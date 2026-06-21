@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import type { CloudFile, CloudStorageProvider, CloudValidationMessage } from "@/store/admin/cloudStorage/types";
 import { authDownload, authorizedFetch } from "@/helpers/general";
 

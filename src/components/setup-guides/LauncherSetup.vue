@@ -124,7 +124,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { LAUNCHER_UPDATE_URL } from "@/main";
+import { LAUNCHER_UPDATE_URL } from "@/config/env";
 import { mdiDownload } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 

@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { PlayerSearchInfo } from "@/store/globalSearch/types";
 
 export default class GlobalSearchService {
