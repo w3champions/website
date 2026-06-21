@@ -1,6 +1,6 @@
 <template>
   <div class="score-stat-row">
-    <div class="score-stat-value text-right" :style="{ color: stat1Color }">
+    <div class="score-stat-value text-right" :class="stat1Class">
       {{ stat1 }}
     </div>
     <div class="score-stat-icon">
@@ -10,7 +10,7 @@
     <div class="score-stat-icon">
       <img :src="`/assets/icons/stat-${icon}-icon.png`" width="16" height="16" :alt="icon" />
     </div>
-    <div class="score-stat-value text-left" :style="{ color: stat2Color }">
+    <div class="score-stat-value text-left" :class="stat2Class">
       {{ stat2 }}
     </div>
   </div>
@@ -40,17 +40,17 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const stat1Color = computed(() => {
+    const stat1Class = computed(() => {
       if (props.stat1 === props.stat2) return "";
-      return props.stat1 > props.stat2 ? "var(--w3-won-color, #4caf50)" : "var(--w3-lost-color, #ff5252)";
+      return props.stat1 > props.stat2 ? "w3-won" : "w3-lost";
     });
 
-    const stat2Color = computed(() => {
+    const stat2Class = computed(() => {
       if (props.stat1 === props.stat2) return "";
-      return props.stat1 < props.stat2 ? "var(--w3-won-color, #4caf50)" : "var(--w3-lost-color, #ff5252)";
+      return props.stat1 < props.stat2 ? "w3-won" : "w3-lost";
     });
 
-    return { stat1Color, stat2Color };
+    return { stat1Class, stat2Class };
   },
 });
 </script>

@@ -46,7 +46,7 @@ export default defineComponent({
       if (hideWinner.value) {
         return "w3-gold";
       }
-      return resultSymbol === "W" ? "green" : "red";
+      return resultSymbol === "W" ? "success" : "lost";
     }
 
     return { mdiShieldSwordOutline, getIconColor, shouldBlurIcon };

@@ -10,7 +10,7 @@
 
     <template v-else-if="stats.totalGames > 0">
       <!-- Score block: centered, player context already in match header above -->
-      <v-row justify="center" class="mt-4">
+      <v-row justify="center">
         <v-col cols="auto" class="text-center">
           <div class="d-flex justify-center align-center ga-6">
             <span class="text-body-2 score-name text-primary text-right">{{ playerName }}</span>
@@ -421,7 +421,6 @@ export default defineComponent({
   background-color: rgb(var(--v-theme-surface));
   z-index: 1;
   width: 100%;
-  margin-left: -8px;
   margin-right: -20px;
   padding: 8px 8px 6px;
   font-size: 0.7rem;
@@ -433,7 +432,6 @@ export default defineComponent({
 .match-list-scroll {
   max-height: 400px;
   overflow-y: auto;
-  padding: 0 0 8px 8px;
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--v-theme-on-surface), 0.15) transparent;
   background-color: rgba(var(--v-theme-on-surface), 0.03);
