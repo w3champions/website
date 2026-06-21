@@ -1,23 +1,26 @@
 <template>
-  <v-row v-if="show" no-gutters :class="['d-flex', 'ga-2']">
+  <v-row v-if="props.show" no-gutters :class="['d-flex', 'ga-2']">
     <v-col v-for="(hero, heroIndex) in heroList" :key="heroIndex">
-      <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="size" :selectedHeroes="selectedHeroes" />
+      <hero-icon :hero="hero" :firstHero="heroIndex === firstHeroIndex" :show-level="false" :size="props.size" :selectedHeroes="props.selectedHeroes" />
     </v-col>
   </v-row>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { Hero } from "@/store/types";
 import HeroIcon from "@/components/match-details/HeroIcon.vue";
 
-const { heroes, left, show, selectedHeroes, size = 128 } = defineProps<{
+const props = withDefaults(defineProps<{
   heroes: Hero[] | null;
   left: boolean;
   show: boolean;
   selectedHeroes: number[];
   size?: number;
-}>();
+}>(), {
+  size: 128,
+});
 
-const heroList = left && heroes ? heroes.toReversed() : heroes;
-const firstHeroIndex = left && heroList ? heroList.length - 1 : 0;
+const heroList = computed<Hero[] | null>(() => props.left && props.heroes ? props.heroes.toReversed() : props.heroes);
+const firstHeroIndex = computed<number>(() => props.left && heroList.value ? heroList.value.length - 1 : 0);
 </script>

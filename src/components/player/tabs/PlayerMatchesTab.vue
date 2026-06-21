@@ -24,7 +24,7 @@
     <v-card-text class="pt-4 pb-3">
       <v-row no-gutters align="end" class="player-match-controls-row">
         <v-col cols="auto" class="pa-0">
-          <v-menu location="right" transition="fade-transition">
+          <v-menu location="bottom start" transition="fade-transition">
             <template v-slot:activator="{ props }">
               <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
                 <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
@@ -49,7 +49,7 @@
           </v-menu>
         </v-col>
         <v-col cols="auto" class="pa-0">
-          <v-menu location="right">
+          <v-menu location="bottom start">
             <template v-slot:activator="{ props }">
               <v-btn
                 tile
@@ -129,7 +129,7 @@
           </v-menu>
         </v-col>
         <v-col cols="auto" class="pa-0">
-          <v-menu location="right">
+          <v-menu location="bottom start">
             <template v-slot:activator="{ props }">
               <v-btn
                 tile
@@ -215,8 +215,7 @@
           />
         </v-col>
         <v-col class="pa-0 d-flex justify-end align-end player-match-search-col">
-          <hero-icon-toggle :showHeroes="showHeroIcons" @update:showHeroes="showHeroIcons = $event" />
-          <spoiler-free-toggle />
+          <table-options-menu />
         </v-col>
       </v-row>
     </v-card-text>
@@ -245,6 +244,7 @@
       only-show-enemy
       :is-player-profile="true"
       :show-heroes="showHeroIcons"
+      :show-relative-start-time="showRelativeStartTime"
       :selectedHeroes="selectedHeroes"
       @pageChanged="onPageChanged"
     />
@@ -261,12 +261,12 @@ import { EGameMode, ERaceEnum, type Match, type PlayerInTeam, type Team } from "
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { usePlayerStore } from "@/store/player/store";
 import { useRankingStore } from "@/store/ranking/store";
-import HeroIconToggle from "@/components/matches/HeroIconToggle.vue";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import { useCommonStore } from "@/store/common/store";
 import { getAsset } from "@/helpers/url-functions";
 import { mdiControllerClassic } from "@mdi/js";
-import SpoilerFreeToggle from "@/components/matches/SpoilerFreeToggle.vue";
+import TableOptionsMenu from "@/components/matches/TableOptionsMenu.vue";
+import { useTableOptionsStore } from "@/store/tableOptions/store";
 
 interface RaceFilterOption {
   raceName: string;
@@ -279,9 +279,8 @@ export default defineComponent({
   components: {
     MatchesGrid,
     PlayerSearch,
-    HeroIconToggle,
     HeroSelect,
-    SpoilerFreeToggle,
+    TableOptionsMenu,
   },
   props: {
     id: {
@@ -294,16 +293,17 @@ export default defineComponent({
     const playerStore = usePlayerStore();
     const rankingsStore = useRankingStore();
     const commonStore = useCommonStore();
+    const tableOptionsStore = useTableOptionsStore();
     const isLoadingMatches = ref<boolean>(false);
     const foundPlayer = ref<string>("");
-    const showHeroIcons = ref<boolean>(false);
     const hasResolvedInitialMatches = ref<boolean>(false);
 
     const battleTag = computed<string>(() => decodeURIComponent(props.id));
     const totalMatches = computed<number>(() => playerStore.totalMatches);
     const matches = computed<Match[]>(() => playerStore.matches);
     const selectedHeroes = computed<number[]>(() => playerStore.selectedHeroes);
-
+    const showHeroIcons = computed<boolean>(() => tableOptionsStore.showHeroes);
+    const showRelativeStartTime = computed<boolean>(() => tableOptionsStore.showRelativeStartTime);
     const selectedGameModeName = ref<string>("All Modes");
 
     const races = computed<RaceFilterOption[]>(() => [
@@ -644,6 +644,7 @@ export default defineComponent({
       battleTag,
       onPageChanged,
       showHeroIcons,
+      showRelativeStartTime,
       heroChanged,
       selectedHeroes,
       playerIncludeRandom,

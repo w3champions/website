@@ -1,6 +1,6 @@
 <template>
   <v-menu
-    location="right"
+    location="bottom start"
     :close-on-content-click="false"
     @update:model-value="onMenuToggled"
   >

@@ -20,7 +20,6 @@ export type MatchState = {
   duration: { min: number; max: number };
   sort: string;
   selectedSeason: Season;
-  showHeroIcons: boolean;
   selectedHeroFilter: number[];
 };
 

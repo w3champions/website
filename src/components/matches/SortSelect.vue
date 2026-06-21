@@ -1,5 +1,5 @@
 <template>
-  <v-menu location="right">
+  <v-menu location="bottom start">
     <template v-slot:activator="{ props }">
       <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
         <v-icon size="x-large" start>{{ mdiSortAscending }}</v-icon>
