@@ -49,7 +49,8 @@
           class="ovo-flag"
         />
         <a
-          class="cursor-pointer ovo-name-link text-primary"
+          class="cursor-pointer ovo-name-link"
+          :class="player(0).won ? 'w3-won' : 'w3-lost'"
           @click="goToPlayer(player(0).battleTag)"
         >
           {{ player(0).name }}
@@ -68,7 +69,8 @@
           :big="true"
         />
         <a
-          class="cursor-pointer ovo-name-link text-primary"
+          class="cursor-pointer ovo-name-link"
+          :class="player(1).won ? 'w3-won' : 'w3-lost'"
           @click="goToPlayer(player(1).battleTag)"
         >
           {{ player(1).name }}
@@ -86,11 +88,6 @@
             :to="rankingsUrl(player(0), player(0).ranking?.leagueOrder)"
             class="ovo-league-link"
           >
-            <img
-              :src="`/assets/leagueIcons/${player(0).ranking?.leagueOrder}.png`"
-              class="ovo-league-icon"
-              :class="`ovo-league-glow--${player(0).ranking?.leagueOrder}`"
-            />
             <span class="ovo-league-name">{{ leagueName(0) }}</span>
             <span v-if="player(0).ranking?.division" class="ovo-mmr-label">
               {{ player(0).ranking?.division }}
@@ -98,50 +95,26 @@
             <span v-if="player(0).ranking?.rank" class="ovo-rank-num">
               #{{ player(0).ranking?.rank }}
             </span>
+            <img
+              :src="`/assets/leagueIcons/${player(0).ranking?.leagueOrder}.png`"
+              class="ovo-league-icon"
+              :class="`ovo-league-glow--${player(0).ranking?.leagueOrder}`"
+            />
           </router-link>
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
-        <div class="ovo-fist-slot">
-          <v-tooltip
-            v-if="player(0).won"
-            location="top"
-            content-class="w3-tooltip elevation-1"
-          >
-            <template v-slot:activator="{ props: activatorProps }">
-              <img
-                v-bind="activatorProps"
-                src="/assets/icons/winner-fist.png"
-                class="ovo-winner-fist"
-                alt="winner"
-              />
-            </template>
-            <span>Winner</span>
-          </v-tooltip>
-        </div>
       </div>
       <div class="ovo-league ovo-league--right">
-        <div class="ovo-fist-slot">
-          <v-tooltip
-            v-if="player(1).won"
-            location="top"
-            content-class="w3-tooltip elevation-1"
-          >
-            <template v-slot:activator="{ props: activatorProps }">
-              <img
-                v-bind="activatorProps"
-                src="/assets/icons/winner-fist.png"
-                class="ovo-winner-fist"
-                alt="winner"
-              />
-            </template>
-            <span>Winner</span>
-          </v-tooltip>
-        </div>
         <template v-if="player(1).ranking?.leagueOrder != null">
           <router-link
             :to="rankingsUrl(player(1), player(1).ranking?.leagueOrder)"
             class="ovo-league-link"
           >
+            <img
+              :src="`/assets/leagueIcons/${player(1).ranking?.leagueOrder}.png`"
+              class="ovo-league-icon"
+              :class="`ovo-league-glow--${player(1).ranking?.leagueOrder}`"
+            />
             <span class="ovo-league-name">{{ leagueName(1) }}</span>
             <span v-if="player(1).ranking?.division" class="ovo-mmr-label">
               {{ player(1).ranking?.division }}
@@ -149,11 +122,6 @@
             <span v-if="player(1).ranking?.rank" class="ovo-rank-num">
               #{{ player(1).ranking?.rank }}
             </span>
-            <img
-              :src="`/assets/leagueIcons/${player(1).ranking?.leagueOrder}.png`"
-              class="ovo-league-icon"
-              :class="`ovo-league-glow--${player(1).ranking?.leagueOrder}`"
-            />
           </router-link>
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
@@ -175,10 +143,8 @@
             {{ $t("components_matches_playermatchinfo.calibrating") }}
           </template>
         </span>
-        <div class="ovo-fist-slot"></div>
       </div>
       <div class="ovo-mmr ovo-mmr--right">
-        <div class="ovo-fist-slot"></div>
         <span class="ovo-mmr-text">
           <template v-if="player(1).oldMmr">
             {{ Math.floor(player(1).oldMmr!) }}
@@ -419,16 +385,7 @@ export default defineComponent({
   justify-content: flex-start;
 }
 
-.ovo-fist-slot {
-  flex: 0 0 auto;
-  width: var(--ovo-icon-size);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .ovo-league-icon,
-.ovo-winner-fist,
 :deep(.race-icon-big) {
   width: var(--ovo-icon-size);
   height: var(--ovo-icon-size);
@@ -484,10 +441,6 @@ export default defineComponent({
 
 .ovo-mmr-label {
   opacity: 0.6;
-}
-
-.ovo-winner-fist {
-  vertical-align: middle;
 }
 
 .ovo-map-stats {

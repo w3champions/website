@@ -74,4 +74,10 @@ export default defineComponent({
   text-align: center;
   white-space: nowrap;
 }
+
+@media (max-width: 750px) {
+  .score-stat-title {
+    font-size: 0.78rem;
+  }
+}
 </style>
