@@ -500,6 +500,9 @@ const en = {
 
   components_matches_replayicon: {
     download: "Download Replay",
+    notFound: "Replay not found.",
+    rateLimited: "Too many replay downloads. Try again later.",
+    unavailable: "Replay unavailable",
   },
 
   components_matches_matchesgrid: {
