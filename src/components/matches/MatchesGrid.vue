@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div class="elevation-1 overflow-x-auto overflow-y-hidden">
+    <div
+      class="elevation-1 overflow-x-auto overflow-y-hidden"
+      @mouseover="onGridTipOver"
+      @mouseleave="onGridTipLeave"
+    >
       <table class="custom-table">
         <thead>
           <tr>
@@ -97,12 +101,7 @@
               <span class="text-caption">{{ mapNameFromMatch(item) }}</span>
             </td>
             <td class="text-right">
-              <v-tooltip location="top" content-class="w3-tooltip elevation-1">
-                <template v-slot:activator="{ props: tooltipProps }">
-                  <span class="start-time-text" v-bind="tooltipProps">{{ getStartTime(item) }}</span>
-                </template>
-                <span>{{ getStartTimeTooltip(item) }}</span>
-              </v-tooltip>
+              <span class="start-time-text" :data-tip="getStartTimeTooltip(item)">{{ getStartTime(item) }}</span>
             </td>
             <td class="text-right">
               <div class="d-flex flex-column text-right align-end">
@@ -127,6 +126,22 @@
         </tbody>
       </table>
     </div>
+    <!--
+      One shared tooltip re-targeted via event delegation (see onGridTipOver),
+      instead of a v-tooltip per hero icon / start time. Hero icons render as plain
+      <img> (no per-icon v-img/v-tooltip), so toggling the heroes switch doesn't
+      churn hundreds of overlay instances.
+    -->
+    <v-tooltip
+      :model-value="textTipOpen"
+      :activator="textTipActivator"
+      :open-on-hover="false"
+      location="top"
+      transition="none"
+      content-class="w3-tooltip elevation-1"
+    >
+      {{ textTipText }}
+    </v-tooltip>
     <div>
       <div class="text-center font-regular mt-2">
         {{ currentMatchesLowRange }} - {{ currentMatchesHighRange }} of
@@ -138,7 +153,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, type StyleValue, type PropType } from "vue";
+import { computed, defineComponent, type PropType, ref, type StyleValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { EGameMode, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
@@ -227,6 +242,29 @@ export default defineComponent({
 
     const matches = computed<Match[]>(() => props.modelValue);
     const hideDurationSpoilers = computed<boolean>(() => spoilerFreeStore.hideDuration);
+
+    // Shared hover tooltip, re-anchored via event delegation instead of mounting a
+    // v-tooltip per hero icon. Elements opt in with a `data-tip` attribute (hero
+    // icons, start time); a single overlay is re-targeted to whichever one is
+    // hovered, so toggling the heroes switch doesn't churn hundreds of overlays.
+    const textTipActivator = ref<HTMLElement | undefined>(undefined);
+    const textTipText = ref<string>("");
+    const textTipOpen = ref<boolean>(false);
+
+    function onGridTipOver(event: MouseEvent): void {
+      const textEl = (event.target as Element | null)?.closest<HTMLElement>("[data-tip]");
+      if (textEl) {
+        textTipActivator.value = textEl;
+        textTipText.value = textEl.getAttribute("data-tip") ?? "";
+        textTipOpen.value = true;
+      } else {
+        textTipOpen.value = false;
+      }
+    }
+
+    function onGridTipLeave(): void {
+      textTipOpen.value = false;
+    }
 
     const currentMatchesLowRange = computed<number>(() => {
       if (props.totalMatches === 0) return 0;
@@ -417,6 +455,11 @@ export default defineComponent({
       showReplayDownload,
       hasServerInfo,
       hideDurationSpoilers,
+      textTipActivator,
+      textTipText,
+      textTipOpen,
+      onGridTipOver,
+      onGridTipLeave,
     };
   },
 });
