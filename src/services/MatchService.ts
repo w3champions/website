@@ -1,5 +1,5 @@
 import { EGameMode, ERaceEnum, Match, MatchDetail } from "@/store/types";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { Gateways } from "@/store/ranking/types";
 import { Mmr } from "@/store/match/types";
 

@@ -1,4 +1,4 @@
-import { TURNSTILE_SITE_KEY } from "@/main";
+import { TURNSTILE_SITE_KEY } from "@/config/env";
 
 declare global {
   interface Window {

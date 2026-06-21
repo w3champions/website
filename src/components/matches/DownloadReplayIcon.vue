@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { mdiDownload } from "@mdi/js";
 
 const { gameId } = defineProps({

@@ -1,5 +1,5 @@
 import { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/player/types";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { Gateways } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum } from "@/store/types";
 

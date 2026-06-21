@@ -1,4 +1,4 @@
-import { API_URL, PATREON_REDIRECT_URL } from "@/main";
+import { API_URL, PATREON_REDIRECT_URL } from "@/config/env";
 import { authorizedFetch } from "@/helpers/general";
 import { UserReward } from "@/store/rewards/types";
 

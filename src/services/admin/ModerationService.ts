@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { LoungeMute, LoungeMuteResponse } from "@/store/admin/loungeMute/types";
 import { authorizedFetch } from "@/helpers/general";
 import { LauncherChatMessage } from "@/store/admin/types";

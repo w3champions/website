@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {

@@ -1,5 +1,5 @@
 import { IPermission } from "@/store/admin/permission/types";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { authorizedFetch } from "@/helpers/general";
 
 export interface IPermissionsResponse {

@@ -1,5 +1,5 @@
 import { ActiveGameMode, CountryRanking, Gateways, Ladder, Ranking, Season } from "@/store/ranking/types";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { EGameMode } from "@/store/types";
 
 export default class RankingService {

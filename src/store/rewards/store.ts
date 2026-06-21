@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { PatreonLinkStatus, RewardsState } from "./types";
 import RewardsService from "@/services/RewardsService";
-import { PATREON_REDIRECT_URL } from "@/main";
+import { PATREON_REDIRECT_URL } from "@/config/env";
 
 export const useRewardsStore = defineStore("rewards", {
   state: (): RewardsState => ({

@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreatePlayerWarningRequest, CreatePlayerWarningResponse, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PatreonMemberDetails, PlayerWarning, PlayerWarningDefinition, PlayerWarningDefinitionRequest, PlayerWarningsGetRequest, PlayerWarningsResponse, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";

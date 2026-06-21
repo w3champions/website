@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/main";
+import { REDIRECT_URL, BNET_API_CLIENT_ID } from "@/config/env";
 import { BnetOAuthRegion } from "@/store/oauth/types";
 import { useI18n } from "vue-i18n";
 import { useOauthStore } from "@/store/oauth/store";

@@ -1,4 +1,4 @@
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { GameDayPerMode, GameLength, MatchesOnMapPerSeason, MatchupLength, MmrDistribution, PlayedHeroByMode, PlayersPerDay, PopularHours, StatsPerWinrate, WinLoss } from "@/store/overallStats/types";
 import { EGameMode } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";

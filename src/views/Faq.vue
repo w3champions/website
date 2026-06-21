@@ -32,7 +32,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { API_URL } from "@/main";
+import { API_URL } from "@/config/env";
 import { EMainRouteName, ESetupGuideRouteName } from "@/router/types";
 
 interface Faq {

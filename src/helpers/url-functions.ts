@@ -1,4 +1,4 @@
-import { INGAME_STATIC_RESOURCES_URL } from "@/main";
+import { INGAME_STATIC_RESOURCES_URL } from "@/config/env";
 import { EAvatarCategory } from "@/store/types";
 
 export function getAvatarUrl(category: EAvatarCategory, picId: number, isClassic: boolean): string {
