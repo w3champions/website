@@ -29,7 +29,6 @@
               <v-btn tile class="w3-dropdown-button w-100" style="background-color: transparent" v-bind="props">
                 <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
                 {{ selectedGameModeName }}
-                <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
               </v-btn>
             </template>
             <v-card>
@@ -72,7 +71,6 @@
                   :alt="playerRaceButtonText + ' Random'"
                   class="race-filter-icon"
                 />
-                <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
               </v-btn>
             </template>
             <v-card>
@@ -153,7 +151,6 @@
                   :alt="opponentRaceButtonText + ' Random'"
                   class="race-filter-icon"
                 />
-                <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
               </v-btn>
             </template>
             <v-card>
@@ -267,7 +264,7 @@ import { useRankingStore } from "@/store/ranking/store";
 import HeroSelect from "@/components/matches/HeroSelect.vue";
 import { useCommonStore } from "@/store/common/store";
 import { getAsset } from "@/helpers/url-functions";
-import { mdiChevronDown, mdiControllerClassic } from "@mdi/js";
+import { mdiControllerClassic } from "@mdi/js";
 import TableOptionsMenu from "@/components/matches/TableOptionsMenu.vue";
 import { useTableOptionsStore } from "@/store/tableOptions/store";
 
@@ -636,7 +633,6 @@ export default defineComponent({
       opponentRaceButtonText,
       selectedPlayerRaceIcon,
       selectedOpponentRaceIcon,
-      mdiChevronDown,
       mdiControllerClassic,
       foundPlayer,
       opponentWins,

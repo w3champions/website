@@ -4,7 +4,6 @@
       <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
         <v-icon size="x-large" start>{{ mdiControllerClassic }}</v-icon>
         {{ gameModeName() }}
-        <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -30,7 +29,7 @@
 <script setup lang="ts">
 import { activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
-import { mdiChevronDown, mdiControllerClassic } from "@mdi/js";
+import { mdiControllerClassic } from "@mdi/js";
 import { onMounted } from "vue";
 
 const { gameMode = EGameMode.UNDEFINED, disabledModes = [] } = defineProps<{

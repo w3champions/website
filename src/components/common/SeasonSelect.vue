@@ -3,7 +3,6 @@
     <template v-slot:activator="{ props }">
       <v-btn tile class="w3-dropdown-button" style="background-color: transparent" v-bind="props">
         {{ $t("components_common_seasonselect.season") }} {{ selectedSeason.id }}
-        <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -25,7 +24,6 @@ import { computed } from "vue";
 import { Season } from "@/store/ranking/types";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
-import { mdiChevronDown } from "@mdi/js";
 
 const emit = defineEmits<{
   seasonSelected: [season: Season];

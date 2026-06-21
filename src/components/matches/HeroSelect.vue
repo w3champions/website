@@ -24,7 +24,6 @@
           class="hero-select-button-icon"
         />
         {{ selectedText }}
-        <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
       </v-btn>
       <v-btn
         v-else
@@ -42,7 +41,6 @@
           class="hero-select-button-icon"
         />
         {{ selectedText }}
-        <v-icon size="18" end>{{ mdiChevronDown }}</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -82,7 +80,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { mdiCheck, mdiChevronDown, mdiDramaMasks } from "@mdi/js";
+import { mdiCheck, mdiDramaMasks } from "@mdi/js";
 import { useCommonStore } from "@/store/common/store";
 import { HeroFilter } from "@/store/heroes";
 import { getAsset } from "@/helpers/url-functions";

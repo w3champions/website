@@ -12,7 +12,6 @@
           >
             <v-icon size="x-large" start class="table-options-button__icon">{{ mdiTableCog }}</v-icon>
             <span class="table-options-button__label">{{ $t("components_matches_tableoptions.button") }}</span>
-            <v-icon size="18" end class="table-options-button__chevron">{{ mdiChevronDown }}</v-icon>
           </v-btn>
         </template>
         <span>{{ $t("components_matches_tableoptions.title") }}</span>
@@ -98,7 +97,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { mdiChevronDown, mdiClockOutline, mdiEye, mdiTableCog, mdiTimerOutline, mdiTrophy } from "@mdi/js";
+import { mdiClockOutline, mdiEye, mdiTableCog, mdiTimerOutline, mdiTrophy } from "@mdi/js";
 import { useTableOptionsStore } from "@/store/tableOptions/store";
 import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
 
@@ -163,10 +162,6 @@ function onHeroesChanged(value: boolean | null): void {
 
   .table-options-button__icon {
     margin-inline-end: 0;
-  }
-
-  .table-options-button__chevron {
-    display: none;
   }
 
   .table-options-button__label {
