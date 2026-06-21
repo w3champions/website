@@ -3,15 +3,17 @@
     <div class="ovo-season-bar">
       <v-card-subtitle class="pa-0 text-uppercase opacity-100 d-flex align-center ga-2">
         <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} · </span>
-        <div class="ml-2 d-inline-block vertical-middle">
+        <div class="ml-2 d-inline-flex align-center ga-1 vertical-middle">
+          <span class="ovo-season-label">Season</span>
           <season-badge :season="seasonObject" />
         </div>
       </v-card-subtitle>
-      <host-icon
-        v-if="match.serverInfo && match.serverInfo.provider"
-        :host="match.serverInfo"
-        style="padding-right: 0px"
-      />
+      <div class="ml-2">
+        <host-icon
+          v-if="match.serverInfo && match.serverInfo.provider"
+          :host="match.serverInfo"
+        />
+      </div>
       <div class="subicon">
         <span class="mr-2">
           <download-replay-icon :gameId="matchId" />
@@ -97,26 +99,49 @@
               #{{ player(0).ranking?.rank }}
             </span>
           </router-link>
-          <img
-            v-if="player(0).won"
-            src="/assets/icons/winner-fist.png"
-            class="ovo-winner-fist"
-            alt="winner"
-          />
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
+        <div class="ovo-fist-slot">
+          <v-tooltip
+            v-if="player(0).won"
+            location="top"
+            content-class="w3-tooltip elevation-1"
+          >
+            <template v-slot:activator="{ props: activatorProps }">
+              <img
+                v-bind="activatorProps"
+                src="/assets/icons/winner-fist.png"
+                class="ovo-winner-fist"
+                alt="winner"
+              />
+            </template>
+            <span>Winner</span>
+          </v-tooltip>
+        </div>
       </div>
       <div class="ovo-league ovo-league--right">
+        <div class="ovo-fist-slot">
+          <v-tooltip
+            v-if="player(1).won"
+            location="top"
+            content-class="w3-tooltip elevation-1"
+          >
+            <template v-slot:activator="{ props: activatorProps }">
+              <img
+                v-bind="activatorProps"
+                src="/assets/icons/winner-fist.png"
+                class="ovo-winner-fist"
+                alt="winner"
+              />
+            </template>
+            <span>Winner</span>
+          </v-tooltip>
+        </div>
         <template v-if="player(1).ranking?.leagueOrder != null">
           <router-link
             :to="rankingsUrl(player(1), player(1).ranking?.leagueOrder)"
             class="ovo-league-link"
           >
-            <img
-              :src="`/assets/leagueIcons/${player(1).ranking?.leagueOrder}.png`"
-              class="ovo-league-icon"
-              :class="`ovo-league-glow--${player(1).ranking?.leagueOrder}`"
-            />
             <span class="ovo-league-name">{{ leagueName(1) }}</span>
             <span v-if="player(1).ranking?.division" class="ovo-mmr-label">
               {{ player(1).ranking?.division }}
@@ -124,18 +149,15 @@
             <span v-if="player(1).ranking?.rank" class="ovo-rank-num">
               #{{ player(1).ranking?.rank }}
             </span>
+            <img
+              :src="`/assets/leagueIcons/${player(1).ranking?.leagueOrder}.png`"
+              class="ovo-league-icon"
+              :class="`ovo-league-glow--${player(1).ranking?.leagueOrder}`"
+            />
           </router-link>
-          <img
-            v-if="player(1).won"
-            src="/assets/icons/winner-fist.png"
-            class="ovo-winner-fist"
-            alt="winner"
-          />
         </template>
         <template v-else>{{ $t("views_rankings.unranked") }}</template>
       </div>
-    </div>
-    <div class="ovo-mmr-row">
       <div class="ovo-mmr ovo-mmr--left">
         <template v-if="player(0).oldMmr">
           {{ Math.floor(player(0).oldMmr!) }}
@@ -327,8 +349,8 @@ export default defineComponent({
   overflow: hidden;
 
   :deep(.flag) {
-    transform: scale(0.2);
-    margin: -5px -15px;
+    transform: scale(0.32);
+    margin: -3px -10px;
   }
 
   .ovo-name-link {
@@ -345,21 +367,32 @@ export default defineComponent({
 }
 
 .ovo-name--left {
+  grid-column: 1;
+  grid-row: 1;
   text-align: right;
   justify-content: flex-end;
 }
 
 .ovo-name--right {
+  grid-column: 3;
+  grid-row: 1;
   text-align: left;
   justify-content: flex-start;
 }
 
 .ovo-vs {
+  grid-column: 2;
+  grid-row: 1;
   font-size: 1.2em;
   font-weight: bold;
   padding: 0 8px;
   align-self: center;
   line-height: 1;
+}
+
+.ovo-season-label {
+  color: rgb(var(--v-theme-w3-gold));
+  font-family: "Friz Quadrata Std Medium";
 }
 
 .ovo-league {
@@ -369,12 +402,23 @@ export default defineComponent({
 }
 
 .ovo-league--left {
+  grid-column: 1;
+  grid-row: 2;
   justify-content: flex-end;
 }
 
 .ovo-league--right {
   grid-column: 3;
+  grid-row: 2;
   justify-content: flex-start;
+}
+
+.ovo-fist-slot {
+  flex: 0 0 auto;
+  width: var(--ovo-icon-size);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ovo-league-icon,
@@ -410,23 +454,20 @@ export default defineComponent({
   }
 }
 
-.ovo-mmr-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 161px;
-  align-items: center;
-  margin-top: 15px;
-  margin-bottom: 1px;
-}
-
 .ovo-mmr--left {
+  grid-column: 1;
+  grid-row: 3;
   text-align: right;
+  padding-right: calc(var(--ovo-icon-size) + 6px);
   font-size: 0.85em;
   opacity: 0.8;
 }
 
 .ovo-mmr--right {
+  grid-column: 3;
+  grid-row: 3;
   text-align: left;
+  padding-left: calc(var(--ovo-icon-size) + 6px);
   font-size: 0.85em;
   opacity: 0.8;
 }
@@ -480,10 +521,6 @@ export default defineComponent({
 
   .ovo-league-link {
     gap: 4px;
-  }
-
-  .ovo-mmr-row {
-    column-gap: 88px;
   }
 
   .ovo-mmr--left,

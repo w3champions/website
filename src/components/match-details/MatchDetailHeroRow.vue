@@ -400,6 +400,12 @@ export default defineComponent({
   gap: 6px;
 }
 
+@media (max-width: 960px) {
+  .match-stats-layout {
+    --hero-icon-size: 40px;
+  }
+}
+
 @media (max-width: 750px) {
   .match-stats-layout {
     --hero-icon-size: 40px;
