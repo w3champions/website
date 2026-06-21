@@ -4,8 +4,8 @@
       <v-card-subtitle class="pa-0 text-uppercase opacity-100 d-flex align-center ga-2">
         <span v-if="isGatewayNeeded">{{ $t(`gatewayNames.${gateWay}`) }} · </span>
         <div class="ml-2 d-inline-flex align-center ga-1 vertical-middle">
-          <span class="ovo-season-label">Season</span>
-          <season-badge :season="seasonObject" />
+          <span class="ovo-season-label font-friz-medium">Season</span>
+          <season-badge :season="seasonObject" :tooltip-prefix="$t('views_rankings.season')" />
         </div>
       </v-card-subtitle>
       <div class="ml-2">
@@ -49,7 +49,7 @@
           class="ovo-flag"
         />
         <a
-          class="cursor-pointer ovo-name-link"
+          class="cursor-pointer ovo-name-link font-friz-medium"
           :class="player(0).won ? 'w3-won' : 'w3-lost'"
           @click="goToPlayer(player(0).battleTag)"
         >
@@ -61,7 +61,7 @@
           :big="true"
         />
       </div>
-      <div class="ovo-vs">VS</div>
+      <div class="ovo-vs font-friz-medium">VS</div>
       <div class="ovo-name ovo-name--right">
         <player-icon
           :race="player(1).race"
@@ -69,7 +69,7 @@
           :big="true"
         />
         <a
-          class="cursor-pointer ovo-name-link"
+          class="cursor-pointer ovo-name-link font-friz-medium"
           :class="player(1).won ? 'w3-won' : 'w3-lost'"
           @click="goToPlayer(player(1).battleTag)"
         >
@@ -331,10 +331,11 @@ export default defineComponent({
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
-
-    &:hover {
-      text-decoration: underline;
-    }
+    // Friz Medium's glyphs sit high in the line box, so they look too high
+    // next to the race icons. Trim the line-height and nudge down to center
+    // the glyphs against the icons (em-relative so it scales with font-size).
+    line-height: 1;
+    transform: translateY(0.13em);
   }
 }
 
@@ -360,11 +361,18 @@ export default defineComponent({
   padding: 0 8px;
   align-self: center;
   line-height: 1;
+  // Match the optical nudge applied to the player names (same font).
+  transform: translateY(0.13em);
 }
 
 .ovo-season-label {
   color: rgb(var(--v-theme-w3-gold));
-  font-family: "Friz Quadrata Std Medium";
+}
+
+// On light themes the gold has poor contrast, so use the on-surface color.
+.v-theme--human .ovo-season-label,
+.v-theme--orc .ovo-season-label {
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .ovo-league {
@@ -407,14 +415,15 @@ export default defineComponent({
   display: flex;
   align-items: center;
   gap: 6px;
+  // Padding gives the hover effect breathing room; the matching negative
+  // margin keeps the content aligned with the name/MMR rows.
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 4px;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  transition: box-shadow 0.15s;
-
-  &:hover {
-    box-shadow: 0 0 10px rgba(var(--v-theme-on-surface), 0.3);
-  }
+  transition: box-shadow 0.15s, background-color 0.15s;
 }
 
 .ovo-mmr {
@@ -462,7 +471,7 @@ export default defineComponent({
   }
 
   .ovo-name {
-    font-size: 1em;
+    font-size: 1.25em;
     flex-wrap: wrap;
     row-gap: 2px;
 

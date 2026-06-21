@@ -2,14 +2,14 @@
   <v-tooltip v-if="season" location="top" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
       <div
-        :class="['season-badge', 'cursor-pointer']"
+        :class="['season-badge', { 'cursor-pointer': !!onClick }]"
         :style="{ 'background-image': 'url(' + seasonBadgeBg + ')' }"
         v-bind="props"
         @click="() => onClick?.(season)"
       ></div>
     </template>
     <span>
-      {{ $t("components_player_seasonbadge.participatedinseason") }}
+      {{ tooltipPrefix ?? $t("components_player_seasonbadge.participatedinseason") }}
       {{ seasonId }}
     </span>
   </v-tooltip>
@@ -30,6 +30,11 @@ export default defineComponent({
     },
     onClick: {
       type: Function,
+      required: false,
+      default: undefined,
+    },
+    tooltipPrefix: {
+      type: String,
       required: false,
       default: undefined,
     },

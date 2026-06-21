@@ -126,7 +126,7 @@
               </v-card-title>
             </div>
           </div>
-          <div v-else-if="isCompleteGame && !matchIsFFA">
+          <div v-if="!isOneVsOne && isCompleteGame && !matchIsFFA">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
               :key="index"
@@ -161,7 +161,7 @@
               </v-col>
             </v-row>
           </div>
-          <div v-else-if="isCompleteGame && matchIsFFA">
+          <div v-if="isCompleteGame && matchIsFFA">
             <match-detail-hero-row
               v-for="(player, index) in scoresOfWinners"
               :key="index"

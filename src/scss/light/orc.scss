@@ -5,6 +5,12 @@
     color: rgb(var(--v-theme-success-darken-2)) !important;
   }
 
+  // The base success green is too light on the orc background; use the same
+  // darker green as .w3-won so themed success text/icons stay legible.
+  .text-success {
+    color: rgb(var(--v-theme-success-darken-2)) !important;
+  }
+
   background: url("/assets/backgrounds/orc.jpg") no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;

@@ -45,17 +45,17 @@
         </div>
         <div v-if="durationMinutes > 0" class="resource-rates resource-rates--left">
           <div class="resource-rate-line">
-            <span :style="resourceRates.xp.winnerStyle">{{ resourceRates.xp.winner }}</span>
+            <span :class="resourceRates.xp.winnerClass">{{ resourceRates.xp.winner }}</span>
             <img src="/assets/icons/stat-plus-icon.png" width="16" height="16" alt="XP" />
             <span class="rate-label">XP/min</span>
           </div>
           <div class="resource-rate-line">
-            <span :style="resourceRates.gold.winnerStyle">{{ resourceRates.gold.winner }}</span>
+            <span :class="resourceRates.gold.winnerClass">{{ resourceRates.gold.winner }}</span>
             <img src="/assets/icons/stat-gold-icon.png" width="16" height="16" alt="Gold" />
             <span class="rate-label">Gold/min</span>
           </div>
           <div class="resource-rate-line">
-            <span :style="resourceRates.lumber.winnerStyle">{{ resourceRates.lumber.winner }}</span>
+            <span :class="resourceRates.lumber.winnerClass">{{ resourceRates.lumber.winner }}</span>
             <img src="/assets/icons/stat-lumber-icon.png" width="16" height="16" alt="Lumber" />
             <span class="rate-label">Lumber/min</span>
           </div>
@@ -163,17 +163,17 @@
           <div class="resource-rate-line">
             <span class="rate-label">XP/min</span>
             <img src="/assets/icons/stat-plus-icon.png" width="16" height="16" alt="XP" />
-            <span :style="resourceRates.xp.loserStyle">{{ resourceRates.xp.loser }}</span>
+            <span :class="resourceRates.xp.loserClass">{{ resourceRates.xp.loser }}</span>
           </div>
           <div class="resource-rate-line">
             <span class="rate-label">Gold/min</span>
             <img src="/assets/icons/stat-gold-icon.png" width="16" height="16" alt="Gold" />
-            <span :style="resourceRates.gold.loserStyle">{{ resourceRates.gold.loser }}</span>
+            <span :class="resourceRates.gold.loserClass">{{ resourceRates.gold.loser }}</span>
           </div>
           <div class="resource-rate-line">
             <span class="rate-label">Lumber/min</span>
             <img src="/assets/icons/stat-lumber-icon.png" width="16" height="16" alt="Lumber" />
-            <span :style="resourceRates.lumber.loserStyle">{{ resourceRates.lumber.loser }}</span>
+            <span :class="resourceRates.lumber.loserClass">{{ resourceRates.lumber.loser }}</span>
           </div>
         </div>
       </div>
@@ -250,9 +250,9 @@ export default defineComponent({
       [...(props.heroesOfWinner || [])].reverse(),
     );
 
-    function compareColor(a: number, b: number): string {
+    function compareClass(a: number, b: number): string {
       if (props.notColorWinner || a === b) return "";
-      return a > b ? "var(--w3-won-color, #4caf50)" : "var(--w3-lost-color, #ff5252)";
+      return a > b ? "w3-won" : "w3-lost";
     }
 
     const resourceRates = computed(() => {
@@ -273,20 +273,20 @@ export default defineComponent({
         xp: {
           winner: Math.round(wXp / mins),
           loser: Math.round(lXp / mins),
-          winnerStyle: { color: compareColor(wXp, lXp) },
-          loserStyle: { color: compareColor(lXp, wXp) },
+          winnerClass: compareClass(wXp, lXp),
+          loserClass: compareClass(lXp, wXp),
         },
         gold: {
           winner: Math.round(wGold / mins),
           loser: Math.round(lGold / mins),
-          winnerStyle: { color: compareColor(wGold, lGold) },
-          loserStyle: { color: compareColor(lGold, wGold) },
+          winnerClass: compareClass(wGold, lGold),
+          loserClass: compareClass(lGold, wGold),
         },
         lumber: {
           winner: Math.round(wLumber / mins),
           loser: Math.round(lLumber / mins),
-          winnerStyle: { color: compareColor(wLumber, lLumber) },
-          loserStyle: { color: compareColor(lLumber, wLumber) },
+          winnerClass: compareClass(wLumber, lLumber),
+          loserClass: compareClass(lLumber, wLumber),
         },
       };
     });
