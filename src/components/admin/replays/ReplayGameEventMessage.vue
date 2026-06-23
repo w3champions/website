@@ -9,19 +9,18 @@
 
 <script lang="ts">
 import { computed, PropType, defineComponent } from "vue";
-import { EReplayGameEventType } from "@/store/admin/types";
+import { EReplayGameEventType, EReplayLeaveReason } from "@/store/admin/types";
 
-// W3GS LeaveReason codes (flo crates/w3gs/src/protocol/constants.rs).
-// Mapped to a short suffix shown after "left the game".
-const LEAVE_REASON_LABELS: Record<number, string> = {
-  0x01: "disconnected",
-  0x07: "lost",
-  0x08: "all buildings destroyed",
-  0x09: "won",
-  0x0a: "draw",
-  0x0b: "observer",
-  0x0c: "invalid save game",
-  0x0d: "left lobby",
+// Maps a LeaveReason enum value to the short suffix shown after "left the game".
+const LEAVE_REASON_LABELS: Partial<Record<EReplayLeaveReason, string>> = {
+  [EReplayLeaveReason.DISCONNECT]: "disconnected",
+  [EReplayLeaveReason.LOST]: "lost",
+  [EReplayLeaveReason.LOST_BUILDINGS]: "all buildings destroyed",
+  [EReplayLeaveReason.WON]: "won",
+  [EReplayLeaveReason.DRAW]: "draw",
+  [EReplayLeaveReason.OBSERVER]: "observer",
+  [EReplayLeaveReason.INVALID_SAVE_GAME]: "invalid save game",
+  [EReplayLeaveReason.LOBBY]: "left lobby",
 };
 
 export default defineComponent({
@@ -30,7 +29,7 @@ export default defineComponent({
     time: { type: Number, required: true },
     type: { type: Number as PropType<EReplayGameEventType>, required: true },
     playerName: { type: String, required: true },
-    reason: { type: Number, required: false, default: undefined },
+    leaveReason: { type: String as PropType<EReplayLeaveReason>, required: false, default: undefined },
   },
   setup(props) {
     const icon = computed<string>(() => {
@@ -53,7 +52,7 @@ export default defineComponent({
         case EReplayGameEventType.RESUME:
           return `${props.playerName} resumed the game`;
         case EReplayGameEventType.LEAVE: {
-          const label = props.reason === undefined ? undefined : LEAVE_REASON_LABELS[props.reason];
+          const label = props.leaveReason === undefined ? undefined : LEAVE_REASON_LABELS[props.leaveReason];
           return label
             ? `${props.playerName} left the game (${label})`
             : `${props.playerName} left the game`;

@@ -279,11 +279,25 @@ export enum EReplayGameEventType {
   LEAVE = 2,
 }
 
+// Snake_case LeaveReason strings emitted by the replay service. Mapped to
+// human-readable text in ReplayGameEventMessage.vue.
+export enum EReplayLeaveReason {
+  DISCONNECT = "disconnect",
+  LOST = "lost",
+  LOST_BUILDINGS = "lost_buildings",
+  WON = "won",
+  DRAW = "draw",
+  OBSERVER = "observer",
+  INVALID_SAVE_GAME = "invalid_save_game",
+  LOBBY = "lobby",
+  UNKNOWN = "unknown",
+}
+
 export type ReplayGameEvent = {
   type: EReplayGameEventType;
   time: number;
   playerId: number;
-  reason?: number; // only present for LEAVE events (LeaveReason code)
+  leaveReason?: EReplayLeaveReason; // only present for LEAVE events
 };
 
 export type ReplayPlayer = {

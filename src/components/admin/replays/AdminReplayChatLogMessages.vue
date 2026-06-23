@@ -32,7 +32,7 @@
             :time="item.event.time"
             :type="item.event.type"
             :playerName="getPlayerName(item.event.playerId)"
-            :reason="item.event.reason"
+            :leaveReason="item.event.leaveReason"
           />
         </template>
       </v-row>
