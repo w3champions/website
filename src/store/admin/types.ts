@@ -268,6 +268,22 @@ export type OverridesList = {
 export type ReplayChatLog = {
   players: ReplayPlayer[];
   messages: ReplayMessage[];
+  events: ReplayGameEvent[];
+};
+
+// Numeric values must mirror the backend ReplayGameEventType enum order
+// (System.Text.Json serializes enums as integers), same convention as EChatScope.
+export enum EReplayGameEventType {
+  PAUSE = 0,
+  RESUME = 1,
+  LEAVE = 2,
+}
+
+export type ReplayGameEvent = {
+  type: EReplayGameEventType;
+  time: number;
+  playerId: number;
+  reason?: number; // only present for LEAVE events (LeaveReason code)
 };
 
 export type ReplayPlayer = {
