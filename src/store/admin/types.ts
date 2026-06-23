@@ -268,6 +268,36 @@ export type OverridesList = {
 export type ReplayChatLog = {
   players: ReplayPlayer[];
   messages: ReplayMessage[];
+  events: ReplayGameEvent[];
+};
+
+// Numeric values must mirror the backend ReplayGameEventType enum order
+// (System.Text.Json serializes enums as integers), same convention as EChatScope.
+export enum EReplayGameEventType {
+  PAUSE = 0,
+  RESUME = 1,
+  LEAVE = 2,
+}
+
+// Snake_case LeaveReason strings emitted by the replay service. Mapped to
+// human-readable text in ReplayGameEventMessage.vue.
+export enum EReplayLeaveReason {
+  DISCONNECT = "disconnect",
+  LOST = "lost",
+  LOST_BUILDINGS = "lost_buildings",
+  WON = "won",
+  DRAW = "draw",
+  OBSERVER = "observer",
+  INVALID_SAVE_GAME = "invalid_save_game",
+  LOBBY = "lobby",
+  UNKNOWN = "unknown",
+}
+
+export type ReplayGameEvent = {
+  type: EReplayGameEventType;
+  time: number;
+  playerId: number;
+  leaveReason?: EReplayLeaveReason; // only present for LEAVE events
 };
 
 export type ReplayPlayer = {

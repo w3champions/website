@@ -13,20 +13,28 @@
           </v-btn>
         </div>
       </v-alert>
-      <v-row v-else-if="!messages || messages.length === 0" class="ma-1">
-        <span class="text-medium-emphasis">This match had no chat messages.</span>
+      <v-row v-else-if="timeline.length === 0" class="ma-1">
+        <span class="text-medium-emphasis">This match had no chat messages or events.</span>
       </v-row>
       <v-row v-else class="ma-1">
-        <replay-chat-message
-          v-for="(item, index) in messages"
-          :key="index"
-          :time="item.time"
-          :sentBy="getSenderName(item)"
-          :team="getTeam(item)"
-          :content="item.content"
-          :scope="item.scope.type"
-          :sentTo="getPrivateRecipientName(item)"
-        />
+        <template v-for="(item, index) in timeline" :key="index">
+          <replay-chat-message
+            v-if="item.kind === 'message'"
+            :time="item.message.time"
+            :sentBy="getSenderName(item.message)"
+            :team="getTeam(item.message)"
+            :content="item.message.content"
+            :scope="item.message.scope.type"
+            :sentTo="getPrivateRecipientName(item.message)"
+          />
+          <replay-game-event-message
+            v-else
+            :time="item.event.time"
+            :type="item.event.type"
+            :playerName="getPlayerName(item.event.playerId)"
+            :leaveReason="item.event.leaveReason"
+          />
+        </template>
       </v-row>
     </v-card-text>
   </v-container>
@@ -35,7 +43,8 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
-import { ReplayChatLog, ReplayMessage } from "@/store/admin/types";
+import ReplayGameEventMessage from "@/components/admin/replays/ReplayGameEventMessage.vue";
+import { ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import { useRoute } from "vue-router";
@@ -44,6 +53,7 @@ export default defineComponent({
   name: "AdminReplayChatLogMessages",
   components: {
     ReplayChatMessage,
+    ReplayGameEventMessage,
   },
   props: {
     matchId: {
@@ -59,12 +69,34 @@ export default defineComponent({
     const errorMessage = ref<string>("");
     const showLoginButton = ref(false);
 
-    const messages = computed<ReplayMessage[]>(() => log.value.messages);
+    type TimelineItem =
+      | { kind: "message"; time: number; message: ReplayMessage }
+      | { kind: "event"; time: number; event: ReplayGameEvent };
 
-    function getSenderName(message: ReplayMessage): string {
-      const name = log.value.players.find((x) => x.id == message.fromPlayer)?.name;
+    // Merge chat messages and game events into a single chronological list.
+    // Array.sort is stable, so messages and events sharing a timestamp keep insertion order.
+    const timeline = computed<TimelineItem[]>(() => {
+      const messages: TimelineItem[] = (log.value.messages ?? []).map((m) => ({
+        kind: "message",
+        time: m.time,
+        message: m,
+      }));
+      const events: TimelineItem[] = (log.value.events ?? []).map((e) => ({
+        kind: "event",
+        time: e.time,
+        event: e,
+      }));
+      return [...messages, ...events].sort((a, b) => a.time - b.time);
+    });
+
+    function getPlayerName(playerId: number): string {
+      const name = log.value.players.find((x) => x.id == playerId)?.name;
       if (name == undefined) return "UNKNOWN";
       return name;
+    }
+
+    function getSenderName(message: ReplayMessage): string {
+      return getPlayerName(message.fromPlayer);
     }
 
     function getTeam(message: ReplayMessage): number {
@@ -75,9 +107,7 @@ export default defineComponent({
 
     function getPrivateRecipientName(message: ReplayMessage): string | undefined {
       if (message.scope.id == null) return undefined;
-      const name = log.value.players.find((x) => x.id == message.scope.id)?.name;
-      if (name == undefined) return "UNKNOWN";
-      return name;
+      return getPlayerName(message.scope.id);
     }
 
     function promptLogin(): void {
@@ -120,10 +150,11 @@ export default defineComponent({
 
     return {
       loading,
-      messages,
+      timeline,
       getSenderName,
       getTeam,
       getPrivateRecipientName,
+      getPlayerName,
       errorMessage,
       showLoginButton,
       promptLogin,
