@@ -11,8 +11,18 @@
 import { computed, PropType, defineComponent } from "vue";
 import { EReplayGameEventType } from "@/store/admin/types";
 
-// Subset of W3GS LeaveReason codes worth distinguishing in the chat log.
-const LEAVE_REASON_DISCONNECT = 0x01;
+// W3GS LeaveReason codes (flo crates/w3gs/src/protocol/constants.rs).
+// Mapped to a short suffix shown after "left the game".
+const LEAVE_REASON_LABELS: Record<number, string> = {
+  0x01: "disconnected",
+  0x07: "lost",
+  0x08: "all buildings destroyed",
+  0x09: "won",
+  0x0a: "draw",
+  0x0b: "observer",
+  0x0c: "invalid save game",
+  0x0d: "left lobby",
+};
 
 export default defineComponent({
   name: "ReplayGameEventMessage",
@@ -42,11 +52,12 @@ export default defineComponent({
           return `${props.playerName} paused the game`;
         case EReplayGameEventType.RESUME:
           return `${props.playerName} resumed the game`;
-        case EReplayGameEventType.LEAVE:
-          if (props.reason === LEAVE_REASON_DISCONNECT) {
-            return `${props.playerName} left the game (disconnected)`;
-          }
-          return `${props.playerName} left the game`;
+        case EReplayGameEventType.LEAVE: {
+          const label = props.reason === undefined ? undefined : LEAVE_REASON_LABELS[props.reason];
+          return label
+            ? `${props.playerName} left the game (${label})`
+            : `${props.playerName} left the game`;
+        }
         default:
           return "";
       }
