@@ -2,18 +2,34 @@
   <v-container>
     <v-card-title class="d-flex align-center ga-3">
       <span>Chat Log</span>
-      <div class="d-flex align-center ga-2 text-body-2 text-medium-emphasis">
-        <span :class="{ 'text-high-emphasis': !showRealTime }">Game time</span>
-        <v-switch
-          v-model="showRealTime"
-          density="compact"
-          hide-details
-          inset
-          color="primary"
-          class="flex-grow-0"
-        />
-        <span :class="{ 'text-high-emphasis': showRealTime }">Real time</span>
-      </div>
+      <v-tooltip
+        v-if="!loading && timeline.length > 0"
+        location="top"
+        content-class="w3-tooltip elevation-1"
+        max-width="300"
+      >
+        <template v-slot:activator="{ props }">
+          <div
+            v-bind="props"
+            class="d-flex align-center ga-2 font-friz-medium text-body-2 ml-6"
+          >
+            <span class="text-uppercase" :class="showRealTime ? 'text-grey' : 'text-w3-gold'">Game time</span>
+            <v-switch
+              v-model="showRealTime"
+              density="compact"
+              hide-details
+              color="w3-gold"
+              base-color="w3-gold"
+              class="flex-grow-0"
+            />
+            <span class="text-uppercase" :class="showRealTime ? 'text-w3-gold' : 'text-grey'">Real time</span>
+          </div>
+        </template>
+        <span>
+          In-game time freezes while the game is paused; real time keeps advancing.
+          The two differ by the total time the game spent paused.
+        </span>
+      </v-tooltip>
     </v-card-title>
     <v-card-text>
       <v-row v-if="loading" justify="center" class="ma-1">
