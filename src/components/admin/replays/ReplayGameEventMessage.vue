@@ -1,6 +1,6 @@
 <template>
   <v-container class="ma-0 pa-0">
-    <div class="text-medium-emphasis font-italic">
+    <div class="text-medium-emphasis">
       <replay-log-time :time="time" :game-time="gameTime" />
       <span>{{ icon }} {{ description }}</span>
     </div>
