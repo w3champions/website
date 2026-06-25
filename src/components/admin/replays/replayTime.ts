@@ -7,13 +7,13 @@ export const REPLAY_SHOW_REAL_TIME: InjectionKey<Ref<boolean>> = Symbol("replayS
 // Per-mode accent colour (Vuetify colour name). Used bright for the active toggle
 // label and the switch, and muted (lower opacity) for the timestamps, so a cropped
 // screenshot reveals the active mode. Prefix with "text-" for a text-colour class.
-// Per-mode accent colours (Vuetify colour names), chosen by theme brightness so
-// they read on both: grey/blue on light themes (orc/human), gold/blue on dark
-// themes (undead/nightelf). Used bright for the label + switch, muted for the
-// timestamps. Prefix with "text-" for a text-colour class.
+// Per-mode accent colours (Vuetify colour names): grey for in-game, blue for real
+// time, tuned by theme brightness so they read on both light themes (orc/human)
+// and dark themes (undead/nightelf). Used bright for the label + switch, muted for
+// the timestamps. Prefix with "text-" for a text-colour class.
 export function replayTimeColors(isDark: boolean): { game: string; real: string } {
   return isDark
-    ? { game: "w3-gold", real: "light-blue-lighten-2" }
+    ? { game: "grey-lighten-1", real: "light-blue-lighten-2" }
     : { game: "grey-darken-1", real: "light-blue-darken-2" };
 }
 

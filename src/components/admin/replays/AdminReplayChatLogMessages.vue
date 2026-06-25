@@ -20,7 +20,7 @@
               hide-details
               :color="realTimeColor"
               :base-color="gameTimeColor"
-              class="flex-grow-0"
+              class="flex-grow-0 mx-2"
             />
             <span class="text-uppercase" :class="showRealTime ? `text-${realTimeColor}` : 'text-grey'">Real time</span>
           </div>
