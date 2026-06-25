@@ -77,7 +77,8 @@
 import { computed, defineComponent, onMounted, provide, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import ReplayGameEventMessage from "@/components/admin/replays/ReplayGameEventMessage.vue";
-import { GAME_TIME_COLOR, REAL_TIME_COLOR, REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
+import { useTheme } from "vuetify";
+import { REPLAY_SHOW_REAL_TIME, replayTimeColors } from "@/components/admin/replays/replayTime";
 import { EReplayGameEventType, ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
@@ -106,6 +107,11 @@ export default defineComponent({
     // Toggle (switch at the top) shared with every ReplayLogTime via inject.
     const showRealTime = ref(false);
     provide(REPLAY_SHOW_REAL_TIME, showRealTime);
+
+    // Per-mode accent colours, theme-aware (grey/blue on light, gold/blue on dark).
+    const theme = useTheme();
+    const gameTimeColor = computed(() => replayTimeColors(theme.current.value.dark).game);
+    const realTimeColor = computed(() => replayTimeColors(theme.current.value.dark).real);
 
     type TimelineItem =
       | { kind: "message"; time: number; message: ReplayMessage }
@@ -211,8 +217,8 @@ export default defineComponent({
       timeline,
       showRealTime,
       resumeDurationFor,
-      gameTimeColor: GAME_TIME_COLOR,
-      realTimeColor: REAL_TIME_COLOR,
+      gameTimeColor,
+      realTimeColor,
       getSenderName,
       getTeam,
       getPrivateRecipientName,

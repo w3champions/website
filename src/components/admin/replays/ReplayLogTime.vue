@@ -4,7 +4,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, ref, Ref } from "vue";
-import { GAME_TIME_COLOR, REAL_TIME_COLOR, REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
+import { useTheme } from "vuetify";
+import { REPLAY_SHOW_REAL_TIME, replayTimeColors } from "@/components/admin/replays/replayTime";
 
 export default defineComponent({
   name: "ReplayLogTime",
@@ -17,10 +18,14 @@ export default defineComponent({
   setup(props) {
     // Toggled by the switch at the top of the chat log. Defaults to in-game time.
     const showRealTime = inject<Ref<boolean>>(REPLAY_SHOW_REAL_TIME, ref(false));
+    const theme = useTheme();
 
     const label = computed(() => formatTime(showRealTime.value ? props.time : props.gameTime));
     const title = computed(() => (showRealTime.value ? "Real time" : "In-game time"));
-    const colorClass = computed(() => `text-${showRealTime.value ? REAL_TIME_COLOR : GAME_TIME_COLOR}`);
+    const colorClass = computed(() => {
+      const colors = replayTimeColors(theme.current.value.dark);
+      return `text-${showRealTime.value ? colors.real : colors.game}`;
+    });
 
     // Example: 1500     -> 00:15
     // Example: 15000000 -> 04:10:00
@@ -47,8 +52,8 @@ export default defineComponent({
   display: inline-block;
   width: 5rem;
   font-family: monospace;
-  /* Mute the per-mode accent so the timestamps read as a subtle grey-ish tint
-     rather than the bright label/switch colour. */
-  opacity: 0.6;
+  /* Slightly mute the per-mode accent so the timestamps read a touch softer than
+     the bright label/switch colour. */
+  opacity: 0.85;
 }
 </style>
