@@ -1,10 +1,10 @@
 <template>
-  <span class="replay-log-time text-medium-emphasis mr-2" :title="title">[{{ label }}]</span>
+  <span class="replay-log-time mr-2" :class="colorClass" :title="title">[{{ label }}]</span>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, inject, ref, Ref } from "vue";
-import { REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
+import { GAME_TIME_COLOR, REAL_TIME_COLOR, REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
 
 export default defineComponent({
   name: "ReplayLogTime",
@@ -20,6 +20,7 @@ export default defineComponent({
 
     const label = computed(() => formatTime(showRealTime.value ? props.time : props.gameTime));
     const title = computed(() => (showRealTime.value ? "Real time" : "In-game time"));
+    const colorClass = computed(() => `text-${showRealTime.value ? REAL_TIME_COLOR : GAME_TIME_COLOR}`);
 
     // Example: 1500     -> 00:15
     // Example: 15000000 -> 04:10:00
@@ -36,7 +37,7 @@ export default defineComponent({
       return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     }
 
-    return { label, title };
+    return { label, title, colorClass };
   },
 });
 </script>
@@ -46,5 +47,8 @@ export default defineComponent({
   display: inline-block;
   width: 5rem;
   font-family: monospace;
+  /* Mute the per-mode accent so the timestamps read as a subtle grey-ish tint
+     rather than the bright label/switch colour. */
+  opacity: 0.6;
 }
 </style>

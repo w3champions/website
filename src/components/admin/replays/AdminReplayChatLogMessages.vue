@@ -13,16 +13,16 @@
             v-bind="props"
             class="d-flex align-center ga-2 font-friz-medium text-body-2 ml-6"
           >
-            <span class="text-uppercase" :class="showRealTime ? 'text-grey' : 'text-w3-gold'">Game time</span>
+            <span class="text-uppercase" :class="showRealTime ? 'text-grey' : `text-${gameTimeColor}`">Game time</span>
             <v-switch
               v-model="showRealTime"
               density="compact"
               hide-details
-              color="w3-gold"
-              base-color="w3-gold"
+              :color="realTimeColor"
+              :base-color="gameTimeColor"
               class="flex-grow-0"
             />
-            <span class="text-uppercase" :class="showRealTime ? 'text-w3-gold' : 'text-grey'">Real time</span>
+            <span class="text-uppercase" :class="showRealTime ? `text-${realTimeColor}` : 'text-grey'">Real time</span>
           </div>
         </template>
         <span>
@@ -77,7 +77,7 @@
 import { computed, defineComponent, onMounted, provide, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import ReplayGameEventMessage from "@/components/admin/replays/ReplayGameEventMessage.vue";
-import { REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
+import { GAME_TIME_COLOR, REAL_TIME_COLOR, REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
 import { EReplayGameEventType, ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
@@ -211,6 +211,8 @@ export default defineComponent({
       timeline,
       showRealTime,
       resumeDurationFor,
+      gameTimeColor: GAME_TIME_COLOR,
+      realTimeColor: REAL_TIME_COLOR,
       getSenderName,
       getTeam,
       getPrivateRecipientName,
