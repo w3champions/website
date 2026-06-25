@@ -1,6 +1,36 @@
 <template>
   <v-container>
-    <v-card-title>Chat Log</v-card-title>
+    <v-card-title class="d-flex align-center ga-3">
+      <span>Chat Log</span>
+      <v-tooltip
+        v-if="!loading && timeline.length > 0"
+        location="top"
+        content-class="w3-tooltip elevation-1"
+        max-width="300"
+      >
+        <template v-slot:activator="{ props }">
+          <div
+            v-bind="props"
+            class="d-flex align-center ga-2 font-friz-medium text-body-2 ml-6"
+          >
+            <span class="text-uppercase" :class="showRealTime ? 'text-grey' : `text-${gameTimeColor}`">Game time</span>
+            <v-switch
+              v-model="showRealTime"
+              density="compact"
+              hide-details
+              :color="realTimeColor"
+              :base-color="gameTimeColor"
+              class="flex-grow-0 mx-2"
+            />
+            <span class="text-uppercase" :class="showRealTime ? `text-${realTimeColor}` : 'text-grey'">Real time</span>
+          </div>
+        </template>
+        <span>
+          In-game time freezes while the game is paused; real time keeps advancing.
+          The two differ by the total time the game spent paused.
+        </span>
+      </v-tooltip>
+    </v-card-title>
     <v-card-text>
       <v-row v-if="loading" justify="center" class="ma-1">
         <v-progress-circular indeterminate />
@@ -21,6 +51,7 @@
           <replay-chat-message
             v-if="item.kind === 'message'"
             :time="item.message.time"
+            :gameTime="item.message.gameTime"
             :sentBy="getSenderName(item.message)"
             :team="getTeam(item.message)"
             :content="item.message.content"
@@ -30,9 +61,11 @@
           <replay-game-event-message
             v-else
             :time="item.event.time"
+            :gameTime="item.event.gameTime"
             :type="item.event.type"
             :playerName="getPlayerName(item.event.playerId)"
             :leaveReason="item.event.leaveReason"
+            :pauseDurationMs="resumeDurationFor(item.event)"
           />
         </template>
       </v-row>
@@ -41,10 +74,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, provide, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import ReplayGameEventMessage from "@/components/admin/replays/ReplayGameEventMessage.vue";
-import { ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
+import { useTheme } from "vuetify";
+import { REPLAY_SHOW_REAL_TIME, replayTimeColors } from "@/components/admin/replays/replayTime";
+import { EReplayGameEventType, ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import { useRoute } from "vue-router";
@@ -69,6 +104,15 @@ export default defineComponent({
     const errorMessage = ref<string>("");
     const showLoginButton = ref(false);
 
+    // Toggle (switch at the top) shared with every ReplayLogTime via inject.
+    const showRealTime = ref(false);
+    provide(REPLAY_SHOW_REAL_TIME, showRealTime);
+
+    // Per-mode accent colours, theme-aware (grey/blue on light, gold/blue on dark).
+    const theme = useTheme();
+    const gameTimeColor = computed(() => replayTimeColors(theme.current.value.dark).game);
+    const realTimeColor = computed(() => replayTimeColors(theme.current.value.dark).real);
+
     type TimelineItem =
       | { kind: "message"; time: number; message: ReplayMessage }
       | { kind: "event"; time: number; event: ReplayGameEvent };
@@ -88,6 +132,26 @@ export default defineComponent({
       }));
       return [...messages, ...events].sort((a, b) => a.time - b.time);
     });
+
+    // Real-time duration of each resume's pause: resume.time - matching pause.time.
+    // Events arrive ordered by time, so the matching pause is the most recent one.
+    const resumeDurations = computed<Map<ReplayGameEvent, number>>(() => {
+      const durations = new Map<ReplayGameEvent, number>();
+      let lastPause: ReplayGameEvent | null = null;
+      for (const event of log.value.events ?? []) {
+        if (event.type === EReplayGameEventType.PAUSE) {
+          lastPause = event;
+        } else if (event.type === EReplayGameEventType.RESUME) {
+          if (lastPause) durations.set(event, event.time - lastPause.time);
+          lastPause = null;
+        }
+      }
+      return durations;
+    });
+
+    function resumeDurationFor(event: ReplayGameEvent): number | undefined {
+      return resumeDurations.value.get(event);
+    }
 
     function getPlayerName(playerId: number): string {
       const name = log.value.players.find((x) => x.id == playerId)?.name;
@@ -151,6 +215,10 @@ export default defineComponent({
     return {
       loading,
       timeline,
+      showRealTime,
+      resumeDurationFor,
+      gameTimeColor,
+      realTimeColor,
       getSenderName,
       getTeam,
       getPrivateRecipientName,
