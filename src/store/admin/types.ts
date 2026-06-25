@@ -295,7 +295,8 @@ export enum EReplayLeaveReason {
 
 export type ReplayGameEvent = {
   type: EReplayGameEventType;
-  time: number;
+  time: number; // real elapsed time (ms), advances during pauses
+  gameTime: number; // in-game clock (ms), frozen during pauses
   playerId: number;
   leaveReason?: EReplayLeaveReason; // only present for LEAVE events
 };
@@ -308,7 +309,8 @@ export type ReplayPlayer = {
 };
 
 export type ReplayMessage = {
-  time: number;
+  time: number; // real elapsed time (ms), advances during pauses
+  gameTime: number; // in-game clock (ms), frozen during pauses
   fromPlayer: number;
   scope: ReplayMessageScope;
   content: string;

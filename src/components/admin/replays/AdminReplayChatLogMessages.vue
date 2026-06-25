@@ -21,6 +21,7 @@
           <replay-chat-message
             v-if="item.kind === 'message'"
             :time="item.message.time"
+            :gameTime="item.message.gameTime"
             :sentBy="getSenderName(item.message)"
             :team="getTeam(item.message)"
             :content="item.message.content"
@@ -30,6 +31,7 @@
           <replay-game-event-message
             v-else
             :time="item.event.time"
+            :gameTime="item.event.gameTime"
             :type="item.event.type"
             :playerName="getPlayerName(item.event.playerId)"
             :leaveReason="item.event.leaveReason"

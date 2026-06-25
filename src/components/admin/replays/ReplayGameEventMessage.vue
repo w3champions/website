@@ -1,7 +1,7 @@
 <template>
   <v-container class="ma-0 pa-0">
     <div class="text-medium-emphasis font-italic">
-      <span class="chat-time mr-2">[{{ formatTime(time) }}]</span>
+      <replay-log-time :time="time" :game-time="gameTime" />
       <span>{{ icon }} {{ description }}</span>
     </div>
   </v-container>
@@ -10,6 +10,7 @@
 <script lang="ts">
 import { computed, PropType, defineComponent } from "vue";
 import { EReplayGameEventType, EReplayLeaveReason } from "@/store/admin/types";
+import ReplayLogTime from "@/components/admin/replays/ReplayLogTime.vue";
 
 // Maps a LeaveReason enum value to the short suffix shown after "left the game".
 const LEAVE_REASON_LABELS: Partial<Record<EReplayLeaveReason, string>> = {
@@ -25,8 +26,10 @@ const LEAVE_REASON_LABELS: Partial<Record<EReplayLeaveReason, string>> = {
 
 export default defineComponent({
   name: "ReplayGameEventMessage",
+  components: { ReplayLogTime },
   props: {
     time: { type: Number, required: true },
+    gameTime: { type: Number, required: true },
     type: { type: Number as PropType<EReplayGameEventType>, required: true },
     playerName: { type: String, required: true },
     leaveReason: { type: String as PropType<EReplayLeaveReason>, required: false, default: undefined },
@@ -62,34 +65,10 @@ export default defineComponent({
       }
     });
 
-    // Example: 1500     -> 00:15
-    // Example: 15000000 -> 04:10:00
-    function formatTime(timeMs: number): string {
-      const totalSeconds = Math.floor(timeMs / 1000);
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      if (hours > 0) {
-        return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-      }
-
-      return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    }
-
     return {
       icon,
       description,
-      formatTime,
     };
   },
 });
 </script>
-
-<style scoped>
-.chat-time {
-  display: inline-block;
-  width: 5rem;
-  font-family: monospace;
-}
-</style>
