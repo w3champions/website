@@ -1,15 +1,19 @@
 <template>
   <v-container>
-    <v-card-title class="d-flex align-center justify-space-between">
-      Chat Log
-      <v-switch
-        v-model="showRealTime"
-        label="Real time"
-        density="compact"
-        hide-details
-        color="primary"
-        class="flex-grow-0"
-      />
+    <v-card-title class="d-flex align-center ga-3">
+      <span>Chat Log</span>
+      <div class="d-flex align-center ga-2 text-body-2 text-medium-emphasis">
+        <span :class="{ 'text-high-emphasis': !showRealTime }">Game time</span>
+        <v-switch
+          v-model="showRealTime"
+          density="compact"
+          hide-details
+          inset
+          color="primary"
+          class="flex-grow-0"
+        />
+        <span :class="{ 'text-high-emphasis': showRealTime }">Real time</span>
+      </div>
     </v-card-title>
     <v-card-text>
       <v-row v-if="loading" justify="center" class="ma-1">
