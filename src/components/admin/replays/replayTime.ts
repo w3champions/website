@@ -8,7 +8,8 @@ export const REPLAY_SHOW_REAL_TIME: InjectionKey<Ref<boolean>> = Symbol("replayS
 // label and the switch, and muted (lower opacity) for the timestamps, so a cropped
 // screenshot reveals the active mode. Prefix with "text-" for a text-colour class.
 export const GAME_TIME_COLOR = "w3-gold";
-export const REAL_TIME_COLOR = "light-blue";
+// A lighter blue so it reads at a similar brightness to the gold.
+export const REAL_TIME_COLOR = "light-blue-lighten-2";
 
 // Format a pause duration (ms) as a short human string: "38s", "1m 5s".
 export function formatPauseDuration(ms: number): string {
