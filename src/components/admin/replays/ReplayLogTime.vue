@@ -1,18 +1,10 @@
 <template>
-  <span class="replay-log-time text-medium-emphasis mr-2">
-    <span :title="gameTime !== time ? 'In-game time (clock was paused)' : 'In-game time'">
-      [{{ formatTime(gameTime) }}]
-    </span>
-    <span
-      v-if="gameTime !== time"
-      class="text-disabled ml-1"
-      title="Real time (advances during pauses)"
-    >{{ formatTime(time) }}</span>
-  </span>
+  <span class="replay-log-time text-medium-emphasis mr-2" :title="title">[{{ label }}]</span>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, inject, ref, Ref } from "vue";
+import { REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
 
 export default defineComponent({
   name: "ReplayLogTime",
@@ -22,7 +14,13 @@ export default defineComponent({
     // In-game clock in ms (frozen during pauses).
     gameTime: { type: Number, required: true },
   },
-  setup() {
+  setup(props) {
+    // Toggled by the switch at the top of the chat log. Defaults to in-game time.
+    const showRealTime = inject<Ref<boolean>>(REPLAY_SHOW_REAL_TIME, ref(false));
+
+    const label = computed(() => formatTime(showRealTime.value ? props.time : props.gameTime));
+    const title = computed(() => (showRealTime.value ? "Real time" : "In-game time"));
+
     // Example: 1500     -> 00:15
     // Example: 15000000 -> 04:10:00
     function formatTime(timeMs: number): string {
@@ -38,7 +36,7 @@ export default defineComponent({
       return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     }
 
-    return { formatTime };
+    return { label, title };
   },
 });
 </script>
@@ -46,7 +44,7 @@ export default defineComponent({
 <style scoped>
 .replay-log-time {
   display: inline-block;
-  width: 8.5rem;
+  width: 5rem;
   font-family: monospace;
 }
 </style>

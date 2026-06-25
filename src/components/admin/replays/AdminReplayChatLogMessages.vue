@@ -1,6 +1,16 @@
 <template>
   <v-container>
-    <v-card-title>Chat Log</v-card-title>
+    <v-card-title class="d-flex align-center justify-space-between">
+      Chat Log
+      <v-switch
+        v-model="showRealTime"
+        label="Real time"
+        density="compact"
+        hide-details
+        color="primary"
+        class="flex-grow-0"
+      />
+    </v-card-title>
     <v-card-text>
       <v-row v-if="loading" justify="center" class="ma-1">
         <v-progress-circular indeterminate />
@@ -35,6 +45,7 @@
             :type="item.event.type"
             :playerName="getPlayerName(item.event.playerId)"
             :leaveReason="item.event.leaveReason"
+            :pauseDurationMs="resumeDurationFor(item.event)"
           />
         </template>
       </v-row>
@@ -43,10 +54,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, provide, ref } from "vue";
 import ReplayChatMessage from "@/components/admin/replays/ReplayChatMessage.vue";
 import ReplayGameEventMessage from "@/components/admin/replays/ReplayGameEventMessage.vue";
-import { ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
+import { REPLAY_SHOW_REAL_TIME } from "@/components/admin/replays/replayTime";
+import { EReplayGameEventType, ReplayChatLog, ReplayGameEvent, ReplayMessage } from "@/store/admin/types";
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import { useRoute } from "vue-router";
@@ -71,6 +83,10 @@ export default defineComponent({
     const errorMessage = ref<string>("");
     const showLoginButton = ref(false);
 
+    // Toggle (switch at the top) shared with every ReplayLogTime via inject.
+    const showRealTime = ref(false);
+    provide(REPLAY_SHOW_REAL_TIME, showRealTime);
+
     type TimelineItem =
       | { kind: "message"; time: number; message: ReplayMessage }
       | { kind: "event"; time: number; event: ReplayGameEvent };
@@ -90,6 +106,26 @@ export default defineComponent({
       }));
       return [...messages, ...events].sort((a, b) => a.time - b.time);
     });
+
+    // Real-time duration of each resume's pause: resume.time - matching pause.time.
+    // Events arrive ordered by time, so the matching pause is the most recent one.
+    const resumeDurations = computed<Map<ReplayGameEvent, number>>(() => {
+      const durations = new Map<ReplayGameEvent, number>();
+      let lastPause: ReplayGameEvent | null = null;
+      for (const event of log.value.events ?? []) {
+        if (event.type === EReplayGameEventType.PAUSE) {
+          lastPause = event;
+        } else if (event.type === EReplayGameEventType.RESUME) {
+          if (lastPause) durations.set(event, event.time - lastPause.time);
+          lastPause = null;
+        }
+      }
+      return durations;
+    });
+
+    function resumeDurationFor(event: ReplayGameEvent): number | undefined {
+      return resumeDurations.value.get(event);
+    }
 
     function getPlayerName(playerId: number): string {
       const name = log.value.players.find((x) => x.id == playerId)?.name;
@@ -153,6 +189,8 @@ export default defineComponent({
     return {
       loading,
       timeline,
+      showRealTime,
+      resumeDurationFor,
       getSenderName,
       getTeam,
       getPrivateRecipientName,

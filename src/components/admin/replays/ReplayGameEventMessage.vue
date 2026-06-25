@@ -11,6 +11,7 @@
 import { computed, PropType, defineComponent } from "vue";
 import { EReplayGameEventType, EReplayLeaveReason } from "@/store/admin/types";
 import ReplayLogTime from "@/components/admin/replays/ReplayLogTime.vue";
+import { formatPauseDuration } from "@/components/admin/replays/replayTime";
 
 // Maps a LeaveReason enum value to the short suffix shown after "left the game".
 const LEAVE_REASON_LABELS: Partial<Record<EReplayLeaveReason, string>> = {
@@ -33,6 +34,8 @@ export default defineComponent({
     type: { type: Number as PropType<EReplayGameEventType>, required: true },
     playerName: { type: String, required: true },
     leaveReason: { type: String as PropType<EReplayLeaveReason>, required: false, default: undefined },
+    // Real-time duration (ms) of the pause this resume ends; undefined otherwise.
+    pauseDurationMs: { type: Number, required: false, default: undefined },
   },
   setup(props) {
     const icon = computed<string>(() => {
@@ -53,7 +56,9 @@ export default defineComponent({
         case EReplayGameEventType.PAUSE:
           return `${props.playerName} paused the game`;
         case EReplayGameEventType.RESUME:
-          return `${props.playerName} resumed the game`;
+          return props.pauseDurationMs !== undefined
+            ? `${props.playerName} resumed the game (paused ${formatPauseDuration(props.pauseDurationMs)})`
+            : `${props.playerName} resumed the game`;
         case EReplayGameEventType.LEAVE: {
           const label = props.leaveReason === undefined ? undefined : LEAVE_REASON_LABELS[props.leaveReason];
           return label
