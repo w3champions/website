@@ -54,11 +54,6 @@
                   <li>{{ $t("views_home.homebody13") }}</li>
                 </ul>
                 <br />
-                {{ $t("views_home.homebody12") }}
-                <ul>
-                  <li>{{ $t("views_home.homebody14") }}</li>
-                </ul>
-                <br />
                 {{ $t("views_home.homebody15") }}
                 <br />
                 {{ $t("views_home.homebody16") }}

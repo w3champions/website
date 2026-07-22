@@ -186,7 +186,6 @@ import {
   mdiInvertColors,
   mdiLogout,
   mdiTreasureChest,
-  mdiTrophy,
   mdiViewList,
 } from "@mdi/js";
 
@@ -227,11 +226,6 @@ export default defineComponent({
     });
 
     const items: ItemType[] = [
-      {
-        title: "tournaments",
-        icon: mdiTrophy,
-        to: EMainRouteName.TOURNAMENTS,
-      },
       {
         title: "rankings",
         icon: mdiViewList,
