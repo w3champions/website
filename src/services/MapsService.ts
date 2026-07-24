@@ -2,6 +2,31 @@ import { API_URL } from "@/config/env";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
+  // The backend returns either a bare string (its own HttpRequestException message,
+  // which already carries the matchmaking service's joined errors) or the raw
+  // { errors: [{ msg }] } envelope. Passing the parsed body to new Error() yields
+  // "[object Object]", so pull a readable message out of both shapes.
+  private static async errorFromResponse(response: Response): Promise<Error> {
+    const fallback = `Request failed with status ${response.status}.`;
+
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      return new Error(fallback);
+    }
+
+    if (typeof body === "string" && body.trim()) return new Error(body);
+
+    const errors = (body as { errors?: { msg?: string }[] })?.errors;
+    if (Array.isArray(errors)) {
+      const messages = errors.map((error) => error?.msg).filter((msg): msg is string => !!msg);
+      if (messages.length) return new Error(messages.join(", "));
+    }
+
+    return new Error(fallback);
+  }
+
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
     const filterParam = filter ? `&filter=${filter}` : "";
 
@@ -33,8 +58,7 @@ export default class MapsService {
     });
 
     if (!response.ok) {
-      const msg = await response.json();
-      throw new Error(msg);
+      throw await MapsService.errorFromResponse(response);
     }
     return await response.json();
   }
@@ -54,8 +78,7 @@ export default class MapsService {
     });
 
     if (!response.ok) {
-      const msg = await response.json();
-      throw new Error(msg);
+      throw await MapsService.errorFromResponse(response);
     }
     return await response.json();
   }
@@ -87,8 +110,7 @@ export default class MapsService {
     });
 
     if (!response.ok) {
-      const msg = await response.json();
-      throw new Error(msg);
+      throw await MapsService.errorFromResponse(response);
     }
     return await response.json();
   }

@@ -24,8 +24,13 @@ export interface Map {
 
 export interface MapForce {
   team: number;
-  slots: number[];
+  slots: MapForceSlot[];
   computers?: MapForceComputer[];
+}
+
+export interface MapForceSlot {
+  index: number;
+  color?: EColors | null;
 }
 
 export interface MapForceComputer {

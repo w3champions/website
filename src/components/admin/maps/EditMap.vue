@@ -56,6 +56,13 @@
               class="text-medium-emphasis"
             />
           </v-col>
+
+          <v-col cols="12" class="pt-0">
+            <mapped-forces-editor
+              v-model="mappedForces"
+              @update:valid="isMappedForcesValid = $event"
+            />
+          </v-col>
         </v-row>
       </v-container>
     </v-card-text>
@@ -65,7 +72,7 @@
       <v-btn variant="text" @click="cancel">
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
-      <v-btn class="bg-primary text-w3-race-bg" @click="save">
+      <v-btn class="bg-primary text-w3-race-bg" :disabled="!isMappedForcesValid" @click="save">
         {{ $t(`views_admin.save`) }}
       </v-btn>
     </v-card-actions>
@@ -74,11 +81,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
-import { Map } from "@/store/admin/mapsManagement/types";
+import { Map, MapForce } from "@/store/admin/mapsManagement/types";
+import MappedForcesEditor from "./MappedForcesEditor.vue";
 
 export default defineComponent({
   name: "EditMap",
-  components: {},
+  components: { MappedForcesEditor },
   props: {
     map: {
       type: Object as PropType<Map>,
@@ -93,16 +101,20 @@ export default defineComponent({
     const mapId = ref<number | null>(null);
     const title = ref<string>(props.isAddDialog ? "Create map" : "Edit map");
     const mapRef = ref<Map>(props.map);
+    const mappedForces = ref<MapForce[]>(props.map.mappedForces ?? []);
+    const isMappedForcesValid = ref<boolean>(true);
 
     function cancel() {
       context.emit("cancel");
     }
 
     function save() {
-      // const editedMap = Object.create(props.map);
+      if (!isMappedForcesValid.value) return;
+
       if (props.isAddDialog && mapId.value !== null) {
         mapRef.value.id = mapId.value;
       }
+      mapRef.value.mappedForces = mappedForces.value;
       context.emit("save", mapRef.value);
     }
 
@@ -112,6 +124,8 @@ export default defineComponent({
       cancel,
       save,
       mapRef,
+      mappedForces,
+      isMappedForcesValid,
     };
   },
 });

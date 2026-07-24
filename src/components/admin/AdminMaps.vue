@@ -116,16 +116,22 @@ export default defineComponent({
       editedMap.value = createDefaultMap();
     }
 
+    // Deep clone: mappedForces and gameMap are nested, so a shallow copy would let
+    // the dialog mutate the store's row even when the edit is cancelled.
+    function cloneMap(map: Map): Map {
+      return JSON.parse(JSON.stringify(map));
+    }
+
     function configureMap(map: Map): void {
       isAddDialog.value = false;
       isEditOpen.value = true;
-      editedMap.value = Object.assign({}, map);
+      editedMap.value = cloneMap(map);
     }
 
     function configureMapFiles(map: Map): void {
       isAddDialog.value = false;
       isEditFilesOpen.value = true;
-      editedMap.value = Object.assign({}, map);
+      editedMap.value = cloneMap(map);
     }
 
     function closeEdit(): void {
