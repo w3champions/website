@@ -142,7 +142,9 @@
       </v-btn>
     </v-card-actions>
 
-    <v-dialog v-model="isConfirmOpen" max-width="520px">
+    <!-- Wide enough for the two-column file details; Vuetify's breakpoints go by
+         the viewport, so a narrow dialog still gets two columns. -->
+    <v-dialog v-model="isConfirmOpen" max-width="720px">
       <v-card>
         <v-card-title>Select this file?</v-card-title>
         <v-card-text>
