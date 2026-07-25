@@ -27,6 +27,9 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     },
     async loadMapFiles(mapId: number) {
       const oauthStore = useOauthStore();
+      // The list is shared state, so drop the previous map's files first: otherwise
+      // they stay on screen, looking like this map's files, until the reply lands.
+      this.SET_MAP_FILES([]);
       const mapFiles = await MapsService.getMapFiles(oauthStore.token, mapId);
       this.SET_MAP_FILES(mapFiles);
     },

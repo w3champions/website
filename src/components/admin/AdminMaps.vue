@@ -72,6 +72,8 @@
           :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
           :search="search"
           class="elevation-1"
+          show-expand
+          item-value="id"
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.disabled`]="{ item }">
@@ -135,6 +137,15 @@
               </v-tooltip>
             </div>
           </template>
+
+          <!-- What the map's selected file actually contains, without opening a dialog. -->
+          <template v-slot:expanded-row="{ columns, item }">
+            <tr>
+              <td :colspan="columns.length" class="py-3">
+                <map-file-details :game-map="item.gameMap" :map="item" :collapsible="false" />
+              </td>
+            </tr>
+          </template>
         </v-data-table>
       </v-card>
     </v-container>
@@ -151,6 +162,7 @@ import type { AdminMapsFilters, Map, MapFileData } from "@/store/admin/mapsManag
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
+import MapFileDetails from "./maps/MapFileDetails.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiEyeOffOutline, mdiEyeOutline, mdiFile, mdiMagnify, mdiPencil } from "@mdi/js";
@@ -162,6 +174,7 @@ export default defineComponent({
     EditMap,
     EditMapFiles,
     BulkMapUpload,
+    MapFileDetails,
   },
   setup() {
     const oauthStore = useOauthStore();

@@ -17,16 +17,24 @@
       <div class="text-medium-emphasis mb-1">Forces</div>
       <div class="d-flex flex-wrap ga-2">
         <v-chip v-for="force in forces" :key="force.name" size="small" variant="tonal">
-          {{ force.name }} &middot; {{ force.slots }} slot{{ force.slots === 1 ? "" : "s" }}
+          {{ force.name }}<template v-if="force.slots > 0">
+            &middot; {{ force.slots }} slot{{ force.slots === 1 ? "" : "s" }}
+          </template>
         </v-chip>
       </div>
     </div>
 
-    <div v-if="playerNames.length" class="mt-3">
-      <div class="text-medium-emphasis mb-1">Players</div>
+    <div v-if="slots.length" class="mt-3">
+      <div class="text-medium-emphasis mb-1">Slots</div>
       <div class="d-flex flex-wrap ga-2">
-        <v-chip v-for="(name, index) in playerNames" :key="`${name}-${index}`" size="small" variant="tonal">
-          {{ name }}
+        <v-chip
+          v-for="(player, index) in slots"
+          :key="`${player.name}-${index}`"
+          size="small"
+          variant="tonal"
+          :color="player.isPlayerSlot ? undefined : 'medium-emphasis'"
+        >
+          {{ player.name }}<template v-if="player.typeLabel">&nbsp;&middot; {{ player.typeLabel }}</template>
         </v-chip>
       </div>
     </div>
@@ -42,6 +50,22 @@ interface Field {
   value: string;
 }
 
+interface MapSlot {
+  name: string;
+  isPlayerSlot: boolean;
+  typeLabel: string;
+}
+
+// war3map.w3i slot types. Type 1 is a slot a person can occupy - the format calls it
+// "human", but that collides with the Human race, so it is labelled "Player" here.
+const SLOT_TYPE_PLAYER = 1;
+const SLOT_TYPE_LABELS: Record<number, string> = {
+  1: "Player",
+  2: "Computer",
+  3: "Neutral",
+  4: "Rescuable",
+};
+
 export default defineComponent({
   name: "MapFileDetailsTable",
   props: {
@@ -53,19 +77,45 @@ export default defineComponent({
       type: Array as PropType<{ name: string; slots: number }[]>,
       default: () => [],
     },
+    slotSummary: {
+      type: String,
+      default: "",
+    },
   },
   setup(props) {
-    const playerNames = computed<string[]>(() =>
-      (props.gameMap.players ?? []).map((player, index) => player.name || `Player ${index + 1}`)
+    const slots = computed<MapSlot[]>(() =>
+      (props.gameMap.players ?? []).map((player, index) => ({
+        name: player.name || `Slot ${index + 1}`,
+        isPlayerSlot: player.type === SLOT_TYPE_PLAYER,
+        // Player slots are the norm, so only the others are worth labelling.
+        typeLabel: player.type === SLOT_TYPE_PLAYER
+          ? ""
+          : SLOT_TYPE_LABELS[player.type] ?? `type ${player.type}`,
+      }))
     );
+
+    const slotBreakdown = computed<string>(() => {
+      const total = props.gameMap.num_players ?? 0;
+      const counts: Record<string, number> = {};
+      for (const player of props.gameMap.players ?? []) {
+        const label = SLOT_TYPE_LABELS[player.type] ?? `type ${player.type}`;
+        counts[label] = (counts[label] ?? 0) + 1;
+      }
+
+      const parts = Object.entries(counts).map(
+        ([label, count]) => `${count} ${label.toLowerCase()}${count === 1 ? "" : "s"}`
+      );
+      return parts.length ? `${total} total (${parts.join(", ")})` : String(total);
+    });
 
     const fields = computed<Field[]>(() => {
       const gameMap = props.gameMap;
       const entries: Field[] = [
         { label: "Author", value: gameMap.author || "—" },
         { label: "Size", value: gameMap.width && gameMap.height ? `${gameMap.width} × ${gameMap.height}` : "—" },
-        { label: "Player slots", value: String(gameMap.num_players ?? "—") },
-        { label: "Suggested players", value: gameMap.suggested_players || "—" },
+        { label: "Slots", value: slotBreakdown.value },
+        // Free text the map author wrote into the map header, not a computed value.
+        { label: "Author's suggestion", value: gameMap.suggested_players || "—" },
         { label: "12 player map", value: gameMap.twelve_p ? "Yes" : "No" },
         { label: "Path", value: gameMap.path || "—" },
         { label: "SHA1", value: gameMap.sha1 || "—" },
@@ -81,7 +131,7 @@ export default defineComponent({
 
     return {
       fields,
-      playerNames,
+      slots,
     };
   },
 });

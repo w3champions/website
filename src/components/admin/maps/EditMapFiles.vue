@@ -27,6 +27,8 @@
           :items-per-page="100"
           height="320"
           fixed-header
+          :loading="loadingFiles"
+          loading-text="Loading map files…"
           show-expand
           item-value="id"
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
@@ -162,6 +164,7 @@ export default defineComponent({
     const fileName = ref<string>("");
     const files = ref<File[]>([]);
     const uploading = ref<boolean>(false);
+    const loadingFiles = ref<boolean>(true);
     const uploadPercent = ref<number>(0);
     const uploadError = ref<string>("");
     const isConfirmOpen = ref<boolean>(false);
@@ -236,7 +239,12 @@ export default defineComponent({
     }
 
     onMounted(async (): Promise<void> => {
-      await mapsManagementStore.loadMapFiles(props.map.id);
+      loadingFiles.value = true;
+      try {
+        await mapsManagementStore.loadMapFiles(props.map.id);
+      } finally {
+        loadingFiles.value = false;
+      }
       await scrollToSelectedFile();
     });
 
@@ -264,6 +272,7 @@ export default defineComponent({
       files,
       fileName,
       uploading,
+      loadingFiles,
       addMapFile,
       cancel,
     };
