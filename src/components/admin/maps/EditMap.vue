@@ -67,11 +67,12 @@
           <!-- What the selected file actually contains, to check the settings above
                against. Warnings here never block saving. -->
           <v-col v-if="!isAddDialog" cols="12">
-            <div class="text-medium-emphasis text-body-2 mb-1">Selected map file</div>
+            <!-- The panel title names the section; a separate label above it just
+                 repeated itself. -->
             <map-file-details
               :game-map="mapRef.gameMap"
               :map="mapRef"
-              details-title="Map file details"
+              details-title="Selected map file"
             />
           </v-col>
         </v-row>
