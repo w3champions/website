@@ -47,8 +47,10 @@
             >
               Upload ({{ readyRows.length }})
             </v-btn>
+            <!-- Outlined rather than filled: a disabled filled button renders as a
+                 pale block on the dark themes. -->
             <v-btn
-              color="secondary"
+              variant="outlined"
               :disabled="readyRows.length === 0 || uploading || selecting"
               :loading="runningAction === 'upload-select'"
               @click="runUploadAndSelect"

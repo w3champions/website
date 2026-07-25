@@ -350,13 +350,16 @@ export default defineComponent({
     }
 
     function createDefaultMap(): Map {
+      // A map with no file is not playable anyway - the matchmaking service drops
+      // maps without a gameMap from its in-game list - so a new one starts disabled
+      // and is enabled deliberately once a file has been selected.
       const map: Map = {
         id: -1,
         name: "",
         category: "",
         maxTeams: 2,
         mappedForces: [],
-        disabled: false,
+        disabled: true,
       };
 
       return map;
