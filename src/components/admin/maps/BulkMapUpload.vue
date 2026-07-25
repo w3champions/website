@@ -49,7 +49,6 @@
             </v-btn>
             <v-btn
               color="secondary"
-              class="text-w3-race-bg"
               :disabled="readyRows.length === 0 || uploading || selecting"
               :loading="runningAction === 'upload-select'"
               @click="runUploadAndSelect"
@@ -103,6 +102,9 @@
             </v-chip>
             <v-chip v-if="selectedRows.length" color="success" size="small" variant="flat">
               {{ selectedRows.length }} selected
+            </v-chip>
+            <v-chip v-if="conflictRows.length" color="warning" size="small" variant="flat">
+              {{ conflictRows.length }} name conflict{{ conflictRows.length === 1 ? "" : "s" }}
             </v-chip>
             <v-chip v-if="problemRows.length" color="error" size="small" variant="flat">
               {{ problemRows.length }} need attention
@@ -190,6 +192,12 @@
               Another file in this batch targets the same map.
             </div>
 
+            <div v-if="nameAlreadyStored(row)" class="text-caption text-warning mt-1">
+              <v-icon size="x-small" class="mr-1">{{ mdiAlertOutline }}</v-icon>
+              This map already has a file stored under this name. Files are never replaced, so it is
+              held back until the name is changed.
+            </div>
+
             <div v-if="duplicateNames.includes(row.storeAs.trim().toLowerCase())" class="text-caption text-warning mt-1">
               <v-icon size="x-small" class="mr-1">{{ mdiAlertOutline }}</v-icon>
               Another file in this batch would be stored under this name.
@@ -261,8 +269,16 @@ export default defineComponent({
     const uploadTotal = ref<number>(0);
     const uploadingFileName = ref<string>("");
     const currentRowPercent = ref<number>(0);
+    // File names each target map already has, so a name that the server would
+    // reject is caught before the upload runs. Keyed by map id.
+    const storedNames = ref<Record<number, string[]>>({});
 
-    const readyRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "ready"));
+    const readyRows = computed<BulkRow[]>(() =>
+      rows.value.filter((row) => row.status === "ready" && !hasNameConflict(row))
+    );
+    const conflictRows = computed<BulkRow[]>(() =>
+      rows.value.filter((row) => row.status === "ready" && hasNameConflict(row))
+    );
     const uploadedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "uploaded"));
     const selectedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "selected"));
     const problemRows = computed<BulkRow[]>(() =>
@@ -280,6 +296,28 @@ export default defineComponent({
       }
       return Object.keys(counts).map(Number).filter((mapId) => counts[mapId] > 1);
     });
+
+    async function loadStoredNames(mapId: number): Promise<void> {
+      if (storedNames.value[mapId]) return;
+      try {
+        const mapFiles = await mapsManagementStore.fetchMapFiles(mapId);
+        storedNames.value[mapId] = mapFiles.map((mapFile) => mapFileName(mapFile.filePath));
+      } catch {
+        // A failed lookup only costs the warning; the upload still reports the error.
+      }
+    }
+
+    function nameAlreadyStored(row: BulkRow): boolean {
+      if (row.mapId === null) return false;
+      const name = row.storeAs.trim().toLowerCase();
+      return !!name && (storedNames.value[row.mapId] ?? []).includes(name);
+    }
+
+    // Either conflict means the server would reject this file, so it is held back
+    // from the upload until the name is changed.
+    function hasNameConflict(row: BulkRow): boolean {
+      return nameAlreadyStored(row) || duplicateNames.value.includes(row.storeAs.trim().toLowerCase());
+    }
 
     // The update service refuses to overwrite a stored file, so two files heading
     // for the same name means the second one fails.
@@ -312,6 +350,7 @@ export default defineComponent({
       row.currentFileName = mapFileName(map.gameMap?.path);
       row.status = "ready";
       row.message = undefined;
+      void loadStoredNames(map.id);
     }
 
     function extractMapIdFromFilename(filename: string): number | null {
@@ -367,6 +406,12 @@ export default defineComponent({
         return detectRow(file, index);
       });
     }, { deep: true });
+
+    // Look up each target map's existing names as soon as the rows settle.
+    watch(rows, (currentRows) => {
+      const mapIds = [...new Set(currentRows.map((row) => row.mapId).filter((id): id is number => id !== null))];
+      mapIds.forEach((mapId) => void loadStoredNames(mapId));
+    }, { deep: true, immediate: true });
 
     function statusLabel(status: RowStatus): string {
       switch (status) {
@@ -586,6 +631,8 @@ export default defineComponent({
       runningAction,
       duplicateMapIds,
       duplicateNames,
+      conflictRows,
+      nameAlreadyStored,
       mapOptions,
       isFixable,
       assignMap,

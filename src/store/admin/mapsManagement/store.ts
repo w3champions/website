@@ -33,6 +33,12 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       const mapFiles = await MapsService.getMapFiles(oauthStore.token, mapId);
       this.SET_MAP_FILES(mapFiles);
     },
+    // Reads a map's files without touching the shared list, for callers that need
+    // several maps' files at once.
+    async fetchMapFiles(mapId: number): Promise<MapFileData[]> {
+      const oauthStore = useOauthStore();
+      return await MapsService.getMapFiles(oauthStore.token, mapId);
+    },
     async createMapFile(formData: FormData, onProgress?: (percentUploaded: number) => void) {
       const oauthStore = useOauthStore();
       await MapsService.createMapFile(oauthStore.token, formData, onProgress);

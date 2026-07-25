@@ -6,8 +6,11 @@
     <v-container style="max-width: 1350px;">
       <v-card class="pa-md-4">
         <div class="d-flex align-center">
-          <v-btn color="primary" class="mr-2 text-w3-race-bg" @click="addMap">Add map</v-btn>
-          <v-btn color="secondary" class="text-w3-race-bg" @click="openBulkUpload">Bulk Upload</v-btn>
+          <v-btn color="primary" class="mr-2 text-w3-race-bg" @click="addMap">New map</v-btn>
+          <!-- No text-w3-race-bg here: that colour is near-black in the dark themes,
+               which left black text on the dark grey secondary. Vuetify's computed
+               on-secondary reads in every theme. -->
+          <v-btn color="secondary" @click="openBulkUpload">Bulk Upload</v-btn>
         </div>
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px" scrollable>
           <edit-map
@@ -27,8 +30,8 @@
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
-        <v-row class="pt-2 px-1" align="center" dense>
-          <v-col cols="12" sm="6" md="4">
+        <v-row class="pt-2 px-1" align="center">
+          <v-col cols="12" sm="6" md="3">
             <v-text-field
               v-model="search"
               label="Search"
@@ -39,7 +42,7 @@
               hide-details
             />
           </v-col>
-          <v-col cols="12" sm="6" md="3">
+          <v-col cols="12" sm="6" md="2">
             <v-autocomplete
               v-model="adminMapsFilters.category"
               :items="categories"
@@ -50,8 +53,8 @@
               hide-details
             />
           </v-col>
-          <v-col cols="12" md="5">
-            <div class="d-flex flex-wrap ga-4">
+          <v-col cols="12" md="7">
+            <div class="d-flex flex-wrap ga-8">
               <v-switch
                 v-model="adminMapsFilters.hideDisabled"
                 label="Hide disabled maps"
