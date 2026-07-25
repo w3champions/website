@@ -53,25 +53,42 @@
               hide-details
             />
           </v-col>
-          <v-col cols="12" md="7">
-            <div class="d-flex flex-wrap ga-8">
-              <v-switch
-                v-model="adminMapsFilters.hideDisabled"
-                label="Hide disabled maps"
-                hide-details
-                density="compact"
-                class="text-medium-emphasis flex-grow-0"
-                color="primary"
-              />
-              <v-switch
-                v-model="adminMapsFilters.onlyMissingFile"
-                label="Only maps without a file"
-                hide-details
-                density="compact"
-                class="text-medium-emphasis flex-grow-0"
-                color="primary"
-              />
-            </div>
+          <v-col cols="12" sm="6" md="3">
+            <v-select
+              v-model="adminMapsFilters.statuses"
+              :items="statusOptions"
+              label="Status"
+              multiple
+              clearable
+              hide-details
+              variant="underlined"
+              color="primary"
+            >
+              <!-- Same chips as the table's Status column, so the filter reads as
+                   the thing it filters. -->
+              <template v-slot:selection="{ item }">
+                <v-chip size="small" variant="flat" :color="statusColor(item.value)" class="mr-1">
+                  {{ item.title }}
+                </v-chip>
+              </template>
+              <template v-slot:item="{ props: itemProps, item }">
+                <v-list-item v-bind="itemProps" title="">
+                  <v-chip size="small" variant="flat" :color="statusColor(item.value)">
+                    {{ item.title }}
+                  </v-chip>
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-col>
+          <v-col cols="12" sm="6" md="4">
+            <v-switch
+              v-model="adminMapsFilters.onlyMissingFile"
+              label="Only maps without a file"
+              hide-details
+              density="compact"
+              class="text-medium-emphasis flex-grow-0 ml-md-4"
+              color="primary"
+            />
           </v-col>
         </v-row>
         <v-data-table
@@ -88,28 +105,41 @@
             <div class="d-flex align-center ga-1">
               <!-- variant="flat" so the chip keeps its solid colour and on-colour text;
                    the default tonal variant washes out on the light themes. -->
-              <v-chip size="small" variant="flat" :color="item.disabled ? 'error' : 'success'">
-                {{ item.disabled ? "Disabled" : "Enabled" }}
-              </v-chip>
+              <v-tooltip
+                location="top"
+                content-class="w3-tooltip elevation-1"
+                :text="statusTooltip(item)"
+                :disabled="!statusTooltip(item)"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" size="small" variant="flat" :color="mapStatus(item).color">
+                    {{ mapStatus(item).label }}
+                  </v-chip>
+                </template>
+              </v-tooltip>
               <!-- Lives beside the state it changes, and away from the actions that
                    open a dialog, where it used to invite misclicks. -->
               <v-tooltip
                 location="top"
                 content-class="w3-tooltip elevation-1"
-                :text="item.disabled ? 'Enable map' : 'Disable map'"
+                :text="toggleTooltip(item)"
               >
+                <!-- The activator is the wrapper, not the button: a disabled v-btn
+                     has pointer-events none, so the tooltip would never show on the
+                     one row where it explains the most. -->
                 <template v-slot:activator="{ props }">
-                  <v-btn
-                    v-bind="props"
-                    :icon="item.disabled ? mdiEyeOutline : mdiEyeOffOutline"
-                    :color="item.disabled ? 'success' : undefined"
-                    :loading="togglingMapId === item.id"
-                    :disabled="togglingMapId !== null"
-                    variant="text"
-                    size="small"
-                    :aria-label="item.disabled ? 'Enable map' : 'Disable map'"
-                    @click="toggleMapDisabled(item)"
-                  />
+                  <span v-bind="props" class="d-inline-flex">
+                    <v-btn
+                      :icon="item.disabled ? mdiEyeOutline : mdiEyeOffOutline"
+                      :color="item.disabled ? 'success' : undefined"
+                      :loading="togglingMapId === item.id"
+                      :disabled="togglingMapId !== null || isLockedByLadder(item)"
+                      variant="text"
+                      size="small"
+                      :aria-label="toggleTooltip(item)"
+                      @click="toggleMapDisabled(item)"
+                    />
+                  </span>
                 </template>
               </v-tooltip>
             </div>
@@ -185,13 +215,15 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import type { AdminMapsFilters, Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import type { AdminMapsFilters, Map, MapFileData, MapStatus } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
+import { useRankingStore } from "@/store/ranking/store";
+import { loadActiveGameModes } from "@/composables/GameModesMixin";
 import { mdiChevronDown, mdiChevronUp, mdiEyeOffOutline, mdiEyeOutline, mdiFile, mdiMagnify, mdiPencil } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 
@@ -206,6 +238,7 @@ export default defineComponent({
   setup() {
     const oauthStore = useOauthStore();
     const mapsManagementStore = useMapsManagementStore();
+    const rankingStore = useRankingStore();
 
     const search = ref<string>("");
     const editedMap = ref<Map>({} as Map);
@@ -214,8 +247,10 @@ export default defineComponent({
     const isAddDialog = ref<boolean>(false);
     const isBulkUploadOpen = ref<boolean>(false);
 
+    // Nothing selected means no status filter, the same as selecting all three.
+    const statusOptions: MapStatus[] = ["Ladder", "Custom", "Disabled"];
     const adminMapsFilters = ref<AdminMapsFilters>({
-      hideDisabled: false,
+      statuses: [],
       category: null,
       onlyMissingFile: false,
     });
@@ -228,12 +263,60 @@ export default defineComponent({
     const maps = computed<Map[]>(() => {
       const filters = adminMapsFilters.value;
       return mapsManagementStore.maps.filter((map) => {
-        if (filters.hideDisabled && map.disabled) return false;
+        if (filters.statuses.length > 0 && !filters.statuses.includes(mapStatus(map).label)) return false;
         if (filters.category && map.category !== filters.category) return false;
         if (filters.onlyMissingFile && map.gameMap?.path) return false;
         return true;
       });
     });
+
+    // The active ladder modes carry their map pools, so a map's role is derivable
+    // rather than another thing to keep in sync by hand.
+    const ladderModesByMapId = computed<Record<number, string[]>>(() => {
+      const modesByMap: Record<number, string[]> = {};
+      for (const mode of rankingStore.activeModes) {
+        for (const map of mode.maps ?? []) {
+          (modesByMap[map.id] ??= []).push(mode.name);
+        }
+      }
+      return modesByMap;
+    });
+
+    function ladderModes(map: Map): string[] {
+      return ladderModesByMapId.value[map.id] ?? [];
+    }
+
+    const STATUS_COLORS: Record<MapStatus, string> = {
+      Ladder: "info",
+      Custom: "secondary",
+      Disabled: "error",
+    };
+
+    function statusColor(status: MapStatus): string {
+      return STATUS_COLORS[status];
+    }
+
+    function mapStatus(map: Map): { label: MapStatus; color: string } {
+      const label: MapStatus = map.disabled ? "Disabled" : ladderModes(map).length > 0 ? "Ladder" : "Custom";
+      return { label, color: STATUS_COLORS[label] };
+    }
+
+    function statusTooltip(map: Map): string {
+      const modes = ladderModes(map);
+      if (modes.length === 0) return "";
+      return `In the active ladder pool: ${modes.join(", ")}`;
+    }
+
+    // The matchmaking service refuses to disable a map that a ladder mode is using,
+    // so the action is held rather than offered and then rejected.
+    function isLockedByLadder(map: Map): boolean {
+      return !map.disabled && ladderModes(map).length > 0;
+    }
+
+    function toggleTooltip(map: Map): string {
+      if (isLockedByLadder(map)) return "Can't disable a map that is in an active ladder pool";
+      return map.disabled ? "Enable map" : "Disable map";
+    }
 
     const categories = computed<string[]>(() =>
       [...new Set(mapsManagementStore.maps.map((map) => map.category).filter((c): c is string => !!c))]
@@ -369,7 +452,7 @@ export default defineComponent({
 
     async function init(): Promise<void> {
       if (!isAdmin.value) return;
-      await mapsManagementStore.loadMaps();
+      await Promise.all([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
     }
 
     onMounted(async (): Promise<void> => {
@@ -396,6 +479,12 @@ export default defineComponent({
       mdiEyeOutline,
       mdiEyeOffOutline,
       categories,
+      statusOptions,
+      statusColor,
+      mapStatus,
+      statusTooltip,
+      isLockedByLadder,
+      toggleTooltip,
       togglingMapId,
       toggleMapDisabled,
       headers,

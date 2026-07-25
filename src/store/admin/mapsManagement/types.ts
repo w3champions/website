@@ -77,8 +77,10 @@ export interface MapFileData {
   metaData: GameMap;
 }
 
+export type MapStatus = "Ladder" | "Custom" | "Disabled";
+
 export interface AdminMapsFilters {
-  hideDisabled: boolean;
+  statuses: MapStatus[];
   category: string | null;
   onlyMissingFile: boolean;
 }
