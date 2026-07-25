@@ -8,27 +8,48 @@
     </v-row>
     <v-card-text>
       <v-container>
+        <div class="d-flex align-center ga-2 mb-3">
+          <span class="text-medium-emphasis">Currently selected:</span>
+          <v-chip v-if="currentFileName" color="success" variant="flat" size="small" :prepend-icon="mdiCheckCircle">
+            {{ currentFileName }}
+          </v-chip>
+          <v-chip v-else color="warning" variant="flat" size="small" :prepend-icon="mdiAlertCircleOutline">
+            No file selected
+          </v-chip>
+        </div>
+
         <v-data-table
+          ref="fileTable"
           :headers="headers"
           :items="mapFiles"
           class="elevation-1"
           :hide-default-footer="true"
           :items-per-page="100"
+          height="320"
+          fixed-header
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
+          :row-props="rowProps"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="selectMapFile(item)">Select</v-btn>
+            <!-- Re-selecting the file the map already points at is a no-op, so show
+                 the state instead of an action. -->
+            <v-chip v-if="isSelected(item)" color="success" variant="flat" size="small" :prepend-icon="mdiCheckCircle">
+              Selected
+            </v-chip>
+            <v-btn v-else color="primary" size="small" class="text-w3-race-bg" @click="selectMapFile(item)">
+              Select
+            </v-btn>
           </template>
         </v-data-table>
 
         <div class="mt-5"></div>
         <span class="text-subtitle-1">Add file</span>
         <v-row>
-          <v-col cols="12" sm="6" md="12">
-            <v-file-input v-model="file" label="Map file" truncate-length="70" variant="underlined" />
+          <v-col cols="12">
+            <map-file-drop-zone v-model="files" label="Drag & drop a map file here" />
           </v-col>
 
-          <v-col cols="12" sm="6" md="12">
+          <v-col cols="12" sm="6" md="12" class="pt-0">
             <v-text-field
               v-model="fileName"
               label="File name (optional)"
@@ -37,7 +58,15 @@
             />
           </v-col>
         </v-row>
-        <v-btn color="primary" class="mb-2 text-w3-race-bg" @click="addMapFile()">Add map file</v-btn>
+        <v-btn
+          color="primary"
+          class="mb-2 text-w3-race-bg"
+          :disabled="!file || uploading"
+          :loading="uploading"
+          @click="addMapFile()"
+        >
+          Add map file
+        </v-btn>
       </v-container>
     </v-card-text>
 
@@ -51,14 +80,17 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, PropType, ref } from "vue";
+import { ComponentPublicInstance, computed, defineComponent, nextTick, onMounted, PropType, ref } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { DataTableHeader } from "vuetify";
+import { mdiAlertCircleOutline, mdiCheckCircle } from "@mdi/js";
+import MapFileDropZone from "./MapFileDropZone.vue";
+import { isSameMapFile, mapFileName } from "./mapFilePath";
 
 export default defineComponent({
   name: "EditMapFiles",
-  components: {},
+  components: { MapFileDropZone },
   props: {
     map: {
       type: Object as PropType<Map>,
@@ -67,14 +99,27 @@ export default defineComponent({
   },
   setup(props, context) {
     const mapsManagementStore = useMapsManagementStore();
+    const fileTable = ref<ComponentPublicInstance | null>(null);
     const fileName = ref<string>("");
-    const file = ref<File>({} as File);
+    const files = ref<File[]>([]);
+    const uploading = ref<boolean>(false);
     const mapFiles = computed<MapFileData[]>(() => mapsManagementStore.mapFiles);
     const maxMapFileNameLength = 60; // Very long file names break the Admin Maps UI
 
-    function selectMapFile(file: MapFileData) {
-      if (confirm(`Are you sure you want to select file with path ${file.filePath}?`)) {
-        context.emit("selected", { map: props.map, file });
+    const file = computed<File | undefined>(() => files.value[0]);
+    const currentFileName = computed<string>(() => mapFileName(props.map.gameMap?.path));
+
+    function isSelected(mapFile: MapFileData): boolean {
+      return isSameMapFile(props.map.gameMap?.path, mapFile.filePath);
+    }
+
+    function rowProps({ item }: { item: MapFileData }) {
+      return isSelected(item) ? { class: "map-file-row--selected" } : {};
+    }
+
+    function selectMapFile(mapFile: MapFileData) {
+      if (confirm(`Are you sure you want to select file with path ${mapFile.filePath}?`)) {
+        context.emit("selected", { map: props.map, file: mapFile });
       }
     }
 
@@ -83,26 +128,44 @@ export default defineComponent({
     }
 
     async function addMapFile() {
+      const selectedFile = file.value;
+      if (!selectedFile) return;
+
+      uploading.value = true;
       try {
-        if (file.value.name.length > maxMapFileNameLength) {
+        if (selectedFile.name.length > maxMapFileNameLength) {
           throw new Error(`File name exceeds maximum character length of ${maxMapFileNameLength}.`);
         }
         const formData = new FormData();
         formData.append("mapId", props.map.id.toString());
-        formData.append("mapFile", file.value, file.value.name);
+        formData.append("mapFile", selectedFile, selectedFile.name);
         formData.append("fileName", fileName.value);
         await mapsManagementStore.createMapFile(formData);
         await mapsManagementStore.loadMapFiles(props.map.id);
 
         fileName.value = "";
-        file.value = {} as File;
+        files.value = [];
       } catch(err) {
         alert(err ? err : "Error trying to create map file.");
+      } finally {
+        uploading.value = false;
       }
+    }
+
+    // A map can have a long list of files; open the list on the one that is in use.
+    async function scrollToSelectedFile(): Promise<void> {
+      await nextTick();
+      const scroller = fileTable.value?.$el?.querySelector(".v-table__wrapper") as HTMLElement | undefined;
+      const selectedRow = scroller?.querySelector(".map-file-row--selected") as HTMLElement | undefined;
+      if (!scroller || !selectedRow) return;
+
+      const offset = selectedRow.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+      scroller.scrollTop += offset - (scroller.clientHeight - selectedRow.clientHeight) / 2;
     }
 
     onMounted(async (): Promise<void> => {
       await mapsManagementStore.loadMapFiles(props.map.id);
+      await scrollToSelectedFile();
     });
 
     const headers: DataTableHeader[] = [
@@ -111,14 +174,28 @@ export default defineComponent({
     ];
 
     return {
+      mdiAlertCircleOutline,
+      mdiCheckCircle,
       headers,
+      fileTable,
       mapFiles,
       selectMapFile,
+      isSelected,
+      rowProps,
+      currentFileName,
       file,
+      files,
       fileName,
+      uploading,
       addMapFile,
       cancel,
     };
   },
 });
 </script>
+
+<style lang="scss" scoped>
+:deep(.map-file-row--selected) {
+  background-color: rgba(var(--v-theme-success), 0.12);
+}
+</style>

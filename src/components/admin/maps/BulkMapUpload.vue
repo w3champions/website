@@ -5,8 +5,12 @@
     </v-card-title>
     <v-card-text>
       <v-container>
-        <v-alert v-if="error" type="error" closable @update:model-value="error = ''">
+        <v-alert v-if="error" type="error" closable class="mb-4" @update:model-value="error = ''">
           {{ error }}
+        </v-alert>
+
+        <v-alert v-if="successMessage" type="success" closable class="mb-4" @update:model-value="successMessage = ''">
+          {{ successMessage }}
         </v-alert>
 
         <v-alert type="info" variant="outlined" class="mb-4">
@@ -19,16 +23,11 @@
           </ul>
         </v-alert>
 
-        <v-file-input
+        <map-file-drop-zone
           v-model="files"
-          label="Select map files (.w3m, .w3x)"
           multiple
-          accept=".w3m,.w3x"
-          truncate-length="50"
           :disabled="uploading || selecting"
-          chips
-          show-size
-          counter
+          label="Drag & drop map files here"
         />
 
         <v-row class="mt-2">
@@ -36,20 +35,20 @@
             <v-btn
               color="primary"
               class="text-w3-race-bg mr-2"
-              :disabled="!files || files.length === 0 || uploading || selecting"
+              :disabled="readyRows.length === 0 || uploading || selecting"
               :loading="uploading"
               @click="uploadFiles"
             >
-              Upload Files
+              Upload {{ readyRows.length ? `${readyRows.length} file${readyRows.length === 1 ? "" : "s"}` : "files" }}
             </v-btn>
             <v-btn
               color="success"
               class="mr-2 text-w3-race-bg"
-              :disabled="uploadedFiles.length === 0 || uploading || selecting"
+              :disabled="uploadedRows.length === 0 || uploading || selecting"
               :loading="selecting"
               @click="selectAll"
             >
-              Select All ({{ uploadedFiles.length }})
+              Select All ({{ uploadedRows.length }})
             </v-btn>
             <v-btn
               class="bg-error text-w3-race-bg"
@@ -62,23 +61,34 @@
           </v-col>
         </v-row>
 
-        <v-divider class="my-4" />
+        <template v-if="rows.length > 0">
+          <v-divider class="my-4" />
 
-        <div v-if="uploadProgress.length > 0">
-          <div class="text-h6 mb-3">Upload Progress</div>
+          <div class="d-flex align-center flex-wrap ga-2 mb-3">
+            <div class="text-h6 mr-2">Detected maps ({{ rows.length }})</div>
+            <v-chip v-if="readyRows.length" color="info" size="small" variant="flat">
+              {{ readyRows.length }} ready
+            </v-chip>
+            <v-chip v-if="uploadedRows.length" color="warning" size="small" variant="flat">
+              {{ uploadedRows.length }} uploaded, not selected
+            </v-chip>
+            <v-chip v-if="selectedRows.length" color="success" size="small" variant="flat">
+              {{ selectedRows.length }} selected
+            </v-chip>
+            <v-chip v-if="problemRows.length" color="error" size="small" variant="flat">
+              {{ problemRows.length }} need attention
+            </v-chip>
+          </div>
+
           <v-data-table
-            :headers="progressHeaders"
-            :items="uploadProgress"
+            :headers="headers"
+            :items="rows"
             :items-per-page="-1"
             hide-default-footer
             density="compact"
+            item-value="key"
             :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
           >
-            <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="getStatusColor(item.status)" size="small">
-                {{ item.status }}
-              </v-chip>
-            </template>
             <template v-slot:[`item.fileName`]="{ item }">
               <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
                 <template v-slot:activator="{ props }">
@@ -87,30 +97,39 @@
                 <span>{{ item.fileName }}</span>
               </v-tooltip>
             </template>
-          </v-data-table>
-        </div>
 
-        <div v-if="uploadedFiles.length > 0" class="mt-4">
-          <div class="text-h6 mb-3">Ready to Select ({{ uploadedFiles.length }} files)</div>
-          <v-table density="compact">
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th>Map ID</th>
-                  <th>File Name</th>
-                  <th>File Path</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="file in uploadedFiles" :key="file.mapId">
-                  <td>{{ file.mapId }}</td>
-                  <td>{{ file.fileName }}</td>
-                  <td>{{ file.filePath }}</td>
-                </tr>
-              </tbody>
+            <template v-slot:[`item.mapId`]="{ item }">
+              <span v-if="item.mapId !== null">{{ item.mapId }}</span>
+              <span v-else class="text-medium-emphasis">&mdash;</span>
             </template>
-          </v-table>
-        </div>
+
+            <template v-slot:[`item.mapName`]="{ item }">
+              <span v-if="item.map">{{ item.map.name }}</span>
+              <span v-else class="text-medium-emphasis">Unknown map</span>
+            </template>
+
+            <template v-slot:[`item.category`]="{ item }">
+              <v-chip v-if="item.map?.category" size="x-small" variant="tonal">
+                {{ item.map.category }}
+              </v-chip>
+              <span v-else class="text-medium-emphasis">&mdash;</span>
+            </template>
+
+            <template v-slot:[`item.currentFile`]="{ item }">
+              <span v-if="item.currentFileName">{{ item.currentFileName }}</span>
+              <span v-else class="text-medium-emphasis">None</span>
+            </template>
+
+            <template v-slot:[`item.status`]="{ item }">
+              <v-chip :color="statusColor(item.status)" variant="flat" size="small" :prepend-icon="statusIcon(item.status)">
+                {{ statusLabel(item.status) }}
+              </v-chip>
+              <div v-if="item.message" class="text-caption text-medium-emphasis mt-1">
+                {{ item.message }}
+              </div>
+            </template>
+          </v-data-table>
+        </template>
       </v-container>
     </v-card-text>
 
@@ -124,42 +143,61 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import { mdiAlertCircleOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiFileQuestionOutline, mdiProgressUpload } from "@mdi/js";
+import MapFileDropZone from "./MapFileDropZone.vue";
+import { mapFileName } from "./mapFilePath";
 
-interface UploadProgress {
+type RowStatus =
+  | "invalid-name"
+  | "unknown-map"
+  | "ready"
+  | "uploading"
+  | "uploaded"
+  | "selected"
+  | "error";
+
+interface BulkRow {
+  key: string;
+  file: File;
   fileName: string;
-  mapId: number;
-  status: "pending" | "uploading" | "success" | "error";
+  mapId: number | null;
+  map?: Map;
+  currentFileName: string;
+  status: RowStatus;
   message?: string;
-}
-
-interface UploadedFile {
-  mapId: number;
-  fileName: string;
-  filePath: string;
-  mapFileData: MapFileData;
-  map: Map;
+  mapFileData?: MapFileData;
 }
 
 export default defineComponent({
   name: "BulkMapUpload",
+  components: { MapFileDropZone },
   setup(props, context) {
     const mapsManagementStore = useMapsManagementStore();
     const files = ref<File[]>([]);
-    const uploadProgress = ref<UploadProgress[]>([]);
-    const uploadedFiles = ref<UploadedFile[]>([]);
+    const rows = ref<BulkRow[]>([]);
     const uploading = ref<boolean>(false);
     const selecting = ref<boolean>(false);
     const error = ref<string>("");
+    const successMessage = ref<string>("");
 
-    const progressHeaders = [
-      { text: "File Name", value: "fileName" },
-      { text: "Map ID", value: "mapId" },
-      { text: "Status", value: "status" },
-      { text: "Message", value: "message" },
+    const headers = [
+      { title: "File name", key: "fileName", sortable: false },
+      { title: "Map ID", key: "mapId", sortable: false },
+      { title: "Map name", key: "mapName", sortable: false },
+      { title: "Category", key: "category", sortable: false },
+      { title: "Current file", key: "currentFile", sortable: false },
+      { title: "Status", key: "status", sortable: false },
     ];
+
+    const readyRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "ready"));
+    const uploadedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "uploaded"));
+    const selectedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "selected"));
+    const problemRows = computed<BulkRow[]>(() =>
+      rows.value.filter((row) => ["invalid-name", "unknown-map", "error"].includes(row.status))
+    );
 
     function extractMapIdFromFilename(filename: string): number | null {
       // Extract map ID from format: {map_id}_{name}.w3m or {map_id}_{name}.w3x
@@ -170,161 +208,186 @@ export default defineComponent({
       return null;
     }
 
-    function getStatusColor(status: string): string {
+    // Detection runs as soon as files are picked, so problems (bad filename, unknown
+    // map id) and the map each file will overwrite are visible before uploading.
+    function detectRow(file: File, index: number): BulkRow {
+      const mapId = extractMapIdFromFilename(file.name);
+      if (mapId === null) {
+        return {
+          key: `${index}-${file.name}`,
+          file,
+          fileName: file.name,
+          mapId: null,
+          currentFileName: "",
+          status: "invalid-name",
+          message: "Expected {map_id}_{name}.w3m or {map_id}_{name}.w3x",
+        };
+      }
+
+      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
+      return {
+        key: `${index}-${file.name}`,
+        file,
+        fileName: file.name,
+        mapId,
+        map,
+        currentFileName: mapFileName(map?.gameMap?.path),
+        status: map ? "ready" : "unknown-map",
+        message: map ? undefined : `Map with ID ${mapId} does not exist`,
+      };
+    }
+
+    // Re-detect whenever the picked files change, but keep the outcome of rows whose
+    // file was already uploaded or selected so the confirmation is not lost.
+    watch(files, (newFiles) => {
+      rows.value = newFiles.map((file, index) => {
+        const existing = rows.value.find((row) => row.file === file);
+        if (existing && ["uploading", "uploaded", "selected", "error"].includes(existing.status)) {
+          return existing;
+        }
+        return detectRow(file, index);
+      });
+    }, { deep: true });
+
+    function statusLabel(status: RowStatus): string {
       switch (status) {
-        case "success": return "success";
-        case "error": return "error";
+        case "invalid-name": return "Bad filename";
+        case "unknown-map": return "Unknown map";
+        case "ready": return "Ready";
+        case "uploading": return "Uploading";
+        case "uploaded": return "Uploaded";
+        case "selected": return "Selected";
+        default: return "Error";
+      }
+    }
+
+    function statusColor(status: RowStatus): string {
+      switch (status) {
+        case "ready": return "info";
         case "uploading": return "info";
-        default: return "default";
+        case "uploaded": return "warning";
+        case "selected": return "success";
+        default: return "error";
+      }
+    }
+
+    function statusIcon(status: RowStatus): string {
+      switch (status) {
+        case "ready": return mdiFileQuestionOutline;
+        case "uploading": return mdiProgressUpload;
+        case "uploaded": return mdiCloudCheckOutline;
+        case "selected": return mdiCheckCircle;
+        default: return mdiAlertCircleOutline;
       }
     }
 
     async function uploadFiles(): Promise<void> {
-      if (!files.value || files.value.length === 0) {
-        error.value = "Please select at least one file.";
+      const pending = readyRows.value;
+      if (pending.length === 0) {
+        error.value = "No files ready to upload.";
         return;
       }
 
       uploading.value = true;
       error.value = "";
-      uploadProgress.value = [];
-      uploadedFiles.value = [];
+      successMessage.value = "";
 
-      // Parse all files first
-      const filesToUpload: { file: File; mapId: number }[] = [];
-      for (const file of files.value) {
-        const mapId = extractMapIdFromFilename(file.name);
-        if (mapId === null) {
-          uploadProgress.value.push({
-            fileName: file.name,
-            mapId: -1,
-            status: "error",
-            message: "Invalid filename format. Expected: {map_id}_{name}.w3m or {map_id}_{name}.w3x",
-          });
-          continue;
-        }
-
-        // Check if map exists
-        const map = mapsManagementStore.maps.find((m) => m.id === mapId);
-        if (!map) {
-          uploadProgress.value.push({
-            fileName: file.name,
-            mapId,
-            status: "error",
-            message: `Map with ID ${mapId} does not exist`,
-          });
-          continue;
-        }
-
-        filesToUpload.push({ file, mapId });
-        uploadProgress.value.push({
-          fileName: file.name,
-          mapId,
-          status: "pending",
-        });
-      }
-
-      // Upload files sequentially
-      for (let i = 0; i < filesToUpload.length; i++) {
-        const { file, mapId } = filesToUpload[i];
-        const progressIndex = uploadProgress.value.findIndex(
-          (p) => p.fileName === file.name && p.mapId === mapId
-        );
-
-        uploadProgress.value[progressIndex].status = "uploading";
+      for (const row of pending) {
+        row.status = "uploading";
+        row.message = undefined;
 
         try {
           const formData = new FormData();
-          formData.append("mapId", mapId.toString());
-          formData.append("mapFile", file, file.name);
+          formData.append("mapId", String(row.mapId));
+          formData.append("mapFile", row.file, row.file.name);
           formData.append("fileName", "");
 
           await mapsManagementStore.createMapFile(formData);
 
-          // Load the uploaded files for this map
-          await mapsManagementStore.loadMapFiles(mapId);
-
-          // Find the newly uploaded file
+          // The create endpoint does not return the stored file, so re-read the
+          // map's files and match the one named after the upload.
+          await mapsManagementStore.loadMapFiles(row.mapId as number);
           const mapFileData = mapsManagementStore.mapFiles.find(
-            (mf) => mf.filePath.includes(file.name) || mf.filePath.endsWith(file.name.replace(/\.(w3m|w3x)$/, ""))
-          );
+            (mf) => mapFileName(mf.filePath) === row.file.name.toLowerCase()
+          ) ?? mapsManagementStore.mapFiles.find((mf) => mf.filePath.includes(row.file.name));
 
           if (!mapFileData) {
-            uploadProgress.value[progressIndex].status = "error";
-            uploadProgress.value[progressIndex].message = "File uploaded but could not be found";
+            row.status = "error";
+            row.message = "File uploaded but could not be found";
             continue;
           }
 
-          const map = mapsManagementStore.maps.find((m) => m.id === mapId);
-          if (!map) {
-            uploadProgress.value[progressIndex].status = "error";
-            uploadProgress.value[progressIndex].message = "Map not found after upload";
-            continue;
-          }
-
-          uploadProgress.value[progressIndex].status = "success";
-          uploadedFiles.value.push({
-            mapId,
-            fileName: file.name,
-            filePath: mapFileData.filePath,
-            mapFileData,
-            map,
-          });
+          row.mapFileData = mapFileData;
+          row.status = "uploaded";
         } catch (err) {
-          uploadProgress.value[progressIndex].status = "error";
-          uploadProgress.value[progressIndex].message = err instanceof Error ? err.message : "Upload failed";
+          row.status = "error";
+          row.message = err instanceof Error ? err.message : "Upload failed";
         }
       }
 
       uploading.value = false;
+
+      const failed = rows.value.filter((row) => row.status === "error").length;
+      const uploaded = uploadedRows.value.length;
+      if (uploaded > 0) {
+        successMessage.value = `Uploaded ${uploaded} file${uploaded === 1 ? "" : "s"}.`
+          + " Use \"Select All\" to make them the active files for their maps.";
+      }
+      if (failed > 0) {
+        error.value = `${failed} file${failed === 1 ? "" : "s"} failed to upload. See the table for details.`;
+      }
     }
 
     async function selectAll(): Promise<void> {
-      if (uploadedFiles.value.length === 0) {
+      const pending = uploadedRows.value;
+      if (pending.length === 0) {
         error.value = "No files to select.";
         return;
       }
 
       selecting.value = true;
       error.value = "";
+      successMessage.value = "";
 
       let successCount = 0;
       let errorCount = 0;
 
-      for (const uploadedFile of uploadedFiles.value) {
+      for (const row of pending) {
         try {
-          const map = { ...uploadedFile.map };
-          map.gameMap = uploadedFile.mapFileData.metaData;
-          map.gameMap.path = `maps\\${uploadedFile.mapFileData.filePath.replaceAll("/", "\\")}`;
+          const map = { ...(row.map as Map) };
+          map.gameMap = (row.mapFileData as MapFileData).metaData;
+          map.gameMap.path = `maps\\${(row.mapFileData as MapFileData).filePath.replaceAll("/", "\\")}`;
 
           await mapsManagementStore.updateMap(map);
+          row.status = "selected";
+          row.currentFileName = mapFileName(map.gameMap.path);
           successCount++;
         } catch (err) {
+          row.status = "error";
+          row.message = err instanceof Error ? err.message : "Failed to select file";
           errorCount++;
-          console.error(`Failed to select file for map ${uploadedFile.mapId}:`, err);
         }
       }
 
       selecting.value = false;
 
-      if (errorCount > 0) {
-        error.value = `Selected ${successCount} maps successfully. ${errorCount} failed.`;
-      } else {
-        // Reload maps to reflect changes
-        await mapsManagementStore.loadMaps();
-        // Clear the list after successful selection
-        uploadedFiles.value = [];
-        uploadProgress.value = [];
-        files.value = [];
+      // Reload so the maps table behind the dialog reflects the new files.
+      await mapsManagementStore.loadMaps();
+
+      if (successCount > 0) {
+        successMessage.value = `Selected ${successCount} map${successCount === 1 ? "" : "s"}.`;
         context.emit("completed", successCount);
+      }
+      if (errorCount > 0) {
+        error.value = `${errorCount} map${errorCount === 1 ? "" : "s"} could not be selected. See the table for details.`;
       }
     }
 
     function reset(): void {
       files.value = [];
-      uploadProgress.value = [];
-      uploadedFiles.value = [];
+      rows.value = [];
       error.value = "";
+      successMessage.value = "";
     }
 
     function cancel(): void {
@@ -333,17 +396,23 @@ export default defineComponent({
 
     return {
       files,
-      uploadProgress,
-      uploadedFiles,
+      rows,
+      readyRows,
+      uploadedRows,
+      selectedRows,
+      problemRows,
       uploading,
       selecting,
       error,
-      progressHeaders,
+      successMessage,
+      headers,
       uploadFiles,
       selectAll,
       reset,
       cancel,
-      getStatusColor,
+      statusColor,
+      statusIcon,
+      statusLabel,
     };
   },
 });

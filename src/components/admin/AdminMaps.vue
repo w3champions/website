@@ -47,8 +47,16 @@
           class="elevation-1"
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
         >
+          <template v-slot:[`item.disabled`]="{ item }">
+            <!-- variant="flat" so the chip keeps its solid colour and on-colour text;
+                 the default tonal variant washes out on the light themes. -->
+            <v-chip size="small" variant="flat" :color="item.disabled ? 'error' : 'success'">
+              {{ item.disabled ? "Disabled" : "Enabled" }}
+            </v-chip>
+          </template>
           <template v-slot:[`item.path`]="{ item }">
-            {{ getMapPath(item) }}
+            <span v-if="getMapPath(item)">{{ getMapPath(item) }}</span>
+            <span v-else class="text-medium-emphasis">No file selected</span>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-icon size="small" class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
@@ -57,6 +65,10 @@
         </v-data-table>
       </v-card>
     </v-container>
+
+    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="4000">
+      {{ snackbarText }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -90,6 +102,10 @@ export default defineComponent({
     const isBulkUploadOpen = ref<boolean>(false);
 
     const adminMapsFilters = ref<AdminMapsFilters>({ hideDisabled: false });
+
+    const snackbar = ref<boolean>(false);
+    const snackbarText = ref<string>("");
+    const snackbarColor = ref<string>("success");
 
     const maps = computed<Map[]>(() => {
       if (adminMapsFilters.value.hideDisabled) {
@@ -151,12 +167,19 @@ export default defineComponent({
       isBulkUploadOpen.value = false;
     }
 
+    // The dialog stays open so its per-file confirmation remains visible; it already
+    // reloaded the maps, so the table behind it is up to date.
     function handleBulkUploadCompleted(count: number): void {
-      alert(`Successfully selected ${count} maps!`);
-      closeBulkUpload();
+      showSnackbar(`Successfully selected ${count} map${count === 1 ? "" : "s"}!`, "success");
     }
 
-    async function saveMap(map: Map): Promise<void> {
+    function showSnackbar(text: string, color: string): void {
+      snackbarText.value = text;
+      snackbarColor.value = color;
+      snackbar.value = true;
+    }
+
+    async function saveMap(map: Map): Promise<boolean> {
       try {
         if (isAddDialog.value) {
           await mapsManagementStore.createMap(map);
@@ -165,8 +188,10 @@ export default defineComponent({
         }
         closeEdit();
         await mapsManagementStore.loadMaps();
+        return true;
       } catch(err) {
-        alert(err ? err : "Error trying to select map.");
+        showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
+        return false;
       }
     }
 
@@ -177,7 +202,9 @@ export default defineComponent({
       map.gameMap = file.metaData;
       map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;
 
-      await saveMap(map);
+      if (await saveMap(map)) {
+        showSnackbar(`Selected ${getMapPath(map)} for ${map.name}.`, "success");
+      }
       closeEditFiles();
     }
 
@@ -209,7 +236,7 @@ export default defineComponent({
       { title: "Map name", value: "name", sortable: true },
       { title: "ID", value: "id", sortable: true },
       { title: "Category", value: "category", sortable: true },
-      { title: "Disabled", value: "disabled", sortable: true },
+      { title: "Status", value: "disabled", sortable: true },
       { title: "File", value: "path", sortable: false },
       { title: "Actions", value: "actions", sortable: false },
     ];
@@ -237,6 +264,9 @@ export default defineComponent({
       openBulkUpload,
       closeBulkUpload,
       handleBulkUploadCompleted,
+      snackbar,
+      snackbarText,
+      snackbarColor,
     };
   },
 });
