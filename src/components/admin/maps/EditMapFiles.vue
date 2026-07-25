@@ -8,15 +8,13 @@
     </v-row>
     <v-card-text>
       <v-container>
-        <div class="d-flex align-center ga-2 mb-3">
-          <span class="text-medium-emphasis">Currently selected:</span>
-          <v-chip v-if="currentFileName" color="success" variant="flat" size="small" :prepend-icon="mdiCheckCircle">
-            {{ currentFileName }}
-          </v-chip>
-          <v-chip v-else color="warning" variant="flat" size="small" :prepend-icon="mdiAlertCircleOutline">
-            No file selected
-          </v-chip>
-        </div>
+        <map-file-details
+          v-if="map.gameMap"
+          class="mb-4"
+          :game-map="map.gameMap"
+          :map="map"
+          details-title="Selected map file details"
+        />
 
         <v-data-table
           ref="fileTable"
@@ -25,7 +23,6 @@
           class="elevation-1 map-files-table"
           :hide-default-footer="true"
           :items-per-page="100"
-          height="320"
           fixed-header
           :loading="loadingFiles"
           loading-text="Loading map files…"
@@ -43,6 +40,20 @@
               <v-btn v-else color="primary" size="small" class="text-w3-race-bg" @click="selectMapFile(item)">
                 Select
               </v-btn>
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Download map file">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="mdiDownload"
+                    :href="downloadUrl(item)"
+                    target="_blank"
+                    rel="noopener"
+                    variant="text"
+                    size="small"
+                    aria-label="Download map file"
+                  />
+                </template>
+              </v-tooltip>
               <v-tooltip
                 location="top"
                 content-class="w3-tooltip elevation-1"
@@ -73,33 +84,34 @@
           </template>
         </v-data-table>
 
-        <div class="mt-5"></div>
-        <span class="text-subtitle-1">Add file</span>
+        <div class="text-subtitle-1 mt-6">Upload file</div>
         <v-alert v-if="uploadError" type="error" closable class="mt-2" @update:model-value="uploadError = ''">
           {{ uploadError }}
         </v-alert>
-        <v-row>
-          <v-col cols="12">
-            <map-file-drop-zone v-model="files" label="Drag & drop a map file here" />
-          </v-col>
 
-          <v-col cols="12" sm="6" md="12" class="pt-0">
-            <v-text-field
-              v-model="fileName"
-              label="File name (optional)"
-              variant="underlined"
-              color="primary"
-            />
-          </v-col>
-        </v-row>
+        <!-- Spaced with margins rather than a v-row, whose gutters disappeared with
+             the name field and left the button against the drop zone. -->
+        <map-file-drop-zone v-model="files" class="mt-3" label="Drag & drop a map file here" />
+
+        <v-text-field
+          v-if="file"
+          v-model="fileName"
+          class="mt-3"
+          label="Store the file as"
+          hint="Prefilled with the name of the file you picked. Edit it to store it under a different name."
+          persistent-hint
+          variant="underlined"
+          color="primary"
+        />
+
         <v-btn
           color="primary"
-          class="mb-2 text-w3-race-bg"
+          class="mt-4 mb-2 text-w3-race-bg"
           :disabled="!file || uploading"
           :loading="uploading"
           @click="addMapFile()"
         >
-          Add map file
+          Upload
         </v-btn>
 
         <div v-if="uploading" class="mt-2">
@@ -157,11 +169,12 @@
 </template>
 
 <script lang="ts">
-import { ComponentPublicInstance, computed, defineComponent, nextTick, onMounted, PropType, ref } from "vue";
+import { ComponentPublicInstance, computed, defineComponent, nextTick, onMounted, PropType, ref, watch } from "vue";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import MapsService from "@/services/MapsService";
 import { DataTableHeader } from "vuetify";
-import { mdiAlertCircleOutline, mdiCheckCircle, mdiChevronDown, mdiChevronUp } from "@mdi/js";
+import { mdiCheckCircle, mdiChevronDown, mdiChevronUp, mdiDownload } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
 import MapFileDetails from "./MapFileDetails.vue";
 import { isSameMapFile, mapFileName } from "./mapFilePath";
@@ -191,6 +204,15 @@ export default defineComponent({
 
     const file = computed<File | undefined>(() => files.value[0]);
     const currentFileName = computed<string>(() => mapFileName(props.map.gameMap?.path));
+
+    // Start from the picked file's own name so it can be tweaked rather than retyped.
+    watch(file, (selected) => {
+      fileName.value = selected?.name ?? "";
+    });
+
+    function downloadUrl(mapFile: MapFileData): string {
+      return MapsService.getMapFileDownloadUrl(mapFile.filePath);
+    }
 
     function isSelected(mapFile: MapFileData): boolean {
       return isSameMapFile(props.map.gameMap?.path, mapFile.filePath);
@@ -230,11 +252,13 @@ export default defineComponent({
         const formData = new FormData();
         formData.append("mapId", props.map.id.toString());
         formData.append("mapFile", selectedFile, selectedFile.name);
-        formData.append("fileName", fileName.value);
+        // An untouched field means "no override", which is the empty string the
+        // backend already treats as "use the uploaded file's own name".
+        const nameOverride = fileName.value.trim() === selectedFile.name ? "" : fileName.value.trim();
+        formData.append("fileName", nameOverride);
         await mapsManagementStore.createMapFile(formData, (percent) => uploadPercent.value = percent);
         await mapsManagementStore.loadMapFiles(props.map.id);
 
-        fileName.value = "";
         files.value = [];
       } catch(err) {
         uploadError.value = err instanceof Error ? err.message : "Error trying to create map file.";
@@ -267,18 +291,19 @@ export default defineComponent({
 
     const headers: DataTableHeader[] = [
       { title: "File path", value: "filePath" },
-      { title: "Actions", value: "actions", sortable: false, width: 180, nowrap: true },
+      { title: "Actions", value: "actions", sortable: false, width: 220, nowrap: true },
     ];
 
     return {
-      mdiAlertCircleOutline,
       mdiCheckCircle,
+      mdiDownload,
       mdiChevronDown,
       mdiChevronUp,
       headers,
       fileTable,
       mapFiles,
       selectMapFile,
+      downloadUrl,
       confirmSelectMapFile,
       isConfirmOpen,
       pendingFile,
@@ -304,6 +329,12 @@ export default defineComponent({
 // columns shift as rows open and close. Fixed layout keeps them still.
 .map-files-table :deep(table) {
   table-layout: fixed;
+}
+
+// max-height rather than the height prop, so a short list takes only the room it
+// needs instead of leaving a gap under the last row.
+.map-files-table :deep(.v-table__wrapper) {
+  max-height: 320px;
 }
 
 .map-files-table :deep(td) {

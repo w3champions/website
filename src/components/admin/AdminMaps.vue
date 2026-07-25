@@ -10,7 +10,13 @@
           <v-btn color="secondary" class="text-w3-race-bg" @click="openBulkUpload">Bulk Upload</v-btn>
         </div>
         <v-dialog v-if="isEditOpen" v-model="isEditOpen" max-width="800px" scrollable>
-          <edit-map :map="editedMap" :isAddDialog="isAddDialog" @cancel="closeEdit" @save="saveMap" />
+          <edit-map
+            :map="editedMap"
+            :isAddDialog="isAddDialog"
+            :categories="categories"
+            @cancel="closeEdit"
+            @save="saveMap"
+          />
         </v-dialog>
 
         <v-dialog v-if="isEditFilesOpen" v-model="isEditFilesOpen" max-width="800px" scrollable>

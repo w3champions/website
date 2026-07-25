@@ -1,4 +1,4 @@
-import { API_URL } from "@/config/env";
+import { API_URL, LAUNCHER_UPDATE_URL } from "@/config/env";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
@@ -142,6 +142,12 @@ export default class MapsService {
 
       request.send(form);
     });
+  }
+
+  // The update service serves the stored files themselves; this is the same
+  // unauthenticated route the launcher downloads maps from.
+  public static getMapFileDownloadUrl(filePath: string): string {
+    return `${LAUNCHER_UPDATE_URL}maps/download?mapPath=${encodeURIComponent(filePath)}`;
   }
 
   public static async getTournamentMaps(): Promise<GetMapsResponse> {
