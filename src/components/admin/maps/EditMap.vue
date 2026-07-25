@@ -63,6 +63,17 @@
               @update:valid="isMappedForcesValid = $event"
             />
           </v-col>
+
+          <!-- What the selected file actually contains, to check the settings above
+               against. Warnings here never block saving. -->
+          <v-col v-if="!isAddDialog" cols="12">
+            <div class="text-medium-emphasis text-body-2 mb-1">Selected map file</div>
+            <map-file-details
+              :game-map="mapRef.gameMap"
+              :map="mapRef"
+              details-title="Map file details"
+            />
+          </v-col>
         </v-row>
       </v-container>
     </v-card-text>
@@ -83,10 +94,11 @@
 import { defineComponent, PropType, ref } from "vue";
 import { Map, MapForce } from "@/store/admin/mapsManagement/types";
 import MappedForcesEditor from "./MappedForcesEditor.vue";
+import MapFileDetails from "./MapFileDetails.vue";
 
 export default defineComponent({
   name: "EditMap",
-  components: { MappedForcesEditor },
+  components: { MappedForcesEditor, MapFileDetails },
   props: {
     map: {
       type: Object as PropType<Map>,

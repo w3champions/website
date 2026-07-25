@@ -27,6 +27,8 @@
           :items-per-page="100"
           height="320"
           fixed-header
+          show-expand
+          item-value="id"
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
           :row-props="rowProps"
         >
@@ -39,6 +41,16 @@
             <v-btn v-else color="primary" size="small" class="text-w3-race-bg" @click="selectMapFile(item)">
               Select
             </v-btn>
+          </template>
+
+          <!-- The metadata is already loaded with the file list, so any file can be
+               inspected before it is selected. -->
+          <template v-slot:expanded-row="{ columns, item }">
+            <tr>
+              <td :colspan="columns.length" class="py-3">
+                <map-file-details :game-map="item.metaData" :map="map" :collapsible="false" />
+              </td>
+            </tr>
           </template>
         </v-data-table>
 
@@ -105,10 +117,13 @@
             <span class="text-medium-emphasis" style="min-width: 72px;">Current:</span>
             <span>{{ currentFileName || "No file selected" }}</span>
           </div>
-          <div class="d-flex align-center ga-2">
+          <div class="d-flex align-center ga-2 mb-3">
             <span class="text-medium-emphasis" style="min-width: 72px;">New:</span>
             <span class="font-weight-medium">{{ pendingFile?.filePath }}</span>
           </div>
+
+          <v-divider class="mb-3" />
+          <map-file-details :game-map="pendingFile?.metaData" :map="map" details-title="Incoming file details" />
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -129,11 +144,12 @@ import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { DataTableHeader } from "vuetify";
 import { mdiAlertCircleOutline, mdiCheckCircle } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
+import MapFileDetails from "./MapFileDetails.vue";
 import { isSameMapFile, mapFileName } from "./mapFilePath";
 
 export default defineComponent({
   name: "EditMapFiles",
-  components: { MapFileDropZone },
+  components: { MapFileDropZone, MapFileDetails },
   props: {
     map: {
       type: Object as PropType<Map>,
