@@ -7,14 +7,18 @@ export default class MapsService {
   // { errors: [{ msg }] } envelope. Passing the parsed body to new Error() yields
   // "[object Object]", so pull a readable message out of both shapes.
   private static async errorFromResponse(response: Response): Promise<Error> {
-    const fallback = `Request failed with status ${response.status}.`;
-
     let body: unknown;
     try {
       body = await response.json();
     } catch {
-      return new Error(fallback);
+      return new Error(`Request failed with status ${response.status}.`);
     }
+
+    return MapsService.errorFromBody(body, response.status);
+  }
+
+  private static errorFromBody(body: unknown, status: number): Error {
+    const fallback = `Request failed with status ${status}.`;
 
     if (typeof body === "string" && body.trim()) return new Error(body);
 
@@ -97,22 +101,47 @@ export default class MapsService {
     return response.ok ? await response.json() : [];
   }
 
-  public static async createMapFile(token: string, form: FormData): Promise<Map> {
+  // Uploads go through XMLHttpRequest rather than fetch: fetch cannot report how
+  // much of the request body has been sent, and map files are big enough that a
+  // progress bar is worth the older API.
+  public static createMapFile(
+    token: string,
+    form: FormData,
+    onProgress?: (percentUploaded: number) => void,
+  ): Promise<void> {
     const mapId = form.get("mapId") as string;
     const url = `${API_URL}api/maps/${mapId}/files`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      body: form,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    return new Promise<void>((resolve, reject) => {
+      const request = new XMLHttpRequest();
+      request.open("POST", url);
+      request.setRequestHeader("Authorization", `Bearer ${token}`);
 
-    if (!response.ok) {
-      throw await MapsService.errorFromResponse(response);
-    }
-    return await response.json();
+      request.upload.onprogress = (event: ProgressEvent): void => {
+        if (!event.lengthComputable) return;
+        onProgress?.(Math.round((event.loaded / event.total) * 100));
+      };
+
+      request.onload = (): void => {
+        if (request.status >= 200 && request.status < 300) {
+          resolve();
+          return;
+        }
+
+        let body: unknown = request.responseText;
+        try {
+          body = JSON.parse(request.responseText);
+        } catch {
+          // Keep the raw text; errorFromBody handles both shapes.
+        }
+        reject(MapsService.errorFromBody(body, request.status));
+      };
+
+      request.onerror = (): void => reject(new Error("Network error while uploading the map file."));
+      request.onabort = (): void => reject(new Error("Upload cancelled."));
+
+      request.send(form);
+    });
   }
 
   public static async getTournamentMaps(): Promise<GetMapsResponse> {

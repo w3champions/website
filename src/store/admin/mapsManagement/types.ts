@@ -79,4 +79,6 @@ export interface MapFileData {
 
 export interface AdminMapsFilters {
   hideDisabled: boolean;
+  category: string | null;
+  onlyMissingFile: boolean;
 }

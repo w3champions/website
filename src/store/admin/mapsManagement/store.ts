@@ -30,9 +30,9 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       const mapFiles = await MapsService.getMapFiles(oauthStore.token, mapId);
       this.SET_MAP_FILES(mapFiles);
     },
-    async createMapFile(formData: FormData) {
+    async createMapFile(formData: FormData, onProgress?: (percentUploaded: number) => void) {
       const oauthStore = useOauthStore();
-      await MapsService.createMapFile(oauthStore.token, formData);
+      await MapsService.createMapFile(oauthStore.token, formData, onProgress);
     },
     SET_MAPS(getMapsResponse: GetMapsResponse) {
       this.maps = getMapsResponse?.items ?? [];

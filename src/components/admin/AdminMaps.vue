@@ -21,23 +21,50 @@
           <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
         </v-dialog>
 
-        <div class="d-flex pt-2 px-1">
-          <div class="w-50">
+        <v-row class="pt-2 px-1" align="center" dense>
+          <v-col cols="12" sm="6" md="4">
             <v-text-field
               v-model="search"
               label="Search"
+              :prepend-inner-icon="mdiMagnify"
               variant="underlined"
               color="primary"
+              clearable
+              hide-details
             />
-          </div>
-          <v-checkbox
-            v-model="adminMapsFilters.hideDisabled"
-            label="Hide disabled maps"
-            hide-details
-            class="text-medium-emphasis"
-            color="primary"
-          />
-        </div>
+          </v-col>
+          <v-col cols="12" sm="6" md="3">
+            <v-autocomplete
+              v-model="adminMapsFilters.category"
+              :items="categories"
+              label="Category"
+              variant="underlined"
+              color="primary"
+              clearable
+              hide-details
+            />
+          </v-col>
+          <v-col cols="12" md="5">
+            <div class="d-flex flex-wrap ga-4">
+              <v-switch
+                v-model="adminMapsFilters.hideDisabled"
+                label="Hide disabled maps"
+                hide-details
+                density="compact"
+                class="text-medium-emphasis flex-grow-0"
+                color="primary"
+              />
+              <v-switch
+                v-model="adminMapsFilters.onlyMissingFile"
+                label="Only maps without a file"
+                hide-details
+                density="compact"
+                class="text-medium-emphasis flex-grow-0"
+                color="primary"
+              />
+            </div>
+          </v-col>
+        </v-row>
         <v-data-table
           :headers="headers"
           :items="maps"
@@ -59,8 +86,54 @@
             <span v-else class="text-medium-emphasis">No file selected</span>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon size="small" class="mr-2" @click="configureMap(item)">{{ mdiPencil }}</v-icon>
-            <v-icon size="small" class="mr-2" @click="configureMapFiles(item)">{{ mdiFile }}</v-icon>
+            <div class="d-flex align-center">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Edit map">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="mdiPencil"
+                    variant="text"
+                    size="small"
+                    density="comfortable"
+                    aria-label="Edit map"
+                    @click="configureMap(item)"
+                  />
+                </template>
+              </v-tooltip>
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Manage map files">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="mdiFile"
+                    variant="text"
+                    size="small"
+                    density="comfortable"
+                    aria-label="Manage map files"
+                    @click="configureMapFiles(item)"
+                  />
+                </template>
+              </v-tooltip>
+              <v-tooltip
+                location="top"
+                content-class="w3-tooltip elevation-1"
+                :text="item.disabled ? 'Enable map' : 'Disable map'"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="item.disabled ? mdiEyeOutline : mdiEyeOffOutline"
+                    :color="item.disabled ? 'success' : undefined"
+                    :loading="togglingMapId === item.id"
+                    :disabled="togglingMapId !== null"
+                    variant="text"
+                    size="small"
+                    density="comfortable"
+                    :aria-label="item.disabled ? 'Enable map' : 'Disable map'"
+                    @click="toggleMapDisabled(item)"
+                  />
+                </template>
+              </v-tooltip>
+            </div>
           </template>
         </v-data-table>
       </v-card>
@@ -80,7 +153,7 @@ import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { mdiFile, mdiPencil } from "@mdi/js";
+import { mdiEyeOffOutline, mdiEyeOutline, mdiFile, mdiMagnify, mdiPencil } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
@@ -101,18 +174,31 @@ export default defineComponent({
     const isAddDialog = ref<boolean>(false);
     const isBulkUploadOpen = ref<boolean>(false);
 
-    const adminMapsFilters = ref<AdminMapsFilters>({ hideDisabled: false });
+    const adminMapsFilters = ref<AdminMapsFilters>({
+      hideDisabled: false,
+      category: null,
+      onlyMissingFile: false,
+    });
 
     const snackbar = ref<boolean>(false);
     const snackbarText = ref<string>("");
     const snackbarColor = ref<string>("success");
+    const togglingMapId = ref<number | null>(null);
 
     const maps = computed<Map[]>(() => {
-      if (adminMapsFilters.value.hideDisabled) {
-        return mapsManagementStore.maps.filter((x) => !x.disabled);
-      }
-      return mapsManagementStore.maps;
+      const filters = adminMapsFilters.value;
+      return mapsManagementStore.maps.filter((map) => {
+        if (filters.hideDisabled && map.disabled) return false;
+        if (filters.category && map.category !== filters.category) return false;
+        if (filters.onlyMissingFile && map.gameMap?.path) return false;
+        return true;
+      });
     });
+
+    const categories = computed<string[]>(() =>
+      [...new Set(mapsManagementStore.maps.map((map) => map.category).filter((c): c is string => !!c))]
+        .sort((a, b) => a.localeCompare(b))
+    );
 
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
@@ -208,6 +294,21 @@ export default defineComponent({
       closeEditFiles();
     }
 
+    // Flipping a map's availability is the most common edit, so it gets a row
+    // action instead of a trip through the edit dialog.
+    async function toggleMapDisabled(map: Map): Promise<void> {
+      togglingMapId.value = map.id;
+      try {
+        await mapsManagementStore.updateMap({ ...map, disabled: !map.disabled });
+        await mapsManagementStore.loadMaps();
+        showSnackbar(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, "success");
+      } catch(err) {
+        showSnackbar(err instanceof Error ? err.message : "Error trying to update map.", "error");
+      } finally {
+        togglingMapId.value = null;
+      }
+    }
+
     function createDefaultMap(): Map {
       const map: Map = {
         id: -1,
@@ -244,6 +345,12 @@ export default defineComponent({
     return {
       mdiFile,
       mdiPencil,
+      mdiMagnify,
+      mdiEyeOutline,
+      mdiEyeOffOutline,
+      categories,
+      togglingMapId,
+      toggleMapDisabled,
       headers,
       addMap,
       isEditOpen,

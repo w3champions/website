@@ -44,6 +44,9 @@
 
         <div class="mt-5"></div>
         <span class="text-subtitle-1">Add file</span>
+        <v-alert v-if="uploadError" type="error" closable class="mt-2" @update:model-value="uploadError = ''">
+          {{ uploadError }}
+        </v-alert>
         <v-row>
           <v-col cols="12">
             <map-file-drop-zone v-model="files" label="Drag & drop a map file here" />
@@ -67,6 +70,20 @@
         >
           Add map file
         </v-btn>
+
+        <div v-if="uploading" class="mt-2">
+          <v-progress-linear
+            :model-value="uploadPercent"
+            :indeterminate="uploadPercent >= 100"
+            color="primary"
+            height="8"
+            rounded
+          />
+          <div class="text-caption text-medium-emphasis mt-1">
+            <!-- 100% only means the body reached the server; it still has to store it. -->
+            {{ uploadPercent >= 100 ? "Processing on the server…" : `Uploading… ${uploadPercent}%` }}
+          </div>
+        </div>
       </v-container>
     </v-card-text>
 
@@ -76,6 +93,32 @@
         {{ $t(`views_admin.cancel`) }}
       </v-btn>
     </v-card-actions>
+
+    <v-dialog v-model="isConfirmOpen" max-width="520px">
+      <v-card>
+        <v-card-title>Select this file?</v-card-title>
+        <v-card-text>
+          <p class="mb-3">
+            <strong>{{ map.name }} ({{ map.id }})</strong> will use this file from now on.
+          </p>
+          <div class="d-flex align-center ga-2 mb-2">
+            <span class="text-medium-emphasis" style="min-width: 72px;">Current:</span>
+            <span>{{ currentFileName || "No file selected" }}</span>
+          </div>
+          <div class="d-flex align-center ga-2">
+            <span class="text-medium-emphasis" style="min-width: 72px;">New:</span>
+            <span class="font-weight-medium">{{ pendingFile?.filePath }}</span>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn variant="text" @click="isConfirmOpen = false">
+            {{ $t(`views_admin.cancel`) }}
+          </v-btn>
+          <v-btn color="primary" variant="flat" @click="confirmSelectMapFile">Select file</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -103,6 +146,10 @@ export default defineComponent({
     const fileName = ref<string>("");
     const files = ref<File[]>([]);
     const uploading = ref<boolean>(false);
+    const uploadPercent = ref<number>(0);
+    const uploadError = ref<string>("");
+    const isConfirmOpen = ref<boolean>(false);
+    const pendingFile = ref<MapFileData | null>(null);
     const mapFiles = computed<MapFileData[]>(() => mapsManagementStore.mapFiles);
     const maxMapFileNameLength = 60; // Very long file names break the Admin Maps UI
 
@@ -118,9 +165,15 @@ export default defineComponent({
     }
 
     function selectMapFile(mapFile: MapFileData) {
-      if (confirm(`Are you sure you want to select file with path ${mapFile.filePath}?`)) {
-        context.emit("selected", { map: props.map, file: mapFile });
-      }
+      pendingFile.value = mapFile;
+      isConfirmOpen.value = true;
+    }
+
+    function confirmSelectMapFile() {
+      const mapFile = pendingFile.value;
+      isConfirmOpen.value = false;
+      if (!mapFile) return;
+      context.emit("selected", { map: props.map, file: mapFile });
     }
 
     function cancel() {
@@ -132,6 +185,8 @@ export default defineComponent({
       if (!selectedFile) return;
 
       uploading.value = true;
+      uploadPercent.value = 0;
+      uploadError.value = "";
       try {
         if (selectedFile.name.length > maxMapFileNameLength) {
           throw new Error(`File name exceeds maximum character length of ${maxMapFileNameLength}.`);
@@ -140,15 +195,16 @@ export default defineComponent({
         formData.append("mapId", props.map.id.toString());
         formData.append("mapFile", selectedFile, selectedFile.name);
         formData.append("fileName", fileName.value);
-        await mapsManagementStore.createMapFile(formData);
+        await mapsManagementStore.createMapFile(formData, (percent) => uploadPercent.value = percent);
         await mapsManagementStore.loadMapFiles(props.map.id);
 
         fileName.value = "";
         files.value = [];
       } catch(err) {
-        alert(err ? err : "Error trying to create map file.");
+        uploadError.value = err instanceof Error ? err.message : "Error trying to create map file.";
       } finally {
         uploading.value = false;
+        uploadPercent.value = 0;
       }
     }
 
@@ -180,6 +236,11 @@ export default defineComponent({
       fileTable,
       mapFiles,
       selectMapFile,
+      confirmSelectMapFile,
+      isConfirmOpen,
+      pendingFile,
+      uploadPercent,
+      uploadError,
       isSelected,
       rowProps,
       currentFileName,

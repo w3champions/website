@@ -30,25 +30,38 @@
           label="Drag & drop map files here"
         />
 
+        <v-alert v-if="duplicateMapIds.length" type="warning" variant="outlined" class="mt-4">
+          {{ duplicateMapIds.length }} map{{ duplicateMapIds.length === 1 ? " is" : "s are" }} targeted by more
+          than one file ({{ duplicateMapIds.join(", ") }}). All of them upload, but only the last one selected
+          stays active for that map.
+        </v-alert>
+
         <v-row class="mt-2">
-          <v-col>
+          <v-col class="d-flex flex-wrap ga-2">
             <v-btn
               color="primary"
-              class="text-w3-race-bg mr-2"
+              class="text-w3-race-bg"
               :disabled="readyRows.length === 0 || uploading || selecting"
-              :loading="uploading"
+              :loading="uploading || selecting"
+              @click="uploadAndSelect"
+            >
+              Upload &amp; select ({{ readyRows.length }})
+            </v-btn>
+            <v-btn
+              color="secondary"
+              class="text-w3-race-bg"
+              :disabled="readyRows.length === 0 || uploading || selecting"
               @click="uploadFiles"
             >
-              Upload {{ readyRows.length ? `${readyRows.length} file${readyRows.length === 1 ? "" : "s"}` : "files" }}
+              Upload only
             </v-btn>
             <v-btn
               color="success"
-              class="mr-2 text-w3-race-bg"
+              class="text-w3-race-bg"
               :disabled="uploadedRows.length === 0 || uploading || selecting"
-              :loading="selecting"
               @click="selectAll"
             >
-              Select All ({{ uploadedRows.length }})
+              Select uploaded ({{ uploadedRows.length }})
             </v-btn>
             <v-btn
               class="bg-error text-w3-race-bg"
@@ -60,6 +73,20 @@
             </v-btn>
           </v-col>
         </v-row>
+
+        <div v-if="uploading" class="mt-3">
+          <v-progress-linear
+            :model-value="currentRowPercent"
+            :indeterminate="currentRowPercent >= 100"
+            color="primary"
+            height="8"
+            rounded
+          />
+          <div class="text-caption text-medium-emphasis mt-1">
+            Uploading file {{ uploadIndex }} of {{ uploadTotal }}: {{ uploadingFileName }}
+            {{ currentRowPercent >= 100 ? "— processing on the server…" : `— ${currentRowPercent}%` }}
+          </div>
+        </div>
 
         <template v-if="rows.length > 0">
           <v-divider class="my-4" />
@@ -99,12 +126,41 @@
             </template>
 
             <template v-slot:[`item.mapId`]="{ item }">
-              <span v-if="item.mapId !== null">{{ item.mapId }}</span>
-              <span v-else class="text-medium-emphasis">&mdash;</span>
+              <div class="d-flex align-center ga-1">
+                <span v-if="item.mapId !== null">{{ item.mapId }}</span>
+                <span v-else class="text-medium-emphasis">&mdash;</span>
+                <v-tooltip
+                  v-if="item.mapId !== null && duplicateMapIds.includes(item.mapId)"
+                  location="bottom"
+                  content-class="w3-tooltip elevation-1"
+                  text="Another selected file targets this same map"
+                >
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" size="small" color="warning">{{ mdiAlertOutline }}</v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
             </template>
 
             <template v-slot:[`item.mapName`]="{ item }">
-              <span v-if="item.map">{{ item.map.name }}</span>
+              <!-- Rows we could not match are fixable in place: pick the map here
+                   instead of renaming the file and dropping it again. -->
+              <v-autocomplete
+                v-if="isFixable(item)"
+                :model-value="item.map ? item.mapId : null"
+                :items="mapOptions"
+                item-title="title"
+                item-value="value"
+                label="Pick a map"
+                density="compact"
+                variant="underlined"
+                color="primary"
+                hide-details
+                :disabled="uploading || selecting"
+                style="min-width: 220px;"
+                @update:model-value="assignMap(item, $event)"
+              />
+              <span v-else-if="item.map">{{ item.map.name }}</span>
               <span v-else class="text-medium-emphasis">Unknown map</span>
             </template>
 
@@ -124,6 +180,16 @@
               <v-chip :color="statusColor(item.status)" variant="flat" size="small" :prepend-icon="statusIcon(item.status)">
                 {{ statusLabel(item.status) }}
               </v-chip>
+              <v-progress-linear
+                v-if="item.status === 'uploading'"
+                :model-value="item.percent"
+                :indeterminate="item.percent >= 100"
+                color="primary"
+                height="4"
+                rounded
+                class="mt-1"
+                style="min-width: 90px;"
+              />
               <div v-if="item.message" class="text-caption text-medium-emphasis mt-1">
                 {{ item.message }}
               </div>
@@ -146,7 +212,7 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
-import { mdiAlertCircleOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiFileQuestionOutline, mdiProgressUpload } from "@mdi/js";
+import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiFileQuestionOutline, mdiProgressUpload } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
 import { mapFileName } from "./mapFilePath";
 
@@ -168,6 +234,7 @@ interface BulkRow {
   currentFileName: string;
   status: RowStatus;
   message?: string;
+  percent: number;
   mapFileData?: MapFileData;
 }
 
@@ -182,6 +249,10 @@ export default defineComponent({
     const selecting = ref<boolean>(false);
     const error = ref<string>("");
     const successMessage = ref<string>("");
+    const uploadIndex = ref<number>(0);
+    const uploadTotal = ref<number>(0);
+    const uploadingFileName = ref<string>("");
+    const currentRowPercent = ref<number>(0);
 
     const headers = [
       { title: "File name", key: "fileName", sortable: false },
@@ -198,6 +269,39 @@ export default defineComponent({
     const problemRows = computed<BulkRow[]>(() =>
       rows.value.filter((row) => ["invalid-name", "unknown-map", "error"].includes(row.status))
     );
+
+    // Two files aimed at the same map both upload fine, but only the last one
+    // selected stays active - worth flagging before the admin walks away.
+    const duplicateMapIds = computed<number[]>(() => {
+      // Note: `Map` is the imported map type here, not the JS global.
+      const counts: Record<number, number> = {};
+      for (const row of rows.value) {
+        if (row.mapId === null) continue;
+        counts[row.mapId] = (counts[row.mapId] ?? 0) + 1;
+      }
+      return Object.keys(counts).map(Number).filter((mapId) => counts[mapId] > 1);
+    });
+
+    const mapOptions = computed(() =>
+      [...mapsManagementStore.maps]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((map) => ({ title: `${map.name} (${map.id})`, value: map.id }))
+    );
+
+    function isFixable(row: BulkRow): boolean {
+      return row.status === "invalid-name" || row.status === "unknown-map";
+    }
+
+    function assignMap(row: BulkRow, mapId: number | null): void {
+      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
+      if (!map) return;
+
+      row.mapId = map.id;
+      row.map = map;
+      row.currentFileName = mapFileName(map.gameMap?.path);
+      row.status = "ready";
+      row.message = undefined;
+    }
 
     function extractMapIdFromFilename(filename: string): number | null {
       // Extract map ID from format: {map_id}_{name}.w3m or {map_id}_{name}.w3x
@@ -219,6 +323,7 @@ export default defineComponent({
           fileName: file.name,
           mapId: null,
           currentFileName: "",
+          percent: 0,
           status: "invalid-name",
           message: "Expected {map_id}_{name}.w3m or {map_id}_{name}.w3x",
         };
@@ -232,6 +337,7 @@ export default defineComponent({
         mapId,
         map,
         currentFileName: mapFileName(map?.gameMap?.path),
+        percent: 0,
         status: map ? "ready" : "unknown-map",
         message: map ? undefined : `Map with ID ${mapId} does not exist`,
       };
@@ -281,20 +387,28 @@ export default defineComponent({
       }
     }
 
-    async function uploadFiles(): Promise<void> {
+    // Uploads stay sequential: batches are small and one file at a time keeps the
+    // progress readable and the server load predictable.
+    async function uploadFiles(): Promise<number> {
       const pending = readyRows.value;
       if (pending.length === 0) {
         error.value = "No files ready to upload.";
-        return;
+        return 0;
       }
 
       uploading.value = true;
       error.value = "";
       successMessage.value = "";
+      uploadIndex.value = 0;
+      uploadTotal.value = pending.length;
 
       for (const row of pending) {
         row.status = "uploading";
         row.message = undefined;
+        row.percent = 0;
+        uploadIndex.value++;
+        uploadingFileName.value = row.fileName;
+        currentRowPercent.value = 0;
 
         try {
           const formData = new FormData();
@@ -302,7 +416,10 @@ export default defineComponent({
           formData.append("mapFile", row.file, row.file.name);
           formData.append("fileName", "");
 
-          await mapsManagementStore.createMapFile(formData);
+          await mapsManagementStore.createMapFile(formData, (percent) => {
+            row.percent = percent;
+            currentRowPercent.value = percent;
+          });
 
           // The create endpoint does not return the stored file, so re-read the
           // map's files and match the one named after the upload.
@@ -326,15 +443,27 @@ export default defineComponent({
       }
 
       uploading.value = false;
+      uploadingFileName.value = "";
+      currentRowPercent.value = 0;
 
       const failed = rows.value.filter((row) => row.status === "error").length;
       const uploaded = uploadedRows.value.length;
       if (uploaded > 0) {
         successMessage.value = `Uploaded ${uploaded} file${uploaded === 1 ? "" : "s"}.`
-          + " Use \"Select All\" to make them the active files for their maps.";
+          + " Use \"Select uploaded\" to make them the active files for their maps.";
       }
       if (failed > 0) {
         error.value = `${failed} file${failed === 1 ? "" : "s"} failed to upload. See the table for details.`;
+      }
+      return uploaded;
+    }
+
+    // The two steps are almost always used together; keep them available
+    // separately for the cases where an admin wants to check before selecting.
+    async function uploadAndSelect(): Promise<void> {
+      const uploaded = await uploadFiles();
+      if (uploaded > 0) {
+        await selectAll();
       }
     }
 
@@ -388,6 +517,10 @@ export default defineComponent({
       rows.value = [];
       error.value = "";
       successMessage.value = "";
+      uploadIndex.value = 0;
+      uploadTotal.value = 0;
+      uploadingFileName.value = "";
+      currentRowPercent.value = 0;
     }
 
     function cancel(): void {
@@ -407,7 +540,17 @@ export default defineComponent({
       successMessage,
       headers,
       uploadFiles,
+      uploadAndSelect,
       selectAll,
+      duplicateMapIds,
+      mapOptions,
+      isFixable,
+      assignMap,
+      uploadIndex,
+      uploadTotal,
+      uploadingFileName,
+      currentRowPercent,
+      mdiAlertOutline,
       reset,
       cancel,
       statusColor,
