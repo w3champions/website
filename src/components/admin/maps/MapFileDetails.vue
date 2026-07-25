@@ -1,17 +1,5 @@
 <template>
   <div v-if="gameMap">
-    <!-- One line of the things you actually check before selecting a file. -->
-    <div class="d-flex flex-wrap align-center ga-3 text-body-2">
-      <span class="font-weight-medium">
-        <wc3-text v-if="gameMap.name" :text="gameMap.name" />
-        <template v-else>Unnamed map</template>
-      </span>
-      <span v-if="gameMap.author" class="text-medium-emphasis">by <wc3-text :text="gameMap.author" /></span>
-      <span v-if="gameMap.width && gameMap.height">{{ gameMap.width }}&times;{{ gameMap.height }}</span>
-      <span>{{ slotSummary }}</span>
-      <span v-if="forceCount">{{ forceCount }} force{{ forceCount === 1 ? "" : "s" }}</span>
-    </div>
-
     <!-- Mismatches are informational: changing a map's layout is a valid reason
          for the file and the configuration to disagree. -->
     <v-alert
@@ -28,17 +16,11 @@
     <v-expansion-panels v-if="collapsible" variant="accordion" class="mt-2">
       <v-expansion-panel :title="detailsTitle">
         <v-expansion-panel-text>
-          <map-file-details-table :game-map="gameMap" :forces="forceRows" :slot-summary="slotSummary" />
+          <map-file-details-table :game-map="gameMap" :forces="forceRows" />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <map-file-details-table
-      v-else
-      class="mt-2"
-      :game-map="gameMap"
-      :forces="forceRows"
-      :slot-summary="slotSummary"
-    />
+    <map-file-details-table v-else class="mt-2" :game-map="gameMap" :forces="forceRows" />
   </div>
   <div v-else class="text-medium-emphasis text-body-2">
     No file metadata available.
@@ -49,16 +31,11 @@
 import { computed, defineComponent, PropType } from "vue";
 import type { GameMap, Map } from "@/store/admin/mapsManagement/types";
 import MapFileDetailsTable from "./MapFileDetailsTable.vue";
-import Wc3Text from "./Wc3Text.vue";
 
 export interface ForceRow {
   name: string;
   slots: number;
 }
-
-// war3map.w3i slot types: 1 = a slot a person can take, 2 = computer, 3 = neutral,
-// 4 = rescuable. The format calls type 1 "human"; "player" avoids reading as the race.
-const SLOT_TYPE_PLAYER = 1;
 
 // player_set is a bitmask of the lobby slots that belong to the force.
 function countSlots(playerSet: number): number {
@@ -73,7 +50,7 @@ function countSlots(playerSet: number): number {
 
 export default defineComponent({
   name: "MapFileDetails",
-  components: { MapFileDetailsTable, Wc3Text },
+  components: { MapFileDetailsTable },
   props: {
     gameMap: {
       type: Object as PropType<GameMap | undefined>,
@@ -94,25 +71,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const forceCount = computed<number>(() => props.gameMap?.forces?.length ?? 0);
-
-    // num_players counts every slot in the lobby, including the computer-controlled
-    // ones a map like Legion TD uses for its lanes, so the count worth leading with
-    // is how many of them a person can take.
-    const playableSlots = computed<number>(
-      () => (props.gameMap?.players ?? []).filter((player) => player.type === SLOT_TYPE_PLAYER).length
-    );
-
-    const hasNonPlayerSlots = computed<boolean>(() =>
-      (props.gameMap?.players ?? []).some((player) => player.type !== SLOT_TYPE_PLAYER)
-    );
-
-    const slotSummary = computed<string>(() => {
-      const total = props.gameMap?.num_players ?? 0;
-      if (!hasNonPlayerSlots.value) return `${total} player slots`;
-      return `${playableSlots.value} of ${total} slots playable`;
-    });
-
     const forceRows = computed<ForceRow[]>(() =>
       (props.gameMap?.forces ?? []).map((force, index) => ({
         name: force.name || `Force ${index + 1}`,
@@ -159,9 +117,7 @@ export default defineComponent({
     });
 
     return {
-      forceCount,
       forceRows,
-      slotSummary,
       warnings,
     };
   },

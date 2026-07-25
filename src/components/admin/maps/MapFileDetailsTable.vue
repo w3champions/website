@@ -84,10 +84,6 @@ export default defineComponent({
       type: Array as PropType<{ name: string; slots: number }[]>,
       default: () => [],
     },
-    slotSummary: {
-      type: String,
-      default: "",
-    },
   },
   setup(props) {
     const slots = computed<MapSlot[]>(() =>
@@ -118,6 +114,8 @@ export default defineComponent({
     const fields = computed<Field[]>(() => {
       const gameMap = props.gameMap;
       const entries: Field[] = [
+        // The file's own name, which can differ from the map name W3C shows.
+        { label: "Name", value: gameMap.name || "—", colored: true },
         { label: "Author", value: gameMap.author || "—", colored: true },
         { label: "Size", value: gameMap.width && gameMap.height ? `${gameMap.width} × ${gameMap.height}` : "—" },
         { label: "Slots", value: slotBreakdown.value },
