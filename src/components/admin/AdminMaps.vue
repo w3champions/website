@@ -334,12 +334,13 @@ export default defineComponent({
     });
 
     const headers: DataTableHeader[] = [
+      { title: "ID", value: "id", sortable: true, width: 90, minWidth: "90px" },
       { title: "Map name", value: "name", sortable: true },
-      { title: "ID", value: "id", sortable: true },
       { title: "Category", value: "category", sortable: true },
       { title: "Status", value: "disabled", sortable: true },
       { title: "File", value: "path", sortable: false },
-      { title: "Actions", value: "actions", sortable: false },
+      // Fixed so the three row actions never wrap or get squeezed by long file paths.
+      { title: "Actions", value: "actions", sortable: false, width: 140, minWidth: "140px", nowrap: true },
     ];
 
     return {

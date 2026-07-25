@@ -42,24 +42,26 @@
               color="primary"
               class="text-w3-race-bg"
               :disabled="readyRows.length === 0 || uploading || selecting"
-              :loading="uploading || selecting"
-              @click="uploadAndSelect"
+              :loading="runningAction === 'upload'"
+              @click="runUpload"
             >
-              Upload &amp; select ({{ readyRows.length }})
+              Upload ({{ readyRows.length }})
             </v-btn>
             <v-btn
               color="secondary"
               class="text-w3-race-bg"
               :disabled="readyRows.length === 0 || uploading || selecting"
-              @click="uploadFiles"
+              :loading="runningAction === 'upload-select'"
+              @click="runUploadAndSelect"
             >
-              Upload only
+              Upload &amp; select
             </v-btn>
             <v-btn
               color="success"
               class="text-w3-race-bg"
               :disabled="uploadedRows.length === 0 || uploading || selecting"
-              @click="selectAll"
+              :loading="runningAction === 'select'"
+              @click="runSelect"
             >
               Select uploaded ({{ uploadedRows.length }})
             </v-btn>
@@ -249,6 +251,8 @@ export default defineComponent({
     const selecting = ref<boolean>(false);
     const error = ref<string>("");
     const successMessage = ref<string>("");
+    // Which button is running, so only that one shows a spinner.
+    const runningAction = ref<"upload" | "upload-select" | "select" | null>(null);
     const uploadIndex = ref<number>(0);
     const uploadTotal = ref<number>(0);
     const uploadingFileName = ref<string>("");
@@ -458,12 +462,35 @@ export default defineComponent({
       return uploaded;
     }
 
+    async function runUpload(): Promise<void> {
+      runningAction.value = "upload";
+      try {
+        await uploadFiles();
+      } finally {
+        runningAction.value = null;
+      }
+    }
+
+    async function runSelect(): Promise<void> {
+      runningAction.value = "select";
+      try {
+        await selectAll();
+      } finally {
+        runningAction.value = null;
+      }
+    }
+
     // The two steps are almost always used together; keep them available
     // separately for the cases where an admin wants to check before selecting.
-    async function uploadAndSelect(): Promise<void> {
-      const uploaded = await uploadFiles();
-      if (uploaded > 0) {
-        await selectAll();
+    async function runUploadAndSelect(): Promise<void> {
+      runningAction.value = "upload-select";
+      try {
+        const uploaded = await uploadFiles();
+        if (uploaded > 0) {
+          await selectAll();
+        }
+      } finally {
+        runningAction.value = null;
       }
     }
 
@@ -540,8 +567,11 @@ export default defineComponent({
       successMessage,
       headers,
       uploadFiles,
-      uploadAndSelect,
       selectAll,
+      runUpload,
+      runSelect,
+      runUploadAndSelect,
+      runningAction,
       duplicateMapIds,
       mapOptions,
       isFixable,
