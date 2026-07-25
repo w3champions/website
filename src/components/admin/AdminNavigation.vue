@@ -1,5 +1,14 @@
 <template>
-  <v-navigation-drawer permanent class="mt-0 w3-glass">
+  <!--
+    Below the "md" threshold (< 960px) the drawer turns temporary: it overlays the
+    content instead of shrinking it, and Vuetify closes it automatically on route
+    change. At >= 960px it behaves like the previous permanent drawer.
+  -->
+  <v-navigation-drawer
+    v-model="isDrawerOpen"
+    mobile-breakpoint="md"
+    class="mt-0 w3-glass"
+  >
     <v-list-item>
       <v-list-item-title>
         {{ $t("views_admin.adminpage") }}
@@ -66,7 +75,18 @@ import {
 export default defineComponent({
   name: "AdminNavigation",
   components: {},
-  setup() {
+  props: {
+    modelValue: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ["update:modelValue"],
+  setup(props, { emit }) {
+    const isDrawerOpen = computed<boolean>({
+      get: () => props.modelValue,
+      set: (val: boolean) => emit("update:modelValue", val),
+    });
     const router = useRouter();
     const route = useRoute();
     const oauthStore = useOauthStore();
@@ -426,12 +446,20 @@ export default defineComponent({
     return {
       mdiAccountTie,
       filteredNavItems,
+      isDrawerOpen,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+// As an overlay the drawer sits on top of the page content, so the glass tint is
+// composited over an opaque surface to keep the menu readable.
+.v-navigation-drawer--temporary {
+  background-color: rgb(var(--v-theme-surface)) !important;
+  background-image: linear-gradient(var(--w3-bg-glass), var(--w3-bg-glass));
+}
+
 :deep(.v-list-group__items) {
   .v-list-item {
     padding-inline-start: 22px !important;
