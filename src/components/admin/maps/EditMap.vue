@@ -21,7 +21,7 @@
               <v-col cols="12" sm="6" md="12">
                 <v-text-field
                   v-model="mapId"
-                  label="Id"
+                  label="ID"
                   v-bind="props"
                   variant="underlined"
                   color="primary"
