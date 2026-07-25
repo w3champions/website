@@ -106,14 +106,17 @@ export default defineComponent({
         );
       }
 
+      // Mapped forces only pin the slots that need a fixed layout; the rest are
+      // left open for players, so covering fewer slots than the file has is
+      // normal. Covering more than exist is not.
       const mappedSlots = (map.mappedForces ?? []).reduce(
         (total, force) => total + (force.slots?.length ?? 0),
         0
       );
-      if (mappedSlots > 0 && gameMap.num_players && mappedSlots !== gameMap.num_players) {
+      if (gameMap.num_players && mappedSlots > gameMap.num_players) {
         messages.push(
-          `The mapped forces cover ${mappedSlots} slot${mappedSlots === 1 ? "" : "s"}, `
-            + `but the file has ${gameMap.num_players} player slots.`
+          `The mapped forces cover ${mappedSlots} slots, `
+            + `but the file only has ${gameMap.num_players} player slot${gameMap.num_players === 1 ? "" : "s"}.`
         );
       }
 
