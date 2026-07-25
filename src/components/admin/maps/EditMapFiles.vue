@@ -22,27 +22,44 @@
           ref="fileTable"
           :headers="headers"
           :items="mapFiles"
-          class="elevation-1"
+          class="elevation-1 map-files-table"
           :hide-default-footer="true"
           :items-per-page="100"
           height="320"
           fixed-header
           :loading="loadingFiles"
           loading-text="Loading map files…"
-          show-expand
           item-value="id"
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
           :row-props="rowProps"
         >
-          <template v-slot:[`item.actions`]="{ item }">
-            <!-- Re-selecting the file the map already points at is a no-op, so show
-                 the state instead of an action. -->
-            <v-chip v-if="isSelected(item)" color="success" variant="flat" size="small" :prepend-icon="mdiCheckCircle">
-              Selected
-            </v-chip>
-            <v-btn v-else color="primary" size="small" class="text-w3-race-bg" @click="selectMapFile(item)">
-              Select
-            </v-btn>
+          <template v-slot:[`item.actions`]="{ item, internalItem, isExpanded, toggleExpand }">
+            <div class="d-flex align-center justify-end ga-2">
+              <!-- Re-selecting the file the map already points at is a no-op, so show
+                   the state instead of an action. -->
+              <v-chip v-if="isSelected(item)" color="success" variant="flat" size="small" :prepend-icon="mdiCheckCircle">
+                Selected
+              </v-chip>
+              <v-btn v-else color="primary" size="small" class="text-w3-race-bg" @click="selectMapFile(item)">
+                Select
+              </v-btn>
+              <v-tooltip
+                location="top"
+                content-class="w3-tooltip elevation-1"
+                :text="isExpanded(internalItem) ? 'Hide file details' : 'Show file details'"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="isExpanded(internalItem) ? mdiChevronUp : mdiChevronDown"
+                    variant="text"
+                    size="small"
+                    :aria-label="isExpanded(internalItem) ? 'Hide file details' : 'Show file details'"
+                    @click="toggleExpand(internalItem)"
+                  />
+                </template>
+              </v-tooltip>
+            </div>
           </template>
 
           <!-- The metadata is already loaded with the file list, so any file can be
@@ -144,7 +161,7 @@ import { ComponentPublicInstance, computed, defineComponent, nextTick, onMounted
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { DataTableHeader } from "vuetify";
-import { mdiAlertCircleOutline, mdiCheckCircle } from "@mdi/js";
+import { mdiAlertCircleOutline, mdiCheckCircle, mdiChevronDown, mdiChevronUp } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
 import MapFileDetails from "./MapFileDetails.vue";
 import { isSameMapFile, mapFileName } from "./mapFilePath";
@@ -250,12 +267,14 @@ export default defineComponent({
 
     const headers: DataTableHeader[] = [
       { title: "File path", value: "filePath" },
-      { title: "Actions", value: "actions", sortable: false },
+      { title: "Actions", value: "actions", sortable: false, width: 180, nowrap: true },
     ];
 
     return {
       mdiAlertCircleOutline,
       mdiCheckCircle,
+      mdiChevronDown,
+      mdiChevronUp,
       headers,
       fileTable,
       mapFiles,
@@ -281,6 +300,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+// Expanding a row makes the browser re-measure an auto-laid-out table, so the
+// columns shift as rows open and close. Fixed layout keeps them still.
+.map-files-table :deep(table) {
+  table-layout: fixed;
+}
+
+.map-files-table :deep(td) {
+  word-break: break-word;
+}
+
 :deep(.map-file-row--selected) {
   background-color: rgba(var(--v-theme-success), 0.12);
 }

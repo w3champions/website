@@ -2,14 +2,14 @@
   <div v-if="gameMap">
     <!-- One line of the things you actually check before selecting a file. -->
     <div class="d-flex flex-wrap align-center ga-3 text-body-2">
-      <span class="font-weight-medium">{{ gameMap.name || "Unnamed map" }}</span>
-      <span v-if="gameMap.author" class="text-medium-emphasis">by {{ gameMap.author }}</span>
+      <span class="font-weight-medium">
+        <wc3-text v-if="gameMap.name" :text="gameMap.name" />
+        <template v-else>Unnamed map</template>
+      </span>
+      <span v-if="gameMap.author" class="text-medium-emphasis">by <wc3-text :text="gameMap.author" /></span>
       <span v-if="gameMap.width && gameMap.height">{{ gameMap.width }}&times;{{ gameMap.height }}</span>
       <span>{{ slotSummary }}</span>
       <span v-if="forceCount">{{ forceCount }} force{{ forceCount === 1 ? "" : "s" }}</span>
-      <span v-if="gameMap.suggested_players" class="text-medium-emphasis">
-        author suggests: {{ gameMap.suggested_players }}
-      </span>
     </div>
 
     <!-- Mismatches are informational: changing a map's layout is a valid reason
@@ -49,6 +49,7 @@
 import { computed, defineComponent, PropType } from "vue";
 import type { GameMap, Map } from "@/store/admin/mapsManagement/types";
 import MapFileDetailsTable from "./MapFileDetailsTable.vue";
+import Wc3Text from "./Wc3Text.vue";
 
 export interface ForceRow {
   name: string;
@@ -72,7 +73,7 @@ function countSlots(playerSet: number): number {
 
 export default defineComponent({
   name: "MapFileDetails",
-  components: { MapFileDetailsTable },
+  components: { MapFileDetailsTable, Wc3Text },
   props: {
     gameMap: {
       type: Object as PropType<GameMap | undefined>,

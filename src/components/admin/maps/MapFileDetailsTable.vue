@@ -1,14 +1,17 @@
 <template>
   <div class="text-body-2">
     <div v-if="gameMap.description" class="mb-3">
-      {{ gameMap.description }}
+      <wc3-text :text="gameMap.description" />
     </div>
 
     <v-row dense>
       <v-col v-for="field in fields" :key="field.label" cols="12" sm="6">
         <div class="d-flex ga-2">
           <span class="text-medium-emphasis" style="min-width: 120px;">{{ field.label }}</span>
-          <span class="text-break">{{ field.value }}</span>
+          <span class="text-break">
+            <wc3-text v-if="field.colored" :text="field.value" />
+            <template v-else>{{ field.value }}</template>
+          </span>
         </div>
       </v-col>
     </v-row>
@@ -17,7 +20,7 @@
       <div class="text-medium-emphasis mb-1">Forces</div>
       <div class="d-flex flex-wrap ga-2">
         <v-chip v-for="force in forces" :key="force.name" size="small" variant="tonal">
-          {{ force.name }}<template v-if="force.slots > 0">
+          <wc3-text :text="force.name" /><template v-if="force.slots > 0">
             &middot; {{ force.slots }} slot{{ force.slots === 1 ? "" : "s" }}
           </template>
         </v-chip>
@@ -34,7 +37,7 @@
           variant="tonal"
           :color="player.isPlayerSlot ? undefined : 'medium-emphasis'"
         >
-          {{ player.name }}<template v-if="player.typeLabel">&nbsp;&middot; {{ player.typeLabel }}</template>
+          <wc3-text :text="player.name" /><template v-if="player.typeLabel">&nbsp;&middot; {{ player.typeLabel }}</template>
         </v-chip>
       </div>
     </div>
@@ -44,10 +47,13 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import type { GameMap } from "@/store/admin/mapsManagement/types";
+import Wc3Text from "./Wc3Text.vue";
 
 interface Field {
   label: string;
   value: string;
+  // Author-written fields can carry Warcraft 3 colour codes.
+  colored?: boolean;
 }
 
 interface MapSlot {
@@ -68,6 +74,7 @@ const SLOT_TYPE_LABELS: Record<number, string> = {
 
 export default defineComponent({
   name: "MapFileDetailsTable",
+  components: { Wc3Text },
   props: {
     gameMap: {
       type: Object as PropType<GameMap>,
@@ -111,11 +118,11 @@ export default defineComponent({
     const fields = computed<Field[]>(() => {
       const gameMap = props.gameMap;
       const entries: Field[] = [
-        { label: "Author", value: gameMap.author || "—" },
+        { label: "Author", value: gameMap.author || "—", colored: true },
         { label: "Size", value: gameMap.width && gameMap.height ? `${gameMap.width} × ${gameMap.height}` : "—" },
         { label: "Slots", value: slotBreakdown.value },
         // Free text the map author wrote into the map header, not a computed value.
-        { label: "Author's suggestion", value: gameMap.suggested_players || "—" },
+        { label: "Suggested", value: gameMap.suggested_players || "—" },
         { label: "12 player map", value: gameMap.twelve_p ? "Yes" : "No" },
         { label: "Path", value: gameMap.path || "—" },
         { label: "SHA1", value: gameMap.sha1 || "—" },

@@ -71,50 +71,19 @@
           :items-per-page="10"
           :footer-props="{ itemsPerPageOptions: [10, 25, 50, -1] }"
           :search="search"
-          class="elevation-1"
-          show-expand
+          class="elevation-1 maps-table"
           item-value="id"
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.disabled`]="{ item }">
-            <!-- variant="flat" so the chip keeps its solid colour and on-colour text;
-                 the default tonal variant washes out on the light themes. -->
-            <v-chip size="small" variant="flat" :color="item.disabled ? 'error' : 'success'">
-              {{ item.disabled ? "Disabled" : "Enabled" }}
-            </v-chip>
-          </template>
-          <template v-slot:[`item.path`]="{ item }">
-            <span v-if="getMapPath(item)">{{ getMapPath(item) }}</span>
-            <span v-else class="text-medium-emphasis">No file selected</span>
-          </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <div class="d-flex align-center">
-              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Edit map">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    v-bind="props"
-                    :icon="mdiPencil"
-                    variant="text"
-                    size="small"
-                    density="comfortable"
-                    aria-label="Edit map"
-                    @click="configureMap(item)"
-                  />
-                </template>
-              </v-tooltip>
-              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Manage map files">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    v-bind="props"
-                    :icon="mdiFile"
-                    variant="text"
-                    size="small"
-                    density="comfortable"
-                    aria-label="Manage map files"
-                    @click="configureMapFiles(item)"
-                  />
-                </template>
-              </v-tooltip>
+            <div class="d-flex align-center ga-1">
+              <!-- variant="flat" so the chip keeps its solid colour and on-colour text;
+                   the default tonal variant washes out on the light themes. -->
+              <v-chip size="small" variant="flat" :color="item.disabled ? 'error' : 'success'">
+                {{ item.disabled ? "Disabled" : "Enabled" }}
+              </v-chip>
+              <!-- Lives beside the state it changes, and away from the actions that
+                   open a dialog, where it used to invite misclicks. -->
               <v-tooltip
                 location="top"
                 content-class="w3-tooltip elevation-1"
@@ -129,9 +98,58 @@
                     :disabled="togglingMapId !== null"
                     variant="text"
                     size="small"
-                    density="comfortable"
                     :aria-label="item.disabled ? 'Enable map' : 'Disable map'"
                     @click="toggleMapDisabled(item)"
+                  />
+                </template>
+              </v-tooltip>
+            </div>
+          </template>
+          <template v-slot:[`item.path`]="{ item }">
+            <span v-if="getMapPath(item)">{{ getMapPath(item) }}</span>
+            <span v-else class="text-medium-emphasis">No file selected</span>
+          </template>
+          <template v-slot:[`item.actions`]="{ item, internalItem, isExpanded, toggleExpand }">
+            <div class="d-flex align-center">
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Edit map">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="mdiPencil"
+                    variant="text"
+                    size="small"
+                    aria-label="Edit map"
+                    @click="configureMap(item)"
+                  />
+                </template>
+              </v-tooltip>
+              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Manage map files">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="mdiFile"
+                    variant="text"
+                    size="small"
+                    aria-label="Manage map files"
+                    @click="configureMapFiles(item)"
+                  />
+                </template>
+              </v-tooltip>
+              <!-- Rendered here rather than through show-expand, which puts its
+                   toggle in a column of its own, detached from the other actions. -->
+              <v-tooltip
+                location="top"
+                content-class="w3-tooltip elevation-1"
+                :text="isExpanded(internalItem) ? 'Hide map file details' : 'Show map file details'"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    :icon="isExpanded(internalItem) ? mdiChevronUp : mdiChevronDown"
+                    variant="text"
+                    size="small"
+                    :aria-label="isExpanded(internalItem) ? 'Hide map file details' : 'Show map file details'"
+                    @click="toggleExpand(internalItem)"
                   />
                 </template>
               </v-tooltip>
@@ -165,7 +183,7 @@ import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
-import { mdiEyeOffOutline, mdiEyeOutline, mdiFile, mdiMagnify, mdiPencil } from "@mdi/js";
+import { mdiChevronDown, mdiChevronUp, mdiEyeOffOutline, mdiEyeOutline, mdiFile, mdiMagnify, mdiPencil } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
@@ -346,20 +364,23 @@ export default defineComponent({
       await init();
     });
 
+    // The table is laid out with fixed widths (see the style block): every column but
+    // "File" is sized here, so expanding a row cannot re-measure and shift the columns.
     const headers: DataTableHeader[] = [
-      { title: "ID", value: "id", sortable: true, width: 90, minWidth: "90px" },
-      { title: "Map name", value: "name", sortable: true },
-      { title: "Category", value: "category", sortable: true },
-      { title: "Status", value: "disabled", sortable: true },
+      { title: "ID", value: "id", sortable: true, width: 80 },
+      { title: "Map name", value: "name", sortable: true, width: 220 },
+      { title: "Category", value: "category", sortable: true, width: 150 },
+      { title: "Status", value: "disabled", sortable: true, width: 160 },
       { title: "File", value: "path", sortable: false },
-      // Fixed so the three row actions never wrap or get squeezed by long file paths.
-      { title: "Actions", value: "actions", sortable: false, width: 140, minWidth: "140px", nowrap: true },
+      { title: "Actions", value: "actions", sortable: false, width: 150, nowrap: true },
     ];
 
     return {
       mdiFile,
       mdiPencil,
       mdiMagnify,
+      mdiChevronDown,
+      mdiChevronUp,
       mdiEyeOutline,
       mdiEyeOffOutline,
       categories,
@@ -392,3 +413,17 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+// With the default auto layout the browser re-measures the columns whenever a row is
+// expanded, because the expanded cell spans them all - so the same rows wrap
+// differently open than closed. Fixed layout pins the widths from the headers.
+.maps-table :deep(table) {
+  table-layout: fixed;
+  min-width: 900px;
+}
+
+.maps-table :deep(td) {
+  word-break: break-word;
+}
+</style>
