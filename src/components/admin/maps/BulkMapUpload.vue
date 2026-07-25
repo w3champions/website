@@ -109,94 +109,96 @@
             </v-chip>
           </div>
 
-          <v-data-table
-            :headers="headers"
-            :items="rows"
-            :items-per-page="-1"
-            hide-default-footer
-            density="compact"
-            item-value="key"
-            :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
-          >
-            <template v-slot:[`item.fileName`]="{ item }">
-              <v-tooltip location="bottom" content-class="w3-tooltip elevation-1">
-                <template v-slot:activator="{ props }">
-                  <span v-bind="props">{{ item.fileName }}</span>
-                </template>
-                <span>{{ item.fileName }}</span>
-              </v-tooltip>
-            </template>
-
-            <template v-slot:[`item.mapId`]="{ item }">
-              <div class="d-flex align-center ga-1">
-                <span v-if="item.mapId !== null">{{ item.mapId }}</span>
-                <span v-else class="text-medium-emphasis">&mdash;</span>
-                <v-tooltip
-                  v-if="item.mapId !== null && duplicateMapIds.includes(item.mapId)"
-                  location="bottom"
-                  content-class="w3-tooltip elevation-1"
-                  text="Another selected file targets this same map"
-                >
-                  <template v-slot:activator="{ props }">
-                    <v-icon v-bind="props" size="small" color="warning">{{ mdiAlertOutline }}</v-icon>
-                  </template>
-                </v-tooltip>
-              </div>
-            </template>
-
-            <template v-slot:[`item.mapName`]="{ item }">
-              <!-- Rows we could not match are fixable in place: pick the map here
-                   instead of renaming the file and dropping it again. -->
-              <v-autocomplete
-                v-if="isFixable(item)"
-                :model-value="item.map ? item.mapId : null"
-                :items="mapOptions"
-                item-title="title"
-                item-value="value"
-                label="Pick a map"
-                density="compact"
-                variant="underlined"
-                color="primary"
-                hide-details
-                :disabled="uploading || selecting"
-                style="min-width: 220px;"
-                @update:model-value="assignMap(item, $event)"
-              />
-              <span v-else-if="item.map">{{ item.map.name }}</span>
-              <span v-else class="text-medium-emphasis">Unknown map</span>
-            </template>
-
-            <template v-slot:[`item.category`]="{ item }">
-              <v-chip v-if="item.map?.category" size="x-small" variant="tonal">
-                {{ item.map.category }}
+          <!-- One block per file rather than a table: with the map, the file it
+               replaces and an editable target name, the columns grew wider than
+               the dialog. -->
+          <v-card v-for="row in rows" :key="row.key" variant="outlined" class="pa-3 mb-3">
+            <div class="d-flex flex-wrap align-center ga-2">
+              <span class="font-weight-medium text-break">{{ row.fileName }}</span>
+              <v-spacer />
+              <v-chip
+                :color="statusColor(row.status)"
+                variant="flat"
+                size="small"
+                :prepend-icon="statusIcon(row.status)"
+              >
+                {{ statusLabel(row.status) }}
               </v-chip>
-              <span v-else class="text-medium-emphasis">&mdash;</span>
-            </template>
+            </div>
 
-            <template v-slot:[`item.currentFile`]="{ item }">
-              <span v-if="item.currentFileName">{{ item.currentFileName }}</span>
-              <span v-else class="text-medium-emphasis">None</span>
-            </template>
+            <v-progress-linear
+              v-if="row.status === 'uploading'"
+              :model-value="row.percent"
+              :indeterminate="row.percent >= 100"
+              color="primary"
+              height="4"
+              rounded
+              class="mt-2"
+            />
 
-            <template v-slot:[`item.status`]="{ item }">
-              <v-chip :color="statusColor(item.status)" variant="flat" size="small" :prepend-icon="statusIcon(item.status)">
-                {{ statusLabel(item.status) }}
-              </v-chip>
-              <v-progress-linear
-                v-if="item.status === 'uploading'"
-                :model-value="item.percent"
-                :indeterminate="item.percent >= 100"
-                color="primary"
-                height="4"
-                rounded
-                class="mt-1"
-                style="min-width: 90px;"
-              />
-              <div v-if="item.message" class="text-caption text-medium-emphasis mt-1">
-                {{ item.message }}
-              </div>
-            </template>
-          </v-data-table>
+            <v-row dense class="mt-1">
+              <v-col cols="12" md="6">
+                <!-- Rows we could not match are fixable in place: pick the map here
+                     instead of renaming the file and dropping it again. -->
+                <v-autocomplete
+                  v-if="isFixable(row)"
+                  :model-value="row.map ? row.mapId : null"
+                  :items="mapOptions"
+                  item-title="title"
+                  item-value="value"
+                  label="Pick a map"
+                  density="compact"
+                  variant="underlined"
+                  color="primary"
+                  hide-details
+                  :disabled="uploading || selecting"
+                  @update:model-value="assignMap(row, $event)"
+                />
+                <div v-else class="d-flex flex-wrap align-center ga-2 text-body-2">
+                  <span class="text-medium-emphasis">Map</span>
+                  <span class="font-weight-medium">{{ row.map?.name }}</span>
+                  <span class="text-medium-emphasis">({{ row.mapId }})</span>
+                  <v-chip v-if="row.map?.category" size="x-small" variant="tonal">
+                    {{ row.map.category }}
+                  </v-chip>
+                </div>
+              </v-col>
+
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="row.storeAs"
+                  label="Store the file as"
+                  density="compact"
+                  variant="underlined"
+                  color="primary"
+                  hide-details
+                  :disabled="uploading || selecting"
+                />
+              </v-col>
+            </v-row>
+
+            <div class="text-caption text-medium-emphasis mt-2">
+              <template v-if="row.currentFileName">Current file: {{ row.currentFileName }}</template>
+              <template v-else>This map has no file yet</template>
+            </div>
+
+            <div
+              v-if="row.mapId !== null && duplicateMapIds.includes(row.mapId)"
+              class="text-caption text-warning mt-1"
+            >
+              <v-icon size="x-small" class="mr-1">{{ mdiAlertOutline }}</v-icon>
+              Another file in this batch targets the same map.
+            </div>
+
+            <div v-if="duplicateNames.includes(row.storeAs.trim().toLowerCase())" class="text-caption text-warning mt-1">
+              <v-icon size="x-small" class="mr-1">{{ mdiAlertOutline }}</v-icon>
+              Another file in this batch would be stored under this name.
+            </div>
+
+            <div v-if="row.message" class="text-caption text-medium-emphasis mt-1">
+              {{ row.message }}
+            </div>
+          </v-card>
         </template>
       </v-container>
     </v-card-text>
@@ -234,6 +236,8 @@ interface BulkRow {
   mapId: number | null;
   map?: Map;
   currentFileName: string;
+  // What the file will be stored as; starts as its own name and is editable.
+  storeAs: string;
   status: RowStatus;
   message?: string;
   percent: number;
@@ -258,15 +262,6 @@ export default defineComponent({
     const uploadingFileName = ref<string>("");
     const currentRowPercent = ref<number>(0);
 
-    const headers = [
-      { title: "File name", key: "fileName", sortable: false },
-      { title: "Map ID", key: "mapId", sortable: false },
-      { title: "Map name", key: "mapName", sortable: false },
-      { title: "Category", key: "category", sortable: false },
-      { title: "Current file", key: "currentFile", sortable: false },
-      { title: "Status", key: "status", sortable: false },
-    ];
-
     const readyRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "ready"));
     const uploadedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "uploaded"));
     const selectedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "selected"));
@@ -284,6 +279,18 @@ export default defineComponent({
         counts[row.mapId] = (counts[row.mapId] ?? 0) + 1;
       }
       return Object.keys(counts).map(Number).filter((mapId) => counts[mapId] > 1);
+    });
+
+    // The update service refuses to overwrite a stored file, so two files heading
+    // for the same name means the second one fails.
+    const duplicateNames = computed<string[]>(() => {
+      const counts: Record<string, number> = {};
+      for (const row of rows.value) {
+        const name = row.storeAs.trim().toLowerCase();
+        if (!name) continue;
+        counts[name] = (counts[name] ?? 0) + 1;
+      }
+      return Object.keys(counts).filter((name) => counts[name] > 1);
     });
 
     const mapOptions = computed(() =>
@@ -327,6 +334,7 @@ export default defineComponent({
           fileName: file.name,
           mapId: null,
           currentFileName: "",
+          storeAs: file.name,
           percent: 0,
           status: "invalid-name",
           message: "Expected {map_id}_{name}.w3m or {map_id}_{name}.w3x",
@@ -341,6 +349,7 @@ export default defineComponent({
         mapId,
         map,
         currentFileName: mapFileName(map?.gameMap?.path),
+        storeAs: file.name,
         percent: 0,
         status: map ? "ready" : "unknown-map",
         message: map ? undefined : `Map with ID ${mapId} does not exist`,
@@ -418,7 +427,10 @@ export default defineComponent({
           const formData = new FormData();
           formData.append("mapId", String(row.mapId));
           formData.append("mapFile", row.file, row.file.name);
-          formData.append("fileName", "");
+          // An untouched name means "no override", which is the empty string the
+          // backend already treats as "use the uploaded file's own name".
+          const storeAs = row.storeAs.trim();
+          formData.append("fileName", storeAs === row.file.name ? "" : storeAs);
 
           await mapsManagementStore.createMapFile(formData, (percent) => {
             row.percent = percent;
@@ -428,9 +440,10 @@ export default defineComponent({
           // The create endpoint does not return the stored file, so re-read the
           // map's files and match the one named after the upload.
           await mapsManagementStore.loadMapFiles(row.mapId as number);
+          const storedName = (storeAs || row.file.name).toLowerCase();
           const mapFileData = mapsManagementStore.mapFiles.find(
-            (mf) => mapFileName(mf.filePath) === row.file.name.toLowerCase()
-          ) ?? mapsManagementStore.mapFiles.find((mf) => mf.filePath.includes(row.file.name));
+            (mf) => mapFileName(mf.filePath) === storedName
+          ) ?? mapsManagementStore.mapFiles.find((mf) => mf.filePath.includes(storeAs || row.file.name));
 
           if (!mapFileData) {
             row.status = "error";
@@ -565,7 +578,6 @@ export default defineComponent({
       selecting,
       error,
       successMessage,
-      headers,
       uploadFiles,
       selectAll,
       runUpload,
@@ -573,6 +585,7 @@ export default defineComponent({
       runUploadAndSelect,
       runningAction,
       duplicateMapIds,
+      duplicateNames,
       mapOptions,
       isFixable,
       assignMap,

@@ -93,6 +93,11 @@
              the name field and left the button against the drop zone. -->
         <map-file-drop-zone v-model="files" class="mt-3" label="Drag & drop a map file here" />
 
+        <v-alert v-if="duplicateFileName" type="warning" variant="tonal" density="compact" class="mt-3">
+          This map already has a file stored as <strong>{{ storedAsName }}</strong>. Files are never
+          replaced, so the upload would be rejected - store it under a different name.
+        </v-alert>
+
         <v-text-field
           v-if="file"
           v-model="fileName"
@@ -107,7 +112,7 @@
         <v-btn
           color="primary"
           class="mt-4 mb-2 text-w3-race-bg"
-          :disabled="!file || uploading"
+          :disabled="!file || uploading || duplicateFileName"
           :loading="uploading"
           @click="addMapFile()"
         >
@@ -210,6 +215,17 @@ export default defineComponent({
       fileName.value = selected?.name ?? "";
     });
 
+    // What the file will be stored as: the override if given, else its own name.
+    const storedAsName = computed<string>(() => (fileName.value.trim() || file.value?.name || ""));
+
+    // The update service refuses to overwrite an existing file, so a name that is
+    // already taken is worth catching before the upload rather than after it fails.
+    const duplicateFileName = computed<boolean>(() => {
+      const target = storedAsName.value.toLowerCase();
+      if (!target) return false;
+      return mapFiles.value.some((mapFile) => mapFileName(mapFile.filePath) === target);
+    });
+
     function downloadUrl(mapFile: MapFileData): string {
       return MapsService.getMapFileDownloadUrl(mapFile.filePath);
     }
@@ -309,6 +325,8 @@ export default defineComponent({
       pendingFile,
       uploadPercent,
       uploadError,
+      storedAsName,
+      duplicateFileName,
       isSelected,
       rowProps,
       currentFileName,
