@@ -39,7 +39,12 @@ export default defineComponent({
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
     // Matches the drawer's "md" mobile-breakpoint: below 960px it overlays.
     const { smAndDown } = useDisplay();
-    const isNavigationOpen = ref(false);
+    // Vuetify only opens a drawer by itself when its model is uncontrolled
+    // (`modelValue == null`), and binding v-model makes it controlled - so the
+    // initial state is ours to set. Without this the drawer stays hidden on
+    // desktop until a resize crosses the breakpoint and Vuetify's own watcher
+    // corrects it.
+    const isNavigationOpen = ref<boolean>(!smAndDown.value);
 
     return {
       isAdmin,
