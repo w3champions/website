@@ -502,8 +502,10 @@ export default defineComponent({
         // Data is already current — scroll immediately, then silently refresh in background
         await handlePlayerScroll();
         getRefreshRankings();
-      } else if (props.gamemode) {
-        await rankingsStore.setGameMode(props.gamemode);
+      } else if (hasGameMode) {
+        // targetGameMode, not props.gamemode: updateQueryParams() rewrites the URL from store state
+        // during the awaits above, so the live prop no longer holds what the URL asked for.
+        await rankingsStore.setGameMode(targetGameMode);
         await handlePlayerScroll();
       } else {
         await getRankings();
