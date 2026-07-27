@@ -6,6 +6,9 @@
 // ladder search (RankingService) and other placements as they move over. true = new engine,
 // false = legacy. Defaults to true.
 //
+// This is an ops rollback lever, not a long-lived toggle: it ships defaulted to true (the merge is
+// the rollout) and is retired after the new search has run stable in production for 2–4 weeks.
+//
 // To retire this flag once the new search is permanent:
 //   1. delete the export below;
 //   2. remove USE_NEW_SEARCH from public/env.js and from the window._env_ type in src/config/env.ts;
