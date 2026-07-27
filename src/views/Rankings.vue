@@ -240,6 +240,9 @@ export default defineComponent({
     // All battleTags of the row to scroll to — both members for an AT team, so the scroll lands on
     // that exact team and not on the first row sharing one of its players.
     const playerIdsToScroll = ref<string[] | undefined>(undefined);
+    // Set only when the target row is known per race (a search selection); left undefined by the
+    // deep-link and highlight paths, which identify a player rather than one of their rows.
+    const raceToScroll = ref<ERaceEnum | undefined>(undefined);
     const isProgrammaticSelection = ref<boolean>(false);
 
     const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
@@ -328,6 +331,9 @@ export default defineComponent({
       }
 
       playerIdsToScroll.value = rank.player.playerIds.map((p) => p.battleTag);
+      // A 1v1 player holds one row per race they laddered, so the battleTags alone identify a person,
+      // not the row they picked.
+      raceToScroll.value = rank.race;
       setLeague(rank.league);
     }
 
@@ -336,18 +342,22 @@ export default defineComponent({
       isLoading.value = false;
     }
 
-    function rankingMatchesPlayerIds(rank: Ranking, playerIds: string[]): boolean {
+    function rankingMatchesPlayerIds(rank: Ranking, playerIds: string[], race?: ERaceEnum): boolean {
+      if (race !== undefined && rank.race !== race) return false;
       return playerIds.every((playerId) => rank.player.playerIds.some((player) => player.battleTag === playerId));
     }
 
     const handlePlayerScroll = async () => {
       if (playerIdsToScroll.value?.length && rankings.value.length > 0) {
         await nextTick();
-        const selectedPlayer = rankings.value.find((r) => rankingMatchesPlayerIds(r, playerIdsToScroll.value!));
+        const selectedPlayer = rankings.value.find((r) =>
+          rankingMatchesPlayerIds(r, playerIdsToScroll.value!, raceToScroll.value)
+        );
         if (selectedPlayer) {
           isProgrammaticSelection.value = true;
           selectedRank.value = selectedPlayer;
           playerIdsToScroll.value = undefined;
+          raceToScroll.value = undefined;
           await nextTick();
           isProgrammaticSelection.value = false;
           const element = document.getElementById(`listitem_${selectedPlayer.rankNumber}`);
