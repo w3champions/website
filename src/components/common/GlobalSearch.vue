@@ -122,8 +122,10 @@ export default defineComponent({
       }
     }
 
-    // Reached the end of the list, try to load more players
-    function endIntersect(_entries: unknown, _observer: unknown, isIntersecting: boolean) {
+    // Reached the end of the list, try to load more players. Vuetify 3 passes isIntersecting FIRST
+    // to v-intersect handlers; with the arguments in Vuetify 2's order this read the observer object
+    // — always truthy — and paged in everything the moment the menu opened.
+    function endIntersect(isIntersecting: boolean) {
       if (isIntersecting && !isLoading.value && allowAppend()) {
         searchChangeHandler(true);
       }
