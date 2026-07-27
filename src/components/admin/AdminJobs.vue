@@ -22,7 +22,11 @@
           {{ actionError }}
         </v-alert>
 
-        <div v-if="!loading && jobs.length === 0" class="text-medium-emphasis py-4">
+        <v-alert v-if="loadError" type="error" variant="tonal" class="mb-4">
+          {{ loadError }}
+        </v-alert>
+
+        <div v-if="!loading && !loadError && jobs.length === 0" class="text-medium-emphasis py-4">
           No jobs are registered.
         </div>
 
@@ -158,12 +162,21 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { mdiDotsVertical, mdiPlay, mdiPlayPause, mdiRefresh, mdiStop } from "@mdi/js";
 import { useOauthStore } from "@/store/oauth/store";
-import AdminJobService from "@/services/admin/AdminJobService";
+import { API_URL } from "@/config/env";
+import { AdminJobService } from "@/services/admin/AdminJobService";
+import { HttpError } from "@/services/http/AuthorizedClient";
 import { AdminJob, canResume, EAdminJobStatus, isRunning, needsForce } from "@/types/admin/AdminJob";
 
 /** Poll fast enough for a progress bar to look live, slowly when nothing moves. */
 const POLL_WHILE_RUNNING_MS = 2000;
 const POLL_WHEN_IDLE_MS = 15000;
+
+// Built lazily for the same reason the service takes its endpoint: API_URL reads
+// window at module load.
+let _service: AdminJobService | null = null;
+function getService(): AdminJobService {
+  return _service ??= new AdminJobService({ endpoint: API_URL });
+}
 
 export default defineComponent({
   name: "AdminJobs",
@@ -175,6 +188,7 @@ export default defineComponent({
     const loading = ref(false);
     const busyKey = ref("");
     const actionError = ref("");
+    const loadError = ref("");
 
     const confirmOpen = ref(false);
     const typedName = ref("");
@@ -186,9 +200,16 @@ export default defineComponent({
     async function loadJobs() {
       loading.value = true;
       try {
-        jobs.value = await AdminJobService.getJobs(token.value);
+        jobs.value = await getService().getJobs(token.value);
+        loadError.value = "";
       } catch (error) {
+        // Say so rather than leaving an empty list looking like "no jobs exist",
+        // and keep whatever was last loaded so a blip mid-run doesn't blank the
+        // page.
         console.error("Failed to load jobs:", error);
+        loadError.value = error instanceof HttpError && error.status === 403
+          ? "You don't have permission to view jobs."
+          : "Could not load jobs.";
       } finally {
         loading.value = false;
       }
@@ -230,7 +251,7 @@ export default defineComponent({
       busyKey.value = job.key;
       actionError.value = "";
       try {
-        const result = await AdminJobService.runJob(job.key, token.value, { force, reset });
+        const result = await getService().runJob(job.key, token.value, { force, reset });
         if (!result.ok) {
           actionError.value = result.message;
         }
@@ -246,7 +267,7 @@ export default defineComponent({
       busyKey.value = job.key;
       actionError.value = "";
       try {
-        const result = await AdminJobService.cancelJob(job.key, token.value);
+        const result = await getService().cancelJob(job.key, token.value);
         if (!result.ok) {
           actionError.value = result.message;
         }
@@ -305,6 +326,7 @@ export default defineComponent({
       loading,
       busyKey,
       actionError,
+      loadError,
       confirmOpen,
       typedName,
       pending,
