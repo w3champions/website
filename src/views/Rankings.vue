@@ -364,6 +364,7 @@ export default defineComponent({
       if (newValue && newValue.length > 2) {
         searchDebounced(newValue);
       } else {
+        clearTimeout(searchTimer); // a scheduled search must not repopulate the cleared results
         rankingsStore.clearSearch();
         isLoading.value = false;
       }
