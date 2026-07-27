@@ -234,7 +234,9 @@ export default defineComponent({
     const selectedRank = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
-    const playerIdToScroll = ref<string | undefined>(undefined);
+    // All battleTags of the row to scroll to — both members for an AT team, so the scroll lands on
+    // that exact team and not on the first row sharing one of its players.
+    const playerIdsToScroll = ref<string[] | undefined>(undefined);
     const isProgrammaticSelection = ref<boolean>(false);
 
     const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
@@ -322,7 +324,7 @@ export default defineComponent({
         return;
       }
 
-      playerIdToScroll.value = rank.player.playerIds[0]?.battleTag;
+      playerIdsToScroll.value = rank.player.playerIds.map((p) => p.battleTag);
       setLeague(rank.league);
     }
 
@@ -331,18 +333,18 @@ export default defineComponent({
       isLoading.value = false;
     }
 
-    function rankingMatchesPlayerId(rank: Ranking, playerId: string): boolean {
-      return rank.player.playerIds.some((player) => player.battleTag === playerId);
+    function rankingMatchesPlayerIds(rank: Ranking, playerIds: string[]): boolean {
+      return playerIds.every((playerId) => rank.player.playerIds.some((player) => player.battleTag === playerId));
     }
 
     const handlePlayerScroll = async () => {
-      if (playerIdToScroll.value && rankings.value.length > 0) {
+      if (playerIdsToScroll.value?.length && rankings.value.length > 0) {
         await nextTick();
-        const selectedPlayer = rankings.value.find((r) => rankingMatchesPlayerId(r, playerIdToScroll.value!));
+        const selectedPlayer = rankings.value.find((r) => rankingMatchesPlayerIds(r, playerIdsToScroll.value!));
         if (selectedPlayer) {
           isProgrammaticSelection.value = true;
           selectedRank.value = selectedPlayer;
-          playerIdToScroll.value = undefined;
+          playerIdsToScroll.value = undefined;
           await nextTick();
           isProgrammaticSelection.value = false;
           const element = document.getElementById(`listitem_${selectedPlayer.rankNumber}`);
@@ -474,7 +476,7 @@ export default defineComponent({
       }
 
       if (props.playerId) {
-        playerIdToScroll.value = props.playerId;
+        playerIdsToScroll.value = [props.playerId];
       }
 
       await rankingsStore.retrieveSeasons();
@@ -548,10 +550,10 @@ export default defineComponent({
     }
 
     async function selectSeason(season: Season) {
-      const highlightedPlayerId =
-        playerIdToScroll.value ??
-        props.playerId ??
-        selectedRank.value?.player.playerIds[0]?.battleTag;
+      const highlightedPlayerIds =
+        playerIdsToScroll.value ??
+        (props.playerId ? [props.playerId] : undefined) ??
+        selectedRank.value?.player.playerIds.map((p) => p.battleTag);
       const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
       rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
@@ -568,8 +570,8 @@ export default defineComponent({
         }
       }
 
-      if (highlightedPlayerId) {
-        playerIdToScroll.value = highlightedPlayerId;
+      if (highlightedPlayerIds?.length) {
+        playerIdsToScroll.value = highlightedPlayerIds;
       }
 
       await setLeague(leagueToSelect);

@@ -61,7 +61,8 @@ function rankInContextToRanking(rank: RankInContext): Ranking {
     gameMode: rank.gameMode,
     player: {
       id: rankId(rank),
-      name: rank.players[0].name,
+      // Joined like PlayerOverview.Name on the backend, so an AT row names both members.
+      name: rank.players.map((p) => p.name).join(" & "),
       mmr: rank.mmr,
       gateWay: rank.gateWay,
       playerIds: rank.players,
