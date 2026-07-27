@@ -371,13 +371,20 @@ export default defineComponent({
     // FIRST to v-intersect handlers. The sentinel can also flash into view while the menu lays out
     // fresh results, so only append once its own list really sits near its scrolled end — or is
     // still too short to scroll at all.
-    function endIntersect(isIntersecting: boolean, entries: IntersectionObserverEntry[]) {
+    async function endIntersect(isIntersecting: boolean, entries: IntersectionObserverEntry[]) {
       if (!isIntersecting || isLoading.value || !rankingsStore.searchHasMore) return;
       if (!search.value || search.value.length < 3) return;
       const list = entries[0]?.target.closest(".v-list");
       if (list && list.scrollHeight > list.clientHeight && list.scrollTop + list.clientHeight < list.scrollHeight - 120) return;
       isLoading.value = true;
-      rankingsStore.search({ searchText: search.value.toLowerCase(), gameMode: selectedGameMode.value, append: true });
+      try {
+        await rankingsStore.search({ searchText: search.value.toLowerCase(), gameMode: selectedGameMode.value, append: true });
+      } catch {
+        // A page that never arrives must not leave the list loading: isLoading also gates this
+        // handler, so a stuck spinner would block every further append until the next keystroke.
+      } finally {
+        isLoading.value = false;
+      }
     }
 
     watch(search, onSearchChanged);
