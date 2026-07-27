@@ -33,7 +33,7 @@ export default class RankingService {
     gameMode: EGameMode,
     season: number,
   ): Promise<Ranking[]> {
-    const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${str}&gameMode=${gameMode}&season=${season}`;
+    const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${encodeURIComponent(str)}&gameMode=${gameMode}&season=${season}`;
 
     const response = await fetch(url);
     return await response.json();
