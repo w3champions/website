@@ -23,6 +23,10 @@ function getService(): PlayerMatchTelemetryService {
   return _service ??= new PlayerMatchTelemetryService({ endpoint: API_URL });
 }
 
+// Bumped by every fetch, reset and skip. Only the newest request may commit its
+// result, so telemetry for a previously viewed report cannot land on this one.
+let fetchSeq = 0;
+
 export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", {
   state: (): State => ({
     telemetry: null,
@@ -32,17 +36,24 @@ export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", 
   }),
   actions: {
     async fetchByGame(gameId: number): Promise<void> {
+      const seq = ++fetchSeq;
       this.loading = true;
       this.error = null;
       this.attempted = true;
       try {
         const oauthStore = useOauthStore();
-        this.telemetry = await getService().getByGame(oauthStore.token, gameId);
+        const telemetry = await getService().getByGame(oauthStore.token, gameId);
+        if (seq !== fetchSeq) return;
+        this.telemetry = telemetry;
       } catch (e) {
+        if (seq !== fetchSeq) return;
         this.error = e instanceof Error ? e.message : String(e);
         this.telemetry = null;
       } finally {
-        this.loading = false;
+        // A superseded request must not clear the flag out from under the newer one.
+        if (seq === fetchSeq) {
+          this.loading = false;
+        }
       }
     },
     /**
@@ -51,12 +62,14 @@ export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", 
      * reason reaches the UI instead of vanishing.
      */
     skip(reason: string): void {
+      fetchSeq++;
       this.telemetry = null;
       this.loading = false;
       this.error = reason;
       this.attempted = false;
     },
     reset(): void {
+      fetchSeq++;
       this.telemetry = null;
       this.loading = false;
       this.error = null;

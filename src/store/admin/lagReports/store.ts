@@ -3,6 +3,11 @@ import { useOauthStore } from "@/store/oauth/store";
 import LagReportService from "@/services/admin/LagReportService";
 import { LagReportQueryParams, LagReportsState } from "./types";
 
+// Bumped on every loadReport call. A response is only committed while it is
+// still the newest request, so a slow load for a previous id cannot overwrite
+// the report the user has since navigated to.
+let selectedReportSeq = 0;
+
 export const useLagReportsStore = defineStore("lagReports", {
   state: (): LagReportsState => ({
     reports: [],
@@ -27,6 +32,7 @@ export const useLagReportsStore = defineStore("lagReports", {
     },
 
     async loadReport(id: string) {
+      const seq = ++selectedReportSeq;
       this.selectedReportLoading = true;
       // Drop the previous report up front: when this page is reused for another
       // id (see the id watcher in AdminLagReportDetail), leaving the old report
@@ -35,12 +41,19 @@ export const useLagReportsStore = defineStore("lagReports", {
       this.selectedReportError = null;
       try {
         const oauthStore = useOauthStore();
-        this.selectedReport = await LagReportService.getReport(oauthStore.token, id);
+        const report = await LagReportService.getReport(oauthStore.token, id);
+        if (seq !== selectedReportSeq) return;
+        this.selectedReport = report;
       } catch (e) {
-        this.selectedReportError = e instanceof Error ? e.message : String(e);
+        if (seq === selectedReportSeq) {
+          this.selectedReportError = e instanceof Error ? e.message : String(e);
+        }
         throw e;
       } finally {
-        this.selectedReportLoading = false;
+        // A superseded request must not clear the flag out from under the newer one.
+        if (seq === selectedReportSeq) {
+          this.selectedReportLoading = false;
+        }
       }
     },
   },

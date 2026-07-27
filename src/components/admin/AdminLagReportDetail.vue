@@ -133,10 +133,20 @@ export default defineComponent({
       router.push({ name: EAdminRouteName.LAG_REPORTS, query: route.query });
     }
 
+    // Incremented per load so a slower response for a previous id cannot be acted
+    // on after the route moved on. The stores apply the same guard to their own
+    // writes, since loadReport assigns selectedReport internally.
+    let loadToken = 0;
+
     async function load(id: string): Promise<void> {
+      const token = ++loadToken;
       // Vue reuses this component when only the :id route param changes, so the
       // previous report's telemetry would otherwise linger on the new report.
       playerMatchTelemetryStore.reset();
+      // Marker positions are absolute wall-clock timestamps from the previous
+      // game; carrying them over would annotate the new chart out of range.
+      inspectorLeftMs.value = null;
+      inspectorRightMs.value = null;
       try {
         await lagReportsStore.loadReport(id);
       } catch {
@@ -144,6 +154,7 @@ export default defineComponent({
         // renders it. Stop here rather than requesting telemetry for no report.
         return;
       }
+      if (token !== loadToken) return;
       const gameId = lagReportsStore.selectedReport?.gameId;
       if (gameId === undefined || gameId === null) {
         playerMatchTelemetryStore.skip("the lag report did not include a game id.");
