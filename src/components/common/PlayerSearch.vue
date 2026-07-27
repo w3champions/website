@@ -14,6 +14,7 @@
       :density="density"
       :items="searchedPlayers"
       item-title="battleTag"
+      :no-filter="USE_NEW_SEARCH"
       :no-data-text="noDataText"
       :loading="isLoading"
       :autofocus="setAutofocus"
@@ -36,10 +37,11 @@
 <script lang="ts">
 import { computed, defineComponent, onBeforeUnmount, ref, watch, PropType } from "vue";
 import debounce from "debounce";
-import ProfileService from "@/services/ProfileService";
+import ProfileService from "@/services/ProfileService"; // legacy player-search path — removed with USE_NEW_SEARCH (see helpers/featureFlags)
+import GlobalSearchService from "@/services/GlobalSearchService";
+import { USE_NEW_SEARCH } from "@/helpers/featureFlags";
 
 import { mdiMagnify } from "@mdi/js";
-import { PlayerProfile } from "@/store/player/types";
 
 type SearchDensity = "default" | "comfortable" | "compact";
 
@@ -85,7 +87,11 @@ export default defineComponent({
     const input = ref<string>("");
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;
-    const searchedPlayers = ref<PlayerProfile[]>([]);
+    // PAGE_SIZE possibly removable: the server defaults to and caps at 20, so passing 20 is redundant
+    // (it's only here because GlobalSearchService.search requires the arg). The server does still use
+    // values <= 20, so the param isn't pointless — a surface could request a smaller page.
+    const PAGE_SIZE = 20;
+    const searchedPlayers = ref<{ battleTag: string }[]>([]);
     const selected = ref<string>();
 
     // Advanced as soon as a search is queued (not when the debounce fires) and on every
@@ -95,7 +101,13 @@ export default defineComponent({
 
     async function dispatchSearch(val: string, searchId: number) {
       try {
-        const players = await ProfileService.searchPlayer(val.toLowerCase());
+        let players: { battleTag: string }[];
+        if (USE_NEW_SEARCH) {
+          players = await GlobalSearchService.search(val, "", PAGE_SIZE);
+        } else {
+          // legacy search — remove this branch with USE_NEW_SEARCH
+          players = await ProfileService.searchPlayer(val.toLowerCase());
+        }
         if (searchId !== latestSearchId) return;
         searchedPlayers.value = players;
       } finally {
@@ -171,6 +183,7 @@ export default defineComponent({
       clearSearch,
       onSelect,
       submitSearch,
+      USE_NEW_SEARCH, // exposes the flag to the template's :no-filter binding
     };
   },
 });
