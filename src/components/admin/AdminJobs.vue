@@ -29,7 +29,12 @@
         <v-card v-for="job in jobs" :key="job.key" variant="outlined" class="mb-3">
           <v-card-text>
             <div class="d-flex align-start flex-wrap ga-3">
-              <div class="flex-grow-1">
+              <!--
+                min-width keeps a long description from squeezing the buttons onto
+                their own line until the viewport is genuinely narrow; ms-auto keeps
+                them right-aligned when it eventually does wrap.
+              -->
+              <div class="flex-grow-1" style="min-width: 320px; flex-basis: 0;">
                 <div class="d-flex align-center ga-2 mb-1">
                   <span class="text-subtitle-1">{{ job.name }}</span>
                   <v-chip :color="statusColor(job.status)" size="small" variant="flat">
@@ -39,7 +44,7 @@
                 <div class="text-body-2 text-medium-emphasis">{{ job.description }}</div>
               </div>
 
-              <div class="d-flex align-center ga-2">
+              <div class="d-flex align-center ga-2 ms-auto flex-shrink-0">
                 <v-btn
                   v-if="isRunning(job)"
                   color="warning"
@@ -93,7 +98,18 @@
               </div>
             </div>
 
-            <v-alert v-if="job.error" type="error" variant="tonal" density="compact" class="mt-3">
+            <!--
+              Interrupted and Cancelled carry an explanation in the same field as a
+              real failure, but neither is one - a deploy or a deliberate stop should
+              not read as red.
+            -->
+            <v-alert
+              v-if="job.error"
+              :type="job.status === 'Failed' ? 'error' : 'warning'"
+              variant="tonal"
+              density="compact"
+              class="mt-3"
+            >
               {{ job.error }}
             </v-alert>
 
