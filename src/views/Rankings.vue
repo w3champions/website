@@ -86,6 +86,7 @@
             :append-inner-icon="mdiMagnify"
             label="Search"
             :items="searchRanks"
+            :no-filter="USE_NEW_SEARCH"
             single-line
             :loading="isLoading"
             :no-data-text="noDataText"
@@ -181,6 +182,7 @@ import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
 import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { USE_NEW_SEARCH } from "@/helpers/featureFlags";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -589,6 +591,7 @@ export default defineComponent({
 
     return {
       mdiMagnify,
+      USE_NEW_SEARCH,
       EGameMode,
       ERaceEnum,
       onGatewayChanged,

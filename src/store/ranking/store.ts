@@ -1,10 +1,140 @@
-import type { ActiveGameMode, CountryRanking, Ladder, Ranking, RankingState, Season } from "./types";
-import { type DataTableOptions, EGameMode } from "../types";
+import type { ActiveGameMode, CountryRanking, Ladder, RankInContext, Ranking, RankingState, Season } from "./types";
+import { type DataTableOptions, EGameMode, ERaceEnum } from "../types";
 import { defineStore } from "pinia";
 import isEmpty from "lodash/isEmpty";
 import RankingService from "@/services/RankingService";
+import GlobalSearchService from "@/services/GlobalSearchService";
+import { PlayerSearchInfo } from "@/store/globalSearch/types";
+import { USE_NEW_SEARCH } from "@/helpers/featureFlags";
 import { useRootStateStore } from "@/store/rootState/store";
 import { usePlayerStore } from "@/store/player/store";
+
+// global-search is relevance-ranked and hard-capped at 20 results/page server-side; the ladder search
+// box is an autocomplete, so a single page is all it shows.
+const SEARCH_PAGE_SIZE = 20;
+
+// Monotonic token guarding the two-call new-search path (global-search -> ranks-for-players). A slower
+// earlier query can resolve after a faster later one; we only commit results from the latest search.
+let latestSearchId = 0;
+
+// Backend sends null for the race of the zeroed/unranked tail; Ranking.race is typed non-null, so this
+// localizes the one honest cast rather than loosening the shared type.
+const NO_RACE = null as unknown as ERaceEnum;
+
+// Build a battleTag -> ranks lookup. One tag can hold several ranks (1v1 is ranked per race), and an
+// AT team rank covers both of its members' tags.
+function indexRanksByBattleTag(ranks: RankInContext[]): Map<string, RankInContext[]> {
+  const byTag = new Map<string, RankInContext[]>();
+  for (const rank of ranks) {
+    for (const player of rank.players) {
+      const existing = byTag.get(player.battleTag);
+      if (existing) {
+        existing.push(rank);
+      } else {
+        byTag.set(player.battleTag, [rank]);
+      }
+    }
+  }
+  return byTag;
+}
+
+// Distinct row identity mirroring the backend's composite rank id (season_btag@gw…_mode[_race]).
+// Rankings.vue keys autocomplete rows by player.id, and a player holds one 1v1 rank per race — a
+// plain battleTag would collide those rows.
+function rankId(rank: RankInContext): string {
+  const tags = rank.players.map((p) => `${p.battleTag}@${rank.gateWay}`).join("_");
+  return `${rank.season}_${tags}_${rank.gameMode}${rank.race != null ? `_${rank.race}` : ""}`;
+}
+
+function rankInContextToRanking(rank: RankInContext): Ranking {
+  return {
+    id: rankId(rank),
+    season: rank.season,
+    gateway: rank.gateWay,
+    league: rank.league,
+    leagueDivision: 0,
+    leagueOrder: 0,
+    race: rank.race ?? NO_RACE,
+    leagueName: "",
+    rankNumber: rank.rankNumber,
+    rankingPoints: rank.rankingPoints,
+    gameMode: rank.gameMode,
+    player: {
+      id: rankId(rank),
+      name: rank.players[0].name,
+      mmr: rank.mmr,
+      gateWay: rank.gateWay,
+      playerIds: rank.players,
+      gameMode: rank.gameMode,
+      season: rank.season,
+      race: rank.race ?? undefined,
+      wins: rank.wins,
+      losses: rank.losses,
+      games: rank.games,
+      winrate: rank.games > 0 ? rank.wins / rank.games : 0,
+    },
+    playersInfo: [],
+  };
+}
+
+// A directory hit with no rank in this context -> a zeroed row, mirroring the legacy ladder/search
+// "unranked" tail (Undefined gateway/mode, season 0) so Rankings.vue renders it identically: games=0
+// shows the "unranked" label and a click routes to the player's profile.
+function unrankedRanking(player: PlayerSearchInfo): Ranking {
+  return {
+    id: player.battleTag,
+    season: 0,
+    gateway: 0,
+    league: 0,
+    leagueDivision: 0,
+    leagueOrder: 0,
+    race: NO_RACE,
+    leagueName: "",
+    rankNumber: 0,
+    rankingPoints: 0,
+    gameMode: EGameMode.UNDEFINED,
+    player: {
+      id: player.battleTag,
+      name: player.name,
+      mmr: 0,
+      gateWay: 0,
+      playerIds: [{ name: player.name, battleTag: player.battleTag }],
+      gameMode: EGameMode.UNDEFINED,
+      season: 0,
+      race: undefined,
+      wins: 0,
+      losses: 0,
+      games: 0,
+      winrate: 0,
+    },
+    playersInfo: [],
+  };
+}
+
+// Merge directory hits with their ranks-in-context. Enriched (ranked) rows are surfaced first, then the
+// unranked directory tail — each group keeping global-search's relevance order: ladder standing for the
+// ranked group, name relevance for the tail. A hit yields one row per rank it holds (1v1 is ranked per race,
+// matching the legacy per-race rows); a team rank already emitted for one AT member is not repeated for
+// the other, and a member whose ranks were all emitted that way is still ranked — never a zeroed row.
+function mergeRanksIntoRankings(found: PlayerSearchInfo[], ranks: RankInContext[]): Ranking[] {
+  const byTag = indexRanksByBattleTag(ranks);
+  const emitted = new Set<RankInContext>();
+  const ranked: Ranking[] = [];
+  const unranked: Ranking[] = [];
+  for (const player of found) {
+    const playerRanks = byTag.get(player.battleTag);
+    if (playerRanks) {
+      for (const rank of playerRanks) {
+        if (emitted.has(rank)) continue;
+        emitted.add(rank);
+        ranked.push(rankInContextToRanking(rank));
+      }
+    } else {
+      unranked.push(unrankedRanking(player));
+    }
+  }
+  return [...ranked, ...unranked];
+}
 
 export const useRankingStore = defineStore("ranking", {
   state: (): RankingState => ({
@@ -73,15 +203,45 @@ export const useRankingStore = defineStore("ranking", {
     },
     async search(search: { searchText: string; gameMode: EGameMode }) {
       const rootStateStore = useRootStateStore();
-      const rankings = await RankingService.searchRankings(
-        search.searchText,
-        rootStateStore.gateway,
-        search.gameMode,
-        this.selectedSeason.id,
-      );
-      this.SET_SEARCH_RANKINGS(rankings);
+      const gateway = rootStateStore.gateway;
+      const season = this.selectedSeason.id;
+
+      if (!USE_NEW_SEARCH) {
+        // legacy ladder search — remove this branch with USE_NEW_SEARCH
+        const rankings = await RankingService.searchRankings(
+          search.searchText,
+          gateway,
+          search.gameMode,
+          season,
+        );
+        this.SET_SEARCH_RANKINGS(rankings);
+        return;
+      }
+
+      // New consolidated path: one directory lookup (global-search) + one rank-in-context enrichment,
+      // merged into the Ranking[] shape Rankings.vue already renders.
+      //
+      // The directory lookup is given this ladder as context, so it ranks its hits by standing on it
+      // and the page cut lands on the ranked players first. Without it the cut is made on name
+      // relevance, which is orthogonal to being on this ladder, so most ranked matches fall past it.
+      const searchId = ++latestSearchId;
+      const found = await GlobalSearchService.search(search.searchText, "", SEARCH_PAGE_SIZE, {
+        season,
+        gateway,
+        gameMode: search.gameMode,
+      });
+      if (searchId !== latestSearchId) return; // a newer search superseded this one
+
+      const battleTags = found.map((p) => p.battleTag);
+      const ranks = battleTags.length
+        ? await RankingService.searchRanksForPlayers(battleTags, gateway, search.gameMode, season)
+        : [];
+      if (searchId !== latestSearchId) return;
+
+      this.SET_SEARCH_RANKINGS(mergeRanksIntoRankings(found, ranks));
     },
     clearSearch() {
+      latestSearchId++; // an in-flight search must not repopulate a cleared box
       this.SET_SEARCH_RANKINGS([]);
     },
     setLeague(league: number) {
