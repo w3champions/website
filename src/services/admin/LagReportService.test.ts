@@ -1,4 +1,4 @@
-import { test } from "node:test";
+import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import { LagReportService } from "./LagReportService";
 import { HttpError } from "@/services/http/AuthorizedClient";

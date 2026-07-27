@@ -53,6 +53,12 @@ steps:
       command: 'custom'
       customCommand: 'run type-check-vue'
 
+  - task: Npm@1
+    displayName: vitest
+    inputs:
+      command: 'custom'
+      customCommand: 'run test'
+
   - task: Docker@2
     inputs:
       containerRegistry: "official-docker-modmoto"

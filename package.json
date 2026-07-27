@@ -11,7 +11,8 @@
     "preview": "vite build && vite preview",
     "build:prod": "npm run generate-locales && vite build",
     "generate-locales": "node scripts/generate-locales.ts",
-    "test": "tsx --test \"src/**/*.test.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint --no-fix --max-warnings=0 --flag unstable_native_nodejs_ts_config src/",
     "lint-js": "eslint --no-fix --max-warnings=0",
     "lint:fix": "eslint --fix src/",
@@ -78,11 +79,11 @@
     "prettier": "2.8.8",
     "sass": "~1.99.0",
     "terser": "^5.29.2",
-    "tsx": "^4.23.1",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.16",
     "vite-plugin-vuetify": "2.1.2",
+    "vitest": "^4.1.10",
     "vue-tsc": "^3.2.7"
   }
 }
