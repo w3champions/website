@@ -135,7 +135,8 @@
                           | MMR: {{ item.raw.player.mmr }}
                         </v-list-item-subtitle>
                         <v-list-item-subtitle v-else>
-                          {{ $t(`views_rankings.unranked`) }}
+                          <!-- Scoped to the selected mode: these players may hold ranks on other ladders. -->
+                          {{ $t(`views_rankings.unranked`) }} · {{ $t(`gameModes.${EGameMode[selectedGameMode]}`) }}
                         </v-list-item-subtitle>
                       </div>
                     </div>
