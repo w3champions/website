@@ -64,7 +64,12 @@ export class PlayerMatchTelemetryService {
 
   constructor(deps: IDeps) {
     this.endpoint = deps.endpoint;
-    this.fetchImpl = deps.fetch ?? globalThis.fetch;
+    // Bind to the global: storing the native fetch on an instance and calling it
+    // as `this.fetchImpl(...)` would invoke it with this service as the receiver.
+    // Browsers brand-check that receiver — Firefox throws "'fetch' called on an
+    // object that does not implement interface Window" while Chromium allows it,
+    // so an unbound reference fails for only some users.
+    this.fetchImpl = deps.fetch ?? globalThis.fetch.bind(globalThis);
   }
 
   async getByGame(token: string, gameId: number): Promise<IPlayerMatchTelemetry | null> {

@@ -128,3 +128,44 @@ test("getByGame throws on 500", async () => {
     /500/,
   );
 });
+
+test("invokes the global fetch with a valid receiver on the non-injected path", async () => {
+  const minimal = {
+    gameId: 7,
+    matchWallStart: "2026-05-21T12:00:00Z",
+    players: [],
+    createdAt: "2026-05-21T12:30:00Z",
+    expiresAt: "2026-08-19T12:30:00Z",
+  };
+
+  const originalFetch = globalThis.fetch;
+  let receiverIsGlobal = false;
+  let receiverLabel = "fetch was never called";
+  globalThis.fetch = function(this: unknown): Promise<Response> {
+    receiverIsGlobal = this === undefined || this === globalThis;
+    receiverLabel = receiverIsGlobal ? "the global object" : "the service instance";
+    return Promise.resolve(
+      new Response(JSON.stringify(minimal), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+  };
+
+  try {
+    // Constructed after the swap so the default (production) path picks it up.
+    const service = new PlayerMatchTelemetryService({ endpoint: "https://example.com/" });
+    await service.getByGame("token", 7);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  // Browsers brand-check fetch's receiver. Firefox rejects a call whose `this`
+  // is the service instance with "'fetch' called on an object that does not
+  // implement interface Window"; Chromium tolerates it, which is why this only
+  // broke for some admins. Node does not brand-check, so assert the receiver.
+  assert.ok(
+    receiverIsGlobal,
+    `global fetch must not be called as a method of the service (receiver: ${receiverLabel})`,
+  );
+});
