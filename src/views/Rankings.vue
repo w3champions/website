@@ -118,10 +118,10 @@
                         class="search-race-icon mr-3"
                       />
                       <div class="d-flex flex-column justify-center">
-                        <span v-if="!isDuplicateName(item.raw.player.name)">
+                        <span v-if="!needsDiscriminator(item.raw.player.name)">
                           {{ item.raw.player.name }}
                         </span>
-                        <span v-if="isDuplicateName(item.raw.player.name)">
+                        <span v-if="needsDiscriminator(item.raw.player.name)">
                           <span
                             v-for="(pid, index) in item.raw.player.playerIds"
                             :key="pid.battleTag"
@@ -429,6 +429,12 @@ export default defineComponent({
       return searchRanks.value.filter((r) => r.player.name === name).length > 1;
     }
 
+    // A term carrying '#' asks by tag, so the rows answer in tags: the discriminator shows even
+    // when the name alone would be unambiguous in this list.
+    function needsDiscriminator(name: string): boolean {
+      return search.value.includes("#") || isDuplicateName(name);
+    }
+
     function listLeagueIcon(item: League): number {
       const season = rankingsStore.selectedSeason;
       if (season?.id < 5 && item.order > 1) {
@@ -649,7 +655,7 @@ export default defineComponent({
       search,
       noDataText,
       endIntersect,
-      isDuplicateName,
+      needsDiscriminator,
       playerIsRanked,
       selectedSeason,
       selectSeason,
