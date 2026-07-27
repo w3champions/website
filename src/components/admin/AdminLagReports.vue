@@ -4,6 +4,12 @@
       Lag Reports
     </v-card-title>
 
+    <v-container v-if="reportsError" class="pb-0">
+      <v-alert type="error" variant="tonal" density="compact">
+        Failed to load lag reports: {{ reportsError }}
+      </v-alert>
+    </v-container>
+
     <v-container>
       <v-row dense>
         <v-col cols="12" md="2">
@@ -221,6 +227,7 @@ export default defineComponent({
     const reports = computed(() => lagReportsStore.reports);
     const total = computed(() => lagReportsStore.total);
     const loading = computed(() => lagReportsStore.loading);
+    const reportsError = computed(() => lagReportsStore.reportsError);
 
     const tableOptions = ref({
       page: 1,
@@ -447,6 +454,7 @@ export default defineComponent({
 
     return {
       reports,
+      reportsError,
       total,
       loading,
       tableOptions,

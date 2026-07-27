@@ -1,9 +1,5 @@
 import type { IDisconnectEvent, IPlayerMatchTelemetry, IPlayerMatchTelemetryEntry } from "@/store/admin/playerMatchTelemetry/types";
-
-interface IDeps {
-  endpoint: string;
-  fetch?: typeof globalThis.fetch;
-}
+import { AuthorizedClient, type AuthorizedClientDeps } from "@/services/http/AuthorizedClient";
 
 // Wire shape (ISO-8601 timestamps on the wire; we parse them into Date below).
 interface IWireDisconnectEvent {
@@ -59,35 +55,20 @@ function toTelemetry(wire: IWireResponse): IPlayerMatchTelemetry {
 }
 
 export class PlayerMatchTelemetryService {
-  private readonly endpoint: string;
-  private readonly fetchImpl: typeof globalThis.fetch;
+  private readonly client: AuthorizedClient;
 
-  constructor(deps: IDeps) {
-    this.endpoint = deps.endpoint;
-    // Bind to the global: storing the native fetch on an instance and calling it
-    // as `this.fetchImpl(...)` would invoke it with this service as the receiver.
-    // Browsers brand-check that receiver — Firefox throws "'fetch' called on an
-    // object that does not implement interface Window" while Chromium allows it,
-    // so an unbound reference fails for only some users.
-    this.fetchImpl = deps.fetch ?? globalThis.fetch.bind(globalThis);
+  constructor(deps: AuthorizedClientDeps) {
+    this.client = new AuthorizedClient(deps);
   }
 
   async getByGame(token: string, gameId: number): Promise<IPlayerMatchTelemetry | null> {
-    const url = `${this.endpoint}api/player-match-telemetry/by-game/${gameId}`;
-    const res = await this.fetchImpl(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/json",
-      },
-    });
-    if (res.status === 404) return null;
-    if (!res.ok) {
-      throw new Error(
-        `PlayerMatchTelemetryService.getByGame: HTTP ${res.status} for game ${gameId}`,
-      );
-    }
-    const wire = (await res.json()) as IWireResponse;
-    return toTelemetry(wire);
+    // 404 is a normal outcome here: telemetry is submitted separately from the
+    // lag report, so a game can legitimately have none. Every other non-OK
+    // status throws, so a broken request is never mistaken for absent data.
+    const wire = await this.client.getJsonOrNull<IWireResponse>(
+      `api/player-match-telemetry/by-game/${gameId}`,
+      token,
+    );
+    return wire === null ? null : toTelemetry(wire);
   }
 }

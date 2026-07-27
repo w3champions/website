@@ -29,6 +29,16 @@ export const racesWithTotal: Race[] = [
   { raceId: ERaceEnum.TOTAL, raceName: ERaceEnum[ERaceEnum.TOTAL] },
 ];
 
+/**
+ * Legacy helper: performs an authenticated request and returns the raw Response.
+ *
+ * Prefer `AuthorizedClient` (@/services/http/AuthorizedClient) for new code and
+ * when touching an existing service. This helper leaves status checking to each
+ * caller, which is applied inconsistently — some parse error bodies as if they
+ * were success payloads, others swallow failures into empty defaults. The client
+ * centralises URL joining, auth, status checking and JSON parsing, and is
+ * injectable so the calling service can be unit tested.
+ */
 export const authorizedFetch = async (method: string, url: RequestInfo | URL, token: string, body?: BodyInit | null): Promise<Response> => {
   return await fetch(url, {
     method: method,

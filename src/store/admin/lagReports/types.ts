@@ -32,6 +32,7 @@ export type LagReportsState = {
   reports: LagReportListItem[];
   total: number;
   loading: boolean;
+  reportsError: string | null;
   selectedReport: LagReportDetail | null;
   selectedReportLoading: boolean;
   selectedReportError: string | null;

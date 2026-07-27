@@ -1,7 +1,15 @@
 import { defineStore } from "pinia";
+import { API_URL } from "@/config/env";
 import { useOauthStore } from "@/store/oauth/store";
-import LagReportService from "@/services/admin/LagReportService";
+import { LagReportService } from "@/services/admin/LagReportService";
 import { LagReportQueryParams, LagReportsState } from "./types";
+
+// Lazy singleton: constructing at module-load time would read API_URL before the
+// module graph has finished initializing. Defer to first call.
+let _service: LagReportService | null = null;
+function getService(): LagReportService {
+  return _service ??= new LagReportService({ endpoint: API_URL });
+}
 
 // Bumped on every loadReport call. A response is only committed while it is
 // still the newest request, so a slow load for a previous id cannot overwrite
@@ -13,6 +21,7 @@ export const useLagReportsStore = defineStore("lagReports", {
     reports: [],
     total: 0,
     loading: false,
+    reportsError: null,
     selectedReport: null,
     selectedReportLoading: false,
     selectedReportError: null,
@@ -21,11 +30,18 @@ export const useLagReportsStore = defineStore("lagReports", {
   actions: {
     async loadReports(params: LagReportQueryParams) {
       this.loading = true;
+      this.reportsError = null;
       try {
         const oauthStore = useOauthStore();
-        const response = await LagReportService.getReports(oauthStore.token, params);
+        const response = await getService().getReports(oauthStore.token, params);
         this.reports = response.items;
         this.total = response.total;
+      } catch (e) {
+        // The service now throws on a non-OK status instead of parsing the error
+        // body as if it were a page of results. Record it so the list can say so.
+        this.reportsError = e instanceof Error ? e.message : String(e);
+        this.reports = [];
+        this.total = 0;
       } finally {
         this.loading = false;
       }
@@ -41,7 +57,7 @@ export const useLagReportsStore = defineStore("lagReports", {
       this.selectedReportError = null;
       try {
         const oauthStore = useOauthStore();
-        const report = await LagReportService.getReport(oauthStore.token, id);
+        const report = await getService().getReport(oauthStore.token, id);
         if (seq !== selectedReportSeq) return;
         this.selectedReport = report;
       } catch (e) {
