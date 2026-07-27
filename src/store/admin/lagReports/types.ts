@@ -34,6 +34,7 @@ export type LagReportsState = {
   loading: boolean;
   selectedReport: LagReportDetail | null;
   selectedReportLoading: boolean;
+  selectedReportError: string | null;
 };
 
 export interface LagReportListItem {

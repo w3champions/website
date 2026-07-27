@@ -18,6 +18,16 @@
         :server-node-name="report.serverNodeName"
       />
 
+      <v-alert
+        v-if="telemetryNotice"
+        :type="telemetryNotice.type"
+        variant="tonal"
+        density="compact"
+        class="mb-4"
+      >
+        {{ telemetryNotice.text }}
+      </v-alert>
+
       <v-expansion-panels v-model="expandedPanels" multiple class="mb-4">
         <lag-report-continuous-monitoring
           :report="report"
@@ -46,15 +56,17 @@
     </v-container>
 
     <v-container v-else>
-      <v-alert type="warning">Report not found.</v-alert>
+      <v-alert v-if="reportError" type="error">Failed to load report: {{ reportError }}</v-alert>
+      <v-alert v-else type="warning">Report not found.</v-alert>
     </v-container>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
 import { usePlayerMatchTelemetryStore } from "@/store/admin/playerMatchTelemetry/store";
+import { telemetryNoticeFor } from "@/store/admin/playerMatchTelemetry/notice";
 import { mdiArrowLeft } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
@@ -89,6 +101,19 @@ export default defineComponent({
     const report = computed(() => lagReportsStore.selectedReport);
     const loading = computed(() => lagReportsStore.selectedReportLoading);
     const telemetry = computed(() => playerMatchTelemetryStore.telemetry);
+    const reportError = computed(() => lagReportsStore.selectedReportError);
+
+    // Action latency lives behind a second request (player-match-telemetry). When
+    // that request fails, 404s, or is never made, the traces simply do not appear
+    // on the chart. Surface the reason instead of letting the feature look absent.
+    const telemetryNotice = computed(() =>
+      telemetryNoticeFor({
+        loading: playerMatchTelemetryStore.loading,
+        error: playerMatchTelemetryStore.error,
+        attempted: playerMatchTelemetryStore.attempted,
+        hasTelemetry: playerMatchTelemetryStore.telemetry !== null,
+      })
+    );
 
     const expandedPanels = ref(["continuous", "inspector"]);
     const inspectorLeftMs = ref<number | null>(null);
@@ -108,18 +133,35 @@ export default defineComponent({
       router.push({ name: EAdminRouteName.LAG_REPORTS, query: route.query });
     }
 
-    onMounted(async () => {
-      await lagReportsStore.loadReport(props.id);
-      const gameId = lagReportsStore.selectedReport?.gameId;
-      if (gameId !== undefined && gameId !== null) {
-        await playerMatchTelemetryStore.fetchByGame(gameId);
+    async function load(id: string): Promise<void> {
+      // Vue reuses this component when only the :id route param changes, so the
+      // previous report's telemetry would otherwise linger on the new report.
+      playerMatchTelemetryStore.reset();
+      try {
+        await lagReportsStore.loadReport(id);
+      } catch {
+        // loadReport records the reason in selectedReportError; the template
+        // renders it. Stop here rather than requesting telemetry for no report.
+        return;
       }
-    });
+      const gameId = lagReportsStore.selectedReport?.gameId;
+      if (gameId === undefined || gameId === null) {
+        playerMatchTelemetryStore.skip("the lag report did not include a game id.");
+        return;
+      }
+      await playerMatchTelemetryStore.fetchByGame(gameId);
+    }
+
+    // immediate: true replaces onMounted and additionally refetches when the
+    // route id changes while this component stays mounted.
+    watch(() => props.id, (id) => void load(id), { immediate: true });
 
     return {
       report,
       loading,
       telemetry,
+      reportError,
+      telemetryNotice,
       expandedPanels,
       inspectorLeftMs,
       inspectorRightMs,

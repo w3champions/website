@@ -8,6 +8,10 @@ interface State {
   telemetry: IPlayerMatchTelemetry | null;
   loading: boolean;
   error: string | null;
+  // Whether a fetch was actually attempted for the current report. Without this
+  // we cannot tell "the game has no telemetry" (404 -> telemetry null) apart from
+  // "we never asked", and both render as a silently missing action-latency trace.
+  attempted: boolean;
 }
 
 // Lazy singleton: API_URL lives in @/main and the module graph touches us before
@@ -24,11 +28,13 @@ export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", 
     telemetry: null,
     loading: false,
     error: null,
+    attempted: false,
   }),
   actions: {
     async fetchByGame(gameId: number): Promise<void> {
       this.loading = true;
       this.error = null;
+      this.attempted = true;
       try {
         const oauthStore = useOauthStore();
         this.telemetry = await getService().getByGame(oauthStore.token, gameId);
@@ -39,10 +45,22 @@ export const usePlayerMatchTelemetryStore = defineStore("playerMatchTelemetry", 
         this.loading = false;
       }
     },
+    /**
+     * Record that no fetch was attempted, and why. Callers use this when they
+     * cannot build a request at all (e.g. the report carries no game id) so the
+     * reason reaches the UI instead of vanishing.
+     */
+    skip(reason: string): void {
+      this.telemetry = null;
+      this.loading = false;
+      this.error = reason;
+      this.attempted = false;
+    },
     reset(): void {
       this.telemetry = null;
       this.loading = false;
       this.error = null;
+      this.attempted = false;
     },
   },
 });
