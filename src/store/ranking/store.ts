@@ -17,6 +17,11 @@ const SEARCH_PAGE_SIZE = 20;
 // earlier query can resolve after a faster later one; we only commit results from the latest search.
 let latestSearchId = 0;
 
+// Cursor for the next ladder-search page: the raw relevanceId of the last directory hit, exactly as
+// global-search hands it out. Merging reshapes rows (per-race splits, AT dedupe), so the cursor must
+// be kept from the raw page, never derived from a merged row.
+let searchCursor = "";
+
 // Backend sends null for the race of the zeroed/unranked tail; Ranking.race is typed non-null, so this
 // localizes the one honest cast rather than loosening the shared type.
 const NO_RACE = null as unknown as ERaceEnum;
@@ -147,6 +152,7 @@ export const useRankingStore = defineStore("ranking", {
     rankings: [],
     topFive: [],
     searchRanks: [],
+    searchHasMore: false,
     countryRankings: [],
     countryRankingsLoading: false,
     gameMode: EGameMode.GM_1ON1,
@@ -202,13 +208,15 @@ export const useRankingStore = defineStore("ranking", {
       this.SET_COUNTRY_RANKINGS(rankings);
       this.SET_COUNTRY_RANKINGS_LOADING(false);
     },
-    async search(search: { searchText: string; gameMode: EGameMode }) {
+    async search(search: { searchText: string; gameMode: EGameMode; append?: boolean }) {
       const rootStateStore = useRootStateStore();
       const gateway = rootStateStore.gateway;
       const season = this.selectedSeason.id;
 
       if (!USE_NEW_SEARCH) {
         // legacy ladder search — remove this branch with USE_NEW_SEARCH
+        // (it returns the full result set in one response; there is never a next page to append)
+        if (search.append) return;
         const rankings = await RankingService.searchRankings(
           search.searchText,
           gateway,
@@ -225,8 +233,12 @@ export const useRankingStore = defineStore("ranking", {
       // The directory lookup is given this ladder as context, so it ranks its hits by standing on it
       // and the page cut lands on the ranked players first. Without it the cut is made on name
       // relevance, which is orthogonal to being on this ladder, so most ranked matches fall past it.
-      const searchId = ++latestSearchId;
-      const found = await GlobalSearchService.search(search.searchText, "", SEARCH_PAGE_SIZE, {
+      //
+      // An append continues the latest search rather than starting a new one: it keeps the current
+      // searchId (so a real new search still supersedes it) and passes the pagination cursor.
+      if (search.append && (!this.searchHasMore || !searchCursor)) return;
+      const searchId = search.append ? latestSearchId : ++latestSearchId;
+      const found = await GlobalSearchService.search(search.searchText, search.append ? searchCursor : "", SEARCH_PAGE_SIZE, {
         season,
         gateway,
         gameMode: search.gameMode,
@@ -239,11 +251,20 @@ export const useRankingStore = defineStore("ranking", {
         : [];
       if (searchId !== latestSearchId) return;
 
-      this.SET_SEARCH_RANKINGS(mergeRanksIntoRankings(found, ranks));
+      searchCursor = found.length ? found[found.length - 1].relevanceId : "";
+      this.SET_SEARCH_HAS_MORE(found.length === SEARCH_PAGE_SIZE);
+      const rows = mergeRanksIntoRankings(found, ranks);
+      if (search.append) {
+        this.APPEND_SEARCH_RANKINGS(rows);
+      } else {
+        this.SET_SEARCH_RANKINGS(rows);
+      }
     },
     clearSearch() {
       latestSearchId++; // an in-flight search must not repopulate a cleared box
+      searchCursor = "";
       this.SET_SEARCH_RANKINGS([]);
+      this.SET_SEARCH_HAS_MORE(false);
     },
     setLeague(league: number) {
       this.SET_LEAGUE(league);
@@ -297,6 +318,15 @@ export const useRankingStore = defineStore("ranking", {
     },
     SET_SEARCH_RANKINGS(rankings: Ranking[]): void {
       this.searchRanks = rankings;
+    },
+    APPEND_SEARCH_RANKINGS(rankings: Ranking[]): void {
+      // An AT team rank covers two members; when they land on different pages the later page
+      // re-emits the shared row — drop anything already listed.
+      const listed = new Set(this.searchRanks.map((r) => r.id));
+      this.searchRanks = [...this.searchRanks, ...rankings.filter((r) => !listed.has(r.id))];
+    },
+    SET_SEARCH_HAS_MORE(hasMore: boolean): void {
+      this.searchHasMore = hasMore;
     },
     SET_COUNTRY_RANKINGS(rankings: CountryRanking[]): void {
       this.countryRankings = rankings;

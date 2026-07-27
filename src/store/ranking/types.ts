@@ -11,6 +11,7 @@ export type RankingState = {
   rankings: Ranking[];
   topFive: Ranking[];
   searchRanks: Ranking[];
+  searchHasMore: boolean;
   countryRankings: CountryRanking[];
   countryRankingsLoading: boolean;
   gameMode: EGameMode;
