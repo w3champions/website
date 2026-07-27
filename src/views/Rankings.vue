@@ -145,6 +145,9 @@
                 </v-list-item>
               </template>
             </template>
+            <template v-slot:append-item>
+              <div v-intersect="endIntersect"></div>
+            </template>
           </v-autocomplete>
         </div>
       </v-card-text>
@@ -362,6 +365,20 @@ export default defineComponent({
         rankingsStore.search({ searchText: newValue.toLowerCase(), gameMode: selectedGameMode.value });
       }, timeout);
     };
+
+    // Reached the end of the search list — load the next page onto it. Inert on the legacy path
+    // and past the last page (searchHasMore stays false there). Vuetify 3 passes isIntersecting
+    // FIRST to v-intersect handlers. The sentinel can also flash into view while the menu lays out
+    // fresh results, so only append once its own list really sits near its scrolled end — or is
+    // still too short to scroll at all.
+    function endIntersect(isIntersecting: boolean, entries: IntersectionObserverEntry[]) {
+      if (!isIntersecting || isLoading.value || !rankingsStore.searchHasMore) return;
+      if (!search.value || search.value.length < 3) return;
+      const list = entries[0]?.target.closest(".v-list");
+      if (list && list.scrollHeight > list.clientHeight && list.scrollTop + list.clientHeight < list.scrollHeight - 120) return;
+      isLoading.value = true;
+      rankingsStore.search({ searchText: search.value.toLowerCase(), gameMode: selectedGameMode.value, append: true });
+    }
 
     watch(search, onSearchChanged);
     function onSearchChanged(newValue: string) {
@@ -614,6 +631,7 @@ export default defineComponent({
       isLoading,
       search,
       noDataText,
+      endIntersect,
       isDuplicateName,
       playerIsRanked,
       selectedSeason,
