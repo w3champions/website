@@ -36,6 +36,10 @@ export default class RankingService {
     const url = `${API_URL}api/ladder/search?gateWay=${gateway}&searchFor=${encodeURIComponent(str)}&gameMode=${gameMode}&season=${season}`;
 
     const response = await fetch(url);
+    if (!response.ok) {
+      // Error bodies are plain text, not JSON — surface them as the error they are.
+      throw new Error(`ladder search failed (${response.status}): ${await response.text()}`);
+    }
     return await response.json();
   }
 
@@ -54,6 +58,9 @@ export default class RankingService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ battleTags, season, gateWay: gateway, gameMode }),
     });
+    if (!response.ok) {
+      throw new Error(`ranks-for-players failed (${response.status}): ${await response.text()}`);
+    }
     return await response.json();
   }
 

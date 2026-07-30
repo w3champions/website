@@ -20,6 +20,7 @@
         :append-inner-icon="mdiMagnify"
         class="font-weight-medium w3-autocomplete"
         menu-icon=""
+        no-filter
         autofocus
         :no-data-text="noDataText"
         :loading="isLoading"
@@ -62,6 +63,7 @@ import { getAvatarUrl, getProfileUrl } from "@/helpers/url-functions";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchInfo } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
+import { meetsSearchMinimum } from "@/helpers/search";
 import { useRouter } from "vue-router";
 import { mdiMagnify } from "@mdi/js";
 import { Intersect } from "vuetify/directives";
@@ -106,12 +108,20 @@ export default defineComponent({
       searchChangeHandler();
     }
 
-    function dispatchSearch(append = false) {
-      globalSearchStore.search({ searchText: search.value, append });
+    async function dispatchSearch(append = false) {
+      try {
+        await globalSearchStore.search({ searchText: search.value, append });
+      } catch {
+        // A fresh search that fails must not leave the previous term's list standing; a failed
+        // append keeps the loaded pages (and hasMore, so the sentinel can retry). Either way the
+        // spinner clears — a stuck one also blocks endIntersect for good.
+        if (!append) globalSearchStore.clearSearch();
+        isLoading.value = false;
+      }
     }
 
     function searchChangeHandler(append = false) {
-      if (search.value && search.value.length >= 3) {
+      if (meetsSearchMinimum(search.value)) {
         isLoading.value = true;
         debouncedSearch(append);
       } else {
@@ -132,7 +142,7 @@ export default defineComponent({
     }
 
     const noDataText = computed<string>(() => {
-      if (!search.value || search.value.length < 3) {
+      if (!meetsSearchMinimum(search.value)) {
         return "Type at least 3 letters";
       }
       if (isLoading.value) {

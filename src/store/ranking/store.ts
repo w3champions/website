@@ -217,13 +217,18 @@ export const useRankingStore = defineStore("ranking", {
         // legacy ladder search — remove this branch with USE_NEW_SEARCH
         // (it returns the full result set in one response; there is never a next page to append)
         if (search.append) return;
-        const rankings = await RankingService.searchRankings(
-          search.searchText,
-          gateway,
-          search.gameMode,
-          season,
-        );
-        this.SET_SEARCH_RANKINGS(rankings);
+        try {
+          const rankings = await RankingService.searchRankings(
+            search.searchText,
+            gateway,
+            search.gameMode,
+            season,
+          );
+          this.SET_SEARCH_RANKINGS(rankings);
+        } catch (e) {
+          console.error(e);
+          this.SET_SEARCH_RANKINGS([]); // Rankings.vue clears its spinner on the searchRanks watch
+        }
         return;
       }
 
@@ -238,26 +243,37 @@ export const useRankingStore = defineStore("ranking", {
       // searchId (so a real new search still supersedes it) and passes the pagination cursor.
       if (search.append && (!this.searchHasMore || !searchCursor)) return;
       const searchId = search.append ? latestSearchId : ++latestSearchId;
-      const found = await GlobalSearchService.search(search.searchText, search.append ? searchCursor : "", SEARCH_PAGE_SIZE, {
-        season,
-        gateway,
-        gameMode: search.gameMode,
-      });
-      if (searchId !== latestSearchId) return; // a newer search superseded this one
+      try {
+        const found = await GlobalSearchService.search(search.searchText, search.append ? searchCursor : "", SEARCH_PAGE_SIZE, {
+          season,
+          gateway,
+          gameMode: search.gameMode,
+        });
+        if (searchId !== latestSearchId) return; // a newer search superseded this one
 
-      const battleTags = found.map((p) => p.battleTag);
-      const ranks = battleTags.length
-        ? await RankingService.searchRanksForPlayers(battleTags, gateway, search.gameMode, season)
-        : [];
-      if (searchId !== latestSearchId) return;
+        const battleTags = found.map((p) => p.battleTag);
+        const ranks = battleTags.length
+          ? await RankingService.searchRanksForPlayers(battleTags, gateway, search.gameMode, season)
+          : [];
+        if (searchId !== latestSearchId) return;
 
-      searchCursor = found.length ? found[found.length - 1].relevanceId : "";
-      this.SET_SEARCH_HAS_MORE(found.length === SEARCH_PAGE_SIZE);
-      const rows = mergeRanksIntoRankings(found, ranks);
-      if (search.append) {
-        this.APPEND_SEARCH_RANKINGS(rows);
-      } else {
-        this.SET_SEARCH_RANKINGS(rows);
+        searchCursor = found.length ? found[found.length - 1].relevanceId : "";
+        this.SET_SEARCH_HAS_MORE(found.length === SEARCH_PAGE_SIZE);
+        const rows = mergeRanksIntoRankings(found, ranks);
+        if (search.append) {
+          this.APPEND_SEARCH_RANKINGS(rows);
+        } else {
+          this.SET_SEARCH_RANKINGS(rows);
+        }
+      } catch (e) {
+        // Failure is handled here rather than by callers because only this scope can tell a
+        // superseded failure (the newer search owns the UI — stay silent) from a current one.
+        // A fresh search that fails clears the list, which fires the searchRanks watch that
+        // clears the spinner; a failed append keeps the loaded pages and its caller's finally
+        // re-arms the intersect sentinel for a retry.
+        if (searchId !== latestSearchId) return;
+        console.error(e);
+        if (!search.append) this.SET_SEARCH_RANKINGS([]);
       }
     },
     clearSearch() {
