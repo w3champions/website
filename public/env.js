@@ -21,4 +21,11 @@ window._env_ = {
 
   //* Turnstile site key
   TURNSTILE_SITE_KEY: "0x4AAAAAAB0hhXF_QHDGwhjQ",
+
+  //* USE_NEW_SEARCH — temporary rollout switch for the consolidated search, removed again once
+  //* the rollout has proven stable (retirement steps: src/helpers/featureFlags.ts). This file
+  //* serves local dev only; set false here to run the legacy search locally. Rollback on
+  //* test/prod: register USE_NEW_SEARCH=false as an environment variable on the frontend
+  //* deployment — scripts/env.sh reads it at container start; unset means on.
+  USE_NEW_SEARCH: true,
 };
