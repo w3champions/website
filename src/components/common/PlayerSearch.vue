@@ -54,6 +54,7 @@ import debounce from "debounce";
 import ProfileService from "@/services/ProfileService"; // legacy player-search path — removed with USE_NEW_SEARCH (see helpers/featureFlags)
 import GlobalSearchService from "@/services/GlobalSearchService";
 import { USE_NEW_SEARCH } from "@/helpers/featureFlags";
+import { meetsSearchMinimum } from "@/helpers/search";
 import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { Season } from "@/store/ranking/types";
@@ -130,19 +131,20 @@ export default defineComponent({
     const debouncedSearch = debounce(dispatchSearch, SEARCH_DELAY);
 
     async function dispatchSearch(val: string, searchId: number) {
+      let players: SearchedPlayer[] = [];
       try {
-        let players: SearchedPlayer[];
         if (USE_NEW_SEARCH) {
           players = await GlobalSearchService.search(val, "", PAGE_SIZE);
         } else {
           // legacy search — remove this branch with USE_NEW_SEARCH
           players = await ProfileService.searchPlayer(val.toLowerCase());
         }
-        if (searchId !== latestSearchId) return;
-        searchedPlayers.value = players;
-      } finally {
-        if (searchId === latestSearchId) isLoading.value = false;
+      } catch {
+        // a failed request reads as "No player found" — the empty list below — never a stuck spinner
       }
+      if (searchId !== latestSearchId) return;
+      searchedPlayers.value = players;
+      isLoading.value = false;
     }
 
     function cancelPendingSearch(): void {
@@ -177,7 +179,7 @@ export default defineComponent({
       // Empty text is not an edit: Vuetify resets the search to "" on blur while the
       // selection stays shown, and clears the selection itself when the user empties it.
       if (val && selected.value && val !== selected.value) selected.value = undefined;
-      if (!val || val.length < 3) {
+      if (!meetsSearchMinimum(val)) {
         cancelPendingSearch();
         searchedPlayers.value = [];
         isLoading.value = false;
@@ -207,7 +209,7 @@ export default defineComponent({
     });
 
     const noDataText = computed<string>(() =>
-      (!input.value || input.value.length < 3)
+      !meetsSearchMinimum(input.value)
         ? "Type at least 3 letters"
         : isLoading.value
           ? "Loading..."

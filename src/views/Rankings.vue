@@ -186,6 +186,7 @@ import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistributi
 import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
 import { USE_NEW_SEARCH } from "@/helpers/featureFlags";
+import { meetsSearchMinimum } from "@/helpers/search";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -383,7 +384,7 @@ export default defineComponent({
     // still too short to scroll at all.
     async function endIntersect(isIntersecting: boolean, entries: IntersectionObserverEntry[]) {
       if (!isIntersecting || isLoading.value || !rankingsStore.searchHasMore) return;
-      if (!search.value || search.value.length < 3) return;
+      if (!meetsSearchMinimum(search.value)) return;
       const list = entries[0]?.target.closest(".v-list");
       if (list && list.scrollHeight > list.clientHeight && list.scrollTop + list.clientHeight < list.scrollHeight - 120) return;
       isLoading.value = true;
@@ -399,7 +400,7 @@ export default defineComponent({
 
     watch(search, onSearchChanged);
     function onSearchChanged(newValue: string) {
-      if (newValue && newValue.length > 2) {
+      if (meetsSearchMinimum(newValue)) {
         searchDebounced(newValue);
       } else {
         clearTimeout(searchTimer); // a scheduled search must not repopulate the cleared results
@@ -469,7 +470,7 @@ export default defineComponent({
     }
 
     const noDataText = computed<string>(() => {
-      if (!search.value || search.value.length < 3) {
+      if (!meetsSearchMinimum(search.value)) {
         return "Type at least 3 letters";
       }
       if (isLoading.value) {
