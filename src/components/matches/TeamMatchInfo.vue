@@ -1,12 +1,12 @@
 <template>
   <div v-if="team" class="team-match-info">
     <div v-if="!isNil(team.matchRanking)" class="team-ranking">
-      #{{ team.matchRanking + 1 }}
+      {{ formatRanking(team.matchRanking) }}
     </div>
     <div class="team-content">
       <div v-for="(player, index) in team.players" :key="index" class="player-row">
         <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking">
-          #{{ player.matchRanking + 1 }}
+          {{ formatRanking(player.matchRanking) }}
         </div>
         <player-match-info
           :unfinishedMatch="unfinishedMatch"
@@ -26,9 +26,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { Team } from "@/store/types";
 import PlayerMatchInfo from "@/components/matches/PlayerMatchInfo.vue";
+import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
 import isNil from "lodash/isNil";
 
 export default defineComponent({
@@ -88,9 +89,20 @@ export default defineComponent({
       default: () => [],
     },
   },
-  setup() {
+  setup(props) {
+    const spoilerFreeStore = useSpoilerFreeStore();
+
+    // Placement is the result in Survival Chaos, where #1 won. The value is substituted rather
+    // than blurred: a blur is cosmetic and leaves the real number readable in the DOM. This
+    // mirrors the stand-in MMR in PlayerMatchInfo, where the true rating never reaches the page.
+    const hideRanking = computed<boolean>(() =>
+      props.spoilerFreeWinner && spoilerFreeStore.hideWinner && !props.unfinishedMatch
+    );
+    const formatRanking = (ranking: number): string => hideRanking.value ? "#?" : `#${ranking + 1}`;
+
     return {
       isNil,
+      formatRanking,
     };
   },
 });

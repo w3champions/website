@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import isNil from "lodash/isNil";
 import { ERaceEnum, PlayerInTeam } from "@/store/types";
@@ -142,14 +142,17 @@ export default defineComponent({
       return "";
     });
 
-    const race = ref<ERaceEnum>(props.player.race);
-    const rndRace = ref<ERaceEnum>(props.player.rndRace);
-    const currentRating = ref<number | null>(props.player.oldMmr != null ? Math.floor(props.player.oldMmr) : null);
-    const textClass = ref<string>(props.left ? "player-info__right" : "player-info__left");
-    const nameWithoutBtag = ref<string>(props.player.name);
-    const showPlayerInfo = ref<boolean>(!(props.unfinishedMatch && props.isAnonymous));
-    const leagueDivision = ref<number | null>(props.player.ranking?.division || null);
-    const leagueRank = ref<number | null>(props.player.ranking?.rank || null);
+    // Everything displayed for a player derives from props as computeds: the matches grid
+    // reorders teams in place when the hide-winner toggle flips, handing a mounted row a
+    // different player, and every derived value must follow that prop.
+    const race = computed<ERaceEnum>(() => props.player.race);
+    const rndRace = computed<ERaceEnum>(() => props.player.rndRace);
+    const currentRating = computed<number | null>(() => props.player.oldMmr != null ? Math.floor(props.player.oldMmr) : null);
+    const textClass = computed<string>(() => props.left ? "player-info__right" : "player-info__left");
+    const nameWithoutBtag = computed<string>(() => props.player.name);
+    const showPlayerInfo = computed<boolean>(() => !(props.unfinishedMatch && props.isAnonymous));
+    const leagueDivision = computed<number | null>(() => props.player.ranking?.division || null);
+    const leagueRank = computed<number | null>(() => props.player.ranking?.rank || null);
 
     const mmrChange = computed<number>(() => {
       if (props.player.oldMmr && props.player.currentMmr) {
