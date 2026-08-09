@@ -70,7 +70,7 @@
                 <v-col :cols="teamColumnWidth" class="team-match-info-container left-side" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getPlayerTeam(item) : getWinner(item)"
+                    :team="alwaysLeftName ? getPlayerTeam(item) : getLeftTeam(item)"
                     :unfinishedMatch="unfinished"
                     :left="true"
                     :highlightedPlayer="nameIfNonSolo(item)"
@@ -86,7 +86,7 @@
                 <v-col :cols="teamColumnWidth" class="team-match-info-container" align-self="center">
                   <team-match-info
                     :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getOpponentTeam(item) : getLoser(item)"
+                    :team="alwaysLeftName ? getOpponentTeam(item) : getRightTeam(item)"
                     :unfinishedMatch="unfinished"
                     :spoiler-free-winner="true"
                     :show-heroes="showHeroes"
@@ -242,6 +242,7 @@ export default defineComponent({
 
     const matches = computed<Match[]>(() => props.modelValue);
     const hideDurationSpoilers = computed<boolean>(() => spoilerFreeStore.hideDuration);
+    const hideWinnerSpoilers = computed<boolean>(() => spoilerFreeStore.hideWinner && !props.unfinished);
 
     // Shared hover tooltip, re-anchored via event delegation instead of mounting a
     // v-tooltip per hero icon. Elements opt in with a `data-tip` attribute (hero
@@ -308,8 +309,22 @@ export default defineComponent({
       router.push({ path: `/match/${match.id}` });
     }
 
-    const getWinner = (match: Match): Team => match.teams[0];
-    const getLoser = (match: Match): Team => match.teams[1];
+    // The backend returns the winning team first, so a fixed left/right split states the result
+    // on its own — masking every value inside the row still leaves the position telling. Under
+    // hide-winner the teams are ordered by battleTag instead: unrelated to the outcome, and
+    // stable across re-renders and pagination the way a shuffle would not be.
+    function teamSortKey(team: Team): string {
+      return team.players.map((player: PlayerInTeam) => player.battleTag.toLowerCase()).sort()[0] ?? "";
+    }
+
+    function orderTeams(teams: Team[]): Team[] {
+      if (!hideWinnerSpoilers.value) return teams;
+
+      return [...teams].sort((a: Team, b: Team) => teamSortKey(a).localeCompare(teamSortKey(b)));
+    }
+
+    const getLeftTeam = (match: Match): Team => orderTeams(match.teams)[0];
+    const getRightTeam = (match: Match): Team => orderTeams(match.teams)[1];
 
     function getPlayerTeam(match: Match): Team {
       const playerTeam = match.teams.find((team: Team) =>
@@ -325,11 +340,14 @@ export default defineComponent({
       )!;
     }
 
+    // On a player profile this drops the profile player's own team, which stays pinned first so
+    // you can always find yourself. On the global matches list there is no such player, so every
+    // team lands here — in Survival Chaos that is placement order, hence the same reordering.
     function getOpponentTeams(match: Match): Team[] {
       const playerTeam = getPlayerTeam(match);
       const opponentTeams = match.teams.filter((x) => x != playerTeam);
 
-      return opponentTeams;
+      return orderTeams(opponentTeams);
     }
 
     function nameIfNonSolo(match: Match): string {
@@ -442,8 +460,8 @@ export default defineComponent({
       teamColumnWidth,
       serverColumnWidth,
       goToMatchDetailPage,
-      getWinner,
-      getLoser,
+      getLeftTeam,
+      getRightTeam,
       getPlayerTeam,
       getOpponentTeam,
       getOpponentTeams,

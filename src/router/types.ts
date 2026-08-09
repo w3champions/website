@@ -32,6 +32,7 @@ export enum EAdminRouteName {
   MANAGE_API_TOKENS = "Admin - Manage API Tokens",
   LAG_REPORTS = "Admin - Lag Reports",
   LAG_REPORT_DETAIL = "Admin - Lag Report Detail",
+  JOBS = "Admin - Jobs",
 }
 
 export enum EStatisticsRouteName {
