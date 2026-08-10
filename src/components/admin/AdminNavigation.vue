@@ -69,7 +69,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline,
+  mdiAlertCircleOutline, mdiPlayBoxOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -410,6 +410,20 @@ export default defineComponent({
             permission: EPermission.Permissions,
             component: "admin-api-tokens",
             routeName: EAdminRouteName.MANAGE_API_TOKENS,
+          },
+        ],
+      },
+      {
+        title: "Jobs",
+        icon: mdiPlayBoxOutline,
+        permission: EPermission.Jobs,
+        items: [
+          {
+            title: "Run Jobs",
+            icon: mdiPlayBoxOutline,
+            permission: EPermission.Jobs,
+            component: "admin-jobs",
+            routeName: EAdminRouteName.JOBS,
           },
         ],
       },
