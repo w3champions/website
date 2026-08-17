@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { API_URL } from "@/config/env";
 import { useOauthStore } from "@/store/oauth/store";
 import { LagReportService } from "@/services/admin/LagReportService";
-import { LagReportQueryParams, LagReportsState } from "./types";
+import { LagReportAggregateBucket, LagReportAggregateParams, LagReportQueryParams, LagReportsState } from "./types";
 
 // Lazy singleton: constructing at module-load time would read API_URL before the
 // module graph has finished initializing. Defer to first call.
@@ -11,10 +11,11 @@ function getService(): LagReportService {
   return _service ??= new LagReportService({ endpoint: API_URL });
 }
 
-// Bumped on every loadReport call. A response is only committed while it is
-// still the newest request, so a slow load for a previous id cannot overwrite
-// the report the user has since navigated to.
+// Bumped on every call of the matching loader. A response is only committed
+// while it is still the newest request, so a slow response for a previous
+// page/filter/range cannot overwrite the state the user has since moved to.
 let selectedReportSeq = 0;
+let reportsSeq = 0;
 
 export const useLagReportsStore = defineStore("lagReports", {
   state: (): LagReportsState => ({
@@ -29,22 +30,33 @@ export const useLagReportsStore = defineStore("lagReports", {
 
   actions: {
     async loadReports(params: LagReportQueryParams) {
+      const seq = ++reportsSeq;
       this.loading = true;
       this.reportsError = null;
       try {
         const oauthStore = useOauthStore();
         const response = await getService().getReports(oauthStore.token, params);
+        if (seq !== reportsSeq) return;
         this.reports = response.items;
         this.total = response.total;
       } catch (e) {
+        if (seq !== reportsSeq) return;
         // The service now throws on a non-OK status instead of parsing the error
         // body as if it were a page of results. Record it so the list can say so.
         this.reportsError = e instanceof Error ? e.message : String(e);
         this.reports = [];
         this.total = 0;
       } finally {
-        this.loading = false;
+        if (seq === reportsSeq) this.loading = false;
       }
+    },
+
+    // One-shot aggregation fetch. Throws on failure — every caller decides for
+    // itself whether that means an error state or a silent degrade.
+    async fetchAggregate(params: LagReportAggregateParams): Promise<LagReportAggregateBucket[]> {
+      const oauthStore = useOauthStore();
+      const response = await getService().getAggregate(oauthStore.token, params);
+      return response.buckets;
     },
 
     async loadReport(id: string) {
