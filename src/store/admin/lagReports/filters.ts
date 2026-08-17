@@ -28,11 +28,16 @@ export type LagFiltersState = {
   proxyName: string;
   proxyIp: string;
   issueCategories: string[];
+  // Single-select: the endpoint takes one connection_issue_tag.
+  connectionIssueTag: string;
   explicitOnly: boolean;
   dateFrom: string;
   dateTo: string;
   // False while the window is the recomputed default; true once chosen.
   datesExplicit: boolean;
+  // Players in the game. 0 = no bound on that end, so both at 0 is inactive.
+  minPlayers: number;
+  maxPlayers: number;
 };
 
 export function applyDefaultWindow(filters: LagFiltersState): void {
@@ -50,10 +55,13 @@ export function createDefaultFilters(): LagFiltersState {
     proxyName: "",
     proxyIp: "",
     issueCategories: [],
+    connectionIssueTag: "",
     explicitOnly: false,
     dateFrom: utcDayString(-1),
     dateTo: utcDayString(0),
     datesExplicit: false,
+    minPlayers: 0,
+    maxPlayers: 0,
   };
 }
 
@@ -240,6 +248,26 @@ const datesFilter: FilterDescriptor = {
   },
 };
 
+const tagsFilter: FilterDescriptor = {
+  key: "tags",
+  label: "Connection tag",
+  queryKeys: ["connectionIssueTag"],
+  hasValue: (f) => f.connectionIssueTag !== "",
+  pillLabel: (f) => (f.connectionIssueTag ? `Tag: ${f.connectionIssueTag}` : "Tag: …"),
+  clear: (f) => {
+    f.connectionIssueTag = "";
+  },
+  toParams: (f, p) => {
+    p.connectionIssueTag = f.connectionIssueTag || undefined;
+  },
+  toQuery: (f, q) => {
+    if (f.connectionIssueTag) q.connectionIssueTag = f.connectionIssueTag;
+  },
+  fromQuery: (f, q) => {
+    f.connectionIssueTag = queryString(q, "connectionIssueTag");
+  },
+};
+
 const explicitFilter: FilterDescriptor = {
   key: "explicit",
   label: "Submitted only",
@@ -262,6 +290,38 @@ const explicitFilter: FilterDescriptor = {
   },
 };
 
+const playerCountFilter: FilterDescriptor = {
+  key: "playerCount",
+  label: "Player count",
+  queryKeys: ["minPlayers", "maxPlayers"],
+  hasValue: (f) => f.minPlayers > 0 || f.maxPlayers > 0,
+  pillLabel: (f) => {
+    const { minPlayers: min, maxPlayers: max } = f;
+    if (min > 0 && max > 0) return min === max ? `${min} players` : `${min}–${max} players`;
+    if (min > 0) return `≥ ${min} players`;
+    if (max > 0) return `≤ ${max} players`;
+    return "Player count: …";
+  },
+  clear: (f) => {
+    f.minPlayers = 0;
+    f.maxPlayers = 0;
+  },
+  toParams: (f, p) => {
+    p.minPlayers = f.minPlayers > 0 ? f.minPlayers : undefined;
+    p.maxPlayers = f.maxPlayers > 0 ? f.maxPlayers : undefined;
+  },
+  toQuery: (f, q) => {
+    if (f.minPlayers > 0) q.minPlayers = String(f.minPlayers);
+    if (f.maxPlayers > 0) q.maxPlayers = String(f.maxPlayers);
+  },
+  fromQuery: (f, q) => {
+    const min = Number.parseInt(queryString(q, "minPlayers"), 10);
+    f.minPlayers = Number.isFinite(min) && min > 0 ? min : 0;
+    const max = Number.parseInt(queryString(q, "maxPlayers"), 10);
+    f.maxPlayers = Number.isFinite(max) && max > 0 ? max : 0;
+  },
+};
+
 // Registry order is menu order: the "+ Filter" menu and the pill bar both
 // render straight from this list.
 export const FILTER_REGISTRY: FilterDescriptor[] = [
@@ -272,7 +332,9 @@ export const FILTER_REGISTRY: FilterDescriptor[] = [
   prefixTextFilter("game", "Game ID / Name", "Game", "gameSearch"),
   prefixTextFilter("proxy", "Proxy", "Proxy", "proxyName"),
   prefixTextFilter("proxyIp", "Proxy IP", "Proxy IP", "proxyIp"),
+  tagsFilter,
   explicitFilter,
+  playerCountFilter,
 ];
 
 // ── Generic operations — every per-filter switch collapses into these ──

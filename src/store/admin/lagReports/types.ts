@@ -57,6 +57,10 @@ export interface LagReportPlayerSummary {
   connectionType: EConnectionType;
   proxyName: string | null;
   issueCategories: EIssueCategory[];
+  // Wire name is snake_case — the backend pins it with JsonPropertyName. The
+  // launcher's own fault verdict (e.g. "LAN", "LastMile"); typed as strings so
+  // new tags pass through without a frontend release.
+  connection_issue_tags: string[];
   lagEventCount: number;
   connectionEventCount: number;
 }
@@ -80,7 +84,10 @@ export interface LagReportQueryParams {
   dateTo?: string;
   // OR'd server-side: a report matches when any player carries any of them.
   issueCategories?: string[];
+  connectionIssueTag?: string;
   explicitOnly?: boolean;
+  minPlayers?: number;
+  maxPlayers?: number;
 }
 
 // ── Aggregate (counts grouped by one dimension) ──────────────────────

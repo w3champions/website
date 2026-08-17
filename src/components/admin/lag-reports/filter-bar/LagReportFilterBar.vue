@@ -67,8 +67,15 @@
         <list-editor
           v-else-if="pill.key === 'categories'"
           :items="categoryItems"
+          multiple
           caption="Only matches player-submitted reports"
           @toggle="toggleCategory"
+        />
+        <list-editor
+          v-else-if="pill.key === 'tags'"
+          :items="tagItems"
+          caption="The launcher's own verdict on where the connection fault sat"
+          @toggle="setTagFilter"
         />
         <date-range-editor
           v-else-if="pill.key === 'dates'"
@@ -78,6 +85,13 @@
           @update:dateFrom="(value: string) => setDateBound('dateFrom', value)"
           @update:dateTo="(value: string) => setDateBound('dateTo', value)"
           @preset="applyDatePreset"
+        />
+        <number-range-editor
+          v-else-if="pill.key === 'playerCount'"
+          :min="filtersStore.minPlayers"
+          :max="filtersStore.maxPlayers"
+          @update:min="(value: string) => setPlayerBound('min', value)"
+          @update:max="(value: string) => setPlayerBound('max', value)"
         />
       </v-card>
     </v-menu>
@@ -141,6 +155,11 @@ import ServerEditor from "./editors/ServerEditor.vue";
 import type { ServerOption } from "./editors/ServerEditor.vue";
 import ListEditor from "./editors/ListEditor.vue";
 import DateRangeEditor from "./editors/DateRangeEditor.vue";
+import NumberRangeEditor from "./editors/NumberRangeEditor.vue";
+
+// The launcher's tag vocabulary (ELagReportTag). New backend tags still render
+// as chips and remain clickable — this list only feeds the editor.
+const TAG_OPTIONS = ["LAN", "LastMile"];
 
 const ISSUE_CATEGORY_OPTIONS = [
   "InputDelay",
@@ -165,7 +184,7 @@ const byKey = new Map(FILTER_REGISTRY.map((descriptor) => [descriptor.key, descr
 // loading stay with the page.
 export default defineComponent({
   name: "LagReportFilterBar",
-  components: { PrefixFacetEditor, ServerEditor, ListEditor, DateRangeEditor },
+  components: { PrefixFacetEditor, ServerEditor, ListEditor, DateRangeEditor, NumberRangeEditor },
   emits: ["change"],
   setup(_props, { emit }) {
     const filtersStore = useLagReportsFiltersStore();
@@ -347,6 +366,27 @@ export default defineComponent({
       toggleServerNode(opt.nodeId as number, opt.name);
     }
 
+    function setPlayerBound(bound: "min" | "max", value: string) {
+      const parsed = Number.parseInt(value, 10);
+      const next = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+      if (bound === "min") {
+        filtersStore.minPlayers = next;
+      } else {
+        filtersStore.maxPlayers = next;
+      }
+      change();
+    }
+
+    // Toggle semantics: picking the active tag again clears it. (Tag chips in
+    // rows filter through the page's own handler — an editor can't be open
+    // behind a row click, the menu swallows the outside click first.)
+    function setTagFilter(tag: string) {
+      filtersStore.connectionIssueTag = filtersStore.connectionIssueTag === tag ? "" : tag;
+      openEditor.value = null;
+      draftKey.value = null;
+      change();
+    }
+
     function toggleCategory(cat: string) {
       const selected = new Set(filtersStore.issueCategories);
       if (selected.has(cat)) {
@@ -419,6 +459,14 @@ export default defineComponent({
       }))
     );
 
+    const tagItems = computed(() =>
+      TAG_OPTIONS.map((tag) => ({
+        value: tag,
+        label: tag,
+        active: filtersStore.connectionIssueTag === tag,
+      }))
+    );
+
     return {
       filtersStore,
       toolbarChips,
@@ -436,11 +484,14 @@ export default defineComponent({
       serverOptions,
       addServerTerm,
       toggleServerOption,
+      setPlayerBound,
+      setTagFilter,
       toggleCategory,
       setDateBound,
       datePresets,
       applyDatePreset,
       categoryItems,
+      tagItems,
       mdiFilterRemove,
       mdiPlus,
       mdiStar,
