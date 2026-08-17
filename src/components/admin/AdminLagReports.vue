@@ -4,136 +4,46 @@
       Lag Reports
     </v-card-title>
 
-    <v-container v-if="reportsError" class="pb-0">
+    <v-container v-if="reportsError" fluid class="pb-0">
       <v-alert type="error" variant="tonal" density="compact">
         Failed to load lag reports: {{ reportsError }}
       </v-alert>
     </v-container>
 
-    <v-container>
-      <v-row dense>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.battleTag"
-            label="BattleTag"
-            placeholder="Starts with…"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.gameSearch"
-            label="Game ID / Name"
-            placeholder="ID, or name starts with…"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.serverName"
-            label="Server Name"
-            placeholder="Starts with…"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.proxyName"
-            label="Proxy Name"
-            placeholder="Starts with…"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.proxyIp"
-            label="Proxy IP"
-            placeholder="Starts with…"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols="12" md="2">
-          <v-select
-            v-model="filters.issueCategory"
-            :items="issueCategories"
-            label="Issue Category"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2" class="d-flex justify-center align-center">
-          <v-switch
-            v-model="filters.explicitOnly"
-            label="Explicit only"
-            color="primary"
-            density="compact"
-            hide-details
-            class="flex-grow-0"
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.dateFrom"
-            label="Date from"
-            type="date"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field
-            v-model="filters.dateTo"
-            label="Date to"
-            type="date"
-            variant="underlined"
-            color="primary"
-            clearable
-            @update:modelValue="onFilterChange"
-          />
-        </v-col>
-        <v-col cols="12" md="2" class="d-flex align-center">
-          <v-btn
-            color="primary"
-            variant="outlined"
-            block
-            @click="refreshResults"
-          >
-            Refresh results
-          </v-btn>
-        </v-col>
-      </v-row>
+    <!-- fluid throughout the card: the plain container caps its width and
+         centres itself on wide screens, which would indent the filter bar away
+         from the full-bleed title and table. -->
+    <v-container fluid>
+      <div class="d-flex align-center flex-wrap ga-2">
+        <!-- Filters and view controls are two groups, not one long run of
+             items: the controls stay intact and drop to their own line as a
+             block, instead of the row breaking wherever the chips happen to
+             run out of width. -->
+        <lag-report-filter-bar @change="onFilterChange" />
+
+        <div class="d-flex align-center ga-2 ms-auto">
+          <v-btn-toggle v-model="explicitMode" mandatory density="compact" variant="outlined" divided>
+            <v-btn value="all" size="small" title="Every report, including the ones flo raised on its own">
+              All
+            </v-btn>
+            <v-btn value="submitted" size="small" title="Only reports where a player filled in the in-game dialog">
+              Submitted
+            </v-btn>
+          </v-btn-toggle>
+
+          <v-btn :icon="mdiRefresh" size="small" variant="text" title="Refresh results" @click="refreshResults" />
+        </div>
+      </div>
     </v-container>
 
     <v-data-table-server
       :headers="headers"
-      :items="reports"
-      :items-length="total"
+      :items="tableItems"
+      :items-length="tableTotal"
       :items-per-page="tableOptions.itemsPerPage"
       :items-per-page-options="[10, 25, 50]"
       :page="tableOptions.page"
-      :loading="loading"
+      :loading="tableLoading"
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       item-value="id"
       @update:options="onTableOptionsUpdate"
@@ -180,14 +90,23 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, ref } from "vue";
-import { useLagReportsStore } from "@/store/admin/lagReports/store";
-import { LagReportQueryParams } from "@/store/admin/lagReports/types";
-import { mdiCheckCircle, mdiCloseCircle, mdiEye } from "@mdi/js";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { EAdminRouteName } from "@/router/types";
+import { mdiCheckCircle, mdiCloseCircle, mdiEye, mdiRefresh } from "@mdi/js";
 import debounce from "debounce";
 import { DataTableHeader } from "vuetify";
+import { EAdminRouteName } from "@/router/types";
+import { useLagReportsStore } from "@/store/admin/lagReports/store";
+import {
+  applyQueryToFilters,
+  FiltersQueryRecord,
+  filterParams,
+  filtersToQuery,
+  queryHoldsFilterState,
+  useLagReportsFiltersStore,
+} from "@/store/admin/lagReports/filters";
+import { LagReportQueryParams } from "@/store/admin/lagReports/types";
+import LagReportFilterBar from "@/components/admin/lag-reports/filter-bar/LagReportFilterBar.vue";
 
 type VuetifyTableUpdateOptions = {
   page: number;
@@ -197,18 +116,10 @@ type VuetifyTableUpdateOptions = {
   search: string;
 };
 
+// What one visit leaves for the next: the filters as the same query-shaped
+// record the URL carries (one serialization, two homes) plus the view shape.
 type LagReportsUiState = {
-  filters: {
-    battleTag: string;
-    gameSearch: string;
-    serverName: string;
-    proxyName: string;
-    proxyIp: string;
-    issueCategory: string;
-    explicitOnly: boolean;
-    dateFrom: string;
-    dateTo: string;
-  };
+  filters: FiltersQueryRecord;
   tableOptions: {
     page: number;
     itemsPerPage: number;
@@ -219,47 +130,19 @@ const LAG_REPORTS_UI_STATE_KEY = "admin-lag-reports-ui-state";
 
 export default defineComponent({
   name: "AdminLagReports",
+  components: { LagReportFilterBar },
   setup() {
     const lagReportsStore = useLagReportsStore();
+    const filtersStore = useLagReportsFiltersStore();
     const router = useRouter();
     const route = useRoute();
 
-    const reports = computed(() => lagReportsStore.reports);
-    const total = computed(() => lagReportsStore.total);
-    const loading = computed(() => lagReportsStore.loading);
     const reportsError = computed(() => lagReportsStore.reportsError);
 
     const tableOptions = ref({
       page: 1,
       itemsPerPage: 25,
     });
-
-    const filters = reactive({
-      battleTag: "",
-      gameSearch: "",
-      serverName: "",
-      proxyName: "",
-      proxyIp: "",
-      issueCategory: "",
-      explicitOnly: false,
-      dateFrom: "",
-      dateTo: "",
-    });
-
-    const issueCategories = [
-      "InputDelay",
-      "GameStutter",
-      "WaitingForPlayers",
-      "RubberBanding",
-      "SpikeLag",
-      "ConsistentLag",
-      "Reconnecting",
-      "FullDisconnect",
-      "Desync",
-      "FpsDrops",
-      "GameCrashed",
-      "Other",
-    ];
 
     const headers: DataTableHeader[] = [
       { title: "Created", value: "createdAt", sortable: false, width: "140px" },
@@ -271,19 +154,19 @@ export default defineComponent({
       { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
     ];
 
+    // Every filter runs on the server against the full window, so the table
+    // reads straight from the store — there is no second row universe.
+    const tableItems = computed(() => lagReportsStore.reports);
+    const tableTotal = computed(() => lagReportsStore.total);
+    const tableLoading = computed(() => lagReportsStore.loading);
+
+    // ── Server-backed flat list ──────────────────────────────────────
+
     function buildParams(): LagReportQueryParams {
       return {
         page: tableOptions.value.page - 1,
         pageSize: tableOptions.value.itemsPerPage,
-        battleTag: filters.battleTag || undefined,
-        gameSearch: filters.gameSearch || undefined,
-        serverName: filters.serverName || undefined,
-        proxyName: filters.proxyName || undefined,
-        proxyIp: filters.proxyIp || undefined,
-        dateFrom: filters.dateFrom || undefined,
-        dateTo: filters.dateTo || undefined,
-        issueCategory: filters.issueCategory || undefined,
-        explicitOnly: filters.explicitOnly || undefined,
+        ...filterParams(filtersStore),
       };
     }
 
@@ -292,21 +175,9 @@ export default defineComponent({
     }
 
     function routeQueryFromState(): Record<string, string> {
-      const query: Record<string, string> = {};
-
-      if (filters.battleTag) query.battleTag = filters.battleTag;
-      if (filters.gameSearch) query.gameSearch = filters.gameSearch;
-      if (filters.serverName) query.serverName = filters.serverName;
-      if (filters.proxyName) query.proxyName = filters.proxyName;
-      if (filters.proxyIp) query.proxyIp = filters.proxyIp;
-      if (filters.issueCategory) query.issueCategory = filters.issueCategory;
-      if (filters.explicitOnly) query.explicitOnly = "true";
-      if (filters.dateFrom) query.dateFrom = filters.dateFrom;
-      if (filters.dateTo) query.dateTo = filters.dateTo;
-
+      const query = filtersToQuery(filtersStore);
       if (tableOptions.value.page !== 1) query.page = String(tableOptions.value.page);
       if (tableOptions.value.itemsPerPage !== 25) query.itemsPerPage = String(tableOptions.value.itemsPerPage);
-
       return query;
     }
 
@@ -318,17 +189,7 @@ export default defineComponent({
       if (typeof window === "undefined") return;
 
       const state: LagReportsUiState = {
-        filters: {
-          battleTag: filters.battleTag,
-          gameSearch: filters.gameSearch,
-          serverName: filters.serverName,
-          proxyName: filters.proxyName,
-          proxyIp: filters.proxyIp,
-          issueCategory: filters.issueCategory,
-          explicitOnly: filters.explicitOnly,
-          dateFrom: filters.dateFrom,
-          dateTo: filters.dateTo,
-        },
+        filters: filtersToQuery(filtersStore),
         tableOptions: {
           page: tableOptions.value.page,
           itemsPerPage: tableOptions.value.itemsPerPage,
@@ -338,61 +199,52 @@ export default defineComponent({
       window.sessionStorage.setItem(LAG_REPORTS_UI_STATE_KEY, JSON.stringify(state));
     }
 
-    function hydrateStateFromStorage() {
-      if (typeof window === "undefined") return;
+    function readStoredUiState(): LagReportsUiState | null {
+      if (typeof window === "undefined") return null;
 
       const raw = window.sessionStorage.getItem(LAG_REPORTS_UI_STATE_KEY);
-      if (!raw) return;
+      if (!raw) return null;
 
       try {
         const state = JSON.parse(raw) as LagReportsUiState;
-
-        filters.battleTag = state.filters?.battleTag ?? "";
-        filters.gameSearch = state.filters?.gameSearch ?? "";
-        filters.serverName = state.filters?.serverName ?? "";
-        filters.proxyName = state.filters?.proxyName ?? "";
-        filters.proxyIp = state.filters?.proxyIp ?? "";
-        filters.issueCategory = state.filters?.issueCategory ?? "";
-        filters.explicitOnly = Boolean(state.filters?.explicitOnly);
-        filters.dateFrom = state.filters?.dateFrom ?? "";
-        filters.dateTo = state.filters?.dateTo ?? "";
-
-        tableOptions.value.page = state.tableOptions?.page && state.tableOptions.page > 0 ? state.tableOptions.page : 1;
-        tableOptions.value.itemsPerPage =
-          state.tableOptions?.itemsPerPage && state.tableOptions.itemsPerPage > 0 ? state.tableOptions.itemsPerPage : 25;
+        // Snapshots from the previous storage shape held structured values
+        // (arrays, booleans); the query-shaped record is strings only. Drop an
+        // old filters record rather than half-reading it — the view shape
+        // fields below kept their form and still apply.
+        if (state.filters && Object.values(state.filters).some((value) => typeof value !== "string")) {
+          state.filters = {};
+        }
+        return state;
       } catch (_error) {
         window.sessionStorage.removeItem(LAG_REPORTS_UI_STATE_KEY);
+        return null;
       }
     }
 
+    function applyStoredUiState(state: LagReportsUiState) {
+      applyQueryToFilters(filtersStore, state.filters ?? {});
+
+      tableOptions.value.page = state.tableOptions?.page && state.tableOptions.page > 0 ? state.tableOptions.page : 1;
+      tableOptions.value.itemsPerPage =
+        state.tableOptions?.itemsPerPage && state.tableOptions.itemsPerPage > 0 ? state.tableOptions.itemsPerPage : 25;
+    }
+
     function hydrateStateFromQuery() {
-      const hasQueryState =
-        typeof route.query.battleTag === "string" ||
-        typeof route.query.gameSearch === "string" ||
-        typeof route.query.serverName === "string" ||
-        typeof route.query.proxyName === "string" ||
-        typeof route.query.proxyIp === "string" ||
-        typeof route.query.issueCategory === "string" ||
-        route.query.explicitOnly === "true" ||
-        typeof route.query.dateFrom === "string" ||
-        typeof route.query.dateTo === "string" ||
-        typeof route.query.page === "string" ||
-        typeof route.query.itemsPerPage === "string";
+      // The filters store outlives the component between visits; every entry
+      // starts from the defaults before the URL, storage or the offer speak.
+      filtersStore.$reset();
+
+      const hasQueryState = queryHoldsFilterState(route.query)
+        || typeof route.query.page === "string"
+        || typeof route.query.itemsPerPage === "string";
 
       if (!hasQueryState) {
-        hydrateStateFromStorage();
+        const stored = readStoredUiState();
+        if (stored) applyStoredUiState(stored);
         return;
       }
 
-      filters.battleTag = typeof route.query.battleTag === "string" ? route.query.battleTag : "";
-      filters.gameSearch = typeof route.query.gameSearch === "string" ? route.query.gameSearch : "";
-      filters.serverName = typeof route.query.serverName === "string" ? route.query.serverName : "";
-      filters.proxyName = typeof route.query.proxyName === "string" ? route.query.proxyName : "";
-      filters.proxyIp = typeof route.query.proxyIp === "string" ? route.query.proxyIp : "";
-      filters.issueCategory = typeof route.query.issueCategory === "string" ? route.query.issueCategory : "";
-      filters.explicitOnly = route.query.explicitOnly === "true";
-      filters.dateFrom = typeof route.query.dateFrom === "string" ? route.query.dateFrom : "";
-      filters.dateTo = typeof route.query.dateTo === "string" ? route.query.dateTo : "";
+      applyQueryToFilters(filtersStore, route.query);
 
       const page = typeof route.query.page === "string" ? Number(route.query.page) : NaN;
       tableOptions.value.page = Number.isFinite(page) && page > 0 ? page : 1;
@@ -435,15 +287,27 @@ export default defineComponent({
       loadReports();
     }
 
-    function formatDate(iso: string): string {
-      if (!iso) return "";
-      const d = new Date(iso);
-      return d.toLocaleString();
-    }
+    // "Submitted" means at least one player filled in the in-game report
+    // dialog; the rest are reports flo raised on its own. This is the same
+    // state as the explicit filter, shown as a segmented control because it is
+    // the one filter people flip constantly while triaging.
+    const explicitMode = computed({
+      get: () => (filtersStore.explicitOnly ? "submitted" : "all"),
+      set: (mode: string) => {
+        filtersStore.explicitOnly = mode === "submitted";
+        onFilterChange();
+      },
+    });
 
     function openDetail(id: string) {
       persistUiState();
       router.push({ name: EAdminRouteName.LAG_REPORT_DETAIL, params: { id }, query: routeQueryFromState() });
+    }
+
+    function formatDate(iso: string): string {
+      if (!iso) return "";
+      const d = new Date(iso);
+      return d.toLocaleString();
     }
 
     onMounted(() => {
@@ -453,22 +317,23 @@ export default defineComponent({
     });
 
     return {
-      reports,
+      filtersStore,
       reportsError,
-      total,
-      loading,
       tableOptions,
-      filters,
-      issueCategories,
       headers,
+      tableItems,
+      tableTotal,
+      tableLoading,
       onFilterChange,
       onTableOptionsUpdate,
       refreshResults,
-      formatDate,
+      explicitMode,
       openDetail,
+      formatDate,
       mdiCheckCircle,
       mdiCloseCircle,
       mdiEye,
+      mdiRefresh,
     };
   },
 });
