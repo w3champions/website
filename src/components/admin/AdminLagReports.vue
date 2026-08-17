@@ -1,7 +1,30 @@
 <template>
   <div>
-    <v-card-title class="pt-3">
-      Lag Reports
+    <v-card-title class="pt-3 d-flex align-center flex-wrap ga-2 lag-reports-title">
+      <span>Lag Reports</span>
+      <v-spacer />
+      <!-- Jump straight to a report someone quoted in a ticket or on Discord,
+           without hunting for it in the list. -->
+      <div class="d-flex align-center ga-2 open-by-id">
+        <v-text-field
+          v-model="openIdInput"
+          label="Open report by ID"
+          placeholder="Report ID or a link to it"
+          density="compact"
+          variant="outlined"
+          hide-details
+          @keyup.enter="openById"
+        />
+        <v-btn
+          color="primary"
+          variant="tonal"
+          :prepend-icon="mdiEye"
+          :disabled="!openIdCandidate"
+          @click="openById"
+        >
+          Open
+        </v-btn>
+      </div>
     </v-card-title>
 
     <v-container v-if="reportsError" fluid class="pb-0">
@@ -97,6 +120,18 @@
             variant="tonal"
           >
             {{ cat }}
+          </v-chip>
+          <v-chip
+            v-for="(tag, ti) in p.connection_issue_tags ?? []"
+            :key="'tag-' + ti"
+            size="x-small"
+            color="deep-purple"
+            variant="tonal"
+            class="clickable"
+            :title="`Launcher verdict: ${tag} — click to filter`"
+            @click.stop="filterByTag(tag)"
+          >
+            {{ tag }}
           </v-chip>
         </div>
       </template>
@@ -342,6 +377,13 @@ export default defineComponent({
       },
     });
 
+    // Toggle semantics shared with the tags editor: clicking a row's active
+    // tag chip clears the filter again.
+    function filterByTag(tag: string) {
+      filtersStore.connectionIssueTag = filtersStore.connectionIssueTag === tag ? "" : tag;
+      onFilterChange();
+    }
+
     // A host stall is the node's own measurement, so it is shown next to the server that
     // made it. Null when no player carries a count - an older backend leaves the field out
     // entirely, and drawing a zero there would claim a clean game it cannot vouch for.
@@ -358,6 +400,26 @@ export default defineComponent({
       if (!iso) return "";
       const d = new Date(iso);
       return d.toLocaleString();
+    }
+
+    // ── Open by ID ───────────────────────────────────────────────────
+
+    // Takes a bare report id or a pasted link to one: admins trade detail
+    // URLs, and the id is the last path segment of such a URL.
+    function normalizeReportId(raw: string): string {
+      const withoutQuery = raw.trim().split(/[?#]/)[0];
+      const segments = withoutQuery.split("/").filter(Boolean);
+      return segments.length > 0 ? segments[segments.length - 1] : "";
+    }
+
+    const openIdInput = ref("");
+    const openIdCandidate = computed(() => normalizeReportId(openIdInput.value));
+
+    // An id that matches no report is the detail page's to report — it already
+    // renders "Report not found." — so there is nothing to validate here.
+    function openById() {
+      if (!openIdCandidate.value) return;
+      openDetail(openIdCandidate.value);
     }
 
     onMounted(() => {
@@ -379,10 +441,14 @@ export default defineComponent({
       onTableOptionsUpdate,
       refreshResults,
       explicitMode,
+      filterByTag,
       hostStallCount,
       transportSwitchIndicatorCount,
       openDetail,
       formatDate,
+      openIdInput,
+      openIdCandidate,
+      openById,
       mdiCheckCircle,
       mdiCloseCircle,
       mdiEye,
@@ -391,3 +457,26 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
+// v-card-title clips its content (overflow: hidden, white-space: nowrap) to
+// ellipsize long titles. The ID field lives in this row, so let it show in
+// full and wrap under the heading when the viewport is narrow.
+.lag-reports-title {
+  overflow: visible;
+  white-space: normal;
+}
+
+.open-by-id {
+  width: 100%;
+  max-width: 420px;
+}
+</style>

@@ -9,8 +9,10 @@ export type LagReportsFilterKey =
   | "proxy"
   | "proxyIp"
   | "categories"
+  | "tags"
   | "dates"
-  | "explicit";
+  | "explicit"
+  | "playerCount";
 
 const ALL_FILTER_KEYS: LagReportsFilterKey[] = [
   "player",
@@ -19,8 +21,10 @@ const ALL_FILTER_KEYS: LagReportsFilterKey[] = [
   "proxy",
   "proxyIp",
   "categories",
+  "tags",
   "dates",
   "explicit",
+  "playerCount",
 ];
 
 type LagReportsPrefsState = {
