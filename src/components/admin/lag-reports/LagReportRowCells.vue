@@ -34,6 +34,19 @@
       {{ sumConnectionEvents(report) === 0 ? "—" : sumConnectionEvents(report) }}
     </span>
   </template>
+  <template v-else-if="column === 'repeat'">
+    <v-chip
+      v-if="maxRepeat(report) >= 2"
+      :size="variant === 'grouped' ? 'x-small' : 'small'"
+      color="deep-orange"
+      variant="tonal"
+      class="font-weight-bold"
+      :class="variant === 'grouped' ? undefined : 'repeat-chip'"
+    >
+      ×{{ maxRepeat(report) }}
+    </v-chip>
+    <span v-else class="text-medium-emphasis">—</span>
+  </template>
   <div v-else-if="column === 'serverNodeName'" class="d-flex flex-wrap ga-1 align-center">
     <span
       class="clickable"
@@ -95,6 +108,17 @@
         >
           {{ p.battleTag }}
         </span>
+        <v-chip
+          v-if="repeatCount(p.battleTag) >= 2"
+          size="x-small"
+          color="deep-orange"
+          variant="tonal"
+          class="font-weight-bold clickable"
+          :title="repeatTitle(p.battleTag)"
+          @click.stop="$emit('filter-player', p.battleTag)"
+        >
+          ×{{ repeatCount(p.battleTag) }}
+        </v-chip>
         <v-chip v-if="p.isExplicit" size="x-small" color="warning" variant="tonal">submitted</v-chip>
         <v-chip
           v-if="p.connectionType === 'Proxied'"
@@ -165,6 +189,8 @@
 import { defineComponent, PropType } from "vue";
 import { mdiCheckCircle, mdiCloseCircle, mdiEye } from "@mdi/js";
 import { formatDistanceToNow } from "date-fns";
+import { useLagReportsStore } from "@/store/admin/lagReports/store";
+import { useLagReportsFiltersStore } from "@/store/admin/lagReports/filters";
 import { EConnectionType, LagReportListItem } from "@/store/admin/lagReports/types";
 import { hostStallIndicatorCount } from "@/components/admin/lag-reports/hostStalls";
 import { transportSwitchIndicatorCount } from "@/components/admin/lag-reports/transportSwitches";
@@ -193,6 +219,9 @@ export default defineComponent({
   },
   emits: ["open", "filter-player", "filter-server-node", "filter-proxy", "filter-tag"],
   setup() {
+    const lagReportsStore = useLagReportsStore();
+    const filtersStore = useLagReportsFiltersStore();
+
     /** "maps\W3Champions\5335_Direct Strike 6.5.8_w3c.w3x" → "Direct Strike 6.5.8" */
     function formatMapName(mapPath: string): string {
       if (!mapPath) return "";
@@ -224,6 +253,25 @@ export default defineComponent({
     // entirely, and drawing a zero there would claim a clean game it cannot vouch for.
     function hostStallCount(item: LagReportListItem): number | null {
       return hostStallIndicatorCount(item.players);
+    }
+
+    function repeatCount(battleTag: string): number {
+      return lagReportsStore.playerSubmittedCounts.get(battleTag) ?? 0;
+    }
+
+    function appearanceCount(battleTag: string): number {
+      return lagReportsStore.playerAppearanceCounts.get(battleTag) ?? 0;
+    }
+
+    function maxRepeat(item: LagReportListItem): number {
+      return Math.max(0, ...item.players.map((p) => repeatCount(p.battleTag)));
+    }
+
+    function repeatTitle(battleTag: string): string {
+      const scope = filtersStore.serverNodes.length > 0 || filtersStore.serverNames.length > 0
+        ? "the current date window, on the filtered servers"
+        : "the current date window";
+      return `${repeatCount(battleTag)} submitted · appears in ${appearanceCount(battleTag)} reports in ${scope} — click to filter`;
     }
 
     function formatDate(iso: string): string {
@@ -261,6 +309,9 @@ export default defineComponent({
       sumConnectionEvents,
       hostStallCount,
       transportSwitchIndicatorCount,
+      repeatCount,
+      maxRepeat,
+      repeatTitle,
       formatDate,
       formatRelative,
       cellText,
@@ -279,5 +330,9 @@ export default defineComponent({
 
 .clickable:hover {
   text-decoration: underline;
+}
+
+.repeat-chip {
+  font-size: 0.95rem;
 }
 </style>

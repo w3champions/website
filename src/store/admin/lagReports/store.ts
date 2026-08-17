@@ -17,6 +17,7 @@ function getService(): LagReportService {
 let selectedReportSeq = 0;
 let reportsSeq = 0;
 let nodeDaySeq = 0;
+let battleTagSeq = 0;
 
 export const useLagReportsStore = defineStore("lagReports", {
   state: (): LagReportsState => ({
@@ -30,7 +31,30 @@ export const useLagReportsStore = defineStore("lagReports", {
     nodeDayBuckets: [],
     nodeDayLoading: false,
     nodeDayError: false,
+    battleTagCounts: new Map(),
   }),
+
+  getters: {
+    // Aggregation-backed, range-scoped, top-500 capped (submissions-first
+    // ranked, so real submitters survive the cap; a player beyond it can miss
+    // a badge, never wear a wrong one). Submissions drive every repeat-shaped
+    // number — appearance counts track activity, not distress, and are
+    // context only.
+    playerSubmittedCounts(state): Map<string, number> {
+      const counts = new Map<string, number>();
+      for (const [tag, bucket] of state.battleTagCounts) {
+        counts.set(tag, bucket.submittedCount ?? 0);
+      }
+      return counts;
+    },
+    playerAppearanceCounts(state): Map<string, number> {
+      const counts = new Map<string, number>();
+      for (const [tag, bucket] of state.battleTagCounts) {
+        counts.set(tag, bucket.count);
+      }
+      return counts;
+    },
+  },
 
   actions: {
     async loadReports(params: LagReportQueryParams) {
@@ -93,6 +117,25 @@ export const useLagReportsStore = defineStore("lagReports", {
         this.nodeDayError = true;
       } finally {
         if (seq === nodeDaySeq) this.nodeDayLoading = false;
+      }
+    },
+
+    // Per-player report counts for the repeat badges. Scoped to the date window
+    // and the server filter — a badge means "reports in the shown range, within
+    // the current server scope" — and deliberately nothing else, so unrelated
+    // narrowing (a category, a proxy) doesn't change what the number means.
+    async loadBattleTagCounts(scope: Pick<LagReportAggregateParams, "dateFrom" | "dateTo" | "serverNames" | "serverNodeIds">) {
+      const seq = ++battleTagSeq;
+      try {
+        const buckets = await this.fetchAggregate({ ...scope, groupBy: "battleTag", limit: 500 });
+        if (seq !== battleTagSeq) return;
+        this.battleTagCounts = new Map(
+          buckets.filter((b) => b.battleTag).map((b) => [b.battleTag as string, b]),
+        );
+      } catch (_e) {
+        // Badges are annotations over rows that render fine without them;
+        // honest absence beats stale numbers.
+        if (seq === battleTagSeq) this.battleTagCounts = new Map();
       }
     },
 

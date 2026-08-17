@@ -356,12 +356,33 @@ export default defineComponent({
       refreshAggregates();
     }
 
+    // Everything aggregation-backed refreshes together — except the badges,
+    // which refetch only when their own scope (the window plus the server
+    // filter) changed: they deliberately ignore all other narrowing, so
+    // refiring on it would re-run the same query for the same answer.
+    let lastBadgeScopeKey = "";
+
+    function badgeScope() {
+      return {
+        dateFrom: filtersStore.dateFrom,
+        dateTo: filtersStore.dateTo,
+        serverNames: filtersStore.serverNames.length > 0 ? [...filtersStore.serverNames] : undefined,
+        serverNodeIds: filtersStore.serverNodes.length > 0 ? filtersStore.serverNodes.map((n) => n.id) : undefined,
+      };
+    }
+
     // The grouped view caches per-group rows and holds a client-side pager;
     // these tokens tell it when its world changed (see the prop comments).
     const groupReloadToken = ref(0);
     const groupPageResetToken = ref(0);
 
-    function refreshAggregates() {
+    function refreshAggregates(force = false) {
+      const scope = badgeScope();
+      const scopeKey = JSON.stringify(scope);
+      if (force || scopeKey !== lastBadgeScopeKey) {
+        lastBadgeScopeKey = scopeKey;
+        lagReportsStore.loadBattleTagCounts(scope);
+      }
       if (groupMode.value) {
         groupReloadToken.value++;
         lagReportsStore.loadNodeDay(filterParams(filtersStore));
@@ -410,7 +431,7 @@ export default defineComponent({
       persistUiState();
       syncRouteQuery();
       loadReports();
-      refreshAggregates();
+      refreshAggregates(true);
     }
 
     // "Submitted" means at least one player filled in the in-game report

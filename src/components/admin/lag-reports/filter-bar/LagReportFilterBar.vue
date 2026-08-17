@@ -33,7 +33,12 @@
           :model-value="filtersStore.battleTag"
           label="BattleTag"
           placeholder="Starts with…"
+          :facets="playerFacets"
+          :facet-heading="playerFacetHeading"
+          count-suffix=" submitted"
+          :error="facetError"
           @update:modelValue="(value: string) => setTextFilter('battleTag', value)"
+          @pick="(value: string) => applyFacet('player', value)"
         />
         <prefix-facet-editor
           v-else-if="pill.key === 'game'"
@@ -90,6 +95,13 @@
           @update:dateFrom="(value: string) => setDateBound('dateFrom', value)"
           @update:dateTo="(value: string) => setDateBound('dateTo', value)"
           @preset="applyDatePreset"
+        />
+        <repeat-editor
+          v-else-if="pill.key === 'repeat'"
+          :min-repeat="filtersStore.minRepeat"
+          :mode="filtersStore.repeatMode"
+          @update:minRepeat="setMinRepeat"
+          @update:mode="setRepeatMode"
         />
         <number-range-editor
           v-else-if="pill.key === 'playerCount'"
@@ -163,6 +175,7 @@ import ServerEditor from "./editors/ServerEditor.vue";
 import type { ServerOption } from "./editors/ServerEditor.vue";
 import ListEditor from "./editors/ListEditor.vue";
 import DateRangeEditor from "./editors/DateRangeEditor.vue";
+import RepeatEditor from "./editors/RepeatEditor.vue";
 import NumberRangeEditor from "./editors/NumberRangeEditor.vue";
 
 // The launcher's tag vocabulary (ELagReportTag). New backend tags still render
@@ -192,7 +205,7 @@ const byKey = new Map(FILTER_REGISTRY.map((descriptor) => [descriptor.key, descr
 // loading stay with the page.
 export default defineComponent({
   name: "LagReportFilterBar",
-  components: { PrefixFacetEditor, ServerEditor, ListEditor, DateRangeEditor, NumberRangeEditor },
+  components: { PrefixFacetEditor, ServerEditor, ListEditor, DateRangeEditor, RepeatEditor, NumberRangeEditor },
   emits: ["change"],
   setup(_props, { emit }) {
     const filtersStore = useLagReportsFiltersStore();
@@ -390,6 +403,17 @@ export default defineComponent({
       toggleServerNode(opt.nodeId as number, opt.name);
     }
 
+    function setMinRepeat(value: string) {
+      const parsed = Number.parseInt(value, 10);
+      filtersStore.minRepeat = Number.isFinite(parsed) && parsed >= 2 ? parsed : 0;
+      change();
+    }
+
+    function setRepeatMode(mode: unknown) {
+      filtersStore.repeatMode = mode === "involved" ? "involved" : "submitted";
+      if (filtersStore.minRepeat >= 2) change();
+    }
+
     function setPlayerBound(bound: "min" | "max", value: string) {
       const parsed = Number.parseInt(value, 10);
       const next = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
@@ -560,6 +584,22 @@ export default defineComponent({
         .map((b) => [b.proxyName, b.count]);
     });
 
+    // With nothing typed this list is a "who reports most" leaderboard, so it
+    // shows repeat players only. Once someone types they are after one specific
+    // person, and holding the repeat gate would hide anyone with a single
+    // report — exactly the search that looks broken.
+    const playerFacets = computed<Array<[string, number]>>(() => {
+      const needle = filtersStore.battleTag.trim().toLowerCase();
+      return [...lagReportsStore.playerSubmittedCounts.entries()]
+        .filter(([tag, count]) => (needle ? tag.toLowerCase().startsWith(needle) : count >= 2))
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, FACET_LIMIT);
+    });
+
+    const playerFacetHeading = computed(() =>
+      filtersStore.battleTag.trim() ? "Matches in the selected range" : "Top reporters (selected range)"
+    );
+
     const categoryItems = computed(() => {
       const counts = new Map<string, number>(ISSUE_CATEGORY_OPTIONS.map((cat) => [cat, 0]));
       for (const bucket of facetBuckets.value.category) {
@@ -600,12 +640,16 @@ export default defineComponent({
       serverOptions,
       addServerTerm,
       toggleServerOption,
+      setMinRepeat,
+      setRepeatMode,
       setPlayerBound,
       setTagFilter,
       toggleCategory,
       setDateBound,
       datePresets,
       applyDatePreset,
+      playerFacets,
+      playerFacetHeading,
       proxyFacets,
       categoryItems,
       tagItems,

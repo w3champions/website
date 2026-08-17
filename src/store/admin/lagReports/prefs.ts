@@ -12,6 +12,7 @@ export type LagReportsFilterKey =
   | "tags"
   | "dates"
   | "explicit"
+  | "repeat"
   | "playerCount";
 
 export type LagReportsColumnKey =
@@ -26,6 +27,7 @@ export type LagReportsColumnKey =
   | "proxiedCount"
   | "lagEvents"
   | "connectionEvents"
+  | "repeat"
   | "hasExplicitReport"
   | "submittedBy"
   | "players";
@@ -40,6 +42,7 @@ const ALL_FILTER_KEYS: LagReportsFilterKey[] = [
   "tags",
   "dates",
   "explicit",
+  "repeat",
   "playerCount",
 ];
 
@@ -55,6 +58,7 @@ const ALL_COLUMN_KEYS: LagReportsColumnKey[] = [
   "proxiedCount",
   "lagEvents",
   "connectionEvents",
+  "repeat",
   "hasExplicitReport",
   "submittedBy",
   "players",

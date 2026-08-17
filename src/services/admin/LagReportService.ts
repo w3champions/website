@@ -16,6 +16,11 @@ function setFilterParams(query: URLSearchParams, params: Omit<LagReportQueryPara
   if (params.explicitOnly) query.set("explicitOnly", "true");
   if (params.minPlayers) query.set("minPlayers", params.minPlayers.toString());
   if (params.maxPlayers) query.set("maxPlayers", params.maxPlayers.toString());
+  if (params.minRepeat && params.minRepeat >= 2) {
+    query.set("minRepeat", params.minRepeat.toString());
+    // "submitted" is the server default; only the deviation goes on the wire.
+    if (params.repeatMode === "involved") query.set("repeatMode", "involved");
+  }
 }
 
 function buildQuery(params: LagReportQueryParams): string {
