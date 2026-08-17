@@ -10,6 +10,7 @@ import type { LagReportsFilterKey as FilterKey } from "@/store/admin/lagReports/
 // and storage; the default is recomputed at landing so a bookmark doesn't
 // fossilize the day it was saved on.
 export const RETENTION_DAYS = 90;
+export const WALK_STEP_DAYS = 7;
 
 export function utcDayString(offsetDays = 0): string {
   return new Date(Date.now() + offsetDays * 86400000).toISOString().slice(0, 10);

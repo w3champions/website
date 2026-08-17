@@ -89,11 +89,13 @@
       :base-params="groupBaseParams"
       :dates-explicit="filtersStore.datesExplicit"
       :empty-window-note="emptyWindowNote"
+      :can-walk-back="canWalkBack"
       :reload-token="groupReloadToken"
       :page-reset-token="groupPageResetToken"
       @focus-node="filterByServerNode"
       @open-as-list="openGroupAsList"
       @open="openDetail"
+      @walk="loadOlderDays"
       @filter-player="filterByPlayer"
     />
 
@@ -148,7 +150,9 @@ import {
   filtersToQuery,
   queryHoldsFilterState,
   RETENTION_DAYS,
+  retentionFloor,
   useLagReportsFiltersStore,
+  WALK_STEP_DAYS,
 } from "@/store/admin/lagReports/filters";
 import { LagReportListItem, LagReportQueryParams } from "@/store/admin/lagReports/types";
 import { ALL_HEADERS } from "@/components/admin/lag-reports/columns";
@@ -328,6 +332,30 @@ export default defineComponent({
 
     const debouncedLoad = debounce(loadReports, 400);
 
+    // ── Widening gestures ────────────────────────────────────────────
+    // Only date gestures change dates: the presets in the dates editor, the
+    // walk button below the groups and Clear all (back to the default
+    // window). Filters never widen the window as a side effect — clicking a
+    // node keeps the window and offers the walk.
+
+    const canWalkBack = computed(() => filtersStore.dateFrom > retentionFloor());
+
+    function loadOlderDays() {
+      const from = new Date(`${filtersStore.dateFrom}T00:00:00Z`).getTime() - WALK_STEP_DAYS * 86400000;
+      const target = new Date(from).toISOString().slice(0, 10);
+      const floor = retentionFloor();
+      filtersStore.dateFrom = target < floor ? floor : target;
+      filtersStore.datesExplicit = true;
+      // Deliberately NOT onFilterChange: its reset-to-page-1 would yank the
+      // reader from the oldest fetched days back to the newest. Widening
+      // appends older days after the current position — day-desc sort keeps
+      // everything already on screen where it was.
+      persistUiState();
+      syncRouteQuery();
+      loadReports();
+      refreshAggregates();
+    }
+
     // The grouped view caches per-group rows and holds a client-side pager;
     // these tokens tell it when its world changed (see the prop comments).
     const groupReloadToken = ref(0);
@@ -504,6 +532,8 @@ export default defineComponent({
       groupBaseParams,
       groupReloadToken,
       groupPageResetToken,
+      canWalkBack,
+      loadOlderDays,
       onFilterChange,
       onTableOptionsUpdate,
       refreshResults,
