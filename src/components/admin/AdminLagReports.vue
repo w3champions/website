@@ -84,6 +84,16 @@
       </div>
     </v-container>
 
+    <v-container v-if="dossierTag" fluid class="py-0">
+      <lag-report-player-dossier
+        :battle-tag="dossierTag"
+        :date-from="filtersStore.dateFrom"
+        :date-to="filtersStore.dateTo"
+        :can-expand-history="!retentionWindowActive"
+        @expand-history="applyRetentionWindow"
+      />
+    </v-container>
+
     <lag-report-grouped-view
       v-if="groupMode"
       :base-params="groupBaseParams"
@@ -152,10 +162,12 @@ import {
   RETENTION_DAYS,
   retentionFloor,
   useLagReportsFiltersStore,
+  utcDayString,
   WALK_STEP_DAYS,
 } from "@/store/admin/lagReports/filters";
 import { LagReportListItem, LagReportQueryParams } from "@/store/admin/lagReports/types";
 import { ALL_HEADERS } from "@/components/admin/lag-reports/columns";
+import LagReportPlayerDossier from "@/components/admin/lag-reports/LagReportPlayerDossier.vue";
 import LagReportFilterBar from "@/components/admin/lag-reports/filter-bar/LagReportFilterBar.vue";
 import LagReportGroupedView from "@/components/admin/lag-reports/LagReportGroupedView.vue";
 import type { LagReportGroup } from "@/components/admin/lag-reports/LagReportGroupedView.vue";
@@ -184,7 +196,7 @@ const LAG_REPORTS_UI_STATE_KEY = "admin-lag-reports-ui-state";
 
 export default defineComponent({
   name: "AdminLagReports",
-  components: { LagReportFilterBar, LagReportGroupedView, LagReportRowCells },
+  components: { LagReportPlayerDossier, LagReportFilterBar, LagReportGroupedView, LagReportRowCells },
   setup() {
     const lagReportsStore = useLagReportsStore();
     const filtersStore = useLagReportsFiltersStore();
@@ -334,9 +346,9 @@ export default defineComponent({
 
     // ── Widening gestures ────────────────────────────────────────────
     // Only date gestures change dates: the presets in the dates editor, the
-    // walk button below the groups and Clear all (back to the default
-    // window). Filters never widen the window as a side effect — clicking a
-    // node keeps the window and offers the walk.
+    // walk button below the groups, Clear all (back to the default window)
+    // and the dossier's full-history link. Filters never widen the window as
+    // a side effect — clicking a node keeps the window and offers the walk.
 
     const canWalkBack = computed(() => filtersStore.dateFrom > retentionFloor());
 
@@ -355,6 +367,21 @@ export default defineComponent({
       loadReports();
       refreshAggregates();
     }
+
+    const retentionWindowActive = computed(() =>
+      filtersStore.dateFrom <= retentionFloor() && filtersStore.dateTo >= utcDayString(0)
+    );
+
+    function applyRetentionWindow() {
+      filtersStore.dateFrom = retentionFloor();
+      filtersStore.dateTo = utcDayString(0);
+      filtersStore.datesExplicit = true;
+      onFilterChange();
+    }
+
+    // The dossier fires four aggregate pipelines; wait for a plausible prefix
+    // rather than launching them from the first typed character.
+    const dossierTag = computed(() => (filtersStore.battleTag.trim().length >= 3 ? filtersStore.battleTag : ""));
 
     // Everything aggregation-backed refreshes together — except the badges,
     // which refetch only when their own scope (the window plus the server
@@ -555,6 +582,9 @@ export default defineComponent({
       groupPageResetToken,
       canWalkBack,
       loadOlderDays,
+      retentionWindowActive,
+      applyRetentionWindow,
+      dossierTag,
       onFilterChange,
       onTableOptionsUpdate,
       refreshResults,
