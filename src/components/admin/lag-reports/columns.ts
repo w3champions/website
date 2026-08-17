@@ -16,6 +16,7 @@ export const ALL_HEADERS: DataTableHeader[] = [
   { title: "Proxied", value: "proxiedCount", sortable: false, width: "80px", align: "center" },
   { title: "Lag ev.", value: "lagEvents", sortable: false, width: "80px", align: "center" },
   { title: "Conn ev.", value: "connectionEvents", sortable: false, width: "80px", align: "center" },
+  { title: "Repeat", value: "repeat", sortable: false, width: "80px", align: "center" },
   { title: "Submitted", value: "hasExplicitReport", sortable: false, width: "100px", align: "center" },
   { title: "Submitted by", value: "submittedBy", sortable: false },
   { title: "Players", value: "players", sortable: false },

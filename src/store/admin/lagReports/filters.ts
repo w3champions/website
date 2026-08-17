@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { LocationQuery } from "vue-router";
-import { LagReportQueryParams } from "@/store/admin/lagReports/types";
+import { LagReportQueryParams, LagReportRepeatMode } from "@/store/admin/lagReports/types";
 import type { LagReportsFilterKey as FilterKey } from "@/store/admin/lagReports/prefs";
 
 // ── The window ─────────────────────────────────────────────────────────
@@ -36,6 +36,9 @@ export type LagFiltersState = {
   dateTo: string;
   // False while the window is the recomputed default; true once chosen.
   datesExplicit: boolean;
+  // ≥2 active; runs server-side over the window, in the chosen mode.
+  minRepeat: number;
+  repeatMode: LagReportRepeatMode;
   // Players in the game. 0 = no bound on that end, so both at 0 is inactive.
   minPlayers: number;
   maxPlayers: number;
@@ -61,6 +64,8 @@ export function createDefaultFilters(): LagFiltersState {
     dateFrom: utcDayString(-1),
     dateTo: utcDayString(0),
     datesExplicit: false,
+    minRepeat: 0,
+    repeatMode: "submitted",
     minPlayers: 0,
     maxPlayers: 0,
   };
@@ -291,6 +296,36 @@ const explicitFilter: FilterDescriptor = {
   },
 };
 
+const repeatFilter: FilterDescriptor = {
+  key: "repeat",
+  label: "Repeat submitters",
+  queryKeys: ["minRepeat"],
+  hasValue: (f) => f.minRepeat >= 2,
+  pillLabel: (f) => {
+    if (f.minRepeat < 2) return "Repeat: …";
+    return `Repeat ≥ ${f.minRepeat}${f.repeatMode === "involved" ? " (involving)" : ""}`;
+  },
+  clear: (f) => {
+    f.minRepeat = 0;
+    f.repeatMode = "submitted";
+  },
+  toParams: (f, p) => {
+    p.minRepeat = f.minRepeat >= 2 ? f.minRepeat : undefined;
+    p.repeatMode = f.minRepeat >= 2 ? f.repeatMode : undefined;
+  },
+  toQuery: (f, q) => {
+    if (f.minRepeat >= 2) {
+      q.minRepeat = String(f.minRepeat);
+      if (f.repeatMode === "involved") q.repeatMode = "involved";
+    }
+  },
+  fromQuery: (f, q) => {
+    const parsed = Number.parseInt(queryString(q, "minRepeat"), 10);
+    f.minRepeat = Number.isFinite(parsed) && parsed >= 2 ? parsed : 0;
+    f.repeatMode = q.repeatMode === "involved" ? "involved" : "submitted";
+  },
+};
+
 const playerCountFilter: FilterDescriptor = {
   key: "playerCount",
   label: "Player count",
@@ -335,6 +370,7 @@ export const FILTER_REGISTRY: FilterDescriptor[] = [
   prefixTextFilter("proxyIp", "Proxy IP", "Proxy IP", "proxyIp"),
   tagsFilter,
   explicitFilter,
+  repeatFilter,
   playerCountFilter,
 ];
 

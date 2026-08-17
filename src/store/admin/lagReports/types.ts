@@ -42,6 +42,7 @@ export type LagReportsState = {
   // Set when the grouped-view aggregation failed — the view must say so
   // rather than render an empty result as "no reports match".
   nodeDayError: boolean;
+  battleTagCounts: Map<string, LagReportAggregateBucket>;
 };
 
 export interface LagReportListItem {
@@ -76,6 +77,8 @@ export interface LagReportsResponse {
   total: number;
 }
 
+export type LagReportRepeatMode = "submitted" | "involved";
+
 export interface LagReportQueryParams {
   page: number;
   pageSize: number;
@@ -94,6 +97,10 @@ export interface LagReportQueryParams {
   explicitOnly?: boolean;
   minPlayers?: number;
   maxPlayers?: number;
+  // ≥2 activates; "submitted" (default) keeps reports the chronic personally
+  // submitted, "involved" keeps every report they appear in.
+  minRepeat?: number;
+  repeatMode?: LagReportRepeatMode;
 }
 
 // ── Aggregate (counts grouped by one dimension) ──────────────────────
