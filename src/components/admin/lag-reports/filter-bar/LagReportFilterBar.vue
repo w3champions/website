@@ -213,8 +213,8 @@ export default defineComponent({
     const lagReportsStore = useLagReportsStore();
     const { smAndDown } = useDisplay();
 
-    function change() {
-      emit("change");
+    function change(immediate = false) {
+      emit("change", immediate);
     }
 
     const openEditor = ref<FilterKey | null>(null);
@@ -344,7 +344,7 @@ export default defineComponent({
       if (key === "server") serverInput.value = "";
       if (draftKey.value === key) draftKey.value = null;
       if (openEditor.value === key) openEditor.value = null;
-      change();
+      change(true);
     }
 
     function clearAllFilters() {
@@ -352,7 +352,7 @@ export default defineComponent({
       serverInput.value = "";
       draftKey.value = null;
       openEditor.value = null;
-      change();
+      change(true);
     }
 
     // ── Per-filter wiring ────────────────────────────────────────────
@@ -370,7 +370,7 @@ export default defineComponent({
       if (key === "proxy") filtersStore.proxyName = value;
       openEditor.value = null;
       draftKey.value = null;
-      change();
+      change(true);
     }
 
     // The search box doubles as the way to add a name no suggestion offers —
@@ -384,20 +384,20 @@ export default defineComponent({
       serverInput.value = "";
       if (!term || filtersStore.serverNames.includes(term)) return;
       filtersStore.serverNames = [...filtersStore.serverNames, term];
-      change();
+      change(true);
     }
 
     function toggleServerNode(id: number, name: string) {
       filtersStore.serverNodes = filtersStore.serverNodes.some((n) => n.id === id)
         ? filtersStore.serverNodes.filter((n) => n.id !== id)
         : [...filtersStore.serverNodes, { id, name }];
-      change();
+      change(true);
     }
 
     function toggleServerOption(opt: ServerOption) {
       if (opt.kind === "prefix") {
         filtersStore.serverNames = filtersStore.serverNames.filter((n) => n !== opt.name);
-        change();
+        change(true);
         return;
       }
       toggleServerNode(opt.nodeId as number, opt.name);
@@ -411,7 +411,7 @@ export default defineComponent({
 
     function setRepeatMode(mode: unknown) {
       filtersStore.repeatMode = mode === "involved" ? "involved" : "submitted";
-      if (filtersStore.minRepeat >= 2) change();
+      if (filtersStore.minRepeat >= 2) change(true);
     }
 
     function setPlayerBound(bound: "min" | "max", value: string) {
@@ -432,7 +432,7 @@ export default defineComponent({
       filtersStore.connectionIssueTag = filtersStore.connectionIssueTag === tag ? "" : tag;
       openEditor.value = null;
       draftKey.value = null;
-      change();
+      change(true);
     }
 
     function toggleCategory(cat: string) {
@@ -443,7 +443,7 @@ export default defineComponent({
         selected.add(cat);
       }
       filtersStore.issueCategories = [...selected];
-      change();
+      change(true);
     }
 
     function setDateBound(bound: "dateFrom" | "dateTo", value: string) {
@@ -473,7 +473,7 @@ export default defineComponent({
         filtersStore.dateTo = utcDayString(0);
         filtersStore.datesExplicit = true;
       }
-      change();
+      change(true);
     }
 
     // ── Facet suggestions ────────────────────────────────────────────

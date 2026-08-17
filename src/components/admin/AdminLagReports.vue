@@ -252,6 +252,21 @@ export default defineComponent({
 
     async function loadReports() {
       await lagReportsStore.loadReports(buildParams());
+      // A stale or hand-edited ?page= beyond the last page returns zero rows
+      // while reports exist, which would render as a false "no reports" empty
+      // state. Snap back to page 1; that page always has rows when total > 0,
+      // so the retry cannot loop.
+      if (
+        !lagReportsStore.reportsError &&
+        lagReportsStore.reports.length === 0 &&
+        lagReportsStore.total > 0 &&
+        tableOptions.value.page > 1
+      ) {
+        tableOptions.value.page = 1;
+        persistUiState();
+        syncRouteQuery();
+        await lagReportsStore.loadReports(buildParams());
+      }
     }
 
     function routeQueryFromState(): Record<string, string> {
@@ -361,7 +376,8 @@ export default defineComponent({
       // Deliberately NOT onFilterChange: its reset-to-page-1 would yank the
       // reader from the oldest fetched days back to the newest. Widening
       // appends older days after the current position — day-desc sort keeps
-      // everything already on screen where it was.
+      // everything already on screen where it was. A click is discrete, so the
+      // aggregates reload un-debounced.
       persistUiState();
       syncRouteQuery();
       loadReports();
@@ -376,7 +392,7 @@ export default defineComponent({
       filtersStore.dateFrom = retentionFloor();
       filtersStore.dateTo = utcDayString(0);
       filtersStore.datesExplicit = true;
-      onFilterChange();
+      onFilterChange(true);
     }
 
     // The dossier fires four aggregate pipelines; wait for a plausible prefix
@@ -418,13 +434,23 @@ export default defineComponent({
 
     const debouncedAggregates = debounce(refreshAggregates, 400);
 
-    function onFilterChange() {
+    // The debounce exists for keystrokes. A click — a toggle, a checkbox, a
+    // facet pick, a preset — is a finished decision, so it loads now; clearing
+    // the pending calls prevents a stale duplicate fetch 400ms later.
+    function onFilterChange(immediate = false) {
       tableOptions.value.page = 1;
       groupPageResetToken.value++;
       persistUiState();
       syncRouteQuery();
-      debouncedLoad();
-      debouncedAggregates();
+      if (immediate) {
+        debouncedLoad.clear();
+        debouncedAggregates.clear();
+        loadReports();
+        refreshAggregates();
+      } else {
+        debouncedLoad();
+        debouncedAggregates();
+      }
     }
 
     function onGroupModeChange() {
@@ -469,7 +495,7 @@ export default defineComponent({
       get: () => (filtersStore.explicitOnly ? "submitted" : "all"),
       set: (mode: string) => {
         filtersStore.explicitOnly = mode === "submitted";
-        onFilterChange();
+        onFilterChange(true);
       },
     });
 
@@ -485,7 +511,7 @@ export default defineComponent({
 
     function filterByPlayer(battleTag: string) {
       filtersStore.battleTag = battleTag;
-      onFilterChange();
+      onFilterChange(true);
     }
 
     // Clicking a server in a row or group header means "just this node", so it
@@ -493,19 +519,19 @@ export default defineComponent({
     function filterByServerNode(id: number, name: string) {
       filtersStore.serverNames = [];
       filtersStore.serverNodes = [{ id, name }];
-      onFilterChange();
+      onFilterChange(true);
     }
 
     function filterByProxy(proxyName: string) {
       filtersStore.proxyName = proxyName;
-      onFilterChange();
+      onFilterChange(true);
     }
 
     // Toggle semantics shared with the tags editor: clicking a row's active
     // tag chip clears the filter again.
     function filterByTag(tag: string) {
       filtersStore.connectionIssueTag = filtersStore.connectionIssueTag === tag ? "" : tag;
-      onFilterChange();
+      onFilterChange(true);
     }
 
     // The bridge from reconnaissance to the grind: a group's node + day become
@@ -521,9 +547,9 @@ export default defineComponent({
       groupMode.value = false;
       onGroupModeChange();
       // Blank the table for the context switch, so the new context shows a
-      // spinner rather than the old rows while the reload runs.
+      // spinner rather than the old rows while the immediate load runs.
       lagReportsStore.clearReports();
-      onFilterChange();
+      onFilterChange(true);
     }
 
     function openDetail(id: string) {
