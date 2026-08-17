@@ -42,12 +42,13 @@
           placeholder="ID, or name starts with…"
           @update:modelValue="(value: string) => setTextFilter('gameSearch', value)"
         />
-        <prefix-facet-editor
+        <server-editor
           v-else-if="pill.key === 'server'"
-          :model-value="filtersStore.serverName"
-          label="Server name"
-          placeholder="Starts with…"
-          @update:modelValue="(value: string) => setTextFilter('serverName', value)"
+          :input="serverInput"
+          :options="serverOptions"
+          @update:input="(value: string) => (serverInput = value)"
+          @commit="addServerTerm"
+          @toggle="toggleServerOption"
         />
         <prefix-facet-editor
           v-else-if="pill.key === 'proxy'"
@@ -63,18 +64,12 @@
           placeholder="Starts with…"
           @update:modelValue="(value: string) => setTextFilter('proxyIp', value)"
         />
-        <template v-else-if="pill.key === 'categories'">
-          <div class="text-caption text-medium-emphasis mb-1">Only matches player-submitted reports</div>
-          <v-select
-            :model-value="filtersStore.issueCategory"
-            :items="issueCategoryOptions"
-            label="Issue Category"
-            density="compact"
-            clearable
-            hide-details
-            @update:modelValue="setCategory"
-          />
-        </template>
+        <list-editor
+          v-else-if="pill.key === 'categories'"
+          :items="categoryItems"
+          caption="Only matches player-submitted reports"
+          @toggle="toggleCategory"
+        />
         <date-range-editor
           v-else-if="pill.key === 'dates'"
           :date-from="filtersStore.dateFrom"
@@ -142,6 +137,9 @@ import {
   utcDayString,
 } from "@/store/admin/lagReports/filters";
 import PrefixFacetEditor from "./editors/PrefixFacetEditor.vue";
+import ServerEditor from "./editors/ServerEditor.vue";
+import type { ServerOption } from "./editors/ServerEditor.vue";
+import ListEditor from "./editors/ListEditor.vue";
 import DateRangeEditor from "./editors/DateRangeEditor.vue";
 
 const ISSUE_CATEGORY_OPTIONS = [
@@ -167,7 +165,7 @@ const byKey = new Map(FILTER_REGISTRY.map((descriptor) => [descriptor.key, descr
 // loading stay with the page.
 export default defineComponent({
   name: "LagReportFilterBar",
-  components: { PrefixFacetEditor, DateRangeEditor },
+  components: { PrefixFacetEditor, ServerEditor, ListEditor, DateRangeEditor },
   emits: ["change"],
   setup(_props, { emit }) {
     const filtersStore = useLagReportsFiltersStore();
@@ -280,12 +278,25 @@ export default defineComponent({
         openEditor.value = key;
         return;
       }
+      // Typing a server name and closing without pressing Enter still applies
+      // it, the way the old single-value field did — the box reads as a filter,
+      // not only as a search over the suggestions. Once something is ticked the
+      // text was a search over the list, so it is dropped rather than added as
+      // a second term that would widen the very selection just made.
+      if (key === "server") {
+        if (filtersStore.serverNames.length === 0 && filtersStore.serverNodes.length === 0) {
+          addServerTerm();
+        } else {
+          serverInput.value = "";
+        }
+      }
       if (openEditor.value === key) openEditor.value = null;
       if (draftKey.value === key && !filterHasValue(key)) draftKey.value = null;
     }
 
     function removeFilter(key: FilterKey) {
       byKey.get(key)?.clear(filtersStore);
+      if (key === "server") serverInput.value = "";
       if (draftKey.value === key) draftKey.value = null;
       if (openEditor.value === key) openEditor.value = null;
       change();
@@ -293,6 +304,7 @@ export default defineComponent({
 
     function clearAllFilters() {
       clearAllFilterValues(filtersStore);
+      serverInput.value = "";
       draftKey.value = null;
       openEditor.value = null;
       change();
@@ -300,13 +312,49 @@ export default defineComponent({
 
     // ── Per-filter wiring ────────────────────────────────────────────
 
-    function setTextFilter(field: "battleTag" | "gameSearch" | "serverName" | "proxyName" | "proxyIp", value: string) {
+    function setTextFilter(field: "battleTag" | "gameSearch" | "proxyName" | "proxyIp", value: string) {
       filtersStore[field] = value;
       change();
     }
 
-    function setCategory(value: unknown) {
-      filtersStore.issueCategory = typeof value === "string" ? value : "";
+    // The search box doubles as the way to add a name no suggestion offers —
+    // the filter runs against the whole database, so a prefix with no local
+    // suggestion is still worth submitting. Ticking a suggestion instead
+    // commits the node's exact id: "this node", not "names like this".
+    const serverInput = ref("");
+
+    function addServerTerm() {
+      const term = serverInput.value.trim();
+      serverInput.value = "";
+      if (!term || filtersStore.serverNames.includes(term)) return;
+      filtersStore.serverNames = [...filtersStore.serverNames, term];
+      change();
+    }
+
+    function toggleServerNode(id: number, name: string) {
+      filtersStore.serverNodes = filtersStore.serverNodes.some((n) => n.id === id)
+        ? filtersStore.serverNodes.filter((n) => n.id !== id)
+        : [...filtersStore.serverNodes, { id, name }];
+      change();
+    }
+
+    function toggleServerOption(opt: ServerOption) {
+      if (opt.kind === "prefix") {
+        filtersStore.serverNames = filtersStore.serverNames.filter((n) => n !== opt.name);
+        change();
+        return;
+      }
+      toggleServerNode(opt.nodeId as number, opt.name);
+    }
+
+    function toggleCategory(cat: string) {
+      const selected = new Set(filtersStore.issueCategories);
+      if (selected.has(cat)) {
+        selected.delete(cat);
+      } else {
+        selected.add(cat);
+      }
+      filtersStore.issueCategories = [...selected];
       change();
     }
 
@@ -340,6 +388,37 @@ export default defineComponent({
       change();
     }
 
+    // Selected entries: exact node picks first, then typed name prefixes
+    // (marked as such), so a term typed by hand stays visible and removable.
+    const serverOptions = computed<ServerOption[]>(() => {
+      const selectedNodes = filtersStore.serverNodes.map((node) => ({
+        key: `node-${node.id}`,
+        label: node.name,
+        count: null,
+        selected: true,
+        kind: "node" as const,
+        nodeId: node.id,
+        name: node.name,
+      }));
+      const selectedPrefixes = filtersStore.serverNames.map((name) => ({
+        key: `prefix-${name}`,
+        label: `${name}… (name filter)`,
+        count: null,
+        selected: true,
+        kind: "prefix" as const,
+        name,
+      }));
+      return [...selectedNodes, ...selectedPrefixes];
+    });
+
+    const categoryItems = computed(() =>
+      ISSUE_CATEGORY_OPTIONS.map((cat) => ({
+        value: cat,
+        label: cat,
+        active: filtersStore.issueCategories.includes(cat),
+      }))
+    );
+
     return {
       filtersStore,
       toolbarChips,
@@ -353,11 +432,15 @@ export default defineComponent({
       removeFilter,
       clearAllFilters,
       setTextFilter,
-      setCategory,
+      serverInput,
+      serverOptions,
+      addServerTerm,
+      toggleServerOption,
+      toggleCategory,
       setDateBound,
       datePresets,
       applyDatePreset,
-      issueCategoryOptions: ISSUE_CATEGORY_OPTIONS,
+      categoryItems,
       mdiFilterRemove,
       mdiPlus,
       mdiStar,
