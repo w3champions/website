@@ -114,9 +114,12 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <!-- The pager moves WITHIN the fetched window: the aggregate returns
-         every group at once; pages are sliced client-side to keep the DOM
-         small. -->
+    <!-- Two "more" controls, one rule: the pager moves WITHIN the fetched
+         window (the aggregate returns every group at once; pages are sliced
+         client-side to keep the DOM small), and the walk WIDENS the window —
+         a date gesture, dateFrom −7d, chip and URL follow. The walk only
+         offers itself on the last page, where the window is exhausted and
+         "more" can only mean older days. -->
     <div class="d-flex justify-center align-center ga-4 my-2">
       <v-pagination
         v-if="groupPageCount > 1"
@@ -125,6 +128,18 @@
         :total-visible="7"
         density="comfortable"
       />
+      <v-btn
+        v-if="groupPage === groupPageCount"
+        size="small"
+        variant="tonal"
+        :disabled="!canWalkBack"
+        :title="canWalkBack
+          ? 'Widen the date window seven days further into the past'
+          : 'The window already reaches the 90-day retention limit'"
+        @click="$emit('walk')"
+      >
+        {{ canWalkBack ? "Load 7 more days" : "All retained days shown" }}
+      </v-btn>
     </div>
     <v-container v-if="!nodeDayLoading && !nodeDayError && groups.length === 0" fluid>
       <span class="text-medium-emphasis">{{ emptyWindowNote }}</span>
@@ -189,19 +204,24 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    canWalkBack: {
+      type: Boolean,
+      required: true,
+    },
     // Bumped when the aggregates reload (filter change, refresh): the cached
     // per-group rows and open panels belong to the previous result set.
     reloadToken: {
       type: Number,
       required: true,
     },
-    // Bumped on filter changes: the pager returns to the first page.
+    // Bumped on filter changes only — the walk deliberately keeps the pager
+    // where it is, so widening never yanks the reader off the oldest days.
     pageResetToken: {
       type: Number,
       required: true,
     },
   },
-  emits: ["focus-node", "open-as-list", "open", "filter-player"],
+  emits: ["focus-node", "open-as-list", "open", "walk", "filter-player"],
   setup(props) {
     const lagReportsStore = useLagReportsStore();
     const prefsStore = useLagReportsPrefsStore();
@@ -313,7 +333,7 @@ export default defineComponent({
         parts.push(oldest === newest ? `day ${newest}` : `days ${oldest} → ${newest}`);
       }
       if (!props.datesExplicit) {
-        parts.push("showing today and yesterday — set a date range to widen");
+        parts.push("showing today and yesterday — Load 7 more days below, or set a date range");
       }
       return parts.join(" · ");
     });
