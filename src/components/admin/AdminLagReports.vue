@@ -82,6 +82,26 @@
           </v-menu>
         </div>
       </div>
+
+      <!-- Last visit's filters, offered instead of silently re-applied: a
+           fresh arrival starts from the defaults, and this row is the way back
+           into the previous session's scope. Yes applies, No declines and
+           forgets, any filter work simply supersedes the question. Returning
+           from a report detail skips it — that round trip restores silently. -->
+      <v-alert
+        v-if="restoreOffer"
+        class="mt-2"
+        variant="tonal"
+        color="primary"
+        density="compact"
+        :icon="mdiHistory"
+      >
+        <div class="d-flex align-center flex-wrap ga-2">
+          <span>Use the filters from your last visit?</span>
+          <v-btn size="small" variant="text" @click="applyPendingRestore">Yes</v-btn>
+          <v-btn size="small" variant="text" @click="dismissPendingRestore">No</v-btn>
+        </div>
+      </v-alert>
     </v-container>
 
     <v-container v-if="dossierTag" fluid class="py-0">
@@ -147,7 +167,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { mdiCog, mdiEye, mdiRefresh } from "@mdi/js";
+import { mdiCog, mdiEye, mdiHistory, mdiRefresh } from "@mdi/js";
 import debounce from "debounce";
 import { EAdminRouteName } from "@/router/types";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
@@ -194,9 +214,21 @@ type LagReportsUiState = {
 
 const LAG_REPORTS_UI_STATE_KEY = "admin-lag-reports-ui-state";
 
+// Written by the beforeRouteEnter guard, read once by setup: whether this
+// entry came from the detail page. The guard fires before the instance
+// exists, so module scope is the only place both can reach.
+let enteredFromDetail = false;
+
 export default defineComponent({
   name: "AdminLagReports",
   components: { LagReportPlayerDossier, LagReportFilterBar, LagReportGroupedView, LagReportRowCells },
+  // The list ⇄ detail round trip is one investigation, and coming back from a
+  // report must land on the filter stack the admin left. Arriving from
+  // anywhere else is a fresh visit: it starts from the defaults, and stored
+  // filters become an offer instead (see hydrateStateFromQuery).
+  beforeRouteEnter(_to, from) {
+    enteredFromDetail = from.name === EAdminRouteName.LAG_REPORT_DETAIL;
+  },
   setup() {
     const lagReportsStore = useLagReportsStore();
     const filtersStore = useLagReportsFiltersStore();
@@ -283,6 +315,10 @@ export default defineComponent({
     function persistUiState() {
       if (typeof window === "undefined") return;
 
+      // Persisting declares the state on screen the truth, and that answers
+      // any still-open restore offer: the snapshot it holds is now superseded.
+      pendingRestore.value = null;
+
       const state: LagReportsUiState = {
         filters: filtersToQuery(filtersStore),
         tableOptions: {
@@ -327,6 +363,13 @@ export default defineComponent({
         state.tableOptions?.itemsPerPage && state.tableOptions.itemsPerPage > 0 ? state.tableOptions.itemsPerPage : 25;
     }
 
+    // Only a snapshot that would visibly change the view is worth a prompt —
+    // and the record only ever holds explicitly chosen values, so any key
+    // means there is something to offer.
+    function storedHasFilters(state: LagReportsUiState): boolean {
+      return Object.keys(state.filters ?? {}).length > 0;
+    }
+
     function hydrateStateFromQuery() {
       // The filters store outlives the component between visits; every entry
       // starts from the defaults before the URL, storage or the offer speak.
@@ -337,8 +380,25 @@ export default defineComponent({
         || typeof route.query.itemsPerPage === "string";
 
       if (!hasQueryState) {
+        const fromDetail = enteredFromDetail;
+        enteredFromDetail = false;
         const stored = readStoredUiState();
-        if (stored) applyStoredUiState(stored);
+        if (!stored) return;
+        if (fromDetail) {
+          applyStoredUiState(stored);
+          return;
+        }
+        // A fresh visit starts from the defaults: silently re-applied filters
+        // change what the table claims about the data — a restored player
+        // filter even opens the page on someone's dossier. View shape (grouping,
+        // page size) carries no such risk, so it does follow the admin over;
+        // the filters themselves become the chip's offer instead.
+        groupMode.value = Boolean(stored.groupMode);
+        tableOptions.value.itemsPerPage =
+          stored.tableOptions?.itemsPerPage && stored.tableOptions.itemsPerPage > 0
+            ? stored.tableOptions.itemsPerPage
+            : 25;
+        if (storedHasFilters(stored)) pendingRestore.value = stored;
         return;
       }
 
@@ -354,6 +414,16 @@ export default defineComponent({
       const stored = readStoredUiState();
       if (stored) groupMode.value = Boolean(stored.groupMode);
     }
+
+    // ── Restore offer ────────────────────────────────────────────────
+    // The previous visit's filters, held rather than applied. While the offer
+    // stands, storage keeps the offered snapshot untouched, so ignoring the
+    // prompt leaves it available for the next visit too; the first persist —
+    // apply, dismiss, or any filter work — settles the question.
+
+    const pendingRestore = ref<LagReportsUiState | null>(null);
+
+    const restoreOffer = computed(() => pendingRestore.value !== null);
 
     hydrateStateFromQuery();
 
@@ -433,6 +503,29 @@ export default defineComponent({
     }
 
     const debouncedAggregates = debounce(refreshAggregates, 400);
+
+    function applyPendingRestore() {
+      const stored = pendingRestore.value;
+      if (!stored) return;
+      pendingRestore.value = null;
+      applyStoredUiState(stored);
+      persistUiState();
+      syncRouteQuery();
+      // Same context-switch treatment as the group→list bridge: blank the
+      // default view's rows so the restored scope shows a spinner, not them.
+      lagReportsStore.clearReports();
+      debouncedLoad.clear();
+      debouncedAggregates.clear();
+      loadReports();
+      refreshAggregates();
+    }
+
+    function dismissPendingRestore() {
+      pendingRestore.value = null;
+      // "No" answers for the snapshot too: overwrite it with the state on
+      // screen, so the offer does not come back on the next visit.
+      persistUiState();
+    }
 
     // The debounce exists for keystrokes. A click — a toggle, a checkbox, a
     // facet pick, a preset — is a finished decision, so it loads now; clearing
@@ -584,7 +677,9 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      persistUiState();
+      // While an offer stands, storage keeps the offered snapshot — persisting
+      // the defaults now would overwrite what the chip proposes to restore.
+      if (!pendingRestore.value) persistUiState();
       syncRouteQuery();
       loadReports();
       refreshAggregates();
@@ -611,6 +706,9 @@ export default defineComponent({
       retentionWindowActive,
       applyRetentionWindow,
       dossierTag,
+      restoreOffer,
+      applyPendingRestore,
+      dismissPendingRestore,
       onFilterChange,
       onTableOptionsUpdate,
       refreshResults,
@@ -628,6 +726,7 @@ export default defineComponent({
       openById,
       mdiCog,
       mdiEye,
+      mdiHistory,
       mdiRefresh,
     };
   },
