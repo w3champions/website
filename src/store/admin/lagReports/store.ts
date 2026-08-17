@@ -16,6 +16,7 @@ function getService(): LagReportService {
 // page/filter/range cannot overwrite the state the user has since moved to.
 let selectedReportSeq = 0;
 let reportsSeq = 0;
+let nodeDaySeq = 0;
 
 export const useLagReportsStore = defineStore("lagReports", {
   state: (): LagReportsState => ({
@@ -26,6 +27,9 @@ export const useLagReportsStore = defineStore("lagReports", {
     selectedReport: null,
     selectedReportLoading: false,
     selectedReportError: null,
+    nodeDayBuckets: [],
+    nodeDayLoading: false,
+    nodeDayError: false,
   }),
 
   actions: {
@@ -51,12 +55,45 @@ export const useLagReportsStore = defineStore("lagReports", {
       }
     },
 
+    // Blank the table ahead of a deliberate context switch (the group→list
+    // bridge), so the new context shows a spinner rather than the old rows.
+    clearReports() {
+      this.reports = [];
+      this.total = 0;
+    },
+
+    // One-shot page fetch that bypasses the list state — the grouped view uses
+    // it to load one group's rows on expand without disturbing the flat list.
+    async fetchReportsOnce(params: LagReportQueryParams) {
+      const oauthStore = useOauthStore();
+      return await getService().getReports(oauthStore.token, params);
+    },
+
     // One-shot aggregation fetch. Throws on failure — every caller decides for
     // itself whether that means an error state or a silent degrade.
     async fetchAggregate(params: LagReportAggregateParams): Promise<LagReportAggregateBucket[]> {
       const oauthStore = useOauthStore();
       const response = await getService().getAggregate(oauthStore.token, params);
       return response.buckets;
+    },
+
+    async loadNodeDay(params: Omit<LagReportAggregateParams, "groupBy">) {
+      const seq = ++nodeDaySeq;
+      this.nodeDayLoading = true;
+      try {
+        const buckets = await this.fetchAggregate({ ...params, groupBy: "node-day" });
+        if (seq !== nodeDaySeq) return;
+        this.nodeDayBuckets = buckets;
+        this.nodeDayError = false;
+      } catch (_e) {
+        if (seq !== nodeDaySeq) return;
+        // An empty result and a failed request must not look alike — the view
+        // renders this flag instead of a false "no reports match".
+        this.nodeDayBuckets = [];
+        this.nodeDayError = true;
+      } finally {
+        if (seq === nodeDaySeq) this.nodeDayLoading = false;
+      }
     },
 
     async loadReport(id: string) {
