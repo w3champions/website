@@ -55,6 +55,23 @@
           </v-btn-toggle>
 
           <v-btn :icon="mdiRefresh" size="small" variant="text" title="Refresh results" @click="refreshResults" />
+          <v-menu :close-on-content-click="false" location="bottom end">
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" :icon="mdiCog" size="small" variant="text" title="Configure columns" />
+            </template>
+            <v-card min-width="260" class="pa-3">
+              <div class="text-caption font-weight-bold mb-1">Columns</div>
+              <v-checkbox
+                v-for="header in columnOptions"
+                :key="String(header.value)"
+                :label="header.title"
+                :model-value="prefsStore.visibleColumns.includes(header.value as never)"
+                density="compact"
+                hide-details
+                @update:modelValue="prefsStore.toggleColumn(header.value as never)"
+              />
+            </v-card>
+          </v-menu>
         </div>
       </div>
     </v-container>
@@ -68,57 +85,22 @@
       :page="tableOptions.page"
       :loading="tableLoading"
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
+      hover
       item-value="id"
+      class="lag-reports-table"
       @update:options="onTableOptionsUpdate"
+      @click:row="onRowClick"
     >
-      <template v-slot:[`item.createdAt`]="{ item }">
-        {{ formatDate(item.createdAt) }}
-      </template>
-      <template v-slot:[`item.hasExplicitReport`]="{ item }">
-        <v-icon :color="item.hasExplicitReport ? 'success' : 'grey'" size="small">
-          {{ item.hasExplicitReport ? mdiCheckCircle : mdiCloseCircle }}
-        </v-icon>
-      </template>
-      <template v-slot:[`item.players`]="{ item }">
-        <div v-for="(p, i) in item.players" :key="i" class="d-flex align-center ga-1 my-1">
-          <span class="text-body-2">{{ p.battleTag }}</span>
-          <v-chip v-if="p.isExplicit" size="x-small" color="warning" variant="tonal">explicit</v-chip>
-          <v-chip v-if="p.connectionType === 'Proxied'" size="x-small" color="info" variant="tonal">
-            proxied{{ p.proxyName ? `: ${p.proxyName}` : '' }}
-          </v-chip>
-          <v-chip
-            v-for="(cat, ci) in p.issueCategories"
-            :key="ci"
-            size="x-small"
-            color="error"
-            variant="tonal"
-          >
-            {{ cat }}
-          </v-chip>
-          <v-chip
-            v-for="(tag, ti) in p.connection_issue_tags ?? []"
-            :key="'tag-' + ti"
-            size="x-small"
-            color="deep-purple"
-            variant="tonal"
-            class="clickable"
-            :title="`Launcher verdict: ${tag} — click to filter`"
-            @click.stop="filterByTag(tag)"
-          >
-            {{ tag }}
-          </v-chip>
-        </div>
-      </template>
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-btn
-          size="small"
-          variant="text"
-          color="primary"
-          :prepend-icon="mdiEye"
-          @click="openDetail(item.id)"
-        >
-          Detail
-        </v-btn>
+      <template v-for="header in headers" :key="String(header.value)" v-slot:[`item.${header.value}`]="{ item }">
+        <lag-report-row-cells
+          :report="item"
+          :column="String(header.value)"
+          @open="openDetail(item.id)"
+          @filter-player="filterByPlayer"
+          @filter-server-node="filterByServerNode"
+          @filter-proxy="filterByProxy"
+          @filter-tag="filterByTag"
+        />
       </template>
       <template v-slot:no-data>
         <div class="py-4 text-medium-emphasis">{{ emptyWindowNote }}</div>
@@ -130,11 +112,11 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { mdiCheckCircle, mdiCloseCircle, mdiEye, mdiRefresh } from "@mdi/js";
+import { mdiCog, mdiEye, mdiRefresh } from "@mdi/js";
 import debounce from "debounce";
-import { DataTableHeader } from "vuetify";
 import { EAdminRouteName } from "@/router/types";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
+import { useLagReportsPrefsStore } from "@/store/admin/lagReports/prefs";
 import {
   applyDefaultWindow,
   applyQueryToFilters,
@@ -145,8 +127,10 @@ import {
   RETENTION_DAYS,
   useLagReportsFiltersStore,
 } from "@/store/admin/lagReports/filters";
-import { LagReportQueryParams } from "@/store/admin/lagReports/types";
+import { LagReportListItem, LagReportQueryParams } from "@/store/admin/lagReports/types";
+import { ALL_HEADERS } from "@/components/admin/lag-reports/columns";
 import LagReportFilterBar from "@/components/admin/lag-reports/filter-bar/LagReportFilterBar.vue";
+import LagReportRowCells from "@/components/admin/lag-reports/LagReportRowCells.vue";
 
 type VuetifyTableUpdateOptions = {
   page: number;
@@ -170,10 +154,11 @@ const LAG_REPORTS_UI_STATE_KEY = "admin-lag-reports-ui-state";
 
 export default defineComponent({
   name: "AdminLagReports",
-  components: { LagReportFilterBar },
+  components: { LagReportFilterBar, LagReportRowCells },
   setup() {
     const lagReportsStore = useLagReportsStore();
     const filtersStore = useLagReportsFiltersStore();
+    const prefsStore = useLagReportsPrefsStore();
     const router = useRouter();
     const route = useRoute();
 
@@ -184,15 +169,11 @@ export default defineComponent({
       itemsPerPage: 25,
     });
 
-    const headers: DataTableHeader[] = [
-      { title: "Created", value: "createdAt", sortable: false, width: "140px" },
-      { title: "Flo Game", value: "floGameId", sortable: false, width: "100px" },
-      { title: "Game", value: "gameName", sortable: false },
-      { title: "Server", value: "serverNodeName", sortable: false, width: "120px" },
-      { title: "Explicit", value: "hasExplicitReport", sortable: false, width: "80px", align: "center" },
-      { title: "Players", value: "players", sortable: false },
-      { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
-    ];
+    const headers = computed(() =>
+      ALL_HEADERS.filter((h) => h.value === "actions" || prefsStore.visibleColumns.includes(h.value as never))
+    );
+
+    const columnOptions = ALL_HEADERS.filter((h) => h.value !== "actions");
 
     // Every filter runs on the server against the full window, so the table
     // reads straight from the store — there is no second row universe.
@@ -349,6 +330,26 @@ export default defineComponent({
       },
     });
 
+    // ── Click-to-filter ──────────────────────────────────────────────
+
+    function filterByPlayer(battleTag: string) {
+      filtersStore.battleTag = battleTag;
+      onFilterChange();
+    }
+
+    // Clicking a server in a row or group header means "just this node", so it
+    // replaces the selection — and commits the exact id, not a name prefix.
+    function filterByServerNode(id: number, name: string) {
+      filtersStore.serverNames = [];
+      filtersStore.serverNodes = [{ id, name }];
+      onFilterChange();
+    }
+
+    function filterByProxy(proxyName: string) {
+      filtersStore.proxyName = proxyName;
+      onFilterChange();
+    }
+
     // Toggle semantics shared with the tags editor: clicking a row's active
     // tag chip clears the filter again.
     function filterByTag(tag: string) {
@@ -361,10 +362,10 @@ export default defineComponent({
       router.push({ name: EAdminRouteName.LAG_REPORT_DETAIL, params: { id }, query: routeQueryFromState() });
     }
 
-    function formatDate(iso: string): string {
-      if (!iso) return "";
-      const d = new Date(iso);
-      return d.toLocaleString();
+    function onRowClick(_event: unknown, row: { item?: LagReportListItem }) {
+      if (row?.item?.id) {
+        openDetail(row.item.id);
+      }
     }
 
     // ── Open by ID ───────────────────────────────────────────────────
@@ -395,9 +396,11 @@ export default defineComponent({
 
     return {
       filtersStore,
+      prefsStore,
       reportsError,
       tableOptions,
       headers,
+      columnOptions,
       tableItems,
       tableTotal,
       tableLoading,
@@ -406,14 +409,16 @@ export default defineComponent({
       onTableOptionsUpdate,
       refreshResults,
       explicitMode,
+      filterByPlayer,
+      filterByServerNode,
+      filterByProxy,
       filterByTag,
       openDetail,
-      formatDate,
+      onRowClick,
       openIdInput,
       openIdCandidate,
       openById,
-      mdiCheckCircle,
-      mdiCloseCircle,
+      mdiCog,
       mdiEye,
       mdiRefresh,
     };
@@ -422,12 +427,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.clickable {
+.lag-reports-table :deep(tbody tr) {
   cursor: pointer;
-}
-
-.clickable:hover {
-  text-decoration: underline;
 }
 
 // v-card-title clips its content (overflow: hidden, white-space: nowrap) to
