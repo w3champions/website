@@ -85,6 +85,9 @@
           Detail
         </v-btn>
       </template>
+      <template v-slot:no-data>
+        <div class="py-4 text-medium-emphasis">{{ emptyWindowNote }}</div>
+      </template>
     </v-data-table-server>
   </div>
 </template>
@@ -98,11 +101,13 @@ import { DataTableHeader } from "vuetify";
 import { EAdminRouteName } from "@/router/types";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
 import {
+  applyDefaultWindow,
   applyQueryToFilters,
   FiltersQueryRecord,
   filterParams,
   filtersToQuery,
   queryHoldsFilterState,
+  RETENTION_DAYS,
   useLagReportsFiltersStore,
 } from "@/store/admin/lagReports/filters";
 import { LagReportQueryParams } from "@/store/admin/lagReports/types";
@@ -159,6 +164,13 @@ export default defineComponent({
     const tableItems = computed(() => lagReportsStore.reports);
     const tableTotal = computed(() => lagReportsStore.total);
     const tableLoading = computed(() => lagReportsStore.loading);
+
+    // Shown wherever a filtered view comes up empty: an empty result inside a
+    // two-day default window is not "no data exists" — say which window was
+    // searched and how to widen it.
+    const emptyWindowNote = computed(() =>
+      `No reports match between ${filtersStore.dateFrom} and ${filtersStore.dateTo} (UTC). Widen the date range to search older reports — up to ${RETENTION_DAYS} days are retained.`
+    );
 
     // ── Server-backed flat list ──────────────────────────────────────
 
@@ -282,6 +294,9 @@ export default defineComponent({
     }
 
     function refreshResults() {
+      // A defaulted window tracks "now": re-derive it, so a tab left open
+      // across UTC midnight refreshes into the current today+yesterday.
+      if (!filtersStore.datesExplicit) applyDefaultWindow(filtersStore);
       persistUiState();
       syncRouteQuery();
       loadReports();
@@ -324,6 +339,7 @@ export default defineComponent({
       tableItems,
       tableTotal,
       tableLoading,
+      emptyWindowNote,
       onFilterChange,
       onTableOptionsUpdate,
       refreshResults,

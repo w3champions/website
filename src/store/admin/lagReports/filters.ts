@@ -3,6 +3,22 @@ import { LocationQuery } from "vue-router";
 import { LagReportQueryParams } from "@/store/admin/lagReports/types";
 import type { LagReportsFilterKey as FilterKey } from "@/store/admin/lagReports/prefs";
 
+// ── The window ─────────────────────────────────────────────────────────
+// Every read the list page makes scopes to the one date window living in
+// ordinary filter state. It always holds a value: today+yesterday (UTC) by
+// default, wider when explicitly chosen. Only explicit dates go to the URL
+// and storage; the default is recomputed at landing so a bookmark doesn't
+// fossilize the day it was saved on.
+export const RETENTION_DAYS = 90;
+
+export function utcDayString(offsetDays = 0): string {
+  return new Date(Date.now() + offsetDays * 86400000).toISOString().slice(0, 10);
+}
+
+export function retentionFloor(): string {
+  return utcDayString(-RETENTION_DAYS);
+}
+
 export type LagFiltersState = {
   battleTag: string;
   gameSearch: string;
@@ -13,7 +29,15 @@ export type LagFiltersState = {
   explicitOnly: boolean;
   dateFrom: string;
   dateTo: string;
+  // False while the window is the recomputed default; true once chosen.
+  datesExplicit: boolean;
 };
+
+export function applyDefaultWindow(filters: LagFiltersState): void {
+  filters.dateFrom = utcDayString(-1);
+  filters.dateTo = utcDayString(0);
+  filters.datesExplicit = false;
+}
 
 export function createDefaultFilters(): LagFiltersState {
   return {
@@ -24,8 +48,9 @@ export function createDefaultFilters(): LagFiltersState {
     proxyIp: "",
     issueCategory: "",
     explicitOnly: false,
-    dateFrom: "",
-    dateTo: "",
+    dateFrom: utcDayString(-1),
+    dateTo: utcDayString(0),
+    datesExplicit: false,
   };
 }
 
@@ -124,29 +149,40 @@ const datesFilter: FilterDescriptor = {
   key: "dates",
   label: "Dates",
   queryKeys: ["dateFrom", "dateTo"],
-  hasValue: (f) => f.dateFrom !== "" || f.dateTo !== "",
-  pillLabel: (f) => {
-    const { dateFrom: from, dateTo: to } = f;
-    if (from && to) return `${from} – ${to}`;
-    if (from) return `From ${from}`;
-    if (to) return `Until ${to}`;
-    return "Dates: …";
-  },
-  clear: (f) => {
-    f.dateFrom = "";
-    f.dateTo = "";
-  },
+  // The window always holds dates; "has a value" means "was chosen" — the
+  // default doesn't count toward active filters or Clear all.
+  hasValue: (f) => f.datesExplicit,
+  // Both bounds always exist under the window policy; the label is the
+  // window itself, default or chosen alike.
+  pillLabel: (f) => `${f.dateFrom} – ${f.dateTo}`,
+  // Clearing restores the default window — an unbounded state is unreachable.
+  clear: applyDefaultWindow,
   toParams: (f, p) => {
-    p.dateFrom = f.dateFrom || undefined;
-    p.dateTo = f.dateTo || undefined;
+    // The window always holds values — the server never sees an unbounded
+    // read unless the admin explicitly chose the full retention range.
+    p.dateFrom = f.dateFrom;
+    p.dateTo = f.dateTo;
   },
   toQuery: (f, q) => {
-    if (f.dateFrom) q.dateFrom = f.dateFrom;
-    if (f.dateTo) q.dateTo = f.dateTo;
+    // Only a chosen window goes into the URL; the default is recomputed at
+    // landing so links to "the default view" stay current rather than pinned.
+    if (f.datesExplicit) {
+      q.dateFrom = f.dateFrom;
+      q.dateTo = f.dateTo;
+    }
   },
   fromQuery: (f, q) => {
-    f.dateFrom = queryString(q, "dateFrom");
-    f.dateTo = queryString(q, "dateTo");
+    const from = queryString(q, "dateFrom");
+    const to = queryString(q, "dateTo");
+    if (from || to) {
+      // A one-sided link (older builds produced them) gets the missing bound
+      // filled from the window's own limits.
+      f.dateFrom = from || retentionFloor();
+      f.dateTo = to || utcDayString(0);
+      f.datesExplicit = true;
+    } else {
+      applyDefaultWindow(f);
+    }
   },
 };
 
