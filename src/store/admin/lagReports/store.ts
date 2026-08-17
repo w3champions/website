@@ -94,7 +94,8 @@ export const useLagReportsStore = defineStore("lagReports", {
     },
 
     // One-shot aggregation fetch. Throws on failure — every caller decides for
-    // itself whether that means an error state or a silent degrade.
+    // itself whether that means an error state (grouped view) or a silent
+    // degrade (badges, facet suggestions, the dossier card).
     async fetchAggregate(params: LagReportAggregateParams): Promise<LagReportAggregateBucket[]> {
       const oauthStore = useOauthStore();
       const response = await getService().getAggregate(oauthStore.token, params);
