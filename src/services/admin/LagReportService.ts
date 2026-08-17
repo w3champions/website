@@ -1,11 +1,7 @@
 import { AuthorizedClient, type AuthorizedClientDeps } from "@/services/http/AuthorizedClient";
-import { LagReportDetail, LagReportQueryParams, LagReportsResponse } from "@/store/admin/lagReports/types";
+import { LagReportAggregateParams, LagReportAggregateResponse, LagReportDetail, LagReportQueryParams, LagReportsResponse } from "@/store/admin/lagReports/types";
 
-function buildQuery(params: LagReportQueryParams): string {
-  const query = new URLSearchParams();
-  query.set("page", params.page.toString());
-  query.set("pageSize", params.pageSize.toString());
-
+function setFilterParams(query: URLSearchParams, params: Omit<LagReportQueryParams, "page" | "pageSize">): void {
   if (params.battleTag) query.set("battleTag", params.battleTag);
   if (params.gameSearch) query.set("gameSearch", params.gameSearch);
   if (params.serverName) query.set("serverName", params.serverName);
@@ -15,7 +11,21 @@ function buildQuery(params: LagReportQueryParams): string {
   if (params.dateTo) query.set("dateTo", params.dateTo);
   if (params.issueCategory) query.set("issueCategory", params.issueCategory);
   if (params.explicitOnly) query.set("explicitOnly", "true");
+}
 
+function buildQuery(params: LagReportQueryParams): string {
+  const query = new URLSearchParams();
+  query.set("page", params.page.toString());
+  query.set("pageSize", params.pageSize.toString());
+  setFilterParams(query, params);
+  return query.toString();
+}
+
+function buildAggregateQuery(params: LagReportAggregateParams): string {
+  const query = new URLSearchParams();
+  query.set("groupBy", params.groupBy);
+  if (params.limit !== undefined) query.set("limit", params.limit.toString());
+  setFilterParams(query, params);
   return query.toString();
 }
 
@@ -39,5 +49,12 @@ export class LagReportService {
 
   async getReport(token: string, id: string): Promise<LagReportDetail> {
     return await this.client.getJson<LagReportDetail>(`api/lag-reports/${encodeURIComponent(id)}`, token);
+  }
+
+  async getAggregate(token: string, params: LagReportAggregateParams): Promise<LagReportAggregateResponse> {
+    return await this.client.getJson<LagReportAggregateResponse>(
+      `api/lag-reports/aggregate?${buildAggregateQuery(params)}`,
+      token,
+    );
   }
 }

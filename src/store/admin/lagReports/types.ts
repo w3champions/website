@@ -80,6 +80,42 @@ export interface LagReportQueryParams {
   explicitOnly?: boolean;
 }
 
+// ── Aggregate (counts grouped by one dimension) ──────────────────────
+
+export type LagReportAggregateDimension = "day" | "node-day" | "category" | "server" | "proxy" | "battleTag";
+
+export interface LagReportAggregateParams extends Omit<LagReportQueryParams, "page" | "pageSize"> {
+  groupBy: LagReportAggregateDimension;
+  limit?: number;
+}
+
+export interface LagReportCategoryCount {
+  category: string;
+  count: number;
+}
+
+/** One bucket; which key/extra fields are present depends on the dimension. */
+export interface LagReportAggregateBucket {
+  day?: string;
+  serverNodeId?: number;
+  serverNodeName?: string;
+  category?: string;
+  proxyName?: string;
+  battleTag?: string;
+  count: number;
+  explicitCount?: number;
+  distinctPlayers?: number;
+  topCategories?: LagReportCategoryCount[];
+  distinctNodes?: number;
+  // battleTag dimension: reports this player submitted themselves; count is
+  // reports they merely appear in.
+  submittedCount?: number;
+}
+
+export interface LagReportAggregateResponse {
+  buckets: LagReportAggregateBucket[];
+}
+
 // ── Detail types (full report) ───────────────────────────────────────
 
 export interface LagReportDetail {
