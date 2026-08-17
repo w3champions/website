@@ -4,12 +4,14 @@ import { LagReportAggregateParams, LagReportAggregateResponse, LagReportDetail, 
 function setFilterParams(query: URLSearchParams, params: Omit<LagReportQueryParams, "page" | "pageSize">): void {
   if (params.battleTag) query.set("battleTag", params.battleTag);
   if (params.gameSearch) query.set("gameSearch", params.gameSearch);
-  if (params.serverName) query.set("serverName", params.serverName);
+  // List filters repeat their param — ASP.NET binds the repeats into one list, OR'd.
+  for (const name of params.serverNames ?? []) query.append("serverName", name);
+  for (const id of params.serverNodeIds ?? []) query.append("serverNodeId", id.toString());
   if (params.proxyName) query.set("proxyName", params.proxyName);
   if (params.proxyIp) query.set("proxyIp", params.proxyIp);
   if (params.dateFrom) query.set("dateFrom", params.dateFrom);
   if (params.dateTo) query.set("dateTo", params.dateTo);
-  if (params.issueCategory) query.set("issueCategory", params.issueCategory);
+  for (const category of params.issueCategories ?? []) query.append("issueCategory", category);
   if (params.explicitOnly) query.set("explicitOnly", "true");
 }
 

@@ -22,10 +22,12 @@ export function retentionFloor(): string {
 export type LagFiltersState = {
   battleTag: string;
   gameSearch: string;
-  serverName: string;
+  // Typed name prefixes and exact node picks, each list OR'd on the server.
+  serverNames: string[];
+  serverNodes: Array<{ id: number; name: string }>;
   proxyName: string;
   proxyIp: string;
-  issueCategory: string;
+  issueCategories: string[];
   explicitOnly: boolean;
   dateFrom: string;
   dateTo: string;
@@ -43,10 +45,11 @@ export function createDefaultFilters(): LagFiltersState {
   return {
     battleTag: "",
     gameSearch: "",
-    serverName: "",
+    serverNames: [],
+    serverNodes: [],
     proxyName: "",
     proxyIp: "",
-    issueCategory: "",
+    issueCategories: [],
     explicitOnly: false,
     dateFrom: utcDayString(-1),
     dateTo: utcDayString(0),
@@ -102,7 +105,7 @@ function prefixTextFilter(
   key: FilterKey,
   label: string,
   pillPrefix: string,
-  field: "battleTag" | "gameSearch" | "serverName" | "proxyName" | "proxyIp",
+  field: "battleTag" | "gameSearch" | "proxyName" | "proxyIp",
 ): FilterDescriptor {
   return {
     key,
@@ -125,23 +128,74 @@ function prefixTextFilter(
   };
 }
 
+const serverFilter: FilterDescriptor = {
+  key: "server",
+  label: "Server",
+  queryKeys: ["serverName", "serverNode"],
+  hasValue: (f) => f.serverNames.length > 0 || f.serverNodes.length > 0,
+  pillLabel: (f) => {
+    const entries = [...f.serverNodes.map((n) => n.name), ...f.serverNames];
+    const [first, ...rest] = entries;
+    return first ? `Server: ${truncateLabel(first)}${rest.length > 0 ? ` +${rest.length}` : ""}` : "Server: …";
+  },
+  clear: (f) => {
+    f.serverNames = [];
+    f.serverNodes = [];
+  },
+  toParams: (f, p) => {
+    p.serverNames = f.serverNames.length > 0 ? [...f.serverNames] : undefined;
+    p.serverNodeIds = f.serverNodes.length > 0 ? f.serverNodes.map((n) => n.id) : undefined;
+  },
+  toQuery: (f, q) => {
+    if (f.serverNames.length > 0) q.serverName = f.serverNames.join(",");
+    // Exact node picks travel as id:name pairs so a shared link restores the
+    // chip's display name without a lookup.
+    if (f.serverNodes.length > 0) q.serverNode = f.serverNodes.map((n) => `${n.id}:${n.name}`).join(",");
+  },
+  fromQuery: (f, q) => {
+    const names = queryString(q, "serverName");
+    f.serverNames = names ? names.split(",").map((name) => name.trim()).filter(Boolean) : [];
+    // id:name pairs — split on the FIRST colon so a name containing one survives.
+    const nodes = queryString(q, "serverNode");
+    f.serverNodes = nodes
+      ? nodes
+        .split(",")
+        .map((pair) => {
+          const sep = pair.indexOf(":");
+          if (sep <= 0) return null;
+          const id = Number.parseInt(pair.slice(0, sep), 10);
+          const name = pair.slice(sep + 1).trim();
+          return Number.isFinite(id) && name ? { id, name } : null;
+        })
+        .filter((n): n is { id: number; name: string } => n !== null)
+      : [];
+  },
+};
+
 const categoriesFilter: FilterDescriptor = {
   key: "categories",
   label: "Categories",
   queryKeys: ["issueCategory"],
-  hasValue: (f) => f.issueCategory !== "",
-  pillLabel: (f) => (f.issueCategory ? `Category: ${f.issueCategory}` : "Category: …"),
+  hasValue: (f) => f.issueCategories.length > 0,
+  pillLabel: (f) => {
+    const [first, ...rest] = f.issueCategories;
+    return first ? `Categories: ${first}${rest.length > 0 ? ` +${rest.length}` : ""}` : "Categories: …";
+  },
   clear: (f) => {
-    f.issueCategory = "";
+    f.issueCategories = [];
   },
   toParams: (f, p) => {
-    p.issueCategory = f.issueCategory || undefined;
+    p.issueCategories = f.issueCategories.length > 0 ? [...f.issueCategories] : undefined;
   },
   toQuery: (f, q) => {
-    if (f.issueCategory) q.issueCategory = f.issueCategory;
+    if (f.issueCategories.length > 0) q.issueCategory = f.issueCategories.join(",");
   },
   fromQuery: (f, q) => {
-    f.issueCategory = queryString(q, "issueCategory");
+    // Passed through unfiltered: an unknown value is the server's to reject
+    // (400), which surfaces — a local whitelist would silently drop a
+    // category added after this build shipped.
+    const raw = queryString(q, "issueCategory");
+    f.issueCategories = raw ? raw.split(",").map((c) => c.trim()).filter(Boolean) : [];
   },
 };
 
@@ -211,7 +265,7 @@ const explicitFilter: FilterDescriptor = {
 // Registry order is menu order: the "+ Filter" menu and the pill bar both
 // render straight from this list.
 export const FILTER_REGISTRY: FilterDescriptor[] = [
-  prefixTextFilter("server", "Server", "Server", "serverName"),
+  serverFilter,
   categoriesFilter,
   prefixTextFilter("player", "Player", "Player", "battleTag"),
   datesFilter,

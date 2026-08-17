@@ -71,12 +71,15 @@ export interface LagReportQueryParams {
   pageSize: number;
   battleTag?: string;
   gameSearch?: string;
-  serverName?: string;
+  // Name prefixes and exact node ids, each list OR'd server-side (repeated params).
+  serverNames?: string[];
+  serverNodeIds?: number[];
   proxyName?: string;
   proxyIp?: string;
   dateFrom?: string;
   dateTo?: string;
-  issueCategory?: string;
+  // OR'd server-side: a report matches when any player carries any of them.
+  issueCategories?: string[];
   explicitOnly?: boolean;
 }
 
