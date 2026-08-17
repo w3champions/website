@@ -46,6 +46,7 @@
           v-else-if="pill.key === 'server'"
           :input="serverInput"
           :options="serverOptions"
+          :error="facetError"
           @update:input="(value: string) => (serverInput = value)"
           @commit="addServerTerm"
           @toggle="toggleServerOption"
@@ -55,7 +56,10 @@
           :model-value="filtersStore.proxyName"
           label="Proxy name"
           placeholder="Starts with…"
+          :facets="proxyFacets"
+          :error="facetError"
           @update:modelValue="(value: string) => setTextFilter('proxyName', value)"
+          @pick="(value: string) => applyFacet('proxy', value)"
         />
         <prefix-facet-editor
           v-else-if="pill.key === 'proxyIp'"
@@ -69,6 +73,7 @@
           :items="categoryItems"
           multiple
           caption="Only matches player-submitted reports"
+          :error="facetError"
           @toggle="toggleCategory"
         />
         <list-editor
@@ -139,6 +144,7 @@
 import { computed, defineComponent, nextTick, ref } from "vue";
 import { useDisplay } from "vuetify";
 import { mdiFilterRemove, mdiPlus, mdiStar, mdiStarOutline } from "@mdi/js";
+import { useLagReportsStore } from "@/store/admin/lagReports/store";
 import { useLagReportsPrefsStore } from "@/store/admin/lagReports/prefs";
 import type { LagReportsFilterKey as FilterKey } from "@/store/admin/lagReports/prefs";
 import {
@@ -146,10 +152,12 @@ import {
   applyDefaultWindow,
   clearAllFilterValues,
   countActiveFilters,
+  filterParams,
   RETENTION_DAYS,
   useLagReportsFiltersStore,
   utcDayString,
 } from "@/store/admin/lagReports/filters";
+import { LagReportAggregateBucket } from "@/store/admin/lagReports/types";
 import PrefixFacetEditor from "./editors/PrefixFacetEditor.vue";
 import ServerEditor from "./editors/ServerEditor.vue";
 import type { ServerOption } from "./editors/ServerEditor.vue";
@@ -189,6 +197,7 @@ export default defineComponent({
   setup(_props, { emit }) {
     const filtersStore = useLagReportsFiltersStore();
     const prefsStore = useLagReportsPrefsStore();
+    const lagReportsStore = useLagReportsStore();
     const { smAndDown } = useDisplay();
 
     function change() {
@@ -276,6 +285,7 @@ export default defineComponent({
       // An already-applied filter keeps its pill, and a starred one always has
       // one; picking either just reopens its editor.
       if (!filterHasValue(key) && !prefsStore.pinnedFilters.includes(key)) draftKey.value = key;
+      void loadFacet(key);
       // The pill must render before its menu can anchor to it.
       nextTick(() => {
         openEditor.value = key;
@@ -295,6 +305,9 @@ export default defineComponent({
     function onEditorToggle(key: FilterKey, open: boolean) {
       if (open) {
         openEditor.value = key;
+        // Each visit starts from the full suggestion list, freshly counted.
+        if (key === "server") serverInput.value = "";
+        void loadFacet(key);
         return;
       }
       // Typing a server name and closing without pressing Enter still applies
@@ -333,6 +346,17 @@ export default defineComponent({
 
     function setTextFilter(field: "battleTag" | "gameSearch" | "proxyName" | "proxyIp", value: string) {
       filtersStore[field] = value;
+      change();
+    }
+
+    // Single-value facets: picking one replaces the value and closes the editor.
+    // Servers are multi-select and use toggleServerOption instead, which keeps
+    // the editor open the way the category checkboxes do.
+    function applyFacet(key: "player" | "proxy", value: string) {
+      if (key === "player") filtersStore.battleTag = value;
+      if (key === "proxy") filtersStore.proxyName = value;
+      openEditor.value = null;
+      draftKey.value = null;
       change();
     }
 
@@ -428,13 +452,72 @@ export default defineComponent({
       change();
     }
 
-    // Selected entries: exact node picks first, then typed name prefixes
-    // (marked as such), so a term typed by hand stays visible and removable.
+    // ── Facet suggestions ────────────────────────────────────────────
+    // Facet values with counts from the aggregation endpoint — fetched when an
+    // editor opens, scoped to the active date range and other filters (each
+    // dimension excludes its own filter, so the counts preview what selecting a
+    // value would match). Typing narrows the fetched list client-side by the
+    // same prefix rule the filter uses; no per-keystroke requests.
+    const FACET_LIMIT = 10;
+
+    const facetBuckets = ref<{
+      server: LagReportAggregateBucket[];
+      proxy: LagReportAggregateBucket[];
+      category: LagReportAggregateBucket[];
+    }>({ server: [], proxy: [], category: [] });
+
+    // One counter across dimensions: only one editor is open at a time, and a
+    // newer open must always win over any slower older fetch.
+    let facetSeq = 0;
+
+    // A failed suggestion fetch must not read as "nothing exists" — the
+    // editors show a note instead of a bare empty list.
+    const facetError = ref(false);
+
+    async function loadFacet(key: FilterKey) {
+      const seq = ++facetSeq;
+      facetError.value = false;
+      try {
+        if (key === "server") {
+          const params = filterParams(filtersStore);
+          delete params.serverNames;
+          delete params.serverNodeIds;
+          const buckets = await lagReportsStore.fetchAggregate({ ...params, groupBy: "server" });
+          if (seq === facetSeq) facetBuckets.value.server = buckets;
+        } else if (key === "proxy") {
+          const params = filterParams(filtersStore);
+          delete params.proxyName;
+          const buckets = await lagReportsStore.fetchAggregate({ ...params, groupBy: "proxy" });
+          if (seq === facetSeq) facetBuckets.value.proxy = buckets;
+        } else if (key === "categories") {
+          const params = filterParams(filtersStore);
+          delete params.issueCategories;
+          const buckets = await lagReportsStore.fetchAggregate({ ...params, groupBy: "category" });
+          if (seq === facetSeq) facetBuckets.value.category = buckets;
+        }
+      } catch (_e) {
+        if (seq === facetSeq) facetError.value = true;
+      }
+    }
+
+    const serverCounts = computed(() => {
+      const counts = new Map<string, number>();
+      for (const bucket of facetBuckets.value.server) {
+        if (bucket.serverNodeName) counts.set(bucket.serverNodeName, bucket.count);
+      }
+      return counts;
+    });
+
+    // Selected entries lead the list — exact node picks first, then typed name
+    // prefixes (marked as such), then the suggestions — so a term typed by
+    // hand, or one whose rows fall outside the current search, stays visible
+    // and removable instead of disappearing behind the suggestions. A null
+    // count means the value matches no fetched bucket, not nothing at all.
     const serverOptions = computed<ServerOption[]>(() => {
       const selectedNodes = filtersStore.serverNodes.map((node) => ({
         key: `node-${node.id}`,
         label: node.name,
-        count: null,
+        count: serverCounts.value.get(node.name) ?? null,
         selected: true,
         kind: "node" as const,
         nodeId: node.id,
@@ -448,16 +531,48 @@ export default defineComponent({
         kind: "prefix" as const,
         name,
       }));
-      return [...selectedNodes, ...selectedPrefixes];
+      const needle = serverInput.value.trim().toLowerCase();
+      const suggestions = facetBuckets.value.server
+        .filter((b): b is typeof b & { serverNodeName: string; serverNodeId: number } =>
+          !!b.serverNodeName && b.serverNodeId !== undefined
+        )
+        .filter((b) => !filtersStore.serverNodes.some((n) => n.id === b.serverNodeId))
+        .filter((b) => !needle || b.serverNodeName.toLowerCase().startsWith(needle))
+        .slice(0, FACET_LIMIT)
+        .map((b) => ({
+          key: `sugg-${b.serverNodeId}`,
+          label: b.serverNodeName,
+          count: b.count,
+          selected: false,
+          kind: "node" as const,
+          nodeId: b.serverNodeId,
+          name: b.serverNodeName,
+        }));
+      return [...selectedNodes, ...selectedPrefixes, ...suggestions];
     });
 
-    const categoryItems = computed(() =>
-      ISSUE_CATEGORY_OPTIONS.map((cat) => ({
-        value: cat,
-        label: cat,
-        active: filtersStore.issueCategories.includes(cat),
-      }))
-    );
+    const proxyFacets = computed<Array<[string, number]>>(() => {
+      const needle = filtersStore.proxyName.trim().toLowerCase();
+      return facetBuckets.value.proxy
+        .filter((b): b is typeof b & { proxyName: string } => !!b.proxyName)
+        .filter((b) => !needle || b.proxyName.toLowerCase().startsWith(needle))
+        .slice(0, FACET_LIMIT)
+        .map((b) => [b.proxyName, b.count]);
+    });
+
+    const categoryItems = computed(() => {
+      const counts = new Map<string, number>(ISSUE_CATEGORY_OPTIONS.map((cat) => [cat, 0]));
+      for (const bucket of facetBuckets.value.category) {
+        if (bucket.category && counts.has(bucket.category)) counts.set(bucket.category, bucket.count);
+      }
+      return [...counts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .map(([cat, count]) => ({
+          value: cat,
+          label: `${cat} (${count})`,
+          active: filtersStore.issueCategories.includes(cat),
+        }));
+    });
 
     const tagItems = computed(() =>
       TAG_OPTIONS.map((tag) => ({
@@ -480,6 +595,7 @@ export default defineComponent({
       removeFilter,
       clearAllFilters,
       setTextFilter,
+      applyFacet,
       serverInput,
       serverOptions,
       addServerTerm,
@@ -490,8 +606,10 @@ export default defineComponent({
       setDateBound,
       datePresets,
       applyDatePreset,
+      proxyFacets,
       categoryItems,
       tagItems,
+      facetError,
       mdiFilterRemove,
       mdiPlus,
       mdiStar,

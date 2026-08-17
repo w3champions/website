@@ -10,7 +10,7 @@
       @update:modelValue="(value: string) => $emit('update:input', value)"
       @keyup.enter="$emit('commit')"
     />
-    <v-list v-if="options.length > 0" density="compact" class="mt-1">
+    <v-list v-if="options.length > 0" density="compact" class="mt-1 facet-list">
       <v-list-item v-for="opt in options" :key="opt.key" @click="$emit('toggle', opt)">
         <template v-slot:prepend>
           <v-checkbox-btn
@@ -25,11 +25,16 @@
         </template>
       </v-list-item>
     </v-list>
+    <div v-else-if="input.trim()" class="text-caption text-medium-emphasis mt-2">
+      {{ missNote }}
+    </div>
+    <div v-if="error" class="text-caption text-warning mt-2">{{ errorNote }}</div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+import { FACET_ERROR_NOTE, FACET_MISS_NOTE } from "./PrefixFacetEditor.vue";
 
 // One entry the server filter can hold or suggest: an exact node pick
 // ("this node") or a typed name prefix ("names like this").
@@ -59,7 +64,24 @@ export default defineComponent({
       type: Array as PropType<ServerOption[]>,
       required: true,
     },
+    error: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["update:input", "commit", "toggle"],
+  setup() {
+    return {
+      missNote: FACET_MISS_NOTE,
+      errorNote: FACET_ERROR_NOTE,
+    };
+  },
 });
 </script>
+
+<style lang="scss" scoped>
+.facet-list {
+  max-height: 260px;
+  overflow-y: auto;
+}
+</style>

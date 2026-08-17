@@ -22,11 +22,13 @@
         <v-list-item-title>{{ item.label }}</v-list-item-title>
       </v-list-item>
     </v-list>
+    <div v-if="error" class="text-caption text-warning mt-2">{{ errorNote }}</div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+import { FACET_ERROR_NOTE } from "./PrefixFacetEditor.vue";
 
 // A fixed list of values to pick from: checkboxes when several may hold at
 // once (categories), a single-select list otherwise (connection tags, where
@@ -46,7 +48,14 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    error: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["toggle"],
+  setup() {
+    return { errorNote: FACET_ERROR_NOTE };
+  },
 });
 </script>
