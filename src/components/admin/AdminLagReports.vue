@@ -54,6 +54,10 @@
             </v-btn>
           </v-btn-toggle>
 
+          <v-btn-toggle v-model="viewMode" mandatory density="compact" variant="outlined" divided>
+            <v-btn value="flat" size="small">Flat</v-btn>
+            <v-btn value="grouped" size="small">Grouped</v-btn>
+          </v-btn-toggle>
           <v-btn :icon="mdiRefresh" size="small" variant="text" title="Refresh results" @click="refreshResults" />
           <v-menu :close-on-content-click="false" location="bottom end">
             <template v-slot:activator="{ props }">
@@ -65,7 +69,11 @@
                 v-for="header in columnOptions"
                 :key="String(header.value)"
                 :label="header.title"
-                :model-value="prefsStore.visibleColumns.includes(header.value as never)"
+                :model-value="isColumnLocked(header.value) || prefsStore.visibleColumns.includes(header.value as never)"
+                :disabled="isColumnLocked(header.value)"
+                :title="isColumnLocked(header.value)
+                  ? 'Always shown while grouping — every group is headed by it'
+                  : undefined"
                 density="compact"
                 hide-details
                 @update:modelValue="prefsStore.toggleColumn(header.value as never)"
@@ -76,7 +84,21 @@
       </div>
     </v-container>
 
+    <lag-report-grouped-view
+      v-if="groupMode"
+      :base-params="groupBaseParams"
+      :dates-explicit="filtersStore.datesExplicit"
+      :empty-window-note="emptyWindowNote"
+      :reload-token="groupReloadToken"
+      :page-reset-token="groupPageResetToken"
+      @focus-node="filterByServerNode"
+      @open-as-list="openGroupAsList"
+      @open="openDetail"
+      @filter-player="filterByPlayer"
+    />
+
     <v-data-table-server
+      v-else
       :headers="headers"
       :items="tableItems"
       :items-length="tableTotal"
@@ -95,6 +117,7 @@
         <lag-report-row-cells
           :report="item"
           :column="String(header.value)"
+          variant="flat"
           @open="openDetail(item.id)"
           @filter-player="filterByPlayer"
           @filter-server-node="filterByServerNode"
@@ -130,6 +153,8 @@ import {
 import { LagReportListItem, LagReportQueryParams } from "@/store/admin/lagReports/types";
 import { ALL_HEADERS } from "@/components/admin/lag-reports/columns";
 import LagReportFilterBar from "@/components/admin/lag-reports/filter-bar/LagReportFilterBar.vue";
+import LagReportGroupedView from "@/components/admin/lag-reports/LagReportGroupedView.vue";
+import type { LagReportGroup } from "@/components/admin/lag-reports/LagReportGroupedView.vue";
 import LagReportRowCells from "@/components/admin/lag-reports/LagReportRowCells.vue";
 
 type VuetifyTableUpdateOptions = {
@@ -148,13 +173,14 @@ type LagReportsUiState = {
     page: number;
     itemsPerPage: number;
   };
+  groupMode?: boolean;
 };
 
 const LAG_REPORTS_UI_STATE_KEY = "admin-lag-reports-ui-state";
 
 export default defineComponent({
   name: "AdminLagReports",
-  components: { LagReportFilterBar, LagReportRowCells },
+  components: { LagReportFilterBar, LagReportGroupedView, LagReportRowCells },
   setup() {
     const lagReportsStore = useLagReportsStore();
     const filtersStore = useLagReportsFiltersStore();
@@ -169,11 +195,19 @@ export default defineComponent({
       itemsPerPage: 25,
     });
 
+    const groupMode = ref(false);
+
     const headers = computed(() =>
       ALL_HEADERS.filter((h) => h.value === "actions" || prefsStore.visibleColumns.includes(h.value as never))
     );
 
     const columnOptions = ALL_HEADERS.filter((h) => h.value !== "actions");
+
+    // Groups are built on the server name, so that column cannot be switched
+    // off while grouping — its value heads every group.
+    function isColumnLocked(value: unknown): boolean {
+      return groupMode.value && value === "serverNodeName";
+    }
 
     // Every filter runs on the server against the full window, so the table
     // reads straight from the store — there is no second row universe.
@@ -197,6 +231,8 @@ export default defineComponent({
         ...filterParams(filtersStore),
       };
     }
+
+    const groupBaseParams = computed(() => buildParams());
 
     async function loadReports() {
       await lagReportsStore.loadReports(buildParams());
@@ -222,6 +258,7 @@ export default defineComponent({
           page: tableOptions.value.page,
           itemsPerPage: tableOptions.value.itemsPerPage,
         },
+        groupMode: groupMode.value,
       };
 
       window.sessionStorage.setItem(LAG_REPORTS_UI_STATE_KEY, JSON.stringify(state));
@@ -252,6 +289,8 @@ export default defineComponent({
     function applyStoredUiState(state: LagReportsUiState) {
       applyQueryToFilters(filtersStore, state.filters ?? {});
 
+      groupMode.value = Boolean(state.groupMode);
+
       tableOptions.value.page = state.tableOptions?.page && state.tableOptions.page > 0 ? state.tableOptions.page : 1;
       tableOptions.value.itemsPerPage =
         state.tableOptions?.itemsPerPage && state.tableOptions.itemsPerPage > 0 ? state.tableOptions.itemsPerPage : 25;
@@ -279,17 +318,44 @@ export default defineComponent({
 
       const itemsPerPage = typeof route.query.itemsPerPage === "string" ? Number(route.query.itemsPerPage) : NaN;
       tableOptions.value.itemsPerPage = Number.isFinite(itemsPerPage) && itemsPerPage > 0 ? itemsPerPage : 25;
+
+      // groupMode is not a URL concern; restore it from storage regardless.
+      const stored = readStoredUiState();
+      if (stored) groupMode.value = Boolean(stored.groupMode);
     }
 
     hydrateStateFromQuery();
 
     const debouncedLoad = debounce(loadReports, 400);
 
+    // The grouped view caches per-group rows and holds a client-side pager;
+    // these tokens tell it when its world changed (see the prop comments).
+    const groupReloadToken = ref(0);
+    const groupPageResetToken = ref(0);
+
+    function refreshAggregates() {
+      if (groupMode.value) {
+        groupReloadToken.value++;
+        lagReportsStore.loadNodeDay(filterParams(filtersStore));
+      }
+    }
+
+    const debouncedAggregates = debounce(refreshAggregates, 400);
+
     function onFilterChange() {
       tableOptions.value.page = 1;
+      groupPageResetToken.value++;
       persistUiState();
       syncRouteQuery();
       debouncedLoad();
+      debouncedAggregates();
+    }
+
+    function onGroupModeChange() {
+      persistUiState();
+      if (groupMode.value) {
+        lagReportsStore.loadNodeDay(filterParams(filtersStore));
+      }
     }
 
     function onTableOptionsUpdate(options: VuetifyTableUpdateOptions) {
@@ -316,6 +382,7 @@ export default defineComponent({
       persistUiState();
       syncRouteQuery();
       loadReports();
+      refreshAggregates();
     }
 
     // "Submitted" means at least one player filled in the in-game report
@@ -327,6 +394,14 @@ export default defineComponent({
       set: (mode: string) => {
         filtersStore.explicitOnly = mode === "submitted";
         onFilterChange();
+      },
+    });
+
+    const viewMode = computed({
+      get: () => (groupMode.value ? "grouped" : "flat"),
+      set: (mode: string) => {
+        groupMode.value = mode === "grouped";
+        onGroupModeChange();
       },
     });
 
@@ -354,6 +429,24 @@ export default defineComponent({
     // tag chip clears the filter again.
     function filterByTag(tag: string) {
       filtersStore.connectionIssueTag = filtersStore.connectionIssueTag === tag ? "" : tag;
+      onFilterChange();
+    }
+
+    // The bridge from reconnaissance to the grind: a group's node + day become
+    // flat-list filters, where pagination lives in the URL and survives every
+    // detail round-trip — the panel's contents don't. The node goes over as
+    // its exact id, so the list holds precisely the group's reports.
+    function openGroupAsList(group: LagReportGroup) {
+      filtersStore.serverNames = [];
+      filtersStore.serverNodes = [{ id: group.serverNodeId, name: group.serverNodeName }];
+      filtersStore.dateFrom = group.day;
+      filtersStore.dateTo = group.day;
+      filtersStore.datesExplicit = true;
+      groupMode.value = false;
+      onGroupModeChange();
+      // Blank the table for the context switch, so the new context shows a
+      // spinner rather than the old rows while the reload runs.
+      lagReportsStore.clearReports();
       onFilterChange();
     }
 
@@ -392,6 +485,7 @@ export default defineComponent({
       persistUiState();
       syncRouteQuery();
       loadReports();
+      refreshAggregates();
     });
 
     return {
@@ -399,20 +493,27 @@ export default defineComponent({
       prefsStore,
       reportsError,
       tableOptions,
+      groupMode,
       headers,
       columnOptions,
+      isColumnLocked,
       tableItems,
       tableTotal,
       tableLoading,
       emptyWindowNote,
+      groupBaseParams,
+      groupReloadToken,
+      groupPageResetToken,
       onFilterChange,
       onTableOptionsUpdate,
       refreshResults,
       explicitMode,
+      viewMode,
       filterByPlayer,
       filterByServerNode,
       filterByProxy,
       filterByTag,
+      openGroupAsList,
       openDetail,
       onRowClick,
       openIdInput,

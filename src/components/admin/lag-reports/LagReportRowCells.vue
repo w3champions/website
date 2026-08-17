@@ -1,24 +1,39 @@
 <template>
   <template v-if="column === 'createdAt'">
-    <div>{{ formatDate(report.createdAt) }}</div>
-    <div class="text-caption text-medium-emphasis">{{ formatRelative(report.createdAt) }}</div>
+    <span v-if="variant === 'grouped'" class="text-caption text-medium-emphasis">{{ formatDate(report.createdAt) }}</span>
+    <template v-else>
+      <div>{{ formatDate(report.createdAt) }}</div>
+      <div class="text-caption text-medium-emphasis">{{ formatRelative(report.createdAt) }}</div>
+    </template>
   </template>
   <span v-else-if="column === 'mapPath'" :title="report.mapPath">{{ formatMapName(report.mapPath) }}</span>
   <template v-else-if="column === 'playerCount'">
-    {{ report.players.length }}
-    <span v-if="explicitCount(report) > 0" class="text-caption text-medium-emphasis">
-      ({{ explicitCount(report) }} subm.)
+    <template v-if="variant === 'grouped'">{{ report.players.length }}</template>
+    <template v-else>
+      {{ report.players.length }}
+      <span v-if="explicitCount(report) > 0" class="text-caption text-medium-emphasis">
+        ({{ explicitCount(report) }} subm.)
+      </span>
+    </template>
+  </template>
+  <template v-else-if="column === 'proxiedCount'">
+    <template v-if="variant === 'grouped'">{{ proxiedCount(report) === 0 ? "—" : proxiedCount(report) }}</template>
+    <span v-else :class="{ 'text-medium-emphasis': proxiedCount(report) === 0 }">
+      {{ proxiedCount(report) === 0 ? "—" : proxiedCount(report) }}
     </span>
   </template>
-  <span v-else-if="column === 'proxiedCount'" :class="{ 'text-medium-emphasis': proxiedCount(report) === 0 }">
-    {{ proxiedCount(report) === 0 ? "—" : proxiedCount(report) }}
-  </span>
-  <span v-else-if="column === 'lagEvents'" :class="{ 'text-medium-emphasis': sumLagEvents(report) === 0 }">
-    {{ sumLagEvents(report) === 0 ? "—" : sumLagEvents(report) }}
-  </span>
-  <span v-else-if="column === 'connectionEvents'" :class="{ 'text-medium-emphasis': sumConnectionEvents(report) === 0 }">
-    {{ sumConnectionEvents(report) === 0 ? "—" : sumConnectionEvents(report) }}
-  </span>
+  <template v-else-if="column === 'lagEvents'">
+    <template v-if="variant === 'grouped'">{{ sumLagEvents(report) === 0 ? "—" : sumLagEvents(report) }}</template>
+    <span v-else :class="{ 'text-medium-emphasis': sumLagEvents(report) === 0 }">
+      {{ sumLagEvents(report) === 0 ? "—" : sumLagEvents(report) }}
+    </span>
+  </template>
+  <template v-else-if="column === 'connectionEvents'">
+    <template v-if="variant === 'grouped'">{{ sumConnectionEvents(report) === 0 ? "—" : sumConnectionEvents(report) }}</template>
+    <span v-else :class="{ 'text-medium-emphasis': sumConnectionEvents(report) === 0 }">
+      {{ sumConnectionEvents(report) === 0 ? "—" : sumConnectionEvents(report) }}
+    </span>
+  </template>
   <span
     v-else-if="column === 'serverNodeName'"
     class="clickable"
@@ -45,56 +60,71 @@
     <span v-else class="text-medium-emphasis">—</span>
   </template>
   <template v-else-if="column === 'players'">
-    <div v-for="(p, i) in report.players" :key="i" class="d-flex align-center ga-1 my-1 flex-wrap">
+    <!-- The grouped rows keep this cell minimal — the badges and chips are
+         the flat list's triage surface; a group's panel is a preview. -->
+    <template v-if="variant === 'grouped'">
       <span
-        class="text-body-2 clickable"
+        v-for="(p, pi) in report.players"
+        :key="pi"
+        class="text-body-2 clickable me-2"
         :title="`Filter by ${p.battleTag}`"
         @click.stop="$emit('filter-player', p.battleTag)"
       >
-        {{ p.battleTag }}
+        {{ p.battleTag }}<span v-if="p.isExplicit" class="text-warning">*</span>
       </span>
-      <v-chip v-if="p.isExplicit" size="x-small" color="warning" variant="tonal">submitted</v-chip>
-      <v-chip
-        v-if="p.connectionType === 'Proxied'"
-        size="x-small"
-        color="info"
-        variant="tonal"
-        :class="{ clickable: !!p.proxyName }"
-        :title="p.proxyName ? `Filter by proxy ${p.proxyName}` : undefined"
-        @click.stop="p.proxyName && $emit('filter-proxy', p.proxyName)"
-      >
-        proxied{{ p.proxyName ? `: ${p.proxyName}` : "" }}
-      </v-chip>
-      <v-chip
-        v-for="(cat, ci) in p.issueCategories.slice(0, 3)"
-        :key="ci"
-        size="x-small"
-        color="error"
-        variant="tonal"
-      >
-        {{ cat }}
-      </v-chip>
-      <v-chip
-        v-if="p.issueCategories.length > 3"
-        size="x-small"
-        variant="tonal"
-        :title="p.issueCategories.slice(3).join(', ')"
-      >
-        +{{ p.issueCategories.length - 3 }}
-      </v-chip>
-      <v-chip
-        v-for="(tag, ti) in p.connection_issue_tags ?? []"
-        :key="'tag-' + ti"
-        size="x-small"
-        color="deep-purple"
-        variant="tonal"
-        class="clickable"
-        :title="`Launcher verdict: ${tag} — click to filter`"
-        @click.stop="$emit('filter-tag', tag)"
-      >
-        {{ tag }}
-      </v-chip>
-    </div>
+    </template>
+    <template v-else>
+      <div v-for="(p, i) in report.players" :key="i" class="d-flex align-center ga-1 my-1 flex-wrap">
+        <span
+          class="text-body-2 clickable"
+          :title="`Filter by ${p.battleTag}`"
+          @click.stop="$emit('filter-player', p.battleTag)"
+        >
+          {{ p.battleTag }}
+        </span>
+        <v-chip v-if="p.isExplicit" size="x-small" color="warning" variant="tonal">submitted</v-chip>
+        <v-chip
+          v-if="p.connectionType === 'Proxied'"
+          size="x-small"
+          color="info"
+          variant="tonal"
+          :class="{ clickable: !!p.proxyName }"
+          :title="p.proxyName ? `Filter by proxy ${p.proxyName}` : undefined"
+          @click.stop="p.proxyName && $emit('filter-proxy', p.proxyName)"
+        >
+          proxied{{ p.proxyName ? `: ${p.proxyName}` : "" }}
+        </v-chip>
+        <v-chip
+          v-for="(cat, ci) in p.issueCategories.slice(0, 3)"
+          :key="ci"
+          size="x-small"
+          color="error"
+          variant="tonal"
+        >
+          {{ cat }}
+        </v-chip>
+        <v-chip
+          v-if="p.issueCategories.length > 3"
+          size="x-small"
+          variant="tonal"
+          :title="p.issueCategories.slice(3).join(', ')"
+        >
+          +{{ p.issueCategories.length - 3 }}
+        </v-chip>
+        <v-chip
+          v-for="(tag, ti) in p.connection_issue_tags ?? []"
+          :key="'tag-' + ti"
+          size="x-small"
+          color="deep-purple"
+          variant="tonal"
+          class="clickable"
+          :title="`Launcher verdict: ${tag} — click to filter`"
+          @click.stop="$emit('filter-tag', tag)"
+        >
+          {{ tag }}
+        </v-chip>
+      </div>
+    </template>
   </template>
   <v-btn
     v-else-if="column === 'actions'"
@@ -116,9 +146,11 @@ import { formatDistanceToNow } from "date-fns";
 import { EConnectionType, LagReportListItem } from "@/store/admin/lagReports/types";
 
 // One cell of a lag-report row, keyed by column — the single place a column's
-// rendering lives, rendered by the flat table's slots. Click-to-filter targets
-// emit and stop propagation, so a cell click filters rather than opening the
-// report.
+// rendering lives, used by the flat table's slots and the grouped view's
+// table alike. `variant` carries the deliberate differences: grouped rows are
+// previews, so they render lighter (bare timestamps, plain counts, players
+// without chips). Click-to-filter targets emit and stop propagation, so a
+// cell click filters rather than opening the report.
 export default defineComponent({
   name: "LagReportRowCells",
   props: {
@@ -129,6 +161,10 @@ export default defineComponent({
     column: {
       type: String,
       required: true,
+    },
+    variant: {
+      type: String as PropType<"flat" | "grouped">,
+      default: "flat",
     },
   },
   emits: ["open", "filter-player", "filter-server-node", "filter-proxy", "filter-tag"],

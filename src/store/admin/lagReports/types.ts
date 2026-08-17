@@ -36,6 +36,12 @@ export type LagReportsState = {
   selectedReport: LagReportDetail | null;
   selectedReportLoading: boolean;
   selectedReportError: string | null;
+  // Aggregation-backed enrichment (see LagReportAggregateParams).
+  nodeDayBuckets: LagReportAggregateBucket[];
+  nodeDayLoading: boolean;
+  // Set when the grouped-view aggregation failed — the view must say so
+  // rather than render an empty result as "no reports match".
+  nodeDayError: boolean;
 };
 
 export interface LagReportListItem {
