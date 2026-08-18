@@ -99,11 +99,14 @@
                       @filter-player="(battleTag: string) => $emit('filter-player', battleTag)"
                     />
                   </td>
+                  <!-- The Detail button is permanent in both views: the flat table
+                       force-includes `actions` in its headers and keeps it out of the
+                       column gear, so it is a fixed trailing cell here rather than one
+                       of groupRowColumns. -->
                   <td class="text-center">
                     <lag-report-row-cells
                       :report="report"
                       column="actions"
-                      variant="grouped"
                       @open="$emit('open', report.id)"
                     />
                   </td>
