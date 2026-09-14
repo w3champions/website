@@ -29,8 +29,9 @@
             />
           </v-col>
 
-          <!-- Who last uploaded a file for this map. Set by the backend; shown
-               here so an admin can see it without leaving the dialog. -->
+          <!-- Who last uploaded or saved this map. Stamped by website-backend on
+               every admin create/update; shown here so an admin can see it
+               without leaving the dialog. -->
           <v-col v-if="!isAddDialog && mapRef.uploader" cols="12" sm="6">
             <v-text-field
               :model-value="mapRef.uploader"

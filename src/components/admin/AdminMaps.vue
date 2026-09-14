@@ -116,7 +116,10 @@
           <template v-slot:[`item.disabled`]="{ item }">
             <div class="d-flex align-center ga-1 flex-wrap">
               <!-- variant="flat" so the chip keeps its solid colour and on-colour text;
-                   the default tonal variant washes out on the light themes. -->
+                   the default tonal variant washes out on the light themes. A chip is
+                   not focusable, so one whose tooltip says something gets a tabindex:
+                   VTooltip also opens on keyboard focus, the only way a keyboard user
+                   can read it. -->
               <v-tooltip
                 location="top"
                 content-class="w3-tooltip elevation-1"
@@ -124,21 +127,28 @@
                 :disabled="!statusTooltip(item)"
               >
                 <template v-slot:activator="{ props }">
-                  <v-chip v-bind="props" size="small" variant="flat" :color="mapStatus(item).color">
+                  <v-chip
+                    v-bind="props"
+                    size="small"
+                    variant="flat"
+                    :color="mapStatus(item).color"
+                    :tabindex="statusTooltip(item) ? 0 : undefined"
+                  >
                     {{ mapStatus(item).label }}
                   </v-chip>
                 </template>
               </v-tooltip>
               <!-- A self-provided map is not part of the catalogue; the chip
-                   carries its file state and when it was last played. -->
+                   carries its file state and when it was last played. Focusable
+                   like the status chip, since the date is only in the tooltip. -->
               <v-tooltip
-                v-if="item.temporary"
+                v-if="isTemporaryMap(item)"
                 location="top"
                 content-class="w3-tooltip elevation-1"
                 :text="temporaryTooltip(item)"
               >
                 <template v-slot:activator="{ props }">
-                  <v-chip v-bind="props" size="small" variant="flat" color="warning">
+                  <v-chip v-bind="props" size="small" variant="flat" color="warning" tabindex="0">
                     {{ item.fileState === "deleted" ? "Temporary (file deleted)" : "Temporary" }}
                   </v-chip>
                 </template>
@@ -398,6 +408,16 @@ export default defineComponent({
         .sort((a, b) => a.localeCompare(b))
     );
 
+    // A selected category can vanish from the list - unticking "Show temporary
+    // maps" drops the categories only temporary maps have, and an edit can empty
+    // one - which would leave an empty table under a filter still on display.
+    watch(categories, (list) => {
+      const category = adminMapsFilters.value.category;
+      if (category && !list.includes(category)) {
+        adminMapsFilters.value = { ...adminMapsFilters.value, category: null };
+      }
+    });
+
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
     function getMapPath(map: Map): string {
@@ -606,6 +626,7 @@ export default defineComponent({
       loadingTemporary,
       onIncludeTemporaryChanged,
       isReadOnly,
+      isTemporaryMap,
       temporaryTooltip,
       headers,
       addMap,
