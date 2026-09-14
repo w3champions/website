@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { buildMapsQuery, errorFromBody, toMapWriteContract } from "./mapsRequest";
+import { buildMapsQuery, errorFromBody, isTemporaryMap, toMapWriteContract } from "./mapsRequest";
 import type { Map } from "@/store/admin/mapsManagement/types";
 
 test("no query at all when nothing is asked for", () => {
@@ -69,6 +69,19 @@ test("server-owned temporary-map fields are never written back", () => {
   assert.equal("lastHostedAt" in written, false);
   assert.equal("uploader" in written, false);
   assert.equal("path" in written, false);
+});
+
+test("only an explicit temporary: true makes a map temporary", () => {
+  // A temporary map is read-only on the admin page, so anything short of an
+  // explicit true - absent on a permanent row before website-backend ships,
+  // false once it does, or a truthy non-boolean - must read as permanent.
+  const permanent: Map = { id: 7, name: "Echo Isles", maxTeams: 2, disabled: false };
+
+  assert.equal(isTemporaryMap({ ...permanent, temporary: true }), true);
+  assert.equal(isTemporaryMap({ ...permanent, temporary: false }), false);
+  assert.equal(isTemporaryMap({ ...permanent, temporary: undefined }), false);
+  assert.equal(isTemporaryMap(permanent), false);
+  assert.equal(isTemporaryMap({ ...permanent, temporary: "true" as unknown as boolean }), false);
 });
 
 test("a duplicate upload shows the update service's own words", () => {
