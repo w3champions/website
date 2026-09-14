@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { buildMapsQuery, toMapWriteContract } from "./mapsRequest";
+import { buildMapsQuery, errorFromBody, toMapWriteContract } from "./mapsRequest";
 import type { Map } from "@/store/admin/mapsManagement/types";
 
 test("no query at all when nothing is asked for", () => {
@@ -69,4 +69,25 @@ test("server-owned temporary-map fields are never written back", () => {
   assert.equal("lastHostedAt" in written, false);
   assert.equal("uploader" in written, false);
   assert.equal("path" in written, false);
+});
+
+test("a duplicate upload shows the update service's own words", () => {
+  // update-service answers 409 {"message":"File already exists"}; the backend
+  // unwraps that and re-emits the message as a bare text/plain body, which the
+  // XHR handler hands over as a raw string because JSON.parse rejects it.
+  const error = errorFromBody("File already exists", 409);
+
+  assert.equal(error.message, "File already exists");
+});
+
+test("the matchmaking validation envelope is joined into one sentence", () => {
+  const error = errorFromBody({ errors: [{ msg: "name is required" }, { msg: "maxTeams must be >= 1" }] }, 400);
+
+  assert.equal(error.message, "name is required, maxTeams must be >= 1");
+});
+
+test("a body nobody recognises still names the status", () => {
+  assert.equal(errorFromBody({ unexpected: true }, 502).message, "Request failed with status 502.");
+  assert.equal(errorFromBody("   ", 500).message, "Request failed with status 500.");
+  assert.equal(errorFromBody(undefined, 413).message, "Request failed with status 413.");
 });

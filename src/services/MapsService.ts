@@ -1,12 +1,8 @@
 import { API_URL, LAUNCHER_UPDATE_URL } from "@/config/env";
-import { buildMapsQuery, toMapWriteContract } from "@/services/maps/mapsRequest";
+import { buildMapsQuery, errorFromBody, toMapWriteContract } from "@/services/maps/mapsRequest";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
-  // The backend returns either a bare string (its own HttpRequestException message,
-  // which already carries the matchmaking service's joined errors) or the raw
-  // { errors: [{ msg }] } envelope. Passing the parsed body to new Error() yields
-  // "[object Object]", so pull a readable message out of both shapes.
   private static async errorFromResponse(response: Response): Promise<Error> {
     let body: unknown;
     try {
@@ -15,21 +11,7 @@ export default class MapsService {
       return new Error(`Request failed with status ${response.status}.`);
     }
 
-    return MapsService.errorFromBody(body, response.status);
-  }
-
-  private static errorFromBody(body: unknown, status: number): Error {
-    const fallback = `Request failed with status ${status}.`;
-
-    if (typeof body === "string" && body.trim()) return new Error(body);
-
-    const errors = (body as { errors?: { msg?: string }[] })?.errors;
-    if (Array.isArray(errors)) {
-      const messages = errors.map((error) => error?.msg).filter((msg): msg is string => !!msg);
-      if (messages.length) return new Error(messages.join(", "));
-    }
-
-    return new Error(fallback);
+    return errorFromBody(body, response.status);
   }
 
   public static async getAllMaps(token: string, filter?: string, includeTemporary?: boolean): Promise<GetMapsResponse> {
@@ -138,7 +120,7 @@ export default class MapsService {
         } catch {
           // Keep the raw text; errorFromBody handles both shapes.
         }
-        reject(MapsService.errorFromBody(body, request.status));
+        reject(errorFromBody(body, request.status));
       };
 
       request.onerror = (): void => reject(new Error("Network error while uploading the map file."));

@@ -63,3 +63,26 @@ export function toMapWriteContract(map: Map): MapWriteContract {
     disabled: map.disabled,
   };
 }
+
+/**
+ * Reads a usable message out of an error body.
+ *
+ * The backend returns either a bare string - its own HttpRequestException
+ * message, which already carries the update or matchmaking service's words,
+ * including update-service's 409 "File already exists" - or the raw
+ * { errors: [{ msg }] } envelope. Passing the parsed body to new Error() yields
+ * "[object Object]", so pull a readable message out of both shapes.
+ */
+export function errorFromBody(body: unknown, status: number): Error {
+  const fallback = `Request failed with status ${status}.`;
+
+  if (typeof body === "string" && body.trim()) return new Error(body);
+
+  const errors = (body as { errors?: { msg?: string }[] })?.errors;
+  if (Array.isArray(errors)) {
+    const messages = errors.map((error) => error?.msg).filter((msg): msg is string => !!msg);
+    if (messages.length) return new Error(messages.join(", "));
+  }
+
+  return new Error(fallback);
+}
