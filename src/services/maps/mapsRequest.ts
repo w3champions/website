@@ -65,7 +65,26 @@ export function toMapWriteContract(map: Map): MapWriteContract {
 }
 
 /**
- * Reads a usable message out of an error body.
+ * Turns an error response's raw text into the body `errorFromBody` reads: the
+ * parsed JSON when it is JSON, otherwise the text itself, and `undefined` for an
+ * empty or whitespace-only body.
+ *
+ * The raw-text fallback matters: website-backend's maps controller answers a
+ * failed upstream call with a bare text/plain message, which JSON.parse (and
+ * so `Response.json()`) rejects. MapsService's fetch calls and its XHR upload
+ * both read error bodies through here, so the two paths cannot drift apart.
+ */
+export function parseErrorBody(text: string): unknown {
+  if (!text.trim()) return undefined;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+/**
+ * Reads a usable message out of an error body (see `parseErrorBody`).
  *
  * Passing a parsed body to new Error() yields "[object Object]", so the first
  * of these shapes that carries non-blank text wins:

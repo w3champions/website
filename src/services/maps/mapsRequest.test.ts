@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { buildMapsQuery, errorFromBody, isTemporaryMap, toMapWriteContract } from "./mapsRequest";
+import { buildMapsQuery, errorFromBody, isTemporaryMap, parseErrorBody, toMapWriteContract } from "./mapsRequest";
 import type { Map } from "@/store/admin/mapsManagement/types";
 
 test("no query at all when nothing is asked for", () => {
@@ -86,8 +86,8 @@ test("only an explicit temporary: true makes a map temporary", () => {
 
 test("a duplicate upload shows the update service's own words", () => {
   // update-service answers 409 {"message":"File already exists"}; the backend
-  // unwraps that and re-emits the message as a bare text/plain body, which the
-  // XHR handler hands over as a raw string because JSON.parse rejects it.
+  // unwraps that and re-emits the message as a bare text/plain body, which
+  // parseErrorBody hands over as a raw string because JSON.parse rejects it.
   const error = errorFromBody("File already exists", 409);
 
   assert.equal(error.message, "File already exists");
@@ -107,6 +107,15 @@ test("website-backend's { error } and update-service's { message } bodies are re
   // Blank text says nothing, so the status is named instead.
   assert.equal(errorFromBody({ error: "  " }, 502).message, "Request failed with status 502.");
   assert.equal(errorFromBody({ message: "" }, 409).message, "Request failed with status 409.");
+});
+
+test("an error body is parsed when it is JSON and kept as text when it is not", () => {
+  assert.deepEqual(parseErrorBody('{"errors":[{"msg":"name is required"}]}'), { errors: [{ msg: "name is required" }] });
+  assert.equal(parseErrorBody("File already exists"), "File already exists");
+  assert.equal(parseErrorBody(""), undefined);
+  assert.equal(parseErrorBody(" \n "), undefined);
+  // End to end: a text/plain body from a fetch call reaches the admin as written.
+  assert.equal(errorFromBody(parseErrorBody("File already exists"), 409).message, "File already exists");
 });
 
 test("a body nobody recognises still names the status", () => {

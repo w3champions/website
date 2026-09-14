@@ -1,17 +1,20 @@
 import { API_URL, LAUNCHER_UPDATE_URL } from "@/config/env";
-import { buildMapsQuery, errorFromBody, toMapWriteContract } from "@/services/maps/mapsRequest";
+import { buildMapsQuery, errorFromBody, parseErrorBody, toMapWriteContract } from "@/services/maps/mapsRequest";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
+  // Read as text rather than with response.json(): a bare text/plain message is
+  // a real error body here, and json() would reject it.
   private static async errorFromResponse(response: Response): Promise<Error> {
-    let body: unknown;
+    let text: string;
     try {
-      body = await response.json();
+      text = await response.text();
     } catch {
-      return new Error(`Request failed with status ${response.status}.`);
+      // The body could not be read at all; errorFromBody names the status.
+      return errorFromBody(undefined, response.status);
     }
 
-    return errorFromBody(body, response.status);
+    return errorFromBody(parseErrorBody(text), response.status);
   }
 
   public static async getAllMaps(token: string, filter?: string, includeTemporary?: boolean): Promise<GetMapsResponse> {
@@ -114,13 +117,7 @@ export default class MapsService {
           return;
         }
 
-        let body: unknown = request.responseText;
-        try {
-          body = JSON.parse(request.responseText);
-        } catch {
-          // Keep the raw text; errorFromBody handles both shapes.
-        }
-        reject(errorFromBody(body, request.status));
+        reject(errorFromBody(parseErrorBody(request.responseText), request.status));
       };
 
       request.onerror = (): void => reject(new Error("Network error while uploading the map file."));
