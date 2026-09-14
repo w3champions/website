@@ -8,14 +8,31 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     totalMaps: 0,
     maps: [] as Map[],
     mapsFilter: undefined,
+    // Temporary (self-provided) maps are opt-in and off by default. It lives in
+    // the store rather than in the page so the zero-argument `loadMaps()` calls
+    // that follow every save keep the admin's choice instead of silently
+    // dropping the temporary rows from a table that is still showing them.
+    includeTemporary: false,
     mapFiles: [] as MapFileData[],
   }),
   actions: {
     async loadMaps(filter?: string) {
       const oauthStore = useOauthStore();
-      const searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter);
+      const searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter, this.includeTemporary);
       this.SET_MAPS(searchMapsResponse);
       this.SET_FILTER(filter);
+    },
+    async setIncludeTemporary(includeTemporary: boolean) {
+      const previous = this.includeTemporary;
+      this.SET_INCLUDE_TEMPORARY(includeTemporary);
+      try {
+        await this.loadMaps(this.mapsFilter);
+      } catch (err) {
+        // Leave the flag describing what is actually on screen, then let the
+        // page report the failure.
+        this.SET_INCLUDE_TEMPORARY(previous);
+        throw err;
+      }
     },
     async createMap(map: Map) {
       const oauthStore = useOauthStore();
@@ -49,6 +66,9 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     },
     SET_FILTER(filter?: string) {
       this.mapsFilter = filter;
+    },
+    SET_INCLUDE_TEMPORARY(includeTemporary: boolean) {
+      this.includeTemporary = includeTemporary;
     },
     SET_MAP_FILES(mapFiles: MapFileData[]) {
       this.mapFiles = mapFiles || [];

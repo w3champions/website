@@ -4,6 +4,7 @@ export type AdminMapsState = {
   totalMaps: number;
   maps: Map[];
   mapsFilter?: string;
+  includeTemporary: boolean;
   mapFiles: MapFileData[];
 };
 
