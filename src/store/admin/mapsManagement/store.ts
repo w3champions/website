@@ -3,6 +3,22 @@ import { useOauthStore } from "@/store/oauth/store";
 import MapsService from "@/services/MapsService";
 import { defineStore } from "pinia";
 
+// Reloads overlap - the page's first load, the refresh after a save, an
+// enable/disable or a bulk selection, and the "Show temporary maps" opt-in can
+// all be in flight at once - and their responses can land in any order. Plain
+// counters, not state: nothing renders them.
+//
+// `latestLoad` is bumped when a load starts, and only that newest load reports a
+// failure. An older load's failure is moot because the newer load refreshes the
+// table and reports its own outcome; rejecting would also let
+// setIncludeTemporary roll the flag back under a load already using it.
+//
+// `shownLoad` is the load whose response the table holds. Every response is the
+// same list, so an older one still lands while nothing newer has, but it never
+// replaces a newer one: the table only moves forward.
+let latestLoad = 0;
+let shownLoad = 0;
+
 export const useMapsManagementStore = defineStore("mapsManagement", {
   state: (): AdminMapsState => ({
     totalMaps: 0,
@@ -16,11 +32,21 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     mapFiles: [] as MapFileData[],
   }),
   actions: {
+    // Rejects only while it is the newest load. A load superseded by a later one
+    // resolves even if its own request failed: the later load reports instead.
     async loadMaps(filter?: string) {
-      const oauthStore = useOauthStore();
-      const searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter, this.includeTemporary);
-      this.SET_MAPS(searchMapsResponse);
-      this.SET_FILTER(filter);
+      const load = ++latestLoad;
+      try {
+        const oauthStore = useOauthStore();
+        const searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter, this.includeTemporary);
+        if (load < shownLoad) return;
+        shownLoad = load;
+        this.SET_MAPS(searchMapsResponse);
+        this.SET_FILTER(filter);
+      } catch (err) {
+        if (load !== latestLoad) return;
+        throw err;
+      }
     },
     async setIncludeTemporary(includeTemporary: boolean) {
       const previous = this.includeTemporary;
@@ -28,8 +54,10 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       try {
         await this.loadMaps(this.mapsFilter);
       } catch (err) {
-        // Leave the flag describing what is actually on screen, then let the
-        // page report the failure.
+        // Only the newest load rejects, so no reload started since - which would
+        // already be using the new flag - is undercut by this rollback. Leave the
+        // flag describing what is actually on screen, then let the page report
+        // the failure.
         this.SET_INCLUDE_TEMPORARY(previous);
         throw err;
       }
