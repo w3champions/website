@@ -29,6 +29,20 @@
             />
           </v-col>
 
+          <!-- Who last uploaded a file for this map. Set by the backend; shown
+               here so an admin can see it without leaving the dialog. -->
+          <v-col v-if="!isAddDialog && mapRef.uploader" cols="12" sm="6">
+            <v-text-field
+              :model-value="mapRef.uploader"
+              label="Uploader"
+              readonly
+              hint="The BattleTag that last uploaded or saved this map."
+              persistent-hint
+              variant="underlined"
+              color="primary"
+            />
+          </v-col>
+
           <v-col v-if="isAddDialog" cols="12" sm="4">
             <v-text-field
               v-model="mapId"

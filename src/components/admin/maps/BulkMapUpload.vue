@@ -333,8 +333,15 @@ export default defineComponent({
       return Object.keys(counts).filter((name) => counts[name] > 1);
     });
 
+    // A temporary map's file belongs to its uploader, not to a bulk admin
+    // upload, and the matchmaking service rejects PUT /maps/:id for it anyway.
+    function isTemporaryMap(map: Map): boolean {
+      return map.temporary === true;
+    }
+
     const mapOptions = computed(() =>
       [...mapsManagementStore.maps]
+        .filter((map) => !isTemporaryMap(map))
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((map) => ({ title: `${map.name} (${map.id})`, value: map.id }))
     );
@@ -346,6 +353,15 @@ export default defineComponent({
     function assignMap(row: BulkRow, mapId: number | null): void {
       const map = mapsManagementStore.maps.find((m) => m.id === mapId);
       if (!map) return;
+
+      if (isTemporaryMap(map)) {
+        row.mapId = map.id;
+        row.map = undefined;
+        row.currentFileName = "";
+        row.status = "unknown-map";
+        row.message = `Map ${map.id} is a temporary map; its file belongs to the uploader.`;
+        return;
+      }
 
       row.mapId = map.id;
       row.map = map;
@@ -383,6 +399,20 @@ export default defineComponent({
       }
 
       const map = mapsManagementStore.maps.find((m) => m.id === mapId);
+      if (map && isTemporaryMap(map)) {
+        return {
+          key: `${index}-${file.name}`,
+          file,
+          fileName: file.name,
+          mapId,
+          currentFileName: "",
+          storeAs: file.name,
+          percent: 0,
+          status: "unknown-map",
+          message: `Map ${mapId} is a temporary map; its file belongs to the uploader.`,
+        };
+      }
+
       return {
         key: `${index}-${file.name}`,
         file,
@@ -587,15 +617,32 @@ export default defineComponent({
 
       selecting.value = false;
 
-      // Reload so the maps table behind the dialog reflects the new files.
-      await mapsManagementStore.loadMaps();
+      // Reload so the maps table behind the dialog reflects the new files. A
+      // failed reload must not swallow the per-row results below: the success
+      // message and the completed emit still need to happen.
+      let reloadErrorMessage: string | null = null;
+      try {
+        await mapsManagementStore.loadMaps();
+      } catch (err) {
+        reloadErrorMessage = err instanceof Error
+          ? `The maps table could not be refreshed: ${err.message}`
+          : "The maps table could not be refreshed.";
+      }
 
       if (successCount > 0) {
         successMessage.value = `Selected ${successCount} map${successCount === 1 ? "" : "s"}.`;
         context.emit("completed", successCount);
       }
+
+      const errorMessages: string[] = [];
       if (errorCount > 0) {
-        error.value = `${errorCount} map${errorCount === 1 ? "" : "s"} could not be selected. See the table for details.`;
+        errorMessages.push(`${errorCount} map${errorCount === 1 ? "" : "s"} could not be selected. See the table for details.`);
+      }
+      if (reloadErrorMessage) {
+        errorMessages.push(reloadErrorMessage);
+      }
+      if (errorMessages.length > 0) {
+        error.value = errorMessages.join(" ");
       }
     }
 

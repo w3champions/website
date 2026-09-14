@@ -89,6 +89,18 @@
               class="text-medium-emphasis flex-grow-0 ml-md-4"
               color="primary"
             />
+            <!-- Self-provided maps are hidden by default: there can be a lot of
+                 them and they are not part of the curated catalogue. -->
+            <v-checkbox
+              v-model="includeTemporary"
+              label="Show temporary maps"
+              hide-details
+              density="compact"
+              :disabled="loadingTemporary"
+              class="text-medium-emphasis flex-grow-0 ml-md-4"
+              color="primary"
+              @update:model-value="onIncludeTemporaryChanged"
+            />
           </v-col>
         </v-row>
         <v-data-table
@@ -102,7 +114,7 @@
           :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
         >
           <template v-slot:[`item.disabled`]="{ item }">
-            <div class="d-flex align-center ga-1">
+            <div class="d-flex align-center ga-1 flex-wrap">
               <!-- variant="flat" so the chip keeps its solid colour and on-colour text;
                    the default tonal variant washes out on the light themes. -->
               <v-tooltip
@@ -114,6 +126,20 @@
                 <template v-slot:activator="{ props }">
                   <v-chip v-bind="props" size="small" variant="flat" :color="mapStatus(item).color">
                     {{ mapStatus(item).label }}
+                  </v-chip>
+                </template>
+              </v-tooltip>
+              <!-- A self-provided map is not part of the catalogue; the chip
+                   carries its file state and when it was last played. -->
+              <v-tooltip
+                v-if="item.temporary"
+                location="top"
+                content-class="w3-tooltip elevation-1"
+                :text="temporaryTooltip(item)"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-chip v-bind="props" size="small" variant="flat" color="warning">
+                    {{ item.fileState === "deleted" ? "Temporary (file deleted)" : "Temporary" }}
                   </v-chip>
                 </template>
               </v-tooltip>
@@ -133,7 +159,7 @@
                       :icon="item.disabled ? mdiEyeOutline : mdiEyeOffOutline"
                       :color="item.disabled ? 'success' : undefined"
                       :loading="togglingMapId === item.id"
-                      :disabled="togglingMapId !== null || isLockedByLadder(item)"
+                      :disabled="togglingMapId !== null || isLockedByLadder(item) || isReadOnly(item)"
                       variant="text"
                       size="small"
                       :aria-label="toggleTooltip(item)"
@@ -148,32 +174,40 @@
             <span v-if="getMapPath(item)">{{ getMapPath(item) }}</span>
             <span v-else class="text-medium-emphasis">No file selected</span>
           </template>
+          <template v-slot:[`item.uploader`]="{ item }">
+            <span v-if="item.uploader">{{ item.uploader }}</span>
+            <span v-else class="text-medium-emphasis">Unknown</span>
+          </template>
           <template v-slot:[`item.actions`]="{ item, internalItem, isExpanded, toggleExpand }">
             <div class="d-flex align-center">
-              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Edit map">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    v-bind="props"
-                    :icon="mdiPencil"
-                    variant="text"
-                    size="small"
-                    aria-label="Edit map"
-                    @click="configureMap(item)"
-                  />
-                </template>
-              </v-tooltip>
-              <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Manage map files">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    v-bind="props"
-                    :icon="mdiFile"
-                    variant="text"
-                    size="small"
-                    aria-label="Manage map files"
-                    @click="configureMapFiles(item)"
-                  />
-                </template>
-              </v-tooltip>
+              <!-- The matchmaking service rejects PUT /maps/:id for a temporary
+                   map, and its file is owned by the uploader, not by an admin. -->
+              <template v-if="!isReadOnly(item)">
+                <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Edit map">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      v-bind="props"
+                      :icon="mdiPencil"
+                      variant="text"
+                      size="small"
+                      aria-label="Edit map"
+                      @click="configureMap(item)"
+                    />
+                  </template>
+                </v-tooltip>
+                <v-tooltip location="top" content-class="w3-tooltip elevation-1" text="Manage map files">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      v-bind="props"
+                      :icon="mdiFile"
+                      variant="text"
+                      size="small"
+                      aria-label="Manage map files"
+                      @click="configureMapFiles(item)"
+                    />
+                  </template>
+                </v-tooltip>
+              </template>
               <!-- Rendered here rather than through show-expand, which puts its
                    toggle in a column of its own, detached from the other actions. -->
               <v-tooltip
@@ -259,6 +293,12 @@ export default defineComponent({
     const snackbarText = ref<string>("");
     const snackbarColor = ref<string>("success");
     const togglingMapId = ref<number | null>(null);
+    // A local mirror so the checkbox can be reverted when the reload it triggers
+    // fails; the store stays the source of truth for what the table is showing.
+    const includeTemporary = ref<boolean>(mapsManagementStore.includeTemporary);
+    // Guards against an out-of-order reload leaving the checkbox and the table
+    // disagreeing while its own toggle is still in flight.
+    const loadingTemporary = ref<boolean>(false);
 
     const maps = computed<Map[]>(() => {
       const filters = adminMapsFilters.value;
@@ -313,9 +353,44 @@ export default defineComponent({
       return !map.disabled && ladderModes(map).length > 0;
     }
 
+    // Everything about a temporary map - its metadata, its file, its lifetime -
+    // is owned by the uploader and the expiry sweep, so the admin page shows it
+    // and nothing more. PUT /maps/:id returns 400 for a temporary id.
+    function isReadOnly(map: Map): boolean {
+      return map.temporary === true;
+    }
+
     function toggleTooltip(map: Map): string {
+      if (isReadOnly(map)) return "Temporary maps can't be edited";
       if (isLockedByLadder(map)) return "Can't disable a map that is in an active ladder pool";
       return map.disabled ? "Enable map" : "Disable map";
+    }
+
+    function formatDate(epochMs: number): string {
+      return new Date(epochMs).toLocaleString();
+    }
+
+    function temporaryTooltip(map: Map): string {
+      const file = map.fileState === "deleted"
+        ? "its file has expired and been deleted"
+        : "its file is stored";
+      const hosted = map.lastHostedAt
+        ? `last hosted ${formatDate(map.lastHostedAt)}`
+        : "never hosted";
+      return `Self-provided map: ${file}; ${hosted}.`;
+    }
+
+    // VCheckbox emits `unknown` on @update:model-value, not `boolean | null`.
+    async function onIncludeTemporaryChanged(value: unknown): Promise<void> {
+      loadingTemporary.value = true;
+      try {
+        await mapsManagementStore.setIncludeTemporary(value === true);
+      } catch (err) {
+        includeTemporary.value = mapsManagementStore.includeTemporary;
+        showSnackbar(err instanceof Error ? err.message : "Error trying to load maps.", "error");
+      } finally {
+        loadingTemporary.value = false;
+      }
     }
 
     const categories = computed<string[]>(() =>
@@ -452,7 +527,13 @@ export default defineComponent({
 
     async function init(): Promise<void> {
       if (!isAdmin.value) return;
-      await Promise.all([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      // allSettled rather than all: a failed maps load must not hide whatever
+      // loadActiveGameModes() found, and vice versa.
+      const [mapsResult] = await Promise.allSettled([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      if (mapsResult.status === "rejected") {
+        const err = mapsResult.reason;
+        showSnackbar(err instanceof Error ? err.message : "Error trying to load maps.", "error");
+      }
     }
 
     onMounted(async (): Promise<void> => {
@@ -465,6 +546,7 @@ export default defineComponent({
       { title: "ID", value: "id", sortable: true, width: 80 },
       { title: "Map name", value: "name", sortable: true, width: 220 },
       { title: "Category", value: "category", sortable: true, width: 150 },
+      { title: "Uploader", value: "uploader", sortable: true, width: 170 },
       { title: "Status", value: "disabled", sortable: true, width: 160 },
       { title: "File", value: "path", sortable: false },
       { title: "Actions", value: "actions", sortable: false, width: 150, nowrap: true },
@@ -487,6 +569,11 @@ export default defineComponent({
       toggleTooltip,
       togglingMapId,
       toggleMapDisabled,
+      includeTemporary,
+      loadingTemporary,
+      onIncludeTemporaryChanged,
+      isReadOnly,
+      temporaryTooltip,
       headers,
       addMap,
       isEditOpen,
@@ -521,7 +608,7 @@ export default defineComponent({
 // differently open than closed. Fixed layout pins the widths from the headers.
 .maps-table :deep(table) {
   table-layout: fixed;
-  min-width: 900px;
+  min-width: 1070px;
 }
 
 .maps-table :deep(td) {
