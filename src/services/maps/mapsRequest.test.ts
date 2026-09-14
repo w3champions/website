@@ -99,6 +99,16 @@ test("the matchmaking validation envelope is joined into one sentence", () => {
   assert.equal(error.message, "name is required, maxTeams must be >= 1");
 });
 
+test("website-backend's { error } and update-service's { message } bodies are read too", () => {
+  // { error } is website-backend's ErrorResult (its global exception filter);
+  // { message } is update-service's own error body.
+  assert.equal(errorFromBody({ error: "Matchmaking service unavailable" }, 502).message, "Matchmaking service unavailable");
+  assert.equal(errorFromBody({ message: "File already exists" }, 409).message, "File already exists");
+  // Blank text says nothing, so the status is named instead.
+  assert.equal(errorFromBody({ error: "  " }, 502).message, "Request failed with status 502.");
+  assert.equal(errorFromBody({ message: "" }, 409).message, "Request failed with status 409.");
+});
+
 test("a body nobody recognises still names the status", () => {
   assert.equal(errorFromBody({ unexpected: true }, 502).message, "Request failed with status 502.");
   assert.equal(errorFromBody("   ", 500).message, "Request failed with status 500.");

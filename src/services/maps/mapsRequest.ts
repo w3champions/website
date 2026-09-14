@@ -67,22 +67,45 @@ export function toMapWriteContract(map: Map): MapWriteContract {
 /**
  * Reads a usable message out of an error body.
  *
- * The backend returns either a bare string - its own HttpRequestException
- * message, which already carries the update or matchmaking service's words,
- * including update-service's 409 "File already exists" - or the raw
- * { errors: [{ msg }] } envelope. Passing the parsed body to new Error() yields
- * "[object Object]", so pull a readable message out of both shapes.
+ * Passing a parsed body to new Error() yields "[object Object]", so the first
+ * of these shapes that carries non-blank text wins:
+ *
+ * 1. A bare string. website-backend's maps controller answers a failed
+ *    upstream call with the HttpRequestException's message as the body, and
+ *    that message already carries the update or matchmaking service's words
+ *    (for example update-service's 409 "File already exists").
+ * 2. `{ errors: [{ msg }] }` - matchmaking-service's validation envelope, when
+ *    website-backend relays matchmaking's response body as that message.
+ * 3. `{ error }` - website-backend's `ErrorResult`, which its global
+ *    HttpRequestExceptionFilter writes for an HttpRequestException that a
+ *    controller does not catch itself.
+ * 4. `{ message }` - update-service's own error body, should one reach the
+ *    browser without website-backend unwrapping it first.
+ *
+ * Anything else falls back to naming the status.
  */
 export function errorFromBody(body: unknown, status: number): Error {
   const fallback = `Request failed with status ${status}.`;
 
   if (typeof body === "string" && body.trim()) return new Error(body);
 
-  const errors = (body as { errors?: { msg?: string }[] })?.errors;
+  const shaped = body as { errors?: { msg?: string }[]; error?: unknown; message?: unknown } | null | undefined;
+
+  const errors = shaped?.errors;
   if (Array.isArray(errors)) {
     const messages = errors.map((error) => error?.msg).filter((msg): msg is string => !!msg);
     if (messages.length) return new Error(messages.join(", "));
   }
 
+  const error = shaped?.error;
+  if (isNonBlankString(error)) return new Error(error);
+
+  const message = shaped?.message;
+  if (isNonBlankString(message)) return new Error(message);
+
   return new Error(fallback);
+}
+
+function isNonBlankString(value: unknown): value is string {
+  return typeof value === "string" && value.trim() !== "";
 }
