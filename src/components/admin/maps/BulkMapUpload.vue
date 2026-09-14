@@ -259,6 +259,9 @@ interface BulkRow {
   mapFileData?: MapFileData;
 }
 
+// The part of a row that says which map its file goes to.
+type RowTarget = Pick<BulkRow, "mapId" | "map" | "currentFileName" | "status" | "message">;
+
 export default defineComponent({
   name: "BulkMapUpload",
   components: { MapFileDropZone },
@@ -350,24 +353,11 @@ export default defineComponent({
     }
 
     function assignMap(row: BulkRow, mapId: number | null): void {
-      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
-      if (!map) return;
+      if (mapId === null) return;
 
-      if (isTemporaryMap(map)) {
-        row.mapId = map.id;
-        row.map = undefined;
-        row.currentFileName = "";
-        row.status = "unknown-map";
-        row.message = `Map ${map.id} is a temporary map; its file belongs to the uploader.`;
-        return;
-      }
-
-      row.mapId = map.id;
-      row.map = map;
-      row.currentFileName = mapFileName(map.gameMap?.path);
-      row.status = "ready";
-      row.message = undefined;
-      void loadStoredNames(map.id);
+      const target = targetFor(mapId);
+      Object.assign(row, target);
+      if (target.mapId !== null) void loadStoredNames(target.mapId);
     }
 
     function extractMapIdFromFilename(filename: string): number | null {
@@ -379,50 +369,35 @@ export default defineComponent({
       return null;
     }
 
+    // A row with no map to go to. Its id, when the filename had one, is named only
+    // in the message: `mapId` stays null so the row neither looks up stored names
+    // nor counts toward the same-map warning, both of which are about real targets.
+    function noTarget(status: "invalid-name" | "unknown-map", message: string): RowTarget {
+      return { mapId: null, map: undefined, currentFileName: "", status, message };
+    }
+
+    // Where a file aimed at this map id goes - shared by filename detection and
+    // the "Pick a map" fix, so both treat an unknown or temporary map the same.
+    function targetFor(mapId: number): RowTarget {
+      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
+      if (!map) return noTarget("unknown-map", `Map with ID ${mapId} does not exist`);
+      if (isTemporaryMap(map)) return noTarget("unknown-map", `Map ${mapId} is a temporary map; its file belongs to the uploader.`);
+      return { mapId, map, currentFileName: mapFileName(map.gameMap?.path), status: "ready", message: undefined };
+    }
+
     // Detection runs as soon as files are picked, so problems (bad filename, unknown
     // map id) and the map each file will overwrite are visible before uploading.
     function detectRow(file: File, index: number): BulkRow {
       const mapId = extractMapIdFromFilename(file.name);
-      if (mapId === null) {
-        return {
-          key: `${index}-${file.name}`,
-          file,
-          fileName: file.name,
-          mapId: null,
-          currentFileName: "",
-          storeAs: file.name,
-          percent: 0,
-          status: "invalid-name",
-          message: "Expected {map_id}_{name}.w3m or {map_id}_{name}.w3x",
-        };
-      }
-
-      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
-      if (map && isTemporaryMap(map)) {
-        return {
-          key: `${index}-${file.name}`,
-          file,
-          fileName: file.name,
-          mapId,
-          currentFileName: "",
-          storeAs: file.name,
-          percent: 0,
-          status: "unknown-map",
-          message: `Map ${mapId} is a temporary map; its file belongs to the uploader.`,
-        };
-      }
-
       return {
         key: `${index}-${file.name}`,
         file,
         fileName: file.name,
-        mapId,
-        map,
-        currentFileName: mapFileName(map?.gameMap?.path),
         storeAs: file.name,
         percent: 0,
-        status: map ? "ready" : "unknown-map",
-        message: map ? undefined : `Map with ID ${mapId} does not exist`,
+        ...(mapId === null
+          ? noTarget("invalid-name", "Expected {map_id}_{name}.w3m or {map_id}_{name}.w3x")
+          : targetFor(mapId)),
       };
     }
 
