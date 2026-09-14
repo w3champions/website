@@ -110,7 +110,8 @@ test("website-backend's { error } and update-service's { message } bodies are re
 });
 
 test("an error body is parsed when it is JSON and kept as text when it is not", () => {
-  assert.deepEqual(parseErrorBody('{"errors":[{"msg":"name is required"}]}'), { errors: [{ msg: "name is required" }] });
+  const envelope = { errors: [{ msg: "name is required" }] };
+  assert.deepEqual(parseErrorBody(JSON.stringify(envelope)), envelope);
   assert.equal(parseErrorBody("File already exists"), "File already exists");
   assert.equal(parseErrorBody(""), undefined);
   assert.equal(parseErrorBody(" \n "), undefined);
