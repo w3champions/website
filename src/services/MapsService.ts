@@ -1,4 +1,5 @@
 import { API_URL, LAUNCHER_UPDATE_URL } from "@/config/env";
+import { buildMapsQuery, toMapWriteContract } from "@/services/maps/mapsRequest";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 
 export default class MapsService {
@@ -31,10 +32,10 @@ export default class MapsService {
     return new Error(fallback);
   }
 
-  public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
-    const filterParam = filter ? `&filter=${filter}` : "";
+  public static async getAllMaps(token: string, filter?: string, includeTemporary?: boolean): Promise<GetMapsResponse> {
+    const query = buildMapsQuery(filter, includeTemporary);
 
-    const url = `${API_URL}api/maps?${filterParam}`;
+    const url = `${API_URL}api/maps${query ? `?${query}` : ""}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -44,13 +45,16 @@ export default class MapsService {
       },
     });
 
+    if (!response.ok) {
+      throw await MapsService.errorFromResponse(response);
+    }
     return await response.json();
   }
 
   public static async createMap(token: string, map: Map): Promise<Map> {
     const url = `${API_URL}api/maps`;
 
-    const data = JSON.stringify(map);
+    const data = JSON.stringify(toMapWriteContract(map));
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -70,7 +74,7 @@ export default class MapsService {
   public static async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
     const url = `${API_URL}api/maps/${mapId}`;
 
-    const data = JSON.stringify(map);
+    const data = JSON.stringify(toMapWriteContract(map));
     const response = await fetch(url, {
       method: "PUT",
       headers: {
