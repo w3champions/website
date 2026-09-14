@@ -181,7 +181,11 @@
               </v-col>
             </v-row>
 
-            <div class="text-caption text-medium-emphasis mt-2">
+            <!-- A fixable row (bad filename, or a target that turned out unknown or
+                 temporary) has no confirmed map to report a file for - showing
+                 "no file yet" there would contradict a temporary target's own
+                 message, which says its file belongs to the uploader. -->
+            <div v-if="!isFixable(row)" class="text-caption text-medium-emphasis mt-2">
               <template v-if="row.currentFileName">Current file: {{ row.currentFileName }}</template>
               <template v-else>This map has no file yet</template>
             </div>
@@ -226,6 +230,7 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import { isTemporaryMap } from "@/services/maps/mapsRequest";
 import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiFileQuestionOutline, mdiProgressUpload } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
 import { mapFileName } from "./mapFilePath";
@@ -332,12 +337,6 @@ export default defineComponent({
       }
       return Object.keys(counts).filter((name) => counts[name] > 1);
     });
-
-    // A temporary map's file belongs to its uploader, not to a bulk admin
-    // upload, and the matchmaking service rejects PUT /maps/:id for it anyway.
-    function isTemporaryMap(map: Map): boolean {
-      return map.temporary === true;
-    }
 
     const mapOptions = computed(() =>
       [...mapsManagementStore.maps]

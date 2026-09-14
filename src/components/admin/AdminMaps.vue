@@ -255,6 +255,7 @@ import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
+import { isTemporaryMap } from "@/services/maps/mapsRequest";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { loadActiveGameModes } from "@/composables/GameModesMixin";
@@ -353,11 +354,10 @@ export default defineComponent({
       return !map.disabled && ladderModes(map).length > 0;
     }
 
-    // Everything about a temporary map - its metadata, its file, its lifetime -
-    // is owned by the uploader and the expiry sweep, so the admin page shows it
-    // and nothing more. PUT /maps/:id returns 400 for a temporary id.
+    // Named for what it means on this page - a temporary map's row is shown
+    // and nothing more - over the shared `isTemporaryMap` it wraps.
     function isReadOnly(map: Map): boolean {
-      return map.temporary === true;
+      return isTemporaryMap(map);
     }
 
     function toggleTooltip(map: Map): string {
@@ -528,11 +528,23 @@ export default defineComponent({
     async function init(): Promise<void> {
       if (!isAdmin.value) return;
       // allSettled rather than all: a failed maps load must not hide whatever
-      // loadActiveGameModes() found, and vice versa.
-      const [mapsResult] = await Promise.allSettled([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      // loadActiveGameModes() found, and vice versa - both failures are
+      // reported, since a silently stale activeModes list would leave
+      // isLockedByLadder() guarding against data that is no longer current.
+      const [mapsResult, gameModesResult] = await Promise.allSettled([
+        mapsManagementStore.loadMaps(),
+        loadActiveGameModes(),
+      ]);
+      const errors: string[] = [];
       if (mapsResult.status === "rejected") {
         const err = mapsResult.reason;
-        showSnackbar(err instanceof Error ? err.message : "Error trying to load maps.", "error");
+        errors.push(err instanceof Error ? err.message : "Error trying to load maps.");
+      }
+      if (gameModesResult.status === "rejected") {
+        errors.push("Error trying to load active game modes.");
+      }
+      if (errors.length > 0) {
+        showSnackbar(errors.join(" "), "error");
       }
     }
 

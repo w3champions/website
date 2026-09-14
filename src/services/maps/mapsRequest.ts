@@ -1,13 +1,26 @@
 import type { GameMap, Map, MapForce } from "@/store/admin/mapsManagement/types";
 
 /**
- * Pure request/response helpers for the admin maps API.
+ * Pure request/response helpers for the admin maps API, plus small shared
+ * predicates over the `Map` shape they read and write.
  *
  * They live outside MapsService because `@/config/env` reads `window` at module
  * load, so anything importing MapsService cannot be imported by the Vitest
  * suites (they run in the "node" environment). Same reasoning as
  * `AdminJobService`, which takes its endpoint instead of importing API_URL.
  */
+
+/**
+ * Whether a map is temporary (self-provided): its metadata, file and lifetime
+ * are owned by the uploader and the expiry sweep, not by an admin, and
+ * `PUT api/maps/:id` rejects it outright. The one-line check has two call
+ * sites (`AdminMaps.vue`, `BulkMapUpload.vue`); it lives here, rather than
+ * being re-spelled in both, so a future second condition only needs changing
+ * once.
+ */
+export function isTemporaryMap(map: Map): boolean {
+  return map.temporary === true;
+}
 
 /** Query string for `GET api/maps`, without the leading "?". */
 export function buildMapsQuery(filter?: string, includeTemporary?: boolean): string {
