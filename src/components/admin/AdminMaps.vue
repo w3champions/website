@@ -18,7 +18,7 @@
             :isAddDialog="isAddDialog"
             :categories="categories"
             @cancel="closeEdit"
-            @save="saveMap"
+            @save="saveMap($event)"
           />
         </v-dialog>
 
@@ -451,8 +451,9 @@ export default defineComponent({
       isBulkUploadOpen.value = false;
     }
 
-    // The dialog stays open so its per-file confirmation remains visible; it already
-    // reloaded the maps, so the table behind it is up to date.
+    // The dialog stays open so its per-file confirmation remains visible. It has
+    // already tried to reload the maps; a failed refresh is reported inside the
+    // dialog, so the table behind it may lag until the next action.
     function handleBulkUploadCompleted(count: number): void {
       showSnackbar(`Successfully selected ${count} map${count === 1 ? "" : "s"}!`, "success");
     }
@@ -463,20 +464,40 @@ export default defineComponent({
       snackbar.value = true;
     }
 
-    async function saveMap(map: Map): Promise<boolean> {
+    // Runs once a write has landed, so a failed refresh is reported as exactly
+    // that - never as a failed write - and next to the write's confirmation rather
+    // than instead of it. One snackbar either way, since it has a single slot.
+    // Same split as BulkMapUpload's selectAll.
+    async function reloadAfterWrite(confirmation?: string): Promise<void> {
+      try {
+        await mapsManagementStore.loadMaps();
+      } catch (err) {
+        const refreshError = err instanceof Error
+          ? `The maps table could not be refreshed: ${err.message}`
+          : "The maps table could not be refreshed.";
+        showSnackbar(confirmation ? `${confirmation} ${refreshError}` : refreshError, "warning");
+        return;
+      }
+      if (confirmation) {
+        showSnackbar(confirmation, "success");
+      }
+    }
+
+    // `confirmation` is shown once the write lands. The edit dialog passes none:
+    // the dialog closing already says the save worked.
+    async function saveMap(map: Map, confirmation?: string): Promise<void> {
       try {
         if (isAddDialog.value) {
           await mapsManagementStore.createMap(map);
         } else {
           await mapsManagementStore.updateMap(map);
         }
-        closeEdit();
-        await mapsManagementStore.loadMaps();
-        return true;
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
-        return false;
+        return;
       }
+      closeEdit();
+      await reloadAfterWrite(confirmation);
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
@@ -486,9 +507,7 @@ export default defineComponent({
       map.gameMap = file.metaData;
       map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;
 
-      if (await saveMap(map)) {
-        showSnackbar(`Selected ${getMapPath(map)} for ${map.name}.`, "success");
-      }
+      await saveMap(map, `Selected ${getMapPath(map)} for ${map.name}.`);
       closeEditFiles();
     }
 
@@ -498,13 +517,15 @@ export default defineComponent({
       togglingMapId.value = map.id;
       try {
         await mapsManagementStore.updateMap({ ...map, disabled: !map.disabled });
-        await mapsManagementStore.loadMaps();
-        showSnackbar(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, "success");
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to update map.", "error");
-      } finally {
         togglingMapId.value = null;
+        return;
       }
+      // Still held while the table refreshes, so no row is toggled from a stale
+      // value. reloadAfterWrite reports its own failure and never rejects.
+      await reloadAfterWrite(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`);
+      togglingMapId.value = null;
     }
 
     function createDefaultMap(): Map {
