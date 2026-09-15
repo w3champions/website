@@ -264,9 +264,9 @@ export default defineComponent({
       possibleHeroPicks.slice(0, 2),
       possibleHeroPicks.slice(2, 6),
       possibleHeroPicks.slice(6, 10),
-      possibleHeroPicks.slice(10, 15),
-      possibleHeroPicks.slice(15, 19),
-      possibleHeroPicks.slice(19, 23),
+      possibleHeroPicks.slice(10, 14),
+      possibleHeroPicks.slice(14, 18),
+      possibleHeroPicks.slice(18, 23),
       possibleHeroPicks.slice(23, 27),
     ];
 
