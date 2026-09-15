@@ -9,6 +9,7 @@
       <img
         class="hero-img"
         :src="heroSrc(hero)"
+        @error="onImageError"
         :width="props.size"
         :height="props.size"
         :data-tip="tooltipText(hero)"
@@ -50,6 +51,11 @@ function tooltipText(hero: Hero): string {
 
 function isHighlighted(hero: Hero): boolean {
   return props.selectedHeroes.includes(hero.id ?? -1);
+}
+
+function onImageError(e: Event) {
+  const target = e.target as HTMLImageElement;
+  target.src = getAsset("heroes/all.png");
 }
 </script>
 

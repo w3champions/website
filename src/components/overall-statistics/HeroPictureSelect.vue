@@ -253,6 +253,7 @@ export default defineComponent({
       { name: t("heroNames.seawitch").toString(), heroId: "seawitch", race: ERaceEnum.RANDOM },
       { name: t("heroNames.tinker").toString(), heroId: "tinker", race: ERaceEnum.RANDOM },
       { name: t("heroNames.alchemist").toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
+      { name: t("heroNames.forsakenpaladin").toString(), heroId: "forsakenpaladin", race: ERaceEnum.RANDOM },
     ];
 
     const heroPickById = Object.fromEntries(
@@ -263,10 +264,10 @@ export default defineComponent({
       possibleHeroPicks.slice(0, 2),
       possibleHeroPicks.slice(2, 6),
       possibleHeroPicks.slice(6, 10),
-      possibleHeroPicks.slice(10, 14),
-      possibleHeroPicks.slice(14, 18),
-      possibleHeroPicks.slice(18, 22),
-      possibleHeroPicks.slice(22, 26),
+      possibleHeroPicks.slice(10, 15),
+      possibleHeroPicks.slice(15, 19),
+      possibleHeroPicks.slice(19, 23),
+      possibleHeroPicks.slice(23, 27),
     ];
 
     return {

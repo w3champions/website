@@ -15,13 +15,14 @@
         v-bind="props"
       >
         <v-icon v-if="isAllHeroesSelected" size="x-large" start>{{ mdiDramaMasks }}</v-icon>
-        <v-img
+        <img
           v-else
           :src="selectedHeroIcon"
           :alt="selectedText"
           width="28"
-          aspect-ratio="1"
+          height="28"
           class="hero-select-button-icon"
+          @error="onImageError"
         />
         {{ selectedText }}
       </v-btn>
@@ -32,13 +33,14 @@
         v-bind="props"
       >
         <v-icon v-if="isAllHeroesSelected" size="x-large" start>{{ mdiDramaMasks }}</v-icon>
-        <v-img
+        <img
           v-else
           :src="selectedHeroIcon"
           :alt="selectedText"
           width="28"
-          aspect-ratio="1"
+          height="28"
           class="hero-select-button-icon"
+          @error="onImageError"
         />
         {{ selectedText }}
       </v-btn>
@@ -57,13 +59,14 @@
               <span v-if="hero.name === 'allfilter'" class="hero-select-icon hero-select-icon--default">
                 <v-icon size="28">{{ mdiDramaMasks }}</v-icon>
               </span>
-              <v-img
+              <img
                 v-else
                 :src="getHeroIcon(hero)"
                 :alt="$t(`heroNames.${hero.name}`)"
                 width="28"
-                aspect-ratio="1"
+                height="28"
                 class="hero-select-icon"
+                @error="onImageError"
               />
             </template>
             <v-list-item-title>{{ $t(`heroNames.${hero.name}`) }}</v-list-item-title>
@@ -143,6 +146,11 @@ const getHeroIcon = (hero: HeroFilter): string => {
 
 const getHeroIconName = (heroName: string): string => {
   return heroName === "allfilter" ? "all" : heroName;
+};
+
+const onImageError = (e: Event) => {
+  const target = e.target as HTMLImageElement;
+  target.src = getAsset("heroes/all.png");
 };
 </script>
 

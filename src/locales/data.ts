@@ -585,6 +585,7 @@ const data = {
       taurenchieftain: "Tauren Chieftain",
       tinker: "Goblin Tinker",
       warden: "Warden",
+      forsakenpaladin: "Forsaken Paladin",
     },
     matchStatuses: {
       onGoing: "Now Playing",
