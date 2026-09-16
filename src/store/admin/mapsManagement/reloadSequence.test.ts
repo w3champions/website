@@ -110,3 +110,32 @@ test("a load that was never started, or has already settled, changes nothing", (
   assert.deepEqual(reloads.landed(load), { apply: false, includeTemporary: true });
   assert.deepEqual(reloads.failed(99), { report: false, includeTemporary: true });
 });
+
+test("the opt-in has landed, then a later reload with the same flag fails: reported, and the flag stays on", () => {
+  // The rows on screen were fetched with the flag on, so there is nothing to
+  // revert: the failure belongs to the save's refresh and its caller reports it.
+  const reloads = showingPermanentRows();
+  const optIn = reloads.start(true);
+  assert.deepEqual(reloads.landed(optIn), { apply: true, includeTemporary: true });
+
+  const save = reloads.start(true);
+
+  // With nothing left in flight, the returned flag is the shown rows' flag.
+  assert.deepEqual(reloads.failed(save), { report: true, includeTemporary: true });
+});
+
+test("an untick while an earlier save reload is still in flight: its late response is discarded, the flag stays off", () => {
+  // Tick, the opt-in lands, a save starts a reload with the flag on, then the
+  // admin unticks: that reload (flag off) lands first and is applied. The save's
+  // response, temporary maps included, lands last and must not replace it.
+  const reloads = showingPermanentRows();
+  const optIn = reloads.start(true);
+  assert.deepEqual(reloads.landed(optIn), { apply: true, includeTemporary: true });
+
+  const save = reloads.start(true);
+  const optOut = reloads.start(false);
+
+  assert.deepEqual(reloads.landed(optOut), { apply: true, includeTemporary: false });
+  // With nothing left in flight, the returned flag is the shown rows' flag.
+  assert.deepEqual(reloads.landed(save), { apply: false, includeTemporary: false });
+});
