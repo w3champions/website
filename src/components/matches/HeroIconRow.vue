@@ -9,13 +9,13 @@
       <img
         class="hero-img"
         :src="heroSrc(hero)"
-        @error="onImageError"
         :width="props.size"
         :height="props.size"
         :data-tip="tooltipText(hero)"
         loading="lazy"
         decoding="async"
         alt=""
+        @error="onImageError"
       />
     </span>
   </div>

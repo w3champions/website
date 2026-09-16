@@ -35,7 +35,7 @@
           >
             <v-tooltip location="top" content-class="w3-tooltip elevation-1">
               <template v-slot:activator="{ props }">
-                <div class="ma-1" v-bind="props">
+                <div v-bind="props" class="ma-1">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
                       :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
