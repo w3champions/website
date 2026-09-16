@@ -1,23 +1,15 @@
 import type { AdminMapsState, GetMapsResponse, Map, MapFileData } from "./types";
+import { ReloadSequence } from "./reloadSequence";
 import { useOauthStore } from "@/store/oauth/store";
 import MapsService from "@/services/MapsService";
 import { defineStore } from "pinia";
 
 // Reloads overlap - the page's first load, the refresh after a save, an
 // enable/disable or a bulk selection, and the "Show temporary maps" opt-in can
-// all be in flight at once - and their responses can land in any order. Plain
-// counters, not state: nothing renders them.
-//
-// `latestLoad` is bumped when a load starts, and only that newest load reports a
-// failure. An older load's failure is moot because the newer load refreshes the
-// table and reports its own outcome; rejecting would also let
-// setIncludeTemporary roll the flag back under a load already using it.
-//
-// `shownLoad` is the load whose response the table holds. Every response is the
-// same list, so an older one still lands while nothing newer has, but it never
-// replaces a newer one: the table only moves forward.
-let latestLoad = 0;
-let shownLoad = 0;
+// all be in flight at once - and their responses can land in any order. The
+// ordering rules live in ReloadSequence; loadMaps applies what it decides. A
+// plain module value, not state: nothing renders it.
+const reloads = new ReloadSequence();
 
 export const useMapsManagementStore = defineStore("mapsManagement", {
   state: (): AdminMapsState => ({
@@ -34,33 +26,35 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
   actions: {
     // Rejects only while it is the newest load. A load superseded by a later one
     // resolves even if its own request failed: the later load reports instead.
+    // Either way `includeTemporary` is left describing the rows on screen.
     async loadMaps(filter?: string) {
-      const load = ++latestLoad;
+      // Read once: the rows a load returns describe the flag it was fetched
+      // with, whatever the store says by the time they land.
+      const includeTemporary = this.includeTemporary;
+      const load = reloads.start(includeTemporary);
+      let searchMapsResponse: GetMapsResponse;
       try {
         const oauthStore = useOauthStore();
-        const searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter, this.includeTemporary);
-        if (load < shownLoad) return;
-        shownLoad = load;
-        this.SET_MAPS(searchMapsResponse);
-        this.SET_FILTER(filter);
+        searchMapsResponse = await MapsService.getAllMaps(oauthStore.token, filter, includeTemporary);
       } catch (err) {
-        if (load !== latestLoad) return;
+        const outcome = reloads.failed(load);
+        this.SET_INCLUDE_TEMPORARY(outcome.includeTemporary);
+        if (!outcome.report) return;
         throw err;
       }
+      const outcome = reloads.landed(load);
+      this.SET_INCLUDE_TEMPORARY(outcome.includeTemporary);
+      if (!outcome.apply) return;
+      this.SET_MAPS(searchMapsResponse);
+      this.SET_FILTER(filter);
     },
+    // Flips the flag and reloads with it. Should that reload fail - or be
+    // superseded by a reload that inherited the flag and then fails - loadMaps
+    // reverts the flag to the shown rows' and the newest load's caller reports
+    // the failure; nothing to roll back here.
     async setIncludeTemporary(includeTemporary: boolean) {
-      const previous = this.includeTemporary;
       this.SET_INCLUDE_TEMPORARY(includeTemporary);
-      try {
-        await this.loadMaps(this.mapsFilter);
-      } catch (err) {
-        // Only the newest load rejects, so no reload started since - which would
-        // already be using the new flag - is undercut by this rollback. Leave the
-        // flag describing what is actually on screen, then let the page report
-        // the failure.
-        this.SET_INCLUDE_TEMPORARY(previous);
-        throw err;
-      }
+      await this.loadMaps(this.mapsFilter);
     },
     async createMap(map: Map) {
       const oauthStore = useOauthStore();

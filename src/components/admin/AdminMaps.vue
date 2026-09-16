@@ -90,9 +90,11 @@
               color="primary"
             />
             <!-- Self-provided maps are hidden by default: there can be a lot of
-                 them and they are not part of the curated catalogue. -->
+                 them and they are not part of the curated catalogue. Bound to
+                 the store's flag, not mirrored: the store rolls it back when the
+                 reload behind it fails, and the checkbox has to show that. -->
             <v-checkbox
-              v-model="includeTemporary"
+              :model-value="includeTemporary"
               label="Show temporary maps"
               hide-details
               density="compact"
@@ -304,9 +306,9 @@ export default defineComponent({
     const snackbarText = ref<string>("");
     const snackbarColor = ref<string>("success");
     const togglingMapId = ref<number | null>(null);
-    // A local mirror so the checkbox can be reverted when the reload it triggers
-    // fails; the store stays the source of truth for what the table is showing.
-    const includeTemporary = ref<boolean>(mapsManagementStore.includeTemporary);
+    // The store's flag always describes the rows on screen (it reverts itself
+    // when a reload fails), so the checkbox reads it rather than keeping a copy.
+    const includeTemporary = computed<boolean>(() => mapsManagementStore.includeTemporary);
     // Guards against an out-of-order reload leaving the checkbox and the table
     // disagreeing while its own toggle is still in flight.
     const loadingTemporary = ref<boolean>(false);
@@ -391,12 +393,13 @@ export default defineComponent({
     }
 
     // VCheckbox emits `unknown` on @update:model-value, not `boolean | null`.
+    // On failure the store has already put the flag back; only the report is
+    // the page's.
     async function onIncludeTemporaryChanged(value: unknown): Promise<void> {
       loadingTemporary.value = true;
       try {
         await mapsManagementStore.setIncludeTemporary(value === true);
       } catch (err) {
-        includeTemporary.value = mapsManagementStore.includeTemporary;
         showSnackbar(err instanceof Error ? err.message : "Error trying to load maps.", "error");
       } finally {
         loadingTemporary.value = false;
