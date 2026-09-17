@@ -35,7 +35,7 @@
           >
             <v-tooltip location="top" content-class="w3-tooltip elevation-1">
               <template v-slot:activator="{ props }">
-                <div class="ma-1" v-bind="props">
+                <div v-bind="props" class="ma-1">
                   <v-responsive :aspect-ratio="1 / 1">
                     <div
                       :style="{ backgroundImage: 'url(' + parsePicture(heroPickSelection) + ')' }"
@@ -253,6 +253,7 @@ export default defineComponent({
       { name: t("heroNames.seawitch").toString(), heroId: "seawitch", race: ERaceEnum.RANDOM },
       { name: t("heroNames.tinker").toString(), heroId: "tinker", race: ERaceEnum.RANDOM },
       { name: t("heroNames.alchemist").toString(), heroId: "alchemist", race: ERaceEnum.RANDOM },
+      { name: t("heroNames.forsakenpaladin").toString(), heroId: "forsakenpaladin", race: ERaceEnum.RANDOM },
     ];
 
     const heroPickById = Object.fromEntries(
@@ -267,6 +268,7 @@ export default defineComponent({
       possibleHeroPicks.slice(14, 18),
       possibleHeroPicks.slice(18, 22),
       possibleHeroPicks.slice(22, 26),
+      possibleHeroPicks.slice(26),
     ];
 
     return {

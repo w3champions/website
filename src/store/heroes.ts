@@ -25,6 +25,7 @@ export enum EHeroes {
   TAUREN_CHEFTAIN = "taurenchieftain",
   TINKER = "tinker",
   WARDEN = "warden",
+  FORSAKEN_PALADIN = "forsakenpaladin",
 }
 
 export type HeroFilter = {
@@ -50,6 +51,9 @@ export const HERO_DATA: HeroData = {
   },
   [EHeroes.PALADIN]: {
     race: ERaceEnum.HUMAN,
+  },
+  [EHeroes.FORSAKEN_PALADIN]: {
+    race: ERaceEnum.UNDEAD,
   },
 
   [EHeroes.BLADEMASTER]: {

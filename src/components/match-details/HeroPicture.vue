@@ -1,7 +1,7 @@
 <template>
   <v-tooltip location="top" content-class="w3-tooltip elevation-1">
     <template v-slot:activator="{ props }">
-      <v-img :src="heroPicture" :width="size" :aspect-ratio="1 / 1" v-bind="props" />
+      <v-img v-bind="props" :src="heroPicture" :width="size" :aspect-ratio="1 / 1" @error="onImageError" />
     </template>
     <div>{{ heroName }} ({{ $t("common.level") }} {{ heroLevel }})</div>
   </v-tooltip>
@@ -36,9 +36,14 @@ export default defineComponent({
     const heroPicture = ref<string>(getAsset(`heroes/${props.heroIcon}.png`));
     const heroName = ref<string>(t(`heroNames.${props.heroIcon}`));
 
+    function onImageError() {
+      heroPicture.value = getAsset("heroes/all.png");
+    }
+
     return {
       heroPicture,
       heroName,
+      onImageError,
     };
   },
 });
