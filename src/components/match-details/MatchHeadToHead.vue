@@ -52,7 +52,7 @@
                       class="text-body-2 flex-grow-1 map-name"
                       :class="playerWonMatch(m) ? 'w3-won' : 'w3-lost'"
                     >
-                      {{ m.mapName || m.map }}
+                      {{ mapNameFromMatch(m) }}
                     </span>
                   </div>
                   <div class="match-meta">
@@ -103,6 +103,7 @@ import { Gateways } from "@/store/ranking/types";
 import { useRankingStore } from "@/store/ranking/store";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { formatDistanceToNow, parseJSON } from "date-fns";
+import { mapNameFromMatch } from "@/composables/MatchMixin";
 
 const MAX_DURATION_BAR = 1800;
 
@@ -382,6 +383,7 @@ export default defineComponent({
     });
 
     return {
+      mapNameFromMatch,
       loading,
       loadingMore,
       hasData,
