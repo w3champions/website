@@ -47,7 +47,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import type { GameMap } from "@/store/admin/mapsManagement/types";
-import Wc3Text from "./Wc3Text.vue";
+import Wc3Text from "@/components/common/Wc3Text.vue";
 
 interface Field {
   label: string;
