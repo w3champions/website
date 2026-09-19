@@ -27,7 +27,13 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     // Rejects only while it is the newest load. A load superseded by a later one
     // resolves even if its own request failed: the later load reports instead.
     // Either way `includeTemporary` is left describing the rows on screen.
-    async loadMaps(filter?: string) {
+    //
+    // Resolves to whether `maps` now holds the result of a completed load no
+    // older than this call. False says this load's own request failed and a
+    // newer load swallowed the report, so the rows are the ones from before it:
+    // a caller that reads them rather than just repainting them must not take
+    // that for a refresh (see `showsRowsNoOlderThan`).
+    async loadMaps(filter?: string): Promise<boolean> {
       // Read once: the rows a load returns describe the flag it was fetched
       // with, whatever the store says by the time they land.
       const includeTemporary = this.includeTemporary;
@@ -39,14 +45,18 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       } catch (err) {
         const outcome = reloads.failed(load);
         this.SET_INCLUDE_TEMPORARY(outcome.includeTemporary);
-        if (!outcome.report) return;
+        if (!outcome.report) return reloads.showsRowsNoOlderThan(load);
         throw err;
       }
       const outcome = reloads.landed(load);
       this.SET_INCLUDE_TEMPORARY(outcome.includeTemporary);
-      if (!outcome.apply) return;
+      // Overtaken, not lost: the rows that beat these ones to the table are the
+      // newer ones, so the table is still no older than this load - unless the
+      // page was reset while this was in flight, which forgets it entirely.
+      if (!outcome.apply) return reloads.showsRowsNoOlderThan(load);
       this.SET_MAPS(searchMapsResponse);
       this.SET_FILTER(filter);
+      return true;
     },
     // Flips the flag and reloads with it. Should that reload fail - or be
     // superseded by a reload that inherited the flag and then fails - loadMaps

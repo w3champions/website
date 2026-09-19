@@ -185,3 +185,49 @@ test("reset reverts shownFlag to the constructor's initial value, not just false
   const load = reloads.start(false);
   assert.deepEqual(reloads.failed(load), { report: true, includeTemporary: false });
 });
+
+// `showsRowsNoOlderThan` is what lets a caller that reads the rows - rather than
+// only repainting them - tell a load of its own from a load that resolved
+// without touching the table. The bulk upload run reads them: it builds each
+// whole-document map update from the map as it reads right now.
+
+test("a load that filled the table counts as no older than itself", () => {
+  const reloads = new ReloadSequence();
+  const load = reloads.start(false);
+
+  assert.equal(reloads.landed(load).apply, true);
+  assert.equal(reloads.showsRowsNoOlderThan(load), true);
+});
+
+test("a response overtaken by a newer one still leaves the table no older than it", () => {
+  const reloads = new ReloadSequence();
+  const older = reloads.start(false);
+  const newer = reloads.start(false);
+
+  assert.equal(reloads.landed(newer).apply, true);
+  // The older response is dropped, but the rows that beat it are newer still,
+  // so a caller of the older load may read them.
+  assert.equal(reloads.landed(older).apply, false);
+  assert.equal(reloads.showsRowsNoOlderThan(older), true);
+});
+
+test("a failure a newer load swallowed leaves the table older than the load that failed", () => {
+  const reloads = showingPermanentRows();
+  const failing = reloads.start(false);
+  reloads.start(false);
+
+  // Not reported - the newer load reports instead - and resolving silently is
+  // exactly why the caller has to be told the table is still the old one.
+  assert.equal(reloads.failed(failing).report, false);
+  assert.equal(reloads.showsRowsNoOlderThan(failing), false);
+});
+
+test("a load in flight across a reset never counts as having filled the table", () => {
+  const reloads = showingPermanentRows();
+  const stale = reloads.start(false);
+
+  reloads.reset();
+
+  assert.equal(reloads.landed(stale).apply, false);
+  assert.equal(reloads.showsRowsNoOlderThan(stale), false);
+});

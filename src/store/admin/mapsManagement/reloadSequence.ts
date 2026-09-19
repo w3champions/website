@@ -101,6 +101,24 @@ export class ReloadSequence {
     return { report, includeTemporary: this.currentFlag() };
   }
 
+  /**
+   * Whether the rows on screen came from a load no older than `id` - that is,
+   * whether `id`'s caller may read the table as the result of a completed load
+   * of its own, or of a later one. Ask it once `landed`/`failed` has settled
+   * the load.
+   *
+   * It exists because "the load resolved" is not "the maps are fresh": a load
+   * whose own request failed while a newer one was in flight resolves silently,
+   * the newer load having taken over reporting, and the table is then still
+   * showing what it showed before. A caller that *reads* the rows rather than
+   * just repainting them - the bulk upload run builds each map update from the
+   * map as it reads right now - has to be able to tell that apart from a read
+   * of its own. This only reports on the ordering above; it decides nothing.
+   */
+  showsRowsNoOlderThan(id: number): boolean {
+    return this.shown >= id;
+  }
+
   /** The newest load's flag while it is in flight, else the shown rows'. */
   private currentFlag(): boolean {
     return this.inFlight.get(this.latest) ?? this.shownFlag;

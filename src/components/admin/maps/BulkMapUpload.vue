@@ -250,6 +250,7 @@ import { BulkSelectItem, BulkUploadItem, reconcileFailedUpload, selectMapFiles, 
 import {
   BulkRowState,
   BulkRowStatus,
+  freshMapsOrThrow,
   gatingFor,
   RunAction,
   RunTally,
@@ -842,11 +843,11 @@ export default defineComponent({
         updateMap: (map) => mapsManagementStore.updateMap(map),
         // Read once to build each update from the map as it is now, and once
         // afterwards to turn "the PUT answered 200" into "the map really points at
-        // the new file".
-        reloadMaps: async () => {
-          await mapsManagementStore.loadMaps();
-          return mapsManagementStore.maps;
-        },
+        // the new file". Both reads have to be this run's own: loadMaps() reports
+        // whether the rows are, and freshMapsOrThrow turns a superseded failure
+        // into the "could not be read" outcome instead of a silent stale read.
+        reloadMaps: async () =>
+          freshMapsOrThrow(await mapsManagementStore.loadMaps(), mapsManagementStore.maps),
       });
 
       for (const result of results) {

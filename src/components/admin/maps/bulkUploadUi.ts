@@ -1,4 +1,5 @@
 import type { BulkPlanCandidate } from "./bulkUploadPlan";
+import type { Map } from "@/store/admin/mapsManagement/types";
 
 // The glue between the bulk upload dialog and the two modules that do the work.
 // It lives outside the component because every mistake this feature has made so
@@ -56,6 +57,22 @@ export function toPlanCandidates(rows: PlanRowInput[]): BulkPlanCandidate[] {
       sha1: row.sha1,
       settled: row.state !== "pending",
     }));
+}
+
+/**
+ * The maps a run may build its updates from, or a throw.
+ *
+ * A reload resolving is not the same as the maps being fresh: a load whose own
+ * request failed while a newer one was in flight resolves silently, because the
+ * newer load reports instead, and the rows from before the run are then still
+ * the ones in the store. `selectMapFiles` builds every update from the map as it
+ * reads right now, so taking those rows would either revert a concurrent edit or
+ * report every row as unverified against pre-update rows - both silently. A
+ * throw puts the run on the "the maps could not be read" branch it already has.
+ */
+export function freshMapsOrThrow(showsFreshRows: boolean, maps: Map[]): Map[] {
+  if (!showsFreshRows) throw new Error("the maps on screen are not the ones this reload read");
+  return maps;
 }
 
 export interface RunTally {
