@@ -1,6 +1,7 @@
 import type { Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { mapFileName, toGameMapPath } from "./mapFilePath";
 import { reconcileMapUpdate } from "./bulkUploadPlan";
+import { withSelectedMapFile } from "./mapPayload";
 
 // Runs the plan from bulkUploadPlan.ts against the API. The calls it makes are
 // injected so the outcome of a batch - which row failed, which row was never
@@ -180,9 +181,9 @@ export async function selectMapFiles(
 
     const gameMapPath = toGameMapPath(item.mapFile.filePath);
     try {
-      // Copy both the map and its metadata: the metadata object belongs to the
-      // store's file list, and writing the path into it would edit that list.
-      await deps.updateMap({ ...map, gameMap: { ...item.mapFile.metaData, path: gameMapPath } });
+      // Same builder the single-map editor uses, so there is one place that
+      // decides what a "point this map at this file" update looks like.
+      await deps.updateMap(withSelectedMapFile(map, item.mapFile));
       results.push({ key: item.key, ok: true, gameMapPath });
       expectations.push({
         key: item.key,

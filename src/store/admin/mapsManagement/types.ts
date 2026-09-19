@@ -67,7 +67,25 @@ export interface GameMapPlayer {
 export interface GameMapForce {
   name: string;
   flags: number;
-  player_set: number;
+  /**
+   * Bitmask of the lobby slots that belong to this force.
+   *
+   * Camel case, unlike the snake_case fields on GameMap above, because the
+   * browser boundary is System.Text.Json and only this field is missing the
+   * attribute that would rename it: W3C.Contracts/Matchmaking/GameMapForce.cs
+   * carries `[JsonProperty("player_set")]` (Newtonsoft, which is what the
+   * backend uses to talk to the matchmaking service) but no
+   * `[JsonPropertyName]`, so on the way to the browser it falls back to the
+   * camelCase policy. Its siblings in GameMap.cs carry both attributes, which
+   * is why they stay snake_case here.
+   *
+   * The website only ever echoes this value back - it spreads what it was sent
+   * rather than rebuilding the force - so the name matters for reading, not for
+   * writing. If the backend ever adds the missing `[JsonPropertyName]`, the
+   * wire key flips to `player_set` and this has to change in lockstep; reads go
+   * through playerSetOf() in MapFileDetails.vue, which accepts either.
+   */
+  playerSet: number;
 }
 
 export interface MapFileData {

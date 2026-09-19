@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { BulkSelectItem, BulkUploadItem, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
 import type { GameMap, Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import { timeoutError } from "@/services/http/fetchWithTimeout";
 
 const SHA_A = "d3486ae9136e7856bc42212385ea797094475802";
 const SHA_B = "0a0a9f2a6772942557ab5355d76af442f8f65e01";
@@ -121,6 +122,30 @@ describe("uploadMapFiles", () => {
     expect(results[1]).toMatchObject({ key: "b", ok: true, mapFile: stored });
   });
 
+  it("reports a timed-out upload on its row, verbatim, and carries on with the batch", async () => {
+    // What the runner owes a timeout is the same as any other failure: fail that
+    // row, keep the reason intact - a timed-out POST may still have been stored,
+    // and only the message says so - and keep going. Built by the real producer
+    // rather than retyped, so a reworded message cannot pass a stale assertion.
+    const timeout = timeoutError({
+      timeoutMs: 300_000,
+      describe: "Uploading the map file",
+      uncertainOutcome: "The file may still have been stored; running the upload again is safe.",
+    });
+    const stored = mapFile("W3Champions/5111_turtle_rock.w3x");
+    const uploadFile = vi.fn()
+      .mockRejectedValueOnce(timeout)
+      .mockResolvedValueOnce(stored);
+
+    const results = await uploadMapFiles(
+      [uploadItem({ key: "a" }), uploadItem({ key: "b", mapId: 5111, storeAs: "5111_turtle_rock.w3x" })],
+      { uploadFile, fetchMapFiles: vi.fn() },
+    );
+
+    expect(results[0]).toMatchObject({ key: "a", ok: false, message: timeout.message });
+    expect(results[1]).toMatchObject({ key: "b", ok: true, mapFile: stored });
+  });
+
   it("keeps a separate result for two files that share a name", async () => {
     const uploadFile = vi.fn()
       .mockResolvedValueOnce(mapFile("W3Champions/5110_twisted_meadows.w3x"))
@@ -186,6 +211,39 @@ describe("selectMapFiles", () => {
       }),
     );
     expect(results[0]).toMatchObject({ key: "a", ok: true });
+  });
+
+  it("sends every field of the map back, including ones this app does not know", async () => {
+    // The matchmaking service replaces the whole map document with the request
+    // body, so a field the update leaves out is erased from the map. Anything
+    // the backend sends has to come back untouched, whether or not the Map type
+    // has heard of it.
+    const updateMap = vi.fn().mockResolvedValue(undefined);
+    const current = {
+      ...adminMap(5110),
+      category: "Ladder",
+      mappedForces: [{ team: 0, slots: [{ index: 0 }] }],
+      somethingTheBackendAdded: 7,
+    } as Map & { somethingTheBackendAdded: number };
+    const file = mapFile("W3Champions/5110_twisted_meadows.w3x");
+    // Metadata fields the app does not model either - the whole gameMap
+    // subdocument is replaced by what is sent here.
+    (file.metaData as unknown as Record<string, unknown>).forces = [
+      { name: "Force 1", flags: 0, playerSet: 4294967295 },
+    ];
+
+    await selectMapFiles([selectItem("a", current, file)], {
+      updateMap,
+      reloadMaps: reloads([current], [adminMap(5110, "maps\\W3Champions\\5110_twisted_meadows.w3x", SHA_A)]),
+    });
+
+    expect(updateMap).toHaveBeenCalledWith({
+      ...current,
+      gameMap: {
+        ...file.metaData,
+        path: "maps\\W3Champions\\5110_twisted_meadows.w3x",
+      },
+    });
   });
 
   it("leaves the stored file record untouched while building the update", async () => {

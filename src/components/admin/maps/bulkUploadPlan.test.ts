@@ -82,6 +82,10 @@ describe("planBulkUpload", () => {
   });
 
   it("reuses an identical stored file instead of uploading it again", () => {
+    // This is also what makes retrying a timed-out upload safe: the POST may
+    // well have been applied, and once the map's files have been re-read the
+    // file it stored turns up here with a matching checksum, so the retry
+    // reuses it instead of failing on "File already exists".
     const existing = storedFile("W3Champions/5110_twisted_meadows.w3x", SHA_A);
 
     const plan = planBulkUpload([candidate({ key: "a" })], { 5110: [existing] });

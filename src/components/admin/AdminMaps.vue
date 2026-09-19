@@ -232,6 +232,7 @@ import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
+import { cloneMapForEdit, withSelectedMapFile } from "./maps/mapPayload";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -355,22 +356,16 @@ export default defineComponent({
       editedMap.value = createDefaultMap();
     }
 
-    // Deep clone: mappedForces and gameMap are nested, so a shallow copy would let
-    // the dialog mutate the store's row even when the edit is cancelled.
-    function cloneMap(map: Map): Map {
-      return JSON.parse(JSON.stringify(map));
-    }
-
     function configureMap(map: Map): void {
       isAddDialog.value = false;
       isEditOpen.value = true;
-      editedMap.value = cloneMap(map);
+      editedMap.value = cloneMapForEdit(map);
     }
 
     function configureMapFiles(map: Map): void {
       isAddDialog.value = false;
       isEditFilesOpen.value = true;
-      editedMap.value = cloneMap(map);
+      editedMap.value = cloneMapForEdit(map);
     }
 
     function closeEdit(): void {
@@ -428,11 +423,9 @@ export default defineComponent({
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
-      const map = e.map;
-      const file = e.file;
-
-      map.gameMap = file.metaData;
-      map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;
+      // Built rather than assigned in place: the metadata object belongs to the
+      // store's file list, and writing the game path into it would edit that list.
+      const map = withSelectedMapFile(e.map, e.file);
 
       if (await saveMap(map)) {
         showSnackbar(`Selected ${getMapPath(map)} for ${map.name}.`, "success");
