@@ -41,6 +41,12 @@ export function buildMapsQuery(filter?: string, includeTemporary?: boolean): str
  * whitelist an ordinary "save" would echo them straight back into
  * `POST api/maps` / `PUT api/maps/:id`. `uploader` is stamped by
  * website-backend itself, not the client.
+ *
+ * This is the single choke point: the builders in
+ * `@/components/admin/maps/mapPayload` deliberately copy a whole map (a map
+ * update replaces the whole document, so nothing may be lost on the way to the
+ * editor), and the narrowing happens here, once, in MapsService. A field the
+ * backend has to receive has to be added here too.
  */
 export interface MapWriteContract {
   id: number;

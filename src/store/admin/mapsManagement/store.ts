@@ -78,9 +78,14 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
       const oauthStore = useOauthStore();
       return await MapsService.getMapFiles(oauthStore.token, mapId);
     },
-    async createMapFile(formData: FormData, onProgress?: (percentUploaded: number) => void) {
+    // Returns the record the backend stored, or null when it answered without
+    // one, so callers do not have to guess which file the upload became.
+    async createMapFile(
+      formData: FormData,
+      onProgress?: (percentUploaded: number) => void,
+    ): Promise<MapFileData | null> {
       const oauthStore = useOauthStore();
-      await MapsService.createMapFile(oauthStore.token, formData, onProgress);
+      return await MapsService.createMapFile(oauthStore.token, formData, onProgress);
     },
     SET_MAPS(getMapsResponse: GetMapsResponse) {
       this.maps = getMapsResponse?.items ?? [];

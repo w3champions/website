@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import type { GameMap, Map } from "@/store/admin/mapsManagement/types";
+import type { GameMap, GameMapForce, Map } from "@/store/admin/mapsManagement/types";
 import MapFileDetailsTable from "./MapFileDetailsTable.vue";
 
 export interface ForceRow {
@@ -37,9 +37,18 @@ export interface ForceRow {
   slots: number;
 }
 
-// player_set is a bitmask of the lobby slots that belong to the force.
-function countSlots(playerSet: number): number {
-  let remaining = playerSet >>> 0;
+// The backend sends this force field as `playerSet` today, because its contract
+// is missing the attribute that would keep it snake_case on the browser
+// boundary (see GameMapForce in the maps types). Reading both spellings costs a
+// line and means a backend fix there cannot silently zero the slot counts here.
+function playerSetOf(force: GameMapForce): number | undefined {
+  const legacy = (force as GameMapForce & { player_set?: number }).player_set;
+  return force.playerSet ?? legacy;
+}
+
+// playerSet is a bitmask of the lobby slots that belong to the force.
+function countSlots(playerSet: number | undefined): number {
+  let remaining = (playerSet ?? 0) >>> 0;
   let count = 0;
   while (remaining) {
     count += remaining & 1;
@@ -74,7 +83,7 @@ export default defineComponent({
     const forceRows = computed<ForceRow[]>(() =>
       (props.gameMap?.forces ?? []).map((force, index) => ({
         name: force.name || `Force ${index + 1}`,
-        slots: countSlots(force.player_set),
+        slots: countSlots(playerSetOf(force)),
       }))
     );
 

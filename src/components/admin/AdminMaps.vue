@@ -18,7 +18,7 @@
             :isAddDialog="isAddDialog"
             :categories="categories"
             @cancel="closeEdit"
-            @save="saveMap($event)"
+            @save="saveMap"
           />
         </v-dialog>
 
@@ -26,8 +26,20 @@
           <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
         </v-dialog>
 
-        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px" scrollable>
-          <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
+        <!-- Held open while the upload runs: closing unmounts the dialog, and the
+             uploads and map updates would carry on with nowhere to report to. -->
+        <v-dialog
+          v-if="isBulkUploadOpen"
+          v-model="isBulkUploadOpen"
+          max-width="1000px"
+          scrollable
+          :persistent="isBulkUploadRunning"
+        >
+          <bulk-map-upload
+            @cancel="closeBulkUpload"
+            @completed="handleBulkUploadCompleted"
+            @running="isBulkUploadRunning = $event"
+          />
         </v-dialog>
 
         <v-row class="pt-2 px-1" align="center">
@@ -273,6 +285,9 @@ import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
+import { cloneMapForEdit, withSelectedMapFile } from "./maps/mapPayload";
+import { failedSaveNotice, saveNotice } from "./maps/saveNotice";
+import { TimeoutError } from "@/services/http/fetchWithTimeout";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { isTemporaryMap } from "@/services/maps/mapsRequest";
 import { useOauthStore } from "@/store/oauth/store";
@@ -300,6 +315,8 @@ export default defineComponent({
     const isEditFilesOpen = ref<boolean>(false);
     const isAddDialog = ref<boolean>(false);
     const isBulkUploadOpen = ref<boolean>(false);
+    // Reported by the dialog: while a run is on, it must not be dismissed.
+    const isBulkUploadRunning = ref<boolean>(false);
 
     // Nothing selected means no status filter, the same as selecting all three.
     const statusOptions: MapStatus[] = ["Ladder", "Custom", "Disabled"];
@@ -446,22 +463,16 @@ export default defineComponent({
       editedMap.value = createDefaultMap();
     }
 
-    // Deep clone: mappedForces and gameMap are nested, so a shallow copy would let
-    // the dialog mutate the store's row even when the edit is cancelled.
-    function cloneMap(map: Map): Map {
-      return JSON.parse(JSON.stringify(map));
-    }
-
     function configureMap(map: Map): void {
       isAddDialog.value = false;
       isEditOpen.value = true;
-      editedMap.value = cloneMap(map);
+      editedMap.value = cloneMapForEdit(map);
     }
 
     function configureMapFiles(map: Map): void {
       isAddDialog.value = false;
       isEditFilesOpen.value = true;
-      editedMap.value = cloneMap(map);
+      editedMap.value = cloneMapForEdit(map);
     }
 
     function closeEdit(): void {
@@ -474,11 +485,13 @@ export default defineComponent({
     }
 
     function openBulkUpload(): void {
+      isBulkUploadRunning.value = false;
       isBulkUploadOpen.value = true;
     }
 
     function closeBulkUpload(): void {
       isBulkUploadOpen.value = false;
+      isBulkUploadRunning.value = false;
     }
 
     // The dialog stays open so its per-file confirmation remains visible. It has
@@ -494,50 +507,71 @@ export default defineComponent({
       snackbar.value = true;
     }
 
-    // Runs once a write has landed, so a failed refresh is reported as exactly
-    // that - never as a failed write - and next to the write's confirmation rather
-    // than instead of it. One snackbar either way, since it has a single slot.
-    // Same split as BulkMapUpload's selectAll.
-    async function reloadAfterWrite(confirmation?: string): Promise<void> {
+    // What went wrong refreshing the table, or "" when it is up to date again.
+    // Never thrown: the write it follows has already landed.
+    async function reloadMaps(): Promise<string> {
       try {
         await mapsManagementStore.loadMaps();
-      } catch (err) {
-        const refreshError = err instanceof Error
-          ? `The maps table could not be refreshed: ${err.message}`
-          : "The maps table could not be refreshed.";
-        showSnackbar(confirmation ? `${confirmation} ${refreshError}` : refreshError, "warning");
-        return;
-      }
-      if (confirmation) {
-        showSnackbar(confirmation, "success");
+        return "";
+      } catch(err) {
+        return err instanceof Error ? err.message : "Error trying to reload the maps.";
       }
     }
 
-    // `confirmation` is shown once the write lands. The edit dialog passes none:
-    // the dialog closing already says the save worked.
-    async function saveMap(map: Map, confirmation?: string): Promise<void> {
+    // The save is done either way; a failed refresh only means the table behind
+    // the dialog is out of date, and must not be reported as a failed save. The
+    // caller says so in its own message rather than in a second snackbar, which
+    // would only replace whatever the first one says.
+    async function saveMapAndRefresh(map: Map): Promise<{ saved: boolean; refreshError: string }> {
+      const isCreate = isAddDialog.value;
       try {
-        if (isAddDialog.value) {
+        if (isCreate) {
           await mapsManagementStore.createMap(map);
         } else {
           await mapsManagementStore.updateMap(map);
         }
+        closeEdit();
       } catch(err) {
-        showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
-        return;
+        // The write may have landed before the failure, so the table behind the
+        // still-open dialog can already be out of date - and for a create, what
+        // the refreshed list holds is the only thing that says whether pressing
+        // Save again would make a second map.
+        const refreshError = await reloadMaps();
+        const notice = failedSaveNotice({
+          error: err instanceof Error ? err.message : "Error trying to save map.",
+          outcomeUnknown: err instanceof TimeoutError,
+          isCreate,
+          mapName: map.name,
+          mapNames: mapsManagementStore.maps.map((candidate) => candidate.name),
+          refreshError,
+        });
+        showSnackbar(notice.text, notice.color);
+        return { saved: false, refreshError: "" };
       }
-      closeEdit();
-      await reloadAfterWrite(confirmation);
+
+      return { saved: true, refreshError: await reloadMaps() };
+    }
+
+    // The edit dialog needs no confirmation of its own - it closes and its row
+    // updates - so only a table left out of date is worth a message.
+    async function saveMap(map: Map): Promise<void> {
+      const { saved, refreshError } = await saveMapAndRefresh(map);
+      if (!saved || !refreshError) return;
+
+      const notice = saveNotice("The map was saved.", refreshError);
+      showSnackbar(notice.text, notice.color);
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
-      const map = e.map;
-      const file = e.file;
+      // Built rather than assigned in place: the metadata object belongs to the
+      // store's file list, and writing the game path into it would edit that list.
+      const map = withSelectedMapFile(e.map, e.file);
 
-      map.gameMap = file.metaData;
-      map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;
-
-      await saveMap(map, `Selected ${getMapPath(map)} for ${map.name}.`);
+      const { saved, refreshError } = await saveMapAndRefresh(map);
+      if (saved) {
+        const notice = saveNotice(`Selected ${getMapPath(map)} for ${map.name}.`, refreshError);
+        showSnackbar(notice.text, notice.color);
+      }
       closeEditFiles();
     }
 
@@ -552,10 +586,14 @@ export default defineComponent({
         togglingMapId.value = null;
         return;
       }
-      // Still held while the table refreshes, so no row is toggled from a stale
-      // value. reloadAfterWrite reports its own failure and never rejects.
-      await reloadAfterWrite(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`);
+
+      // The flip itself landed, so a refresh that did not must not be reported
+      // as a failed update - there is nothing to try again.
+      const refreshError = await reloadMaps();
       togglingMapId.value = null;
+
+      const notice = saveNotice(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, refreshError);
+      showSnackbar(notice.text, notice.color);
     }
 
     function createDefaultMap(): Map {
@@ -664,6 +702,7 @@ export default defineComponent({
       configureMapFiles,
       adminMapsFilters,
       isBulkUploadOpen,
+      isBulkUploadRunning,
       openBulkUpload,
       closeBulkUpload,
       handleBulkUploadCompleted,

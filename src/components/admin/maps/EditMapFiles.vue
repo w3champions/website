@@ -16,6 +16,12 @@
           details-title="Selected map file details"
         />
 
+        <!-- An unreadable file list used to look like an empty one, which invites
+             uploading a file that is already there. -->
+        <v-alert v-if="loadError" type="error" variant="outlined" class="mb-4">
+          The map's files could not be loaded: {{ loadError }}
+        </v-alert>
+
         <v-data-table
           ref="fileTable"
           :headers="headers"
@@ -185,6 +191,9 @@ import { mdiCheckCircle, mdiChevronDown, mdiChevronUp, mdiDownload } from "@mdi/
 import MapFileDropZone from "./MapFileDropZone.vue";
 import MapFileDetails from "./MapFileDetails.vue";
 import { isSameMapFile, mapFileName } from "./mapFilePath";
+import { uploadFailureNotice } from "./uploadNotice";
+import { sha1Hex } from "./mapFileHash";
+import { TimeoutError } from "@/services/http/fetchWithTimeout";
 
 export default defineComponent({
   name: "EditMapFiles",
@@ -204,6 +213,7 @@ export default defineComponent({
     const loadingFiles = ref<boolean>(true);
     const uploadPercent = ref<number>(0);
     const uploadError = ref<string>("");
+    const loadError = ref<string>("");
     const isConfirmOpen = ref<boolean>(false);
     const pendingFile = ref<MapFileData | null>(null);
     const mapFiles = computed<MapFileData[]>(() => mapsManagementStore.mapFiles);
@@ -256,6 +266,14 @@ export default defineComponent({
       context.emit("cancel");
     }
 
+    async function sha1OrNull(blob: Blob): Promise<string | null> {
+      try {
+        return await sha1Hex(blob);
+      } catch {
+        return null;
+      }
+    }
+
     async function addMapFile() {
       const selectedFile = file.value;
       if (!selectedFile) return;
@@ -275,11 +293,31 @@ export default defineComponent({
         const nameOverride = fileName.value.trim() === selectedFile.name ? "" : fileName.value.trim();
         formData.append("fileName", nameOverride);
         await mapsManagementStore.createMapFile(formData, (percent) => uploadPercent.value = percent);
-        await mapsManagementStore.loadMapFiles(props.map.id);
+        await reloadMapFiles();
 
         files.value = [];
       } catch(err) {
-        uploadError.value = err instanceof Error ? err.message : "Error trying to create map file.";
+        // The server may have stored the file before the request failed - a
+        // timeout is the clearest case, but any failure after the write has the
+        // same shape. Re-read the list either way: a file that did land would
+        // otherwise stay invisible here, and the retry the error invites would
+        // collide with it. reloadMapFiles reports its own failure through
+        // loadError, so it cannot swallow the upload error.
+        await reloadMapFiles();
+        uploadError.value = uploadFailureNotice({
+          error: err instanceof Error ? err.message : "Error trying to create map file.",
+          outcomeUnknown: err instanceof TimeoutError,
+          storedAsName: storedAsName.value,
+          storedFiles: mapFiles.value.map((mapFile) => ({
+            name: mapFileName(mapFile.filePath),
+            sha1: mapFile.metaData?.sha1,
+          })),
+          // A name proves nothing on its own - another admin may have stored a
+          // file under it while this dialog was open. Hashing needs a secure
+          // page, so a failure here is normal enough to be an answer of its own:
+          // null means "could not be compared", not "does not match".
+          pickedSha1: await sha1OrNull(selectedFile),
+        });
       } finally {
         uploading.value = false;
         uploadPercent.value = 0;
@@ -297,10 +335,19 @@ export default defineComponent({
       scroller.scrollTop += offset - (scroller.clientHeight - selectedRow.clientHeight) / 2;
     }
 
+    async function reloadMapFiles(): Promise<void> {
+      loadError.value = "";
+      try {
+        await mapsManagementStore.loadMapFiles(props.map.id);
+      } catch (err) {
+        loadError.value = err instanceof Error ? err.message : "Error trying to load the map's files.";
+      }
+    }
+
     onMounted(async (): Promise<void> => {
       loadingFiles.value = true;
       try {
-        await mapsManagementStore.loadMapFiles(props.map.id);
+        await reloadMapFiles();
       } finally {
         loadingFiles.value = false;
       }
@@ -327,6 +374,7 @@ export default defineComponent({
       pendingFile,
       uploadPercent,
       uploadError,
+      loadError,
       storedAsName,
       duplicateFileName,
       isSelected,
