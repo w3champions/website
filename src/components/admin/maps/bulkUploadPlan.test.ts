@@ -191,6 +191,21 @@ describe("planBulkUpload", () => {
     expect(plan[0].message).toContain("9999");
   });
 
+  it("does not claim an unknown id's map is missing, since a hidden temporary map reads the same", () => {
+    // `mapTemporary` can only be set for a temporary map the caller can see, and
+    // the admin Maps page hides temporary maps unless "Show temporary maps" is
+    // ticked - so this branch takes the common temporary case too and must not
+    // send the admin looking for a map that is there.
+    const plan = planBulkUpload(
+      [candidate({ key: "a", mapId: 5110, mapExists: false })],
+      {},
+    );
+
+    expect(plan[0].action).toBe("skip");
+    expect(plan[0].message).not.toContain("does not exist");
+    expect(plan[0].message).toContain("temporary map");
+  });
+
   it("skips a file aimed at a temporary map and says so rather than calling the map missing", () => {
     // A temporary (self-provided) map exists but is not a target: its file
     // belongs to the uploader, so "does not exist" would send the admin looking
