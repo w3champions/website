@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { BulkSelectItem, BulkUploadItem, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
+import { BulkSelectItem, BulkUploadItem, reconcileFailedUpload, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
 import type { GameMap, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { timeoutError } from "@/services/http/fetchWithTimeout";
 
@@ -412,5 +412,67 @@ describe("selectMapFiles", () => {
     });
 
     expect(reloadMaps).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("reconcileFailedUpload", () => {
+  const item = { storeAs: "5110_twisted_meadows.w3x", sha1: SHA_A };
+
+  it("confirms the upload when the stored file matches by name and checksum", () => {
+    // The POST timed out but was applied. The row has to carry the record, or
+    // neither "Upload" nor "Select uploaded" can act on it.
+    const stored = mapFile("W3Champions/5110_twisted_meadows.w3x", SHA_A);
+
+    const reconciliation = reconcileFailedUpload(item, [stored]);
+
+    expect(reconciliation.outcome).toBe("confirmed");
+    expect(reconciliation.mapFile).toBe(stored);
+    expect(reconciliation.message).toContain("confirmed");
+  });
+
+  it("matches the stored file regardless of its folder and letter case", () => {
+    const stored = mapFile("W3Champions/5110_Twisted_Meadows.w3x", SHA_A.toUpperCase());
+
+    expect(reconcileFailedUpload(item, [stored]).outcome).toBe("confirmed");
+  });
+
+  it("keeps a namesake with different content a failure rather than claiming it", () => {
+    // Another admin stored that name while the batch ran, so the upload was
+    // refused; selecting their file would point the map at the wrong bytes.
+    const reconciliation = reconcileFailedUpload(item, [mapFile("W3Champions/5110_twisted_meadows.w3x", SHA_B)]);
+
+    expect(reconciliation.outcome).toBe("blocked");
+    expect(reconciliation.mapFile).toBeUndefined();
+    expect(reconciliation.message).toContain("rename this one");
+  });
+
+  it("keeps a namesake with no checksum a failure, because it cannot be told apart", () => {
+    const stored = mapFile("W3Champions/5110_twisted_meadows.w3x");
+    stored.metaData = { name: "Twisted Meadows" } as unknown as GameMap;
+
+    const reconciliation = reconcileFailedUpload(item, [stored]);
+
+    expect(reconciliation.outcome).toBe("blocked");
+    expect(reconciliation.message).toContain("no checksum");
+  });
+
+  it("asks for a retry when nothing of that name is stored", () => {
+    const reconciliation = reconcileFailedUpload(item, [mapFile("W3Champions/5111_turtle_rock.w3x", SHA_B)]);
+
+    expect(reconciliation.outcome).toBe("retry");
+    expect(reconciliation.message).toContain("can be sent again");
+  });
+
+  it("asks for a retry when the map has no stored files at all", () => {
+    expect(reconcileFailedUpload(item, []).outcome).toBe("retry");
+  });
+
+  it("claims nothing when the stored files could not be re-read", () => {
+    // Null is "we could not find out", which is not the same as "nothing is
+    // there" - sending the file again could collide with what is.
+    const reconciliation = reconcileFailedUpload(item, null);
+
+    expect(reconciliation.outcome).toBe("blocked");
+    expect(reconciliation.message).toContain("could not be re-read");
   });
 });

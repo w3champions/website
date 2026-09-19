@@ -113,6 +113,77 @@ export async function uploadMapFiles(
   return results;
 }
 
+export type UploadReconciliationOutcome =
+  // The stored files hold this exact file: the upload landed, the answer did not.
+  | "confirmed"
+  // Nothing of this name is stored, so sending it again is the right move.
+  | "retry"
+  // A namesake that is not this file, or a list that could not be read: neither
+  // sending it again nor selecting what is there would be right.
+  | "blocked";
+
+export interface UploadReconciliation {
+  outcome: UploadReconciliationOutcome;
+  /** The stored record this row turned out to be, for "confirmed". */
+  mapFile?: MapFileData;
+  message: string;
+}
+
+/**
+ * What a failed upload really did, read back from the map's stored files.
+ *
+ * A timed-out POST may have been applied, so "the request failed" is not an
+ * answer on its own - and a row left as a bare failure is a dead end: the
+ * planner is not shown failed rows and "Select uploaded" needs a record, so
+ * neither button can act on it. Deciding from the re-read list is what turns it
+ * back into something the admin can finish.
+ *
+ * Identity is the checksum, never the name: a namesake may be a file another
+ * admin stored while this batch was running, in which case the upload was
+ * rejected and pointing the map at that file would be wrong.
+ */
+export function reconcileFailedUpload(
+  item: Pick<BulkUploadItem, "storeAs" | "sha1">,
+  stored: MapFileData[] | null | undefined,
+): UploadReconciliation {
+  const name = mapFileName(item.storeAs);
+
+  if (!stored) {
+    return {
+      outcome: "blocked",
+      message: "The map's stored files could not be re-read, so whether this file was stored is unknown.",
+    };
+  }
+
+  const match = stored.find((file) => mapFileName(file.filePath) === name);
+  if (!match) {
+    return { outcome: "retry", message: `Nothing is stored as "${item.storeAs}", so this file can be sent again.` };
+  }
+
+  const storedSha1 = match.metaData?.sha1?.trim().toLowerCase();
+  if (!storedSha1) {
+    return {
+      outcome: "blocked",
+      message: `A file named "${item.storeAs}" is stored for this map but carries no checksum, `
+        + "so it cannot be told apart from this one.",
+    };
+  }
+
+  if (storedSha1 !== item.sha1.trim().toLowerCase()) {
+    return {
+      outcome: "blocked",
+      message: `A different file named "${item.storeAs}" is stored for this map. `
+        + "Stored files are never replaced, so rename this one.",
+    };
+  }
+
+  return {
+    outcome: "confirmed",
+    mapFile: match,
+    message: "The upload was confirmed from the map's stored files; it can be selected.",
+  };
+}
+
 export interface BulkSelectItem {
   key: string;
   mapId: number;

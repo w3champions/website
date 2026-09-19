@@ -192,6 +192,7 @@ import MapFileDropZone from "./MapFileDropZone.vue";
 import MapFileDetails from "./MapFileDetails.vue";
 import { isSameMapFile, mapFileName } from "./mapFilePath";
 import { uploadFailureNotice } from "./uploadNotice";
+import { sha1Hex } from "./mapFileHash";
 import { TimeoutError } from "@/services/http/fetchWithTimeout";
 
 export default defineComponent({
@@ -265,6 +266,14 @@ export default defineComponent({
       context.emit("cancel");
     }
 
+    async function sha1OrNull(blob: Blob): Promise<string | null> {
+      try {
+        return await sha1Hex(blob);
+      } catch {
+        return null;
+      }
+    }
+
     async function addMapFile() {
       const selectedFile = file.value;
       if (!selectedFile) return;
@@ -299,7 +308,15 @@ export default defineComponent({
           error: err instanceof Error ? err.message : "Error trying to create map file.",
           outcomeUnknown: err instanceof TimeoutError,
           storedAsName: storedAsName.value,
-          storedFileNames: mapFiles.value.map((mapFile) => mapFileName(mapFile.filePath)),
+          storedFiles: mapFiles.value.map((mapFile) => ({
+            name: mapFileName(mapFile.filePath),
+            sha1: mapFile.metaData?.sha1,
+          })),
+          // A name proves nothing on its own - another admin may have stored a
+          // file under it while this dialog was open. Hashing needs a secure
+          // page, so a failure here is normal enough to be an answer of its own:
+          // null means "could not be compared", not "does not match".
+          pickedSha1: await sha1OrNull(selectedFile),
         });
       } finally {
         uploading.value = false;

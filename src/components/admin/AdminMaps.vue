@@ -233,7 +233,8 @@ import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
 import { cloneMapForEdit, withSelectedMapFile } from "./maps/mapPayload";
-import { saveNotice } from "./maps/saveNotice";
+import { failedSaveNotice, saveNotice } from "./maps/saveNotice";
+import { TimeoutError } from "@/services/http/fetchWithTimeout";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -416,15 +417,29 @@ export default defineComponent({
     // caller says so in its own message rather than in a second snackbar, which
     // would only replace whatever the first one says.
     async function saveMapAndRefresh(map: Map): Promise<{ saved: boolean; refreshError: string }> {
+      const isCreate = isAddDialog.value;
       try {
-        if (isAddDialog.value) {
+        if (isCreate) {
           await mapsManagementStore.createMap(map);
         } else {
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
       } catch(err) {
-        showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
+        // The write may have landed before the failure, so the table behind the
+        // still-open dialog can already be out of date - and for a create, what
+        // the refreshed list holds is the only thing that says whether pressing
+        // Save again would make a second map.
+        const refreshError = await reloadMaps();
+        const notice = failedSaveNotice({
+          error: err instanceof Error ? err.message : "Error trying to save map.",
+          outcomeUnknown: err instanceof TimeoutError,
+          isCreate,
+          mapName: map.name,
+          mapNames: mapsManagementStore.maps.map((candidate) => candidate.name),
+          refreshError,
+        });
+        showSnackbar(notice.text, notice.color);
         return { saved: false, refreshError: "" };
       }
 
