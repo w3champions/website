@@ -238,7 +238,7 @@ import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckCircle, mdiCloudCheckOu
 import MapFileDropZone from "./MapFileDropZone.vue";
 import { mapFileName, toStoredFileName } from "./mapFilePath";
 import { BulkPlanEntry, planBulkUpload, StoredMapFilesByMapId } from "./bulkUploadPlan";
-import { BulkSelectItem, BulkUploadItem, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
+import { BulkSelectItem, BulkUploadItem, reconcileFailedUpload, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
 import {
   BulkRowState,
   BulkRowStatus,
@@ -679,20 +679,50 @@ export default defineComponent({
       }
       await Promise.all([...uncertain].map((mapId) => loadStoredFiles(mapId, true)));
 
+      // A failed upload may well have been stored - a timeout is the clearest
+      // case - and a bare failed row is a dead end: the planner is not shown
+      // failed rows and "Select uploaded" needs a record, so neither button can
+      // act on it. The re-read list above settles what really happened, so the
+      // row is put back into whichever state matches it.
+      let confirmed = 0;
+      for (const result of results) {
+        if (result.ok) continue;
+        const row = rowByKey(result.key);
+        const item = items.find((candidate) => candidate.key === result.key);
+        if (!row || !item || row.mapId === null) continue;
+
+        const reconciliation = reconcileFailedUpload(item, storedFiles.value[row.mapId]);
+        row.message = [result.message, reconciliation.message].filter(Boolean).join(" ");
+        if (reconciliation.outcome === "confirmed") {
+          row.state = "uploaded";
+          row.mapFile = reconciliation.mapFile;
+          confirmed++;
+        } else if (reconciliation.outcome === "retry") {
+          // Back in front of the planner, which will offer it as an upload
+          // again. Its message stays, so the failure is still on screen.
+          row.state = "pending";
+        }
+      }
+
       const uploaded = results.filter((result) => result.ok && !result.reused).length;
       const reused = results.filter((result) => result.ok && result.reused).length;
 
-      tally.succeeded += uploaded + reused;
-      tally.failed += results.filter((result) => !result.ok).length;
+      tally.succeeded += uploaded + reused + confirmed;
+      tally.failed += results.filter((result) => !result.ok).length - confirmed;
       if (uploaded > 0) tally.headlines.push(`Uploaded ${uploaded} file${uploaded === 1 ? "" : "s"}.`);
       if (reused > 0) {
         tally.headlines.push(`${reused} file${reused === 1 ? " was" : "s were"} already stored and will be reused.`);
       }
-      if (uploaded + reused > 0) {
+      if (confirmed > 0) {
+        tally.headlines.push(
+          `${confirmed} upload${confirmed === 1 ? " was" : "s were"} confirmed from the maps' stored files.`,
+        );
+      }
+      if (uploaded + reused + confirmed > 0) {
         tally.hint = "Use \"Select uploaded\" to make them the active files for their maps.";
       }
 
-      return uploaded + reused;
+      return uploaded + reused + confirmed;
     }
 
     // The rows the run is about to work on, which are the ones it will report on

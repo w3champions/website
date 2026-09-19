@@ -82,6 +82,8 @@ describe("planBulkUpload", () => {
   });
 
   it("reuses an identical stored file instead of uploading it again", () => {
+    // Note this only covers a row the planner is actually shown, which a failed
+    // row is not - reconcileFailedUpload is what rescues those.
     const existing = storedFile("W3Champions/5110_twisted_meadows.w3x", SHA_A);
 
     const plan = planBulkUpload([candidate({ key: "a" })], { 5110: [existing] });

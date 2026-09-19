@@ -232,7 +232,9 @@ import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
-import { saveNotice } from "./maps/saveNotice";
+import { cloneMapForEdit, withSelectedMapFile } from "./maps/mapPayload";
+import { failedSaveNotice, saveNotice } from "./maps/saveNotice";
+import { TimeoutError } from "@/services/http/fetchWithTimeout";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -356,22 +358,16 @@ export default defineComponent({
       editedMap.value = createDefaultMap();
     }
 
-    // Deep clone: mappedForces and gameMap are nested, so a shallow copy would let
-    // the dialog mutate the store's row even when the edit is cancelled.
-    function cloneMap(map: Map): Map {
-      return JSON.parse(JSON.stringify(map));
-    }
-
     function configureMap(map: Map): void {
       isAddDialog.value = false;
       isEditOpen.value = true;
-      editedMap.value = cloneMap(map);
+      editedMap.value = cloneMapForEdit(map);
     }
 
     function configureMapFiles(map: Map): void {
       isAddDialog.value = false;
       isEditFilesOpen.value = true;
-      editedMap.value = cloneMap(map);
+      editedMap.value = cloneMapForEdit(map);
     }
 
     function closeEdit(): void {
@@ -421,15 +417,29 @@ export default defineComponent({
     // caller says so in its own message rather than in a second snackbar, which
     // would only replace whatever the first one says.
     async function saveMapAndRefresh(map: Map): Promise<{ saved: boolean; refreshError: string }> {
+      const isCreate = isAddDialog.value;
       try {
-        if (isAddDialog.value) {
+        if (isCreate) {
           await mapsManagementStore.createMap(map);
         } else {
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
       } catch(err) {
-        showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
+        // The write may have landed before the failure, so the table behind the
+        // still-open dialog can already be out of date - and for a create, what
+        // the refreshed list holds is the only thing that says whether pressing
+        // Save again would make a second map.
+        const refreshError = await reloadMaps();
+        const notice = failedSaveNotice({
+          error: err instanceof Error ? err.message : "Error trying to save map.",
+          outcomeUnknown: err instanceof TimeoutError,
+          isCreate,
+          mapName: map.name,
+          mapNames: mapsManagementStore.maps.map((candidate) => candidate.name),
+          refreshError,
+        });
+        showSnackbar(notice.text, notice.color);
         return { saved: false, refreshError: "" };
       }
 
@@ -447,11 +457,9 @@ export default defineComponent({
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
-      const map = e.map;
-      const file = e.file;
-
-      map.gameMap = file.metaData;
-      map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;
+      // Built rather than assigned in place: the metadata object belongs to the
+      // store's file list, and writing the game path into it would edit that list.
+      const map = withSelectedMapFile(e.map, e.file);
 
       const { saved, refreshError } = await saveMapAndRefresh(map);
       if (saved) {

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { BulkSelectItem, BulkUploadItem, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
+import { BulkSelectItem, BulkUploadItem, reconcileFailedUpload, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
 import type { GameMap, Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import { timeoutError } from "@/services/http/fetchWithTimeout";
 
 const SHA_A = "d3486ae9136e7856bc42212385ea797094475802";
 const SHA_B = "0a0a9f2a6772942557ab5355d76af442f8f65e01";
@@ -121,6 +122,30 @@ describe("uploadMapFiles", () => {
     expect(results[1]).toMatchObject({ key: "b", ok: true, mapFile: stored });
   });
 
+  it("reports a timed-out upload on its row, verbatim, and carries on with the batch", async () => {
+    // What the runner owes a timeout is the same as any other failure: fail that
+    // row, keep the reason intact - a timed-out POST may still have been stored,
+    // and only the message says so - and keep going. Built by the real producer
+    // rather than retyped, so a reworded message cannot pass a stale assertion.
+    const timeout = timeoutError({
+      timeoutMs: 300_000,
+      describe: "Uploading the map file",
+      uncertainOutcome: "It is not known whether the file was stored; the map's file list shows whether it was.",
+    });
+    const stored = mapFile("W3Champions/5111_turtle_rock.w3x");
+    const uploadFile = vi.fn()
+      .mockRejectedValueOnce(timeout)
+      .mockResolvedValueOnce(stored);
+
+    const results = await uploadMapFiles(
+      [uploadItem({ key: "a" }), uploadItem({ key: "b", mapId: 5111, storeAs: "5111_turtle_rock.w3x" })],
+      { uploadFile, fetchMapFiles: vi.fn() },
+    );
+
+    expect(results[0]).toMatchObject({ key: "a", ok: false, message: timeout.message });
+    expect(results[1]).toMatchObject({ key: "b", ok: true, mapFile: stored });
+  });
+
   it("keeps a separate result for two files that share a name", async () => {
     const uploadFile = vi.fn()
       .mockResolvedValueOnce(mapFile("W3Champions/5110_twisted_meadows.w3x"))
@@ -186,6 +211,39 @@ describe("selectMapFiles", () => {
       }),
     );
     expect(results[0]).toMatchObject({ key: "a", ok: true });
+  });
+
+  it("sends every field of the map back, including ones this app does not know", async () => {
+    // The matchmaking service replaces the whole map document with the request
+    // body, so a field the update leaves out is erased from the map. Anything
+    // the backend sends has to come back untouched, whether or not the Map type
+    // has heard of it.
+    const updateMap = vi.fn().mockResolvedValue(undefined);
+    const current = {
+      ...adminMap(5110),
+      category: "Ladder",
+      mappedForces: [{ team: 0, slots: [{ index: 0 }] }],
+      somethingTheBackendAdded: 7,
+    } as Map & { somethingTheBackendAdded: number };
+    const file = mapFile("W3Champions/5110_twisted_meadows.w3x");
+    // Metadata fields the app does not model either - the whole gameMap
+    // subdocument is replaced by what is sent here.
+    (file.metaData as unknown as Record<string, unknown>).forces = [
+      { name: "Force 1", flags: 0, playerSet: 4294967295 },
+    ];
+
+    await selectMapFiles([selectItem("a", current, file)], {
+      updateMap,
+      reloadMaps: reloads([current], [adminMap(5110, "maps\\W3Champions\\5110_twisted_meadows.w3x", SHA_A)]),
+    });
+
+    expect(updateMap).toHaveBeenCalledWith({
+      ...current,
+      gameMap: {
+        ...file.metaData,
+        path: "maps\\W3Champions\\5110_twisted_meadows.w3x",
+      },
+    });
   });
 
   it("leaves the stored file record untouched while building the update", async () => {
@@ -354,5 +412,67 @@ describe("selectMapFiles", () => {
     });
 
     expect(reloadMaps).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("reconcileFailedUpload", () => {
+  const item = { storeAs: "5110_twisted_meadows.w3x", sha1: SHA_A };
+
+  it("confirms the upload when the stored file matches by name and checksum", () => {
+    // The POST timed out but was applied. The row has to carry the record, or
+    // neither "Upload" nor "Select uploaded" can act on it.
+    const stored = mapFile("W3Champions/5110_twisted_meadows.w3x", SHA_A);
+
+    const reconciliation = reconcileFailedUpload(item, [stored]);
+
+    expect(reconciliation.outcome).toBe("confirmed");
+    expect(reconciliation.mapFile).toBe(stored);
+    expect(reconciliation.message).toContain("confirmed");
+  });
+
+  it("matches the stored file regardless of its folder and letter case", () => {
+    const stored = mapFile("W3Champions/5110_Twisted_Meadows.w3x", SHA_A.toUpperCase());
+
+    expect(reconcileFailedUpload(item, [stored]).outcome).toBe("confirmed");
+  });
+
+  it("keeps a namesake with different content a failure rather than claiming it", () => {
+    // Another admin stored that name while the batch ran, so the upload was
+    // refused; selecting their file would point the map at the wrong bytes.
+    const reconciliation = reconcileFailedUpload(item, [mapFile("W3Champions/5110_twisted_meadows.w3x", SHA_B)]);
+
+    expect(reconciliation.outcome).toBe("blocked");
+    expect(reconciliation.mapFile).toBeUndefined();
+    expect(reconciliation.message).toContain("rename this one");
+  });
+
+  it("keeps a namesake with no checksum a failure, because it cannot be told apart", () => {
+    const stored = mapFile("W3Champions/5110_twisted_meadows.w3x");
+    stored.metaData = { name: "Twisted Meadows" } as unknown as GameMap;
+
+    const reconciliation = reconcileFailedUpload(item, [stored]);
+
+    expect(reconciliation.outcome).toBe("blocked");
+    expect(reconciliation.message).toContain("no checksum");
+  });
+
+  it("asks for a retry when nothing of that name is stored", () => {
+    const reconciliation = reconcileFailedUpload(item, [mapFile("W3Champions/5111_turtle_rock.w3x", SHA_B)]);
+
+    expect(reconciliation.outcome).toBe("retry");
+    expect(reconciliation.message).toContain("can be sent again");
+  });
+
+  it("asks for a retry when the map has no stored files at all", () => {
+    expect(reconcileFailedUpload(item, []).outcome).toBe("retry");
+  });
+
+  it("claims nothing when the stored files could not be re-read", () => {
+    // Null is "we could not find out", which is not the same as "nothing is
+    // there" - sending the file again could collide with what is.
+    const reconciliation = reconcileFailedUpload(item, null);
+
+    expect(reconciliation.outcome).toBe("blocked");
+    expect(reconciliation.message).toContain("could not be re-read");
   });
 });
