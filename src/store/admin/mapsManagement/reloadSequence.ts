@@ -60,10 +60,19 @@ export class ReloadSequence {
    * can neither replace the table nor report a failure: `settle` returns
    * `undefined` for an id this no longer recognises, which makes `apply`
    * false in `landed` and `report` false in `failed`.
+   *
+   * That holds only because `latest` is deliberately *not* rewound: ids stay
+   * monotonic for the sequence's whole lifetime, so a forgotten id can never
+   * match one handed out later and a stale response can never be mistaken for
+   * the load that reopened the page. Zeroing the counter here would hand the
+   * next load an id the forgotten one is still waiting on, and its late
+   * response would consume that entry - repainting the table with the old
+   * page's rows, or swallowing the new page's own failure. `shown` is still
+   * rewound, and safely: every id issued from now on is greater than 0, so
+   * the first load after a reset applies.
    */
   reset(): void {
     this.inFlight.clear();
-    this.latest = 0;
     this.shown = 0;
     this.shownFlag = this.initialIncludeTemporary;
   }
