@@ -8,6 +8,18 @@ import type { BulkPlanCandidate } from "./bulkUploadPlan";
 /** What has happened to a picked file so far. */
 export type BulkRowState = "pending" | "uploading" | "uploaded" | "selected" | "failed";
 
+/** What a row is showing right now, which is its state plus what the plan makes of it. */
+export type BulkRowStatus =
+  | "preparing"
+  | "ready"
+  | "reuse"
+  | "duplicate"
+  | "skipped"
+  | "uploading"
+  | "uploaded"
+  | "selected"
+  | "error";
+
 /** Which button is running, or null when the dialog is idle. */
 export type RunAction = "upload" | "upload-select" | "select" | null;
 
@@ -65,6 +77,39 @@ export interface RunTally {
   notifiesParent?: boolean;
   /** Why the run stopped, when it stopped rather than finished. */
   fatal?: string;
+}
+
+export interface TallyRowInput {
+  key: string;
+  status: BulkRowStatus;
+}
+
+/**
+ * What the batch looks like the moment a run starts.
+ *
+ * The summary is built from this plus the run's own results, never from the live
+ * rows: a Reset or a re-pick part-way through must not be able to turn a failed
+ * run into a success banner.
+ *
+ * Only the rows this run is leaving alone are counted. A row the run is about to
+ * act on is this run's to report, whatever the last one left it looking like -
+ * otherwise a retry of a failed row would be held against it as well as counted
+ * again when it fails, and could never be reported as fixed when it succeeds.
+ */
+export function startTally(rows: TallyRowInput[], acting: Iterable<string>): RunTally {
+  const actingKeys = new Set(acting);
+  const heldBack = rows.filter((row) => !actingKeys.has(row.key)).map((row) => row.status);
+
+  return {
+    total: rows.length,
+    blocked: heldBack.filter((status) => status === "error").length,
+    skipped: heldBack.filter((status) => status === "skipped").length,
+    duplicates: heldBack.filter((status) => status === "duplicate").length,
+    succeeded: 0,
+    failed: 0,
+    headlines: [],
+    hint: "",
+  };
 }
 
 export interface RunSummary {

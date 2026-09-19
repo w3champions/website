@@ -239,7 +239,16 @@ import MapFileDropZone from "./MapFileDropZone.vue";
 import { mapFileName, toStoredFileName } from "./mapFilePath";
 import { BulkPlanEntry, planBulkUpload, StoredMapFilesByMapId } from "./bulkUploadPlan";
 import { BulkSelectItem, BulkUploadItem, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
-import { BulkRowState, gatingFor, RunAction, RunTally, summarizeRun, toPlanCandidates } from "./bulkUploadUi";
+import {
+  BulkRowState,
+  BulkRowStatus,
+  gatingFor,
+  RunAction,
+  RunTally,
+  startTally,
+  summarizeRun,
+  toPlanCandidates,
+} from "./bulkUploadUi";
 import { sha1Hex } from "./mapFileHash";
 
 // What has happened to a row so far. What it *should* do next is not stored here:
@@ -247,16 +256,7 @@ import { sha1Hex } from "./mapFileHash";
 // stays correct while the operator edits a target name or retries a failed row.
 type RowState = BulkRowState;
 
-type RowStatus =
-  | "preparing"
-  | "ready"
-  | "reuse"
-  | "duplicate"
-  | "skipped"
-  | "uploading"
-  | "uploaded"
-  | "selected"
-  | "error";
+type RowStatus = BulkRowStatus;
 
 interface BulkRow {
   // Unique per picked file: two files with the same name must never share a row.
@@ -695,22 +695,14 @@ export default defineComponent({
       return uploaded + reused;
     }
 
-    // What the batch looks like the moment a run starts. The summary is built from
-    // this plus the run's own results, never from the live rows: a Reset or a
-    // re-pick part-way through must not be able to turn a failed run into a
-    // success banner.
-    function startTally(): RunTally {
-      const statuses = rows.value.map(statusOf);
-      return {
-        total: rows.value.length,
-        blocked: statuses.filter((status) => status === "error").length,
-        skipped: statuses.filter((status) => status === "skipped").length,
-        duplicates: statuses.filter((status) => status === "duplicate").length,
-        succeeded: 0,
-        failed: 0,
-        headlines: [],
-        hint: "",
-      };
+    // The rows the run is about to work on, which are the ones it will report on
+    // itself. "Select uploaded" is also the retry for a row whose map update
+    // failed, so what that row looks like now is not held against it as well.
+    function actingKeys(action: RunAction): string[] {
+      const keys: string[] = [];
+      if (action !== "select") keys.push(...readyRows.value.map((row) => row.key));
+      if (action !== "upload") keys.push(...selectableRows.value.map((row) => row.key));
+      return keys;
     }
 
     // Nothing below the buttons is allowed to escape as an unhandled rejection:
@@ -718,7 +710,7 @@ export default defineComponent({
     async function run(action: RunAction, body: (tally: RunTally) => Promise<void>): Promise<void> {
       // Taken before the run is marked as started: nothing may leave the dialog
       // looking busy forever.
-      const tally = startTally();
+      const tally = startTally(rows.value.map((row) => ({ key: row.key, status: statusOf(row) })), actingKeys(action));
 
       runningAction.value = action;
       error.value = "";
