@@ -21,8 +21,15 @@ export const useTournamentsStore = defineStore("tournaments", {
       if (this.tournamentMaps.length > 0) {
         return;
       }
-      const response = await MapsService.getTournamentMaps();
-      this.SET_TOURNAMENT_MAPS(response.items);
+      try {
+        const response = await MapsService.getTournamentMaps();
+        this.SET_TOURNAMENT_MAPS(response.items);
+      } catch {
+        // The map list only decorates the tournament view, so a failed read leaves
+        // it empty rather than breaking the page - but it must stay an empty list,
+        // not the `undefined` an error body used to produce.
+        this.SET_TOURNAMENT_MAPS([]);
+      }
     },
     SET_TOURNAMENTS(tournaments: ITournament[]): void {
       this.tournaments = tournaments;

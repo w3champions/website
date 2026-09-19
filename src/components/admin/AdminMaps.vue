@@ -26,8 +26,20 @@
           <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
         </v-dialog>
 
-        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px" scrollable>
-          <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
+        <!-- Held open while the upload runs: closing unmounts the dialog, and the
+             uploads and map updates would carry on with nowhere to report to. -->
+        <v-dialog
+          v-if="isBulkUploadOpen"
+          v-model="isBulkUploadOpen"
+          max-width="1000px"
+          scrollable
+          :persistent="isBulkUploadRunning"
+        >
+          <bulk-map-upload
+            @cancel="closeBulkUpload"
+            @completed="handleBulkUploadCompleted"
+            @running="isBulkUploadRunning = $event"
+          />
         </v-dialog>
 
         <v-row class="pt-2 px-1" align="center">
@@ -220,6 +232,7 @@ import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
+import { saveNotice } from "./maps/saveNotice";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -246,6 +259,8 @@ export default defineComponent({
     const isEditFilesOpen = ref<boolean>(false);
     const isAddDialog = ref<boolean>(false);
     const isBulkUploadOpen = ref<boolean>(false);
+    // Reported by the dialog: while a run is on, it must not be dismissed.
+    const isBulkUploadRunning = ref<boolean>(false);
 
     // Nothing selected means no status filter, the same as selecting all three.
     const statusOptions: MapStatus[] = ["Ladder", "Custom", "Disabled"];
@@ -369,11 +384,13 @@ export default defineComponent({
     }
 
     function openBulkUpload(): void {
+      isBulkUploadRunning.value = false;
       isBulkUploadOpen.value = true;
     }
 
     function closeBulkUpload(): void {
       isBulkUploadOpen.value = false;
+      isBulkUploadRunning.value = false;
     }
 
     // The dialog stays open so its per-file confirmation remains visible; it already
@@ -388,7 +405,22 @@ export default defineComponent({
       snackbar.value = true;
     }
 
-    async function saveMap(map: Map): Promise<boolean> {
+    // What went wrong refreshing the table, or "" when it is up to date again.
+    // Never thrown: the write it follows has already landed.
+    async function reloadMaps(): Promise<string> {
+      try {
+        await mapsManagementStore.loadMaps();
+        return "";
+      } catch(err) {
+        return err instanceof Error ? err.message : "Error trying to reload the maps.";
+      }
+    }
+
+    // The save is done either way; a failed refresh only means the table behind
+    // the dialog is out of date, and must not be reported as a failed save. The
+    // caller says so in its own message rather than in a second snackbar, which
+    // would only replace whatever the first one says.
+    async function saveMapAndRefresh(map: Map): Promise<{ saved: boolean; refreshError: string }> {
       try {
         if (isAddDialog.value) {
           await mapsManagementStore.createMap(map);
@@ -396,12 +428,22 @@ export default defineComponent({
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
-        await mapsManagementStore.loadMaps();
-        return true;
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
-        return false;
+        return { saved: false, refreshError: "" };
       }
+
+      return { saved: true, refreshError: await reloadMaps() };
+    }
+
+    // The edit dialog needs no confirmation of its own - it closes and its row
+    // updates - so only a table left out of date is worth a message.
+    async function saveMap(map: Map): Promise<void> {
+      const { saved, refreshError } = await saveMapAndRefresh(map);
+      if (!saved || !refreshError) return;
+
+      const notice = saveNotice("The map was saved.", refreshError);
+      showSnackbar(notice.text, notice.color);
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
@@ -411,8 +453,10 @@ export default defineComponent({
       map.gameMap = file.metaData;
       map.gameMap.path = `maps\\${file.filePath.replaceAll("/", "\\")}`;
 
-      if (await saveMap(map)) {
-        showSnackbar(`Selected ${getMapPath(map)} for ${map.name}.`, "success");
+      const { saved, refreshError } = await saveMapAndRefresh(map);
+      if (saved) {
+        const notice = saveNotice(`Selected ${getMapPath(map)} for ${map.name}.`, refreshError);
+        showSnackbar(notice.text, notice.color);
       }
       closeEditFiles();
     }
@@ -423,13 +467,19 @@ export default defineComponent({
       togglingMapId.value = map.id;
       try {
         await mapsManagementStore.updateMap({ ...map, disabled: !map.disabled });
-        await mapsManagementStore.loadMaps();
-        showSnackbar(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, "success");
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to update map.", "error");
-      } finally {
         togglingMapId.value = null;
+        return;
       }
+
+      // The flip itself landed, so a refresh that did not must not be reported
+      // as a failed update - there is nothing to try again.
+      const refreshError = await reloadMaps();
+      togglingMapId.value = null;
+
+      const notice = saveNotice(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, refreshError);
+      showSnackbar(notice.text, notice.color);
     }
 
     function createDefaultMap(): Map {
@@ -452,7 +502,12 @@ export default defineComponent({
 
     async function init(): Promise<void> {
       if (!isAdmin.value) return;
-      await Promise.all([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      try {
+        await Promise.all([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      } catch (err) {
+        // A failed load used to leave an empty table that looked like "no maps".
+        showSnackbar(err instanceof Error ? err.message : "Error trying to load the maps.", "error");
+      }
     }
 
     onMounted(async (): Promise<void> => {
@@ -504,6 +559,7 @@ export default defineComponent({
       configureMapFiles,
       adminMapsFilters,
       isBulkUploadOpen,
+      isBulkUploadRunning,
       openBulkUpload,
       closeBulkUpload,
       handleBulkUploadCompleted,

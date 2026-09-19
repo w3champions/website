@@ -31,6 +31,15 @@ export default class MapsService {
     return new Error(fallback);
   }
 
+  private static mapFileFromBody(responseText: string): MapFileData | null {
+    try {
+      const body = JSON.parse(responseText) as MapFileData | null;
+      return body?.filePath ? body : null;
+    } catch {
+      return null;
+    }
+  }
+
   public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
     const filterParam = filter ? `&filter=${filter}` : "";
 
@@ -44,6 +53,13 @@ export default class MapsService {
       },
     });
 
+    // An error body has no `items`, which would read as "there are no maps". That
+    // is indistinguishable from a real empty list, and the bulk upload verifies
+    // its own writes against this list - a swallowed 401 would report every map as
+    // missing rather than as unverified.
+    if (!response.ok) {
+      throw await MapsService.errorFromResponse(response);
+    }
     return await response.json();
   }
 
@@ -98,21 +114,29 @@ export default class MapsService {
       },
     });
 
-    return response.ok ? await response.json() : [];
+    // An empty list and "the list could not be read" have to stay apart: callers
+    // decide whether a name is free based on this answer.
+    if (!response.ok) {
+      throw await MapsService.errorFromResponse(response);
+    }
+    return await response.json();
   }
 
   // Uploads go through XMLHttpRequest rather than fetch: fetch cannot report how
   // much of the request body has been sent, and map files are big enough that a
   // progress bar is worth the older API.
+  // Resolves with the record the backend stored, so callers do not have to guess
+  // which of a map's files the upload became. Older deployments answer without a
+  // body; null then means "ask for the map's files instead".
   public static createMapFile(
     token: string,
     form: FormData,
     onProgress?: (percentUploaded: number) => void,
-  ): Promise<void> {
+  ): Promise<MapFileData | null> {
     const mapId = form.get("mapId") as string;
     const url = `${API_URL}api/maps/${mapId}/files`;
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<MapFileData | null>((resolve, reject) => {
       const request = new XMLHttpRequest();
       request.open("POST", url);
       request.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -124,7 +148,7 @@ export default class MapsService {
 
       request.onload = (): void => {
         if (request.status >= 200 && request.status < 300) {
-          resolve();
+          resolve(MapsService.mapFileFromBody(request.responseText));
           return;
         }
 
@@ -160,6 +184,9 @@ export default class MapsService {
       },
     });
 
+    if (!response.ok) {
+      throw await MapsService.errorFromResponse(response);
+    }
     return await response.json();
   }
 }
