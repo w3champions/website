@@ -201,8 +201,11 @@
             <!-- A fixable row (bad filename, or a target that turned out unknown or
                  temporary) has no confirmed map to report a file for - showing
                  "no file yet" there would contradict a temporary target's own
-                 message, which says its file belongs to the uploader. -->
-            <div v-if="!isFixable(row)" class="text-caption text-medium-emphasis mt-2">
+                 message, which says its file belongs to the uploader. `row.map`
+                 as well as the status: while the batch is being hashed there is
+                 no plan yet, so nothing is fixable yet either, and a row with no
+                 map would flash "This map has no file yet" until it lands. -->
+            <div v-if="row.map && !isFixable(row)" class="text-caption text-medium-emphasis mt-2">
               <template v-if="row.currentFileName">Current file: {{ row.currentFileName }}</template>
               <template v-else>This map has no file yet</template>
             </div>
@@ -421,7 +424,10 @@ export default defineComponent({
       // Note: `Map` is the imported map type here, not the JS global.
       const counts: Record<number, number> = {};
       for (const row of rows.value) {
-        if (row.mapId === null || ["duplicate", "skipped", "error"].includes(statusOf(row))) continue;
+        // A row with no confirmed map targets nothing, whatever its id says. That
+        // is structural, so it also holds while the batch is being hashed, when
+        // there is no plan yet and the status of every row is still "preparing".
+        if (!row.map || row.mapId === null || ["duplicate", "skipped", "error"].includes(statusOf(row))) continue;
         counts[row.mapId] = (counts[row.mapId] ?? 0) + 1;
       }
       return Object.keys(counts).map(Number).filter((mapId) => counts[mapId] > 1);
