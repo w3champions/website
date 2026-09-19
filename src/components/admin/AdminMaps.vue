@@ -630,7 +630,8 @@ export default defineComponent({
         errors.push(err instanceof Error ? err.message : "Error trying to load maps.");
       }
       if (gameModesResult.status === "rejected") {
-        errors.push("Error trying to load active game modes.");
+        const err = gameModesResult.reason;
+        errors.push(err instanceof Error ? err.message : "Error trying to load active game modes.");
       }
       if (errors.length > 0) {
         showSnackbar(errors.join(" "), "error");
