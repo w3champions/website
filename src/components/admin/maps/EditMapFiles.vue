@@ -191,6 +191,8 @@ import { mdiCheckCircle, mdiChevronDown, mdiChevronUp, mdiDownload } from "@mdi/
 import MapFileDropZone from "./MapFileDropZone.vue";
 import MapFileDetails from "./MapFileDetails.vue";
 import { isSameMapFile, mapFileName } from "./mapFilePath";
+import { uploadFailureNotice } from "./uploadNotice";
+import { TimeoutError } from "@/services/http/fetchWithTimeout";
 
 export default defineComponent({
   name: "EditMapFiles",
@@ -286,7 +288,19 @@ export default defineComponent({
 
         files.value = [];
       } catch(err) {
-        uploadError.value = err instanceof Error ? err.message : "Error trying to create map file.";
+        // The server may have stored the file before the request failed - a
+        // timeout is the clearest case, but any failure after the write has the
+        // same shape. Re-read the list either way: a file that did land would
+        // otherwise stay invisible here, and the retry the error invites would
+        // collide with it. reloadMapFiles reports its own failure through
+        // loadError, so it cannot swallow the upload error.
+        await reloadMapFiles();
+        uploadError.value = uploadFailureNotice({
+          error: err instanceof Error ? err.message : "Error trying to create map file.",
+          outcomeUnknown: err instanceof TimeoutError,
+          storedAsName: storedAsName.value,
+          storedFileNames: mapFiles.value.map((mapFile) => mapFileName(mapFile.filePath)),
+        });
       } finally {
         uploading.value = false;
         uploadPercent.value = 0;

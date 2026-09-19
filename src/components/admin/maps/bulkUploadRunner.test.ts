@@ -130,7 +130,7 @@ describe("uploadMapFiles", () => {
     const timeout = timeoutError({
       timeoutMs: 300_000,
       describe: "Uploading the map file",
-      uncertainOutcome: "The file may still have been stored; running the upload again is safe.",
+      uncertainOutcome: "It is not known whether the file was stored; the map's file list shows whether it was.",
     });
     const stored = mapFile("W3Champions/5111_turtle_rock.w3x");
     const uploadFile = vi.fn()

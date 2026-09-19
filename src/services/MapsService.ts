@@ -29,8 +29,14 @@ const FILE_UPLOAD_TIMEOUT_MS = 5 * 60_000;
 // have reached the server and been applied. Say so, so nobody reads a failed row
 // as "nothing was stored".
 const RETRY_IS_SAFE = "It may still have been applied on the server; running this again is safe.";
-const UPLOAD_RETRY_IS_SAFE = "The file may still have been stored; running the upload again is safe, "
-  + "because a file that is already stored identically is reused instead of uploaded again.";
+// Deliberately says nothing about retrying. This message is shared by the bulk
+// uploader, whose planner re-reads the map's files and reuses one that is
+// already stored, and by the single-map editor, which has no such planner - so
+// a promise that "running it again is safe" would be false in one of the two.
+// What is true in both is that the file list settles the question; each caller
+// adds its own recovery hint on top.
+const UPLOAD_OUTCOME_UNKNOWN = "It is not known whether the file was stored; "
+  + "the map's file list shows whether it was.";
 
 export default class MapsService {
   // The backend returns either a bare string (its own HttpRequestException message,
@@ -214,7 +220,7 @@ export default class MapsService {
         reject(timeoutError({
           timeoutMs: FILE_UPLOAD_TIMEOUT_MS,
           describe: "Uploading the map file",
-          uncertainOutcome: UPLOAD_RETRY_IS_SAFE,
+          uncertainOutcome: UPLOAD_OUTCOME_UNKNOWN,
         }));
 
       request.send(form);
