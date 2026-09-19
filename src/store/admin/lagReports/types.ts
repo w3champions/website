@@ -36,6 +36,13 @@ export type LagReportsState = {
   selectedReport: LagReportDetail | null;
   selectedReportLoading: boolean;
   selectedReportError: string | null;
+  // Aggregation-backed enrichment (see LagReportAggregateParams).
+  nodeDayBuckets: LagReportAggregateBucket[];
+  nodeDayLoading: boolean;
+  // Set when the grouped-view aggregation failed — the view must say so
+  // rather than render an empty result as "no reports match".
+  nodeDayError: boolean;
+  battleTagCounts: Map<string, LagReportAggregateBucket>;
 };
 
 export interface LagReportListItem {
@@ -57,6 +64,10 @@ export interface LagReportPlayerSummary {
   connectionType: EConnectionType;
   proxyName: string | null;
   issueCategories: EIssueCategory[];
+  // Wire name is snake_case — the backend pins it with JsonPropertyName. The
+  // launcher's own fault verdict (e.g. "LAN", "LastMile"); typed as strings so
+  // new tags pass through without a frontend release.
+  connection_issue_tags: string[];
   lagEventCount: number;
   connectionEventCount: number;
 }
@@ -66,18 +77,66 @@ export interface LagReportsResponse {
   total: number;
 }
 
+export type LagReportRepeatMode = "submitted" | "involved";
+
 export interface LagReportQueryParams {
   page: number;
   pageSize: number;
   battleTag?: string;
   gameSearch?: string;
-  serverName?: string;
+  // Name prefixes and exact node ids, each list OR'd server-side (repeated params).
+  serverNames?: string[];
+  serverNodeIds?: number[];
   proxyName?: string;
   proxyIp?: string;
   dateFrom?: string;
   dateTo?: string;
-  issueCategory?: string;
+  // OR'd server-side: a report matches when any player carries any of them.
+  issueCategories?: string[];
+  connectionIssueTag?: string;
   explicitOnly?: boolean;
+  minPlayers?: number;
+  maxPlayers?: number;
+  // ≥2 activates; "submitted" (default) keeps reports the chronic personally
+  // submitted, "involved" keeps every report they appear in.
+  minRepeat?: number;
+  repeatMode?: LagReportRepeatMode;
+}
+
+// ── Aggregate (counts grouped by one dimension) ──────────────────────
+
+export type LagReportAggregateDimension = "day" | "node-day" | "category" | "server" | "proxy" | "battleTag";
+
+export interface LagReportAggregateParams extends Omit<LagReportQueryParams, "page" | "pageSize"> {
+  groupBy: LagReportAggregateDimension;
+  limit?: number;
+}
+
+export interface LagReportCategoryCount {
+  category: string;
+  count: number;
+}
+
+/** One bucket; which key/extra fields are present depends on the dimension. */
+export interface LagReportAggregateBucket {
+  day?: string;
+  serverNodeId?: number;
+  serverNodeName?: string;
+  category?: string;
+  proxyName?: string;
+  battleTag?: string;
+  count: number;
+  explicitCount?: number;
+  distinctPlayers?: number;
+  topCategories?: LagReportCategoryCount[];
+  distinctNodes?: number;
+  // battleTag dimension: reports this player submitted themselves; count is
+  // reports they merely appear in.
+  submittedCount?: number;
+}
+
+export interface LagReportAggregateResponse {
+  buckets: LagReportAggregateBucket[];
 }
 
 // ── Detail types (full report) ───────────────────────────────────────
