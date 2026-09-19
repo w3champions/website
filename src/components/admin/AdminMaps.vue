@@ -233,6 +233,7 @@ import EditMapFiles from "./maps/EditMapFiles.vue";
 import BulkMapUpload from "./maps/BulkMapUpload.vue";
 import MapFileDetails from "./maps/MapFileDetails.vue";
 import { cloneMapForEdit, withSelectedMapFile } from "./maps/mapPayload";
+import { saveNotice } from "./maps/saveNotice";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -399,7 +400,22 @@ export default defineComponent({
       snackbar.value = true;
     }
 
-    async function saveMap(map: Map): Promise<boolean> {
+    // What went wrong refreshing the table, or "" when it is up to date again.
+    // Never thrown: the write it follows has already landed.
+    async function reloadMaps(): Promise<string> {
+      try {
+        await mapsManagementStore.loadMaps();
+        return "";
+      } catch(err) {
+        return err instanceof Error ? err.message : "Error trying to reload the maps.";
+      }
+    }
+
+    // The save is done either way; a failed refresh only means the table behind
+    // the dialog is out of date, and must not be reported as a failed save. The
+    // caller says so in its own message rather than in a second snackbar, which
+    // would only replace whatever the first one says.
+    async function saveMapAndRefresh(map: Map): Promise<{ saved: boolean; refreshError: string }> {
       try {
         if (isAddDialog.value) {
           await mapsManagementStore.createMap(map);
@@ -409,17 +425,20 @@ export default defineComponent({
         closeEdit();
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
-        return false;
+        return { saved: false, refreshError: "" };
       }
 
-      // The save is done either way; a failed refresh only means the table behind
-      // the dialog is out of date, and must not be reported as a failed save.
-      try {
-        await mapsManagementStore.loadMaps();
-      } catch(err) {
-        showSnackbar(err instanceof Error ? err.message : "Error trying to reload the maps.", "error");
-      }
-      return true;
+      return { saved: true, refreshError: await reloadMaps() };
+    }
+
+    // The edit dialog needs no confirmation of its own - it closes and its row
+    // updates - so only a table left out of date is worth a message.
+    async function saveMap(map: Map): Promise<void> {
+      const { saved, refreshError } = await saveMapAndRefresh(map);
+      if (!saved || !refreshError) return;
+
+      const notice = saveNotice("The map was saved.", refreshError);
+      showSnackbar(notice.text, notice.color);
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
@@ -427,8 +446,10 @@ export default defineComponent({
       // store's file list, and writing the game path into it would edit that list.
       const map = withSelectedMapFile(e.map, e.file);
 
-      if (await saveMap(map)) {
-        showSnackbar(`Selected ${getMapPath(map)} for ${map.name}.`, "success");
+      const { saved, refreshError } = await saveMapAndRefresh(map);
+      if (saved) {
+        const notice = saveNotice(`Selected ${getMapPath(map)} for ${map.name}.`, refreshError);
+        showSnackbar(notice.text, notice.color);
       }
       closeEditFiles();
     }
@@ -439,13 +460,19 @@ export default defineComponent({
       togglingMapId.value = map.id;
       try {
         await mapsManagementStore.updateMap({ ...map, disabled: !map.disabled });
-        await mapsManagementStore.loadMaps();
-        showSnackbar(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, "success");
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to update map.", "error");
-      } finally {
         togglingMapId.value = null;
+        return;
       }
+
+      // The flip itself landed, so a refresh that did not must not be reported
+      // as a failed update - there is nothing to try again.
+      const refreshError = await reloadMaps();
+      togglingMapId.value = null;
+
+      const notice = saveNotice(`${map.name} is now ${map.disabled ? "enabled" : "disabled"}.`, refreshError);
+      showSnackbar(notice.text, notice.color);
     }
 
     function createDefaultMap(): Map {

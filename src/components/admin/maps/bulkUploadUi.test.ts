@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { gatingFor, PlanRowInput, RunTally, summarizeRun, toPlanCandidates } from "./bulkUploadUi";
+import { BulkRowStatus, gatingFor, PlanRowInput, RunTally, startTally, summarizeRun, TallyRowInput, toPlanCandidates } from "./bulkUploadUi";
 
 function row(overrides: Partial<PlanRowInput> & Pick<PlanRowInput, "key">): PlanRowInput {
   return {
@@ -40,6 +40,75 @@ describe("toPlanCandidates", () => {
     const [candidate] = toPlanCandidates([row({ key: "a", mapId: null, mapExists: false })]);
 
     expect(candidate).toMatchObject({ mapId: null, mapExists: false });
+  });
+});
+
+function statusRow(key: string, status: BulkRowStatus): TallyRowInput {
+  return { key, status };
+}
+
+describe("startTally", () => {
+  it("counts what the run is leaving behind", () => {
+    const start = startTally(
+      [
+        statusRow("a", "ready"),
+        statusRow("b", "error"),
+        statusRow("c", "skipped"),
+        statusRow("d", "duplicate"),
+      ],
+      ["a"],
+    );
+
+    expect(start).toMatchObject({ total: 4, blocked: 1, skipped: 1, duplicates: 1, succeeded: 0, failed: 0 });
+  });
+
+  it("does not hold back a failed row that this run is about to retry", () => {
+    // "Select uploaded" retries a row whose map update failed. Its outcome is
+    // this run's to report, so the state the last run left it in must not count
+    // against it as well.
+    const start = startTally([statusRow("a", "error")], ["a"]);
+    start.succeeded = 1;
+    start.headlines.push("Selected 1 map.");
+    start.notifiesParent = true;
+
+    const summary = summarizeRun(start);
+    expect(summary.error).toBe("");
+    expect(summary.successMessage).toContain("Selected 1 map.");
+    expect(summary.mayComplete).toBe(true);
+  });
+
+  it("counts a retry that fails again once, not twice", () => {
+    const start = startTally([statusRow("a", "error")], ["a"]);
+    start.failed = 1;
+
+    expect(summarizeRun(start).error).toContain("1 of 1");
+    expect(summarizeRun(start).error).toContain("need attention");
+  });
+
+  it("keeps holding a row the plan refused to send and the run cannot touch", () => {
+    const start = startTally([statusRow("a", "ready"), statusRow("b", "error")], ["a"]);
+    start.succeeded = 1;
+    start.headlines.push("Uploaded 1 file.");
+
+    const summary = summarizeRun(start);
+    expect(summary.successMessage).toBe("");
+    expect(summary.error).toContain("1 of 2");
+    expect(summary.error).toContain("need attention");
+    expect(summary.mayComplete).toBe(false);
+  });
+
+  it("applies the same rule to an upload run, whose rows it also acts on", () => {
+    // Both run kinds go through here; only the set of rows differs.
+    const rows = [statusRow("a", "ready"), statusRow("b", "reuse"), statusRow("c", "error")];
+
+    expect(startTally(rows, ["a", "b"]).blocked).toBe(1);
+    expect(startTally(rows, ["a", "b", "c"]).blocked).toBe(0);
+  });
+
+  it("still reports the whole batch as the size of the run", () => {
+    const rows = [statusRow("a", "error"), statusRow("b", "error")];
+
+    expect(startTally(rows, ["a", "b"]).total).toBe(2);
   });
 });
 
