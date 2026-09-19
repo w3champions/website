@@ -183,7 +183,14 @@
             </div>
           </template>
           <template v-slot:[`item.path`]="{ item }">
-            <span v-if="getMapPath(item)">{{ getMapPath(item) }}</span>
+            <!-- A swept temporary map keeps its `gameMap.path` on purpose - it's
+                 the restore key if the map is ever reattached - but showing that
+                 path here would read as a file that's still there. Say so instead;
+                 the stored path itself is untouched. -->
+            <span v-if="isTemporaryMap(item) && item.fileState === 'deleted'" class="text-medium-emphasis">
+              File expired and deleted
+            </span>
+            <span v-else-if="getMapPath(item)">{{ getMapPath(item) }}</span>
             <span v-else class="text-medium-emphasis">No file selected</span>
           </template>
           <template v-slot:[`item.uploader`]="{ item }">
