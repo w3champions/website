@@ -95,5 +95,14 @@ export const useMapsManagementStore = defineStore("mapsManagement", {
     SET_MAP_FILES(mapFiles: MapFileData[]) {
       this.mapFiles = mapFiles || [];
     },
+    // includeTemporary is an explicit per-page opt-in, so it must not outlive
+    // the page it was ticked on. The reloads sequencer is a module-level
+    // singleton that outlives this store's own resets, so it has to be reset
+    // alongside it - otherwise a load still in flight from the page that just
+    // unmounted could land in whatever reopens next and repaint its table.
+    reset() {
+      this.$reset();
+      reloads.reset();
+    },
   },
 });

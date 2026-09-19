@@ -139,3 +139,40 @@ test("an untick while an earlier save reload is still in flight: its late respon
   // With nothing left in flight, the returned flag is the shown rows' flag.
   assert.deepEqual(reloads.landed(save), { apply: false, includeTemporary: false });
 });
+
+// The page unmounts (the admin navigates away, or signs out - a hard
+// navigation, but this pins the defence-in-depth reset itself) while a load
+// from the old session is still in flight. reset() must leave that load
+// unable to touch the new session: neither applying its rows nor reporting
+// its failure.
+test("a load in flight across a reset neither applies nor reports, and a fresh load after it behaves like the first", () => {
+  const reloads = new ReloadSequence();
+  const stale = reloads.start(true);
+
+  reloads.reset();
+
+  assert.deepEqual(reloads.landed(stale), { apply: false, includeTemporary: false });
+
+  const staleFailure = reloads.start(true);
+  reloads.reset();
+
+  assert.deepEqual(reloads.failed(staleFailure), { report: false, includeTemporary: false });
+
+  // A fresh load started after the reset is, once again, the first load of a
+  // new sequence: it applies and its flag is not shadowed by anything stale.
+  const fresh = reloads.start(true);
+  assert.deepEqual(reloads.landed(fresh), { apply: true, includeTemporary: true });
+});
+
+test("reset reverts shownFlag to the constructor's initial value, not just false", () => {
+  // Land an opt-in so the shown rows' flag is true, then reset: a failure on
+  // a new load afterwards must report includeTemporary: false, proving the
+  // reset actually rewound shownFlag rather than leaving the old landed value.
+  const reloads = new ReloadSequence();
+  reloads.landed(reloads.start(true));
+
+  reloads.reset();
+
+  const load = reloads.start(false);
+  assert.deepEqual(reloads.failed(load), { report: true, includeTemporary: false });
+});

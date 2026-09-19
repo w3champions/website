@@ -260,7 +260,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import type { AdminMapsFilters, Map, MapFileData, MapStatus } from "@/store/admin/mapsManagement/types";
 import EditMap from "./maps/EditMap.vue";
 import EditMapFiles from "./maps/EditMapFiles.vue";
@@ -594,6 +594,15 @@ export default defineComponent({
 
     onMounted(async (): Promise<void> => {
       await init();
+    });
+
+    // "Show temporary maps" is an explicit opt-in for this page, not a
+    // standing preference, so it (and the cached rows fetched under it) must
+    // not survive the page closing. onUnmounted, not a watch(isAdmin, ...)
+    // here: the parent gates this component on v-if="isAdmin", so the parent
+    // unmounts and stops this component's watchers before one could fire.
+    onUnmounted(() => {
+      mapsManagementStore.reset();
     });
 
     // The table is laid out with fixed widths (see the style block): every column but

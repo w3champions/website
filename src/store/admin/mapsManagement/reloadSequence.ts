@@ -45,10 +45,27 @@ export class ReloadSequence {
   private shownFlag: boolean;
   /** The flag each unsettled load was fetched with, by id. */
   private readonly inFlight = new Map<number, boolean>();
+  /** What `reset()` rewinds `shownFlag` to - the table an empty page counts as showing. */
+  private readonly initialIncludeTemporary: boolean;
 
   /** `initialIncludeTemporary` is what an empty table counts as showing. */
   constructor(initialIncludeTemporary = false) {
+    this.initialIncludeTemporary = initialIncludeTemporary;
     this.shownFlag = initialIncludeTemporary;
+  }
+
+  /**
+   * Forgets every load that is still in flight and rewinds the shown flag to
+   * its initial value, so a response from the old session that lands later
+   * can neither replace the table nor report a failure: `settle` returns
+   * `undefined` for an id this no longer recognises, which makes `apply`
+   * false in `landed` and `report` false in `failed`.
+   */
+  reset(): void {
+    this.inFlight.clear();
+    this.latest = 0;
+    this.shown = 0;
+    this.shownFlag = this.initialIncludeTemporary;
   }
 
   /** Registers a load fetched with `includeTemporary` and returns its id. */
