@@ -16,6 +16,12 @@
           details-title="Selected map file details"
         />
 
+        <!-- An unreadable file list used to look like an empty one, which invites
+             uploading a file that is already there. -->
+        <v-alert v-if="loadError" type="error" variant="outlined" class="mb-4">
+          The map's files could not be loaded: {{ loadError }}
+        </v-alert>
+
         <v-data-table
           ref="fileTable"
           :headers="headers"
@@ -204,6 +210,7 @@ export default defineComponent({
     const loadingFiles = ref<boolean>(true);
     const uploadPercent = ref<number>(0);
     const uploadError = ref<string>("");
+    const loadError = ref<string>("");
     const isConfirmOpen = ref<boolean>(false);
     const pendingFile = ref<MapFileData | null>(null);
     const mapFiles = computed<MapFileData[]>(() => mapsManagementStore.mapFiles);
@@ -275,7 +282,7 @@ export default defineComponent({
         const nameOverride = fileName.value.trim() === selectedFile.name ? "" : fileName.value.trim();
         formData.append("fileName", nameOverride);
         await mapsManagementStore.createMapFile(formData, (percent) => uploadPercent.value = percent);
-        await mapsManagementStore.loadMapFiles(props.map.id);
+        await reloadMapFiles();
 
         files.value = [];
       } catch(err) {
@@ -297,10 +304,19 @@ export default defineComponent({
       scroller.scrollTop += offset - (scroller.clientHeight - selectedRow.clientHeight) / 2;
     }
 
+    async function reloadMapFiles(): Promise<void> {
+      loadError.value = "";
+      try {
+        await mapsManagementStore.loadMapFiles(props.map.id);
+      } catch (err) {
+        loadError.value = err instanceof Error ? err.message : "Error trying to load the map's files.";
+      }
+    }
+
     onMounted(async (): Promise<void> => {
       loadingFiles.value = true;
       try {
-        await mapsManagementStore.loadMapFiles(props.map.id);
+        await reloadMapFiles();
       } finally {
         loadingFiles.value = false;
       }
@@ -327,6 +343,7 @@ export default defineComponent({
       pendingFile,
       uploadPercent,
       uploadError,
+      loadError,
       storedAsName,
       duplicateFileName,
       isSelected,

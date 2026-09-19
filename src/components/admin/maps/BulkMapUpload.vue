@@ -20,13 +20,17 @@
             <li>Filenames must be in format: <code>{map_id}_{name}.w3m</code> or <code>{map_id}_{name}.w3x</code></li>
             <li>Example: <code>5529_twisted_meadows.w3m</code> (map_id = 5529)</li>
             <li>Maps with the specified IDs must already exist in the system</li>
+            <li>
+              Picking the same map from several mode folders is fine: identical copies are uploaded once, and a
+              file that is already stored is reused instead of uploaded again.
+            </li>
           </ul>
         </v-alert>
 
         <map-file-drop-zone
           v-model="files"
           multiple
-          :disabled="uploading || selecting"
+          :disabled="busy"
           label="Drag & drop map files here"
         />
 
@@ -41,7 +45,7 @@
             <v-btn
               color="primary"
               class="text-w3-race-bg"
-              :disabled="readyRows.length === 0 || uploading || selecting"
+              :disabled="readyRows.length === 0 || busy"
               :loading="runningAction === 'upload'"
               @click="runUpload"
             >
@@ -51,7 +55,7 @@
                  pale block on the dark themes. -->
             <v-btn
               variant="outlined"
-              :disabled="readyRows.length === 0 || uploading || selecting"
+              :disabled="readyRows.length === 0 || busy"
               :loading="runningAction === 'upload-select'"
               @click="runUploadAndSelect"
             >
@@ -60,15 +64,18 @@
             <v-btn
               color="success"
               class="text-w3-race-bg"
-              :disabled="uploadedRows.length === 0 || uploading || selecting"
+              :disabled="selectableRows.length === 0 || busy"
               :loading="runningAction === 'select'"
               @click="runSelect"
             >
-              Select uploaded ({{ uploadedRows.length }})
+              Select uploaded ({{ selectableRows.length }})
             </v-btn>
+            <!-- Held back for the whole run, not just for the request in flight: a
+                 run keeps writing through phases where nothing is on screen. It
+                 stays available during the pre-flight check, which writes nothing. -->
             <v-btn
               class="bg-error text-w3-race-bg"
-              :disabled="uploading || selecting"
+              :disabled="!gating.canReset"
               variant="text"
               @click="reset"
             >
@@ -76,6 +83,10 @@
             </v-btn>
           </v-col>
         </v-row>
+
+        <div v-if="preparing" class="text-caption text-medium-emphasis mt-3">
+          Checking the picked files against what is already stored…
+        </div>
 
         <div v-if="uploading" class="mt-3">
           <v-progress-linear
@@ -99,14 +110,17 @@
             <v-chip v-if="readyRows.length" color="info" size="small" variant="flat">
               {{ readyRows.length }} ready
             </v-chip>
+            <v-chip v-if="duplicateRows.length" color="warning" size="small" variant="flat">
+              {{ duplicateRows.length }} identical duplicate{{ duplicateRows.length === 1 ? "" : "s" }}
+            </v-chip>
+            <v-chip v-if="skippedRows.length" color="warning" size="small" variant="flat">
+              {{ skippedRows.length }} skipped
+            </v-chip>
             <v-chip v-if="uploadedRows.length" color="warning" size="small" variant="flat">
               {{ uploadedRows.length }} uploaded, not selected
             </v-chip>
             <v-chip v-if="selectedRows.length" color="success" size="small" variant="flat">
               {{ selectedRows.length }} selected
-            </v-chip>
-            <v-chip v-if="conflictRows.length" color="warning" size="small" variant="flat">
-              {{ conflictRows.length }} name conflict{{ conflictRows.length === 1 ? "" : "s" }}
             </v-chip>
             <v-chip v-if="problemRows.length" color="error" size="small" variant="flat">
               {{ problemRows.length }} need attention
@@ -121,17 +135,17 @@
               <span class="font-weight-medium text-break">{{ row.fileName }}</span>
               <v-spacer />
               <v-chip
-                :color="statusColor(row.status)"
+                :color="statusColor(statusOf(row))"
                 variant="flat"
                 size="small"
-                :prepend-icon="statusIcon(row.status)"
+                :prepend-icon="statusIcon(statusOf(row))"
               >
-                {{ statusLabel(row.status) }}
+                {{ statusLabel(statusOf(row)) }}
               </v-chip>
             </div>
 
             <v-progress-linear
-              v-if="row.status === 'uploading'"
+              v-if="statusOf(row) === 'uploading'"
               :model-value="row.percent"
               :indeterminate="row.percent >= 100"
               color="primary"
@@ -155,7 +169,7 @@
                   variant="underlined"
                   color="primary"
                   hide-details
-                  :disabled="uploading || selecting"
+                  :disabled="busy"
                   @update:model-value="assignMap(row, $event)"
                 />
                 <div v-else class="d-flex flex-wrap align-center ga-2 text-body-2">
@@ -169,14 +183,17 @@
               </v-col>
 
               <v-col cols="12" md="6">
+                <!-- A rename is also the retry: a file rejected because the name is
+                     taken by another map's file can only be fixed here. -->
                 <v-text-field
-                  v-model="row.storeAs"
+                  :model-value="row.storeAs"
                   label="Store the file as"
                   density="compact"
                   variant="underlined"
                   color="primary"
                   hide-details
-                  :disabled="uploading || selecting"
+                  :disabled="busy || !canRename(row)"
+                  @update:model-value="renameRow(row, $event)"
                 />
               </v-col>
             </v-row>
@@ -194,19 +211,8 @@
               Another file in this batch targets the same map.
             </div>
 
-            <div v-if="nameAlreadyStored(row)" class="text-caption text-warning mt-1">
-              <v-icon size="x-small" class="mr-1">{{ mdiAlertOutline }}</v-icon>
-              This map already has a file stored under this name. Files are never replaced, so it is
-              held back until the name is changed.
-            </div>
-
-            <div v-if="duplicateNames.includes(row.storeAs.trim().toLowerCase())" class="text-caption text-warning mt-1">
-              <v-icon size="x-small" class="mr-1">{{ mdiAlertOutline }}</v-icon>
-              Another file in this batch would be stored under this name.
-            </div>
-
-            <div v-if="row.message" class="text-caption text-medium-emphasis mt-1">
-              {{ row.message }}
+            <div v-if="messageOf(row)" class="text-caption text-medium-emphasis mt-1">
+              {{ messageOf(row) }}
             </div>
           </v-card>
         </template>
@@ -215,7 +221,9 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn :disabled="uploading || selecting" variant="text" class="bg-primary text-w3-race-bg" @click="cancel">
+      <!-- Closing unmounts this component, so it is held back for the whole run -
+           the writes would carry on with nowhere to report to. -->
+      <v-btn :disabled="!gating.canClose" variant="text" class="bg-primary text-w3-race-bg" @click="cancel">
         Close
       </v-btn>
     </v-card-actions>
@@ -226,20 +234,32 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
-import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiFileQuestionOutline, mdiProgressUpload } from "@mdi/js";
+import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiContentCopy, mdiFileQuestionOutline, mdiMinusCircleOutline, mdiProgressClock, mdiProgressUpload } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
-import { mapFileName } from "./mapFilePath";
+import { mapFileName, toStoredFileName } from "./mapFilePath";
+import { BulkPlanEntry, planBulkUpload, StoredMapFilesByMapId } from "./bulkUploadPlan";
+import { BulkSelectItem, BulkUploadItem, selectMapFiles, uploadMapFiles } from "./bulkUploadRunner";
+import { BulkRowState, gatingFor, RunAction, RunTally, summarizeRun, toPlanCandidates } from "./bulkUploadUi";
+import { sha1Hex } from "./mapFileHash";
+
+// What has happened to a row so far. What it *should* do next is not stored here:
+// bulkUploadPlan decides that from the picked files and the stored ones, so it
+// stays correct while the operator edits a target name or retries a failed row.
+type RowState = BulkRowState;
 
 type RowStatus =
-  | "invalid-name"
-  | "unknown-map"
+  | "preparing"
   | "ready"
+  | "reuse"
+  | "duplicate"
+  | "skipped"
   | "uploading"
   | "uploaded"
   | "selected"
   | "error";
 
 interface BulkRow {
+  // Unique per picked file: two files with the same name must never share a row.
   key: string;
   file: File;
   fileName: string;
@@ -248,10 +268,12 @@ interface BulkRow {
   currentFileName: string;
   // What the file will be stored as; starts as its own name and is editable.
   storeAs: string;
-  status: RowStatus;
+  state: RowState;
   message?: string;
   percent: number;
-  mapFileData?: MapFileData;
+  // Hex SHA-1 of the whole file, which is what the update service stores too.
+  sha1: string | null;
+  mapFile?: MapFileData;
 }
 
 export default defineComponent({
@@ -262,75 +284,141 @@ export default defineComponent({
     const files = ref<File[]>([]);
     const rows = ref<BulkRow[]>([]);
     const uploading = ref<boolean>(false);
-    const selecting = ref<boolean>(false);
+    const lookupsInFlight = ref<number>(0);
+    // Rows currently being hashed and maps currently being read, so two
+    // overlapping drops do not do the same work twice.
+    const hashingKeys = new Set<string>();
+    const lookupKeys = new Set<number>();
+    // Bumped by Reset, so a lookup that was already in flight cannot write its
+    // answer into the next batch.
+    let storedGeneration = 0;
     const error = ref<string>("");
     const successMessage = ref<string>("");
-    // Which button is running, so only that one shows a spinner.
-    const runningAction = ref<"upload" | "upload-select" | "select" | null>(null);
+    // Which button is running, so only that one shows a spinner - and, because it
+    // spans the whole run rather than one request, what gates Reset and Close.
+    const runningAction = ref<RunAction>(null);
     const uploadIndex = ref<number>(0);
     const uploadTotal = ref<number>(0);
     const uploadingFileName = ref<string>("");
     const currentRowPercent = ref<number>(0);
-    // File names each target map already has, so a name that the server would
-    // reject is caught before the upload runs. Keyed by map id.
-    const storedNames = ref<Record<number, string[]>>({});
+    // Each target map's stored files, or null when the lookup failed. The plan
+    // refuses to guess rather than uploading into an unknown state.
+    const storedFiles = ref<StoredMapFilesByMapId>({});
+    let nextRowKey = 0;
 
+    // Derived from the rows themselves rather than from a "hashing" flag, so a
+    // second drop that lands mid-hash cannot clear it early and make the plan
+    // call a file that has simply not been hashed yet unreadable.
+    const preparing = computed<boolean>(() =>
+      lookupsInFlight.value > 0
+      || rows.value.some((row) => row.state === "pending" && row.sha1 === null && !row.message)
+    );
+    const gating = computed(() => gatingFor({ runningAction: runningAction.value, preparing: preparing.value }));
+    const busy = computed<boolean>(() => gating.value.busy);
+
+    // Disabling Close is not enough on its own: the dialog around this component
+    // also closes on Escape and on a click outside, which unmounts it while the
+    // run keeps writing. Tell the parent when it has to hold the dialog open.
+    watch(() => !gating.value.canClose, (running) => context.emit("running", running), { immediate: true });
+
+    // The plan is recomputed from the rows, so editing a target name immediately
+    // moves a file between "ready", "already stored" and "needs attention".
+    //
+    // Rows that are already on their way keep their place in the plan - a file
+    // being uploaded still claims its name, so its identical copies stay
+    // duplicates. A row that failed is left out, so one of its copies can take
+    // over on the next attempt instead of the map ending up with no file at all.
+    const planByKey = computed<Record<string, BulkPlanEntry>>(() => {
+      if (preparing.value) return {};
+
+      const candidates = toPlanCandidates(
+        rows.value.map((row) => ({
+          key: row.key,
+          fileName: row.fileName,
+          storeAs: row.storeAs,
+          mapId: row.mapId,
+          mapExists: !!row.map,
+          sha1: row.sha1,
+          state: row.state,
+        })),
+      );
+
+      const entries: Record<string, BulkPlanEntry> = {};
+      for (const entry of planBulkUpload(candidates, storedFiles.value)) entries[entry.key] = entry;
+      return entries;
+    });
+
+    function planOf(row: BulkRow): BulkPlanEntry | undefined {
+      return row.state === "pending" ? planByKey.value[row.key] : undefined;
+    }
+
+    function statusOf(row: BulkRow): RowStatus {
+      switch (row.state) {
+        case "uploading": return "uploading";
+        case "uploaded": return "uploaded";
+        case "selected": return "selected";
+        case "failed": return "error";
+      }
+
+      const plan = planOf(row);
+      if (!plan) return "preparing";
+      switch (plan.action) {
+        case "upload": return "ready";
+        case "reuse": return "reuse";
+        case "duplicate": return "duplicate";
+        case "skip": return "skipped";
+        default: return "error";
+      }
+    }
+
+    function messageOf(row: BulkRow): string | undefined {
+      if (row.message) return row.message;
+
+      const plan = planOf(row);
+      if (!plan?.duplicateOf) return plan?.message;
+
+      // Two copies share a name, so naming the file it duplicates is not enough
+      // to tell them apart: point at its position in the batch.
+      const position = rows.value.findIndex((candidate) => candidate.key === plan.duplicateOf);
+      return position < 0 ? plan.message : `${plan.message} (file ${position + 1} in this batch)`;
+    }
+
+    function rowsWithStatus(status: RowStatus): BulkRow[] {
+      return rows.value.filter((row) => statusOf(row) === status);
+    }
+
+    // "Ready" covers both a real upload and reusing an identical stored file:
+    // either way the map ends up pointing at the right file.
     const readyRows = computed<BulkRow[]>(() =>
-      rows.value.filter((row) => row.status === "ready" && !hasNameConflict(row))
+      rows.value.filter((row) => ["ready", "reuse"].includes(statusOf(row)))
     );
-    const conflictRows = computed<BulkRow[]>(() =>
-      rows.value.filter((row) => row.status === "ready" && hasNameConflict(row))
+    const duplicateRows = computed<BulkRow[]>(() => rowsWithStatus("duplicate"));
+    const skippedRows = computed<BulkRow[]>(() => rowsWithStatus("skipped"));
+    const uploadedRows = computed<BulkRow[]>(() => rowsWithStatus("uploaded"));
+    // A row whose map update failed still has its uploaded file, so "Select
+    // uploaded" is also the retry for it - otherwise the only way back is a
+    // Reset that throws away the whole batch.
+    const selectableRows = computed<BulkRow[]>(() =>
+      rows.value.filter((row) =>
+        !!row.map && !!row.mapFile && (row.state === "uploaded" || row.state === "failed")
+      )
     );
-    const uploadedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "uploaded"));
-    const selectedRows = computed<BulkRow[]>(() => rows.value.filter((row) => row.status === "selected"));
-    const problemRows = computed<BulkRow[]>(() =>
-      rows.value.filter((row) => ["invalid-name", "unknown-map", "error"].includes(row.status))
-    );
+    const selectedRows = computed<BulkRow[]>(() => rowsWithStatus("selected"));
+    // Both a failed request and a file the plan refused to send count here, so a
+    // run can never be summed up as a success while one of them is on screen.
+    const problemRows = computed<BulkRow[]>(() => rowsWithStatus("error"));
 
     // Two files aimed at the same map both upload fine, but only the last one
     // selected stays active - worth flagging before the admin walks away.
+    // Identical copies are excluded: they are handled once, not twice.
     const duplicateMapIds = computed<number[]>(() => {
       // Note: `Map` is the imported map type here, not the JS global.
       const counts: Record<number, number> = {};
       for (const row of rows.value) {
-        if (row.mapId === null) continue;
+        if (row.mapId === null || ["duplicate", "skipped", "error"].includes(statusOf(row))) continue;
         counts[row.mapId] = (counts[row.mapId] ?? 0) + 1;
       }
       return Object.keys(counts).map(Number).filter((mapId) => counts[mapId] > 1);
-    });
-
-    async function loadStoredNames(mapId: number): Promise<void> {
-      if (storedNames.value[mapId]) return;
-      try {
-        const mapFiles = await mapsManagementStore.fetchMapFiles(mapId);
-        storedNames.value[mapId] = mapFiles.map((mapFile) => mapFileName(mapFile.filePath));
-      } catch {
-        // A failed lookup only costs the warning; the upload still reports the error.
-      }
-    }
-
-    function nameAlreadyStored(row: BulkRow): boolean {
-      if (row.mapId === null) return false;
-      const name = row.storeAs.trim().toLowerCase();
-      return !!name && (storedNames.value[row.mapId] ?? []).includes(name);
-    }
-
-    // Either conflict means the server would reject this file, so it is held back
-    // from the upload until the name is changed.
-    function hasNameConflict(row: BulkRow): boolean {
-      return nameAlreadyStored(row) || duplicateNames.value.includes(row.storeAs.trim().toLowerCase());
-    }
-
-    // The update service refuses to overwrite a stored file, so two files heading
-    // for the same name means the second one fails.
-    const duplicateNames = computed<string[]>(() => {
-      const counts: Record<string, number> = {};
-      for (const row of rows.value) {
-        const name = row.storeAs.trim().toLowerCase();
-        if (!name) continue;
-        counts[name] = (counts[name] ?? 0) + 1;
-      }
-      return Object.keys(counts).filter((name) => counts[name] > 1);
     });
 
     const mapOptions = computed(() =>
@@ -339,8 +427,76 @@ export default defineComponent({
         .map((map) => ({ title: `${map.name} (${map.id})`, value: map.id }))
     );
 
+    async function loadStoredFiles(mapId: number, force = false): Promise<void> {
+      if (!force && (mapId in storedFiles.value || lookupKeys.has(mapId))) return;
+
+      const generation = storedGeneration;
+      lookupKeys.add(mapId);
+      lookupsInFlight.value++;
+      try {
+        const mapFiles = await mapsManagementStore.fetchMapFiles(mapId);
+        // Reset while this was in flight: the answer belongs to a batch that is gone.
+        if (generation === storedGeneration) storedFiles.value[mapId] = mapFiles;
+      } catch {
+        // Null, not an empty list: "no files" and "we could not find out" lead to
+        // very different decisions.
+        if (generation === storedGeneration) storedFiles.value[mapId] = null;
+      } finally {
+        // Both the claim and the counter belong to the batch this lookup started
+        // in. A Reset has already cleared them, and touching them now would undo
+        // a claim the new batch is relying on.
+        if (generation === storedGeneration) {
+          lookupKeys.delete(mapId);
+          lookupsInFlight.value--;
+        }
+      }
+    }
+
+    async function hashPickedFiles(): Promise<void> {
+      // Claim the rows synchronously, before the first await, so an overlapping
+      // call cannot pick up the same ones.
+      const unhashed = rows.value.filter(
+        (row) => row.sha1 === null && !row.message && !hashingKeys.has(row.key)
+      );
+      for (const row of unhashed) hashingKeys.add(row.key);
+
+      try {
+        for (const row of unhashed) {
+          try {
+            row.sha1 = await sha1Hex(row.file);
+          } catch (err) {
+            row.message = err instanceof Error ? err.message : "The file could not be read.";
+          }
+        }
+      } finally {
+        for (const row of unhashed) hashingKeys.delete(row.key);
+      }
+    }
+
+    async function prepareRows(): Promise<void> {
+      const mapIds = [...new Set(rows.value.map((row) => row.mapId).filter((id): id is number => id !== null))];
+      await Promise.all([hashPickedFiles(), ...mapIds.map((mapId) => loadStoredFiles(mapId))]);
+    }
+
     function isFixable(row: BulkRow): boolean {
-      return row.status === "invalid-name" || row.status === "unknown-map";
+      return statusOf(row) === "skipped";
+    }
+
+    // A file that failed before anything was stored for it can be renamed and
+    // tried again - the name may be held by a file of a different map, which this
+    // map's own file list cannot show.
+    function canRename(row: BulkRow): boolean {
+      return row.state === "pending" || (row.state === "failed" && !row.mapFile);
+    }
+
+    function renameRow(row: BulkRow, storeAs: string): void {
+      row.storeAs = storeAs;
+      if (row.state !== "failed") return;
+
+      // Renaming is the retry: put the row back in front of the planner, which
+      // does not look at failed rows.
+      row.state = "pending";
+      row.message = undefined;
     }
 
     function assignMap(row: BulkRow, mapId: number | null): void {
@@ -350,9 +506,11 @@ export default defineComponent({
       row.mapId = map.id;
       row.map = map;
       row.currentFileName = mapFileName(map.gameMap?.path);
-      row.status = "ready";
       row.message = undefined;
-      void loadStoredNames(map.id);
+      // The row may never have been hashed (a file that could not be read keeps
+      // its reason in `message`, which was just cleared), so prepare it again
+      // rather than leaving it waiting for a hash that no one will compute.
+      void prepareRows();
     }
 
     function extractMapIdFromFilename(filename: string): number | null {
@@ -364,27 +522,13 @@ export default defineComponent({
       return null;
     }
 
-    // Detection runs as soon as files are picked, so problems (bad filename, unknown
-    // map id) and the map each file will overwrite are visible before uploading.
-    function detectRow(file: File, index: number): BulkRow {
+    // Detection runs as soon as files are picked, so the map each file targets and
+    // what will happen to it are visible before anything is uploaded.
+    function detectRow(file: File): BulkRow {
       const mapId = extractMapIdFromFilename(file.name);
-      if (mapId === null) {
-        return {
-          key: `${index}-${file.name}`,
-          file,
-          fileName: file.name,
-          mapId: null,
-          currentFileName: "",
-          storeAs: file.name,
-          percent: 0,
-          status: "invalid-name",
-          message: "Expected {map_id}_{name}.w3m or {map_id}_{name}.w3x",
-        };
-      }
-
-      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
+      const map = mapId === null ? undefined : mapsManagementStore.maps.find((m) => m.id === mapId);
       return {
-        key: `${index}-${file.name}`,
+        key: `row-${nextRowKey++}`,
         file,
         fileName: file.name,
         mapId,
@@ -392,45 +536,40 @@ export default defineComponent({
         currentFileName: mapFileName(map?.gameMap?.path),
         storeAs: file.name,
         percent: 0,
-        status: map ? "ready" : "unknown-map",
-        message: map ? undefined : `Map with ID ${mapId} does not exist`,
+        state: "pending",
+        sha1: null,
       };
     }
 
-    // Re-detect whenever the picked files change, but keep the outcome of rows whose
-    // file was already uploaded or selected so the confirmation is not lost.
+    // Re-detect whenever the picked files change, but keep the rows whose file is
+    // already known so their hash and their outcome are not lost.
     watch(files, (newFiles) => {
-      rows.value = newFiles.map((file, index) => {
-        const existing = rows.value.find((row) => row.file === file);
-        if (existing && ["uploading", "uploaded", "selected", "error"].includes(existing.status)) {
-          return existing;
-        }
-        return detectRow(file, index);
-      });
+      rows.value = newFiles.map((file) => rows.value.find((row) => row.file === file) ?? detectRow(file));
+      void prepareRows();
     }, { deep: true });
-
-    // Look up each target map's existing names as soon as the rows settle.
-    watch(rows, (currentRows) => {
-      const mapIds = [...new Set(currentRows.map((row) => row.mapId).filter((id): id is number => id !== null))];
-      mapIds.forEach((mapId) => void loadStoredNames(mapId));
-    }, { deep: true, immediate: true });
 
     function statusLabel(status: RowStatus): string {
       switch (status) {
-        case "invalid-name": return "Bad filename";
-        case "unknown-map": return "Unknown map";
+        case "preparing": return "Checking";
         case "ready": return "Ready";
+        case "reuse": return "Already stored";
+        case "duplicate": return "Duplicate, skipped";
+        case "skipped": return "Skipped";
         case "uploading": return "Uploading";
         case "uploaded": return "Uploaded";
         case "selected": return "Selected";
-        default: return "Error";
+        default: return "Needs attention";
       }
     }
 
     function statusColor(status: RowStatus): string {
       switch (status) {
+        case "preparing": return "info";
         case "ready": return "info";
+        case "reuse": return "info";
         case "uploading": return "info";
+        case "duplicate": return "warning";
+        case "skipped": return "warning";
         case "uploaded": return "warning";
         case "selected": return "success";
         default: return "error";
@@ -439,169 +578,246 @@ export default defineComponent({
 
     function statusIcon(status: RowStatus): string {
       switch (status) {
+        case "preparing": return mdiProgressClock;
         case "ready": return mdiFileQuestionOutline;
+        case "reuse": return mdiCloudCheckOutline;
         case "uploading": return mdiProgressUpload;
+        case "duplicate": return mdiContentCopy;
+        case "skipped": return mdiMinusCircleOutline;
         case "uploaded": return mdiCloudCheckOutline;
         case "selected": return mdiCheckCircle;
         default: return mdiAlertCircleOutline;
       }
     }
 
+    function rowByKey(key: string): BulkRow | undefined {
+      return rows.value.find((row) => row.key === key);
+    }
+
     // Uploads stay sequential: batches are small and one file at a time keeps the
     // progress readable and the server load predictable.
-    async function uploadFiles(): Promise<number> {
-      const pending = readyRows.value;
-      if (pending.length === 0) {
+    async function uploadFiles(tally: RunTally): Promise<number> {
+      const plan = planByKey.value;
+      const items: BulkUploadItem[] = readyRows.value.map((row) => ({
+        key: row.key,
+        mapId: row.mapId as number,
+        fileName: row.fileName,
+        // Only the name, never a path: the plan claims the same string.
+        storeAs: toStoredFileName(row.storeAs, row.fileName),
+        sha1: row.sha1 as string,
+        file: row.file,
+        reuseMapFile: plan[row.key]?.reuseMapFile,
+      }));
+
+      if (items.length === 0) {
         error.value = "No files ready to upload.";
         return 0;
       }
 
       uploading.value = true;
+      uploadIndex.value = 0;
+      uploadTotal.value = items.length;
+
+      let results: Awaited<ReturnType<typeof uploadMapFiles>> = [];
+      try {
+        results = await uploadMapFiles(items, {
+          uploadFile: (item, onProgress) => {
+            const formData = new FormData();
+            formData.append("mapId", String(item.mapId));
+            formData.append("mapFile", item.file, item.fileName);
+            // An untouched name means "no override", which is the empty string the
+            // backend already treats as "use the uploaded file's own name".
+            formData.append("fileName", item.storeAs === item.fileName ? "" : item.storeAs);
+            return mapsManagementStore.createMapFile(formData, onProgress);
+          },
+          fetchMapFiles: (mapId) => mapsManagementStore.fetchMapFiles(mapId),
+        }, {
+          onStart: (item, index) => {
+            const row = rowByKey(item.key);
+            if (row) {
+              row.state = "uploading";
+              row.message = undefined;
+              row.percent = 0;
+              uploadingFileName.value = row.fileName;
+            }
+            uploadIndex.value = index + 1;
+            currentRowPercent.value = 0;
+          },
+          onProgress: (item, percent) => {
+            const row = rowByKey(item.key);
+            if (row) row.percent = percent;
+            currentRowPercent.value = percent;
+          },
+        });
+
+        for (const result of results) {
+          const row = rowByKey(result.key);
+          if (!row) continue;
+          row.state = result.ok ? "uploaded" : "failed";
+          row.mapFile = result.mapFile;
+          row.message = result.message
+            ?? (result.reused ? "The identical file was already stored, so it was not uploaded again." : undefined);
+        }
+      } finally {
+        uploading.value = false;
+        uploadingFileName.value = "";
+        currentRowPercent.value = 0;
+      }
+
+      // The uploads told us what was stored, so the local list is updated from the
+      // records themselves instead of re-reading every map that was written to.
+      // Only a map whose upload failed is in an uncertain state and re-read.
+      const uncertain = new Set<number>();
+      for (const result of results) {
+        const mapId = rowByKey(result.key)?.mapId;
+        if (mapId === null || mapId === undefined) continue;
+
+        const stored = storedFiles.value[mapId];
+        if (!result.ok || !result.mapFile) uncertain.add(mapId);
+        else if (!result.reused && stored) storedFiles.value[mapId] = [...stored, result.mapFile];
+        else if (!result.reused) uncertain.add(mapId);
+      }
+      await Promise.all([...uncertain].map((mapId) => loadStoredFiles(mapId, true)));
+
+      const uploaded = results.filter((result) => result.ok && !result.reused).length;
+      const reused = results.filter((result) => result.ok && result.reused).length;
+
+      tally.succeeded += uploaded + reused;
+      tally.failed += results.filter((result) => !result.ok).length;
+      if (uploaded > 0) tally.headlines.push(`Uploaded ${uploaded} file${uploaded === 1 ? "" : "s"}.`);
+      if (reused > 0) {
+        tally.headlines.push(`${reused} file${reused === 1 ? " was" : "s were"} already stored and will be reused.`);
+      }
+      if (uploaded + reused > 0) {
+        tally.hint = "Use \"Select uploaded\" to make them the active files for their maps.";
+      }
+
+      return uploaded + reused;
+    }
+
+    // What the batch looks like the moment a run starts. The summary is built from
+    // this plus the run's own results, never from the live rows: a Reset or a
+    // re-pick part-way through must not be able to turn a failed run into a
+    // success banner.
+    function startTally(): RunTally {
+      const statuses = rows.value.map(statusOf);
+      return {
+        total: rows.value.length,
+        blocked: statuses.filter((status) => status === "error").length,
+        skipped: statuses.filter((status) => status === "skipped").length,
+        duplicates: statuses.filter((status) => status === "duplicate").length,
+        succeeded: 0,
+        failed: 0,
+        headlines: [],
+        hint: "",
+      };
+    }
+
+    // Nothing below the buttons is allowed to escape as an unhandled rejection:
+    // a row left mid-flight would have no way back except a full Reset.
+    async function run(action: RunAction, body: (tally: RunTally) => Promise<void>): Promise<void> {
+      // Taken before the run is marked as started: nothing may leave the dialog
+      // looking busy forever.
+      const tally = startTally();
+
+      runningAction.value = action;
       error.value = "";
       successMessage.value = "";
-      uploadIndex.value = 0;
-      uploadTotal.value = pending.length;
 
-      for (const row of pending) {
-        row.status = "uploading";
-        row.message = undefined;
-        row.percent = 0;
-        uploadIndex.value++;
-        uploadingFileName.value = row.fileName;
-        currentRowPercent.value = 0;
-
-        try {
-          const formData = new FormData();
-          formData.append("mapId", String(row.mapId));
-          formData.append("mapFile", row.file, row.file.name);
-          // An untouched name means "no override", which is the empty string the
-          // backend already treats as "use the uploaded file's own name".
-          const storeAs = row.storeAs.trim();
-          formData.append("fileName", storeAs === row.file.name ? "" : storeAs);
-
-          await mapsManagementStore.createMapFile(formData, (percent) => {
-            row.percent = percent;
-            currentRowPercent.value = percent;
-          });
-
-          // The create endpoint does not return the stored file, so re-read the
-          // map's files and match the one named after the upload.
-          await mapsManagementStore.loadMapFiles(row.mapId as number);
-          const storedName = (storeAs || row.file.name).toLowerCase();
-          const mapFileData = mapsManagementStore.mapFiles.find(
-            (mf) => mapFileName(mf.filePath) === storedName
-          ) ?? mapsManagementStore.mapFiles.find((mf) => mf.filePath.includes(storeAs || row.file.name));
-
-          if (!mapFileData) {
-            row.status = "error";
-            row.message = "File uploaded but could not be found";
-            continue;
-          }
-
-          row.mapFileData = mapFileData;
-          row.status = "uploaded";
-        } catch (err) {
-          row.status = "error";
-          row.message = err instanceof Error ? err.message : "Upload failed";
+      try {
+        await body(tally);
+      } catch (err) {
+        tally.fatal = err instanceof Error ? err.message : "The run stopped unexpectedly.";
+        tally.failed++;
+        for (const row of rows.value) {
+          if (row.state !== "uploading") continue;
+          row.state = "failed";
+          row.message = tally.fatal;
         }
+      } finally {
+        runningAction.value = null;
       }
 
-      uploading.value = false;
-      uploadingFileName.value = "";
-      currentRowPercent.value = 0;
-
-      const failed = rows.value.filter((row) => row.status === "error").length;
-      const uploaded = uploadedRows.value.length;
-      if (uploaded > 0) {
-        successMessage.value = `Uploaded ${uploaded} file${uploaded === 1 ? "" : "s"}.`
-          + " Use \"Select uploaded\" to make them the active files for their maps.";
-      }
-      if (failed > 0) {
-        error.value = `${failed} file${failed === 1 ? "" : "s"} failed to upload. See the table for details.`;
-      }
-      return uploaded;
+      const summary = summarizeRun(tally);
+      successMessage.value = summary.successMessage;
+      // `error` may already hold an early bail ("No files ready to upload."),
+      // which the summary has nothing to say about.
+      error.value = summary.error || error.value;
+      if (summary.mayComplete) context.emit("completed", tally.succeeded);
     }
 
     async function runUpload(): Promise<void> {
-      runningAction.value = "upload";
-      try {
-        await uploadFiles();
-      } finally {
-        runningAction.value = null;
-      }
+      await run("upload", async (tally) => {
+        await uploadFiles(tally);
+      });
     }
 
     async function runSelect(): Promise<void> {
-      runningAction.value = "select";
-      try {
-        await selectAll();
-      } finally {
-        runningAction.value = null;
-      }
+      await run("select", selectAll);
     }
 
     // The two steps are almost always used together; keep them available
     // separately for the cases where an admin wants to check before selecting.
     async function runUploadAndSelect(): Promise<void> {
-      runningAction.value = "upload-select";
-      try {
-        const uploaded = await uploadFiles();
-        if (uploaded > 0) {
-          await selectAll();
-        }
-      } finally {
-        runningAction.value = null;
-      }
+      await run("upload-select", async (tally) => {
+        const uploaded = await uploadFiles(tally);
+        if (uploaded > 0) await selectAll(tally);
+      });
     }
 
-    async function selectAll(): Promise<void> {
-      const pending = uploadedRows.value;
+    async function selectAll(tally: RunTally): Promise<void> {
+      const pending = selectableRows.value;
       if (pending.length === 0) {
         error.value = "No files to select.";
         return;
       }
 
-      selecting.value = true;
-      error.value = "";
-      successMessage.value = "";
+      const items: BulkSelectItem[] = pending.map((row) => ({
+        key: row.key,
+        mapId: row.mapId as number,
+        mapFile: row.mapFile as MapFileData,
+      }));
 
-      let successCount = 0;
-      let errorCount = 0;
+      const results = await selectMapFiles(items, {
+        updateMap: (map) => mapsManagementStore.updateMap(map),
+        // Read once to build each update from the map as it is now, and once
+        // afterwards to turn "the PUT answered 200" into "the map really points at
+        // the new file".
+        reloadMaps: async () => {
+          await mapsManagementStore.loadMaps();
+          return mapsManagementStore.maps;
+        },
+      });
 
-      for (const row of pending) {
-        try {
-          const map = { ...(row.map as Map) };
-          map.gameMap = (row.mapFileData as MapFileData).metaData;
-          map.gameMap.path = `maps\\${(row.mapFileData as MapFileData).filePath.replaceAll("/", "\\")}`;
-
-          await mapsManagementStore.updateMap(map);
-          row.status = "selected";
-          row.currentFileName = mapFileName(map.gameMap.path);
-          successCount++;
-        } catch (err) {
-          row.status = "error";
-          row.message = err instanceof Error ? err.message : "Failed to select file";
-          errorCount++;
-        }
+      for (const result of results) {
+        const row = rowByKey(result.key);
+        if (!row) continue;
+        row.state = result.ok ? "selected" : "failed";
+        row.message = result.message;
+        row.map = mapsManagementStore.maps.find((map) => map.id === row.mapId) ?? row.map;
+        row.currentFileName = mapFileName(row.map?.gameMap?.path);
       }
 
-      selecting.value = false;
-
-      // Reload so the maps table behind the dialog reflects the new files.
-      await mapsManagementStore.loadMaps();
-
-      if (successCount > 0) {
-        successMessage.value = `Selected ${successCount} map${successCount === 1 ? "" : "s"}.`;
-        context.emit("completed", successCount);
-      }
-      if (errorCount > 0) {
-        error.value = `${errorCount} map${errorCount === 1 ? "" : "s"} could not be selected. See the table for details.`;
-      }
+      const selected = results.filter((result) => result.ok).length;
+      // The upload phase already counted these rows; the run reports what finally
+      // happened to them, not both steps.
+      tally.succeeded = selected;
+      tally.failed += results.filter((result) => !result.ok).length;
+      tally.hint = "";
+      tally.notifiesParent = true;
+      if (selected > 0) tally.headlines.push(`Selected ${selected} map${selected === 1 ? "" : "s"}.`);
     }
 
     function reset(): void {
+      // Anything still in flight belongs to the batch that is being dropped, so
+      // its answer is discarded and it no longer holds the dialog busy.
+      storedGeneration++;
+      lookupsInFlight.value = 0;
       files.value = [];
       rows.value = [];
+      storedFiles.value = {};
+      hashingKeys.clear();
+      lookupKeys.clear();
       error.value = "";
       successMessage.value = "";
       uploadIndex.value = 0;
@@ -618,26 +834,30 @@ export default defineComponent({
       files,
       rows,
       readyRows,
+      duplicateRows,
+      skippedRows,
       uploadedRows,
+      selectableRows,
       selectedRows,
       problemRows,
       uploading,
-      selecting,
+      preparing,
+      busy,
+      gating,
       error,
       successMessage,
-      uploadFiles,
-      selectAll,
       runUpload,
       runSelect,
       runUploadAndSelect,
       runningAction,
       duplicateMapIds,
-      duplicateNames,
-      conflictRows,
-      nameAlreadyStored,
       mapOptions,
       isFixable,
+      canRename,
+      renameRow,
       assignMap,
+      statusOf,
+      messageOf,
       uploadIndex,
       uploadTotal,
       uploadingFileName,

@@ -26,8 +26,20 @@
           <edit-map-files :map="editedMap" @cancel="closeEditFiles" @selected="mapFileSelected" />
         </v-dialog>
 
-        <v-dialog v-if="isBulkUploadOpen" v-model="isBulkUploadOpen" max-width="1000px" scrollable>
-          <bulk-map-upload @cancel="closeBulkUpload" @completed="handleBulkUploadCompleted" />
+        <!-- Held open while the upload runs: closing unmounts the dialog, and the
+             uploads and map updates would carry on with nowhere to report to. -->
+        <v-dialog
+          v-if="isBulkUploadOpen"
+          v-model="isBulkUploadOpen"
+          max-width="1000px"
+          scrollable
+          :persistent="isBulkUploadRunning"
+        >
+          <bulk-map-upload
+            @cancel="closeBulkUpload"
+            @completed="handleBulkUploadCompleted"
+            @running="isBulkUploadRunning = $event"
+          />
         </v-dialog>
 
         <v-row class="pt-2 px-1" align="center">
@@ -246,6 +258,8 @@ export default defineComponent({
     const isEditFilesOpen = ref<boolean>(false);
     const isAddDialog = ref<boolean>(false);
     const isBulkUploadOpen = ref<boolean>(false);
+    // Reported by the dialog: while a run is on, it must not be dismissed.
+    const isBulkUploadRunning = ref<boolean>(false);
 
     // Nothing selected means no status filter, the same as selecting all three.
     const statusOptions: MapStatus[] = ["Ladder", "Custom", "Disabled"];
@@ -369,11 +383,13 @@ export default defineComponent({
     }
 
     function openBulkUpload(): void {
+      isBulkUploadRunning.value = false;
       isBulkUploadOpen.value = true;
     }
 
     function closeBulkUpload(): void {
       isBulkUploadOpen.value = false;
+      isBulkUploadRunning.value = false;
     }
 
     // The dialog stays open so its per-file confirmation remains visible; it already
@@ -396,12 +412,19 @@ export default defineComponent({
           await mapsManagementStore.updateMap(map);
         }
         closeEdit();
-        await mapsManagementStore.loadMaps();
-        return true;
       } catch(err) {
         showSnackbar(err instanceof Error ? err.message : "Error trying to save map.", "error");
         return false;
       }
+
+      // The save is done either way; a failed refresh only means the table behind
+      // the dialog is out of date, and must not be reported as a failed save.
+      try {
+        await mapsManagementStore.loadMaps();
+      } catch(err) {
+        showSnackbar(err instanceof Error ? err.message : "Error trying to reload the maps.", "error");
+      }
+      return true;
     }
 
     async function mapFileSelected(e: { map: Map; file: MapFileData }): Promise<void> {
@@ -452,7 +475,12 @@ export default defineComponent({
 
     async function init(): Promise<void> {
       if (!isAdmin.value) return;
-      await Promise.all([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      try {
+        await Promise.all([mapsManagementStore.loadMaps(), loadActiveGameModes()]);
+      } catch (err) {
+        // A failed load used to leave an empty table that looked like "no maps".
+        showSnackbar(err instanceof Error ? err.message : "Error trying to load the maps.", "error");
+      }
     }
 
     onMounted(async (): Promise<void> => {
@@ -504,6 +532,7 @@ export default defineComponent({
       configureMapFiles,
       adminMapsFilters,
       isBulkUploadOpen,
+      isBulkUploadRunning,
       openBulkUpload,
       closeBulkUpload,
       handleBulkUploadCompleted,
