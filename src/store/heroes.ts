@@ -53,7 +53,7 @@ export const HERO_DATA: HeroData = {
     race: ERaceEnum.HUMAN,
   },
   [EHeroes.FORSAKEN_PALADIN]: {
-    race: ERaceEnum.UNDEAD,
+    race: ERaceEnum.RANDOM,
   },
 
   [EHeroes.BLADEMASTER]: {
