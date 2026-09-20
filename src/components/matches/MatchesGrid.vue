@@ -1,11 +1,12 @@
 <template>
   <div>
     <div
-      class="elevation-1 overflow-x-auto overflow-y-hidden"
+      class="matches-grid-container"
       @mouseover="onGridTipOver"
       @mouseleave="onGridTipLeave"
     >
-      <table class="custom-table">
+      <!-- FFA matches: keep the existing table layout -->
+      <table v-if="hasAnyFfa" class="custom-table">
         <thead>
           <tr>
             <td
@@ -22,10 +23,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in matches" :key="item.id">
+          <tr v-for="item in ffaMatches" :key="item.id">
             <td>
               <div
-                v-if="isFfa(item.gameMode)"
                 :class="{ 'cursor-pointer': !unfinished }"
                 class="my-3"
                 @click="goToMatchDetailPage(item)"
@@ -61,39 +61,6 @@
                   </v-col>
                 </v-row>
               </div>
-              <v-row
-                v-if="!isFfa(item.gameMode)"
-                :class="{ 'cursor-pointer': !unfinished }"
-                class="force-no-wrap"
-                @click="goToMatchDetailPage(item)"
-              >
-                <v-col :cols="teamColumnWidth" class="team-match-info-container left-side" align-self="center">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getPlayerTeam(item) : getLeftTeam(item)"
-                    :unfinishedMatch="unfinished"
-                    :left="true"
-                    :highlightedPlayer="nameIfNonSolo(item)"
-                    :spoiler-free-winner="true"
-                    :show-heroes="showHeroes"
-                    :selectedHeroes="selectedHeroes"
-                  />
-                </v-col>
-                <v-col :cols="serverColumnWidth" class="py-2 d-flex flex-column justify-center align-center">
-                  <span class="text-no-wrap">{{ $t(`views_matchdetail.vs`) }}</span>
-                  <host-icon v-if="hasServerInfo(item)" :host="item.serverInfo" />
-                </v-col>
-                <v-col :cols="teamColumnWidth" class="team-match-info-container" align-self="center">
-                  <team-match-info
-                    :not-clickable="!unfinished"
-                    :team="alwaysLeftName ? getOpponentTeam(item) : getRightTeam(item)"
-                    :unfinishedMatch="unfinished"
-                    :spoiler-free-winner="true"
-                    :show-heroes="showHeroes"
-                    :selectedHeroes="selectedHeroes"
-                  />
-                </v-col>
-              </v-row>
             </td>
             <td class="text-center">
               <span>{{ gameModeTranslation(item.gameMode) }}</span>
@@ -118,13 +85,81 @@
               <download-replay-icon v-if="showReplayDownload(item)" :gameId="item.id" />
             </td>
           </tr>
-          <tr v-if="!matches || matches.length == 0">
+          <tr v-if="!ffaMatches || ffaMatches.length == 0">
             <td :colspan="emptyStateColspan" class="text-center">
               {{ $t("components_matches_matchesgrid.nomatchesfound") }}
             </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Standard (non-FFA) matches: card layout -->
+      <div class="match-cards-list">
+        <!-- Empty state: only show when there are no matches at all (FFA would show its own empty row) -->
+        <div v-if="matches.length === 0" class="match-cards-empty">
+          {{ $t("components_matches_matchesgrid.nomatchesfound") }}
+        </div>
+
+        <div
+          v-for="entry in standardMatchesWithPlayers"
+          :key="entry.match.id"
+          class="match-card"
+          :class="{ 'cursor-pointer': !unfinished }"
+          @click="goToMatchDetailPage(entry.match)"
+        >
+          <!-- Card body: left player | VS divider | right player -->
+          <div class="match-card__body">
+            <!-- Left player -->
+            <match-card-player-info
+              v-if="entry.leftPlayer"
+              :player="entry.leftPlayer"
+              :left="true"
+              :not-clickable="unfinished"
+              :unfinished-match="unfinished"
+              :highlighted="alwaysLeftName === entry.leftPlayer.battleTag"
+              :spoiler-free-winner="true"
+            />
+
+            <!-- VS divider -->
+            <div class="match-card__vs">
+              <img src="/assets/swords.svg" class="vs-swords" alt="VS" />
+              <span class="vs-label">VS</span>
+              <host-icon v-if="hasServerInfo(entry.match)" :host="entry.match.serverInfo" />
+            </div>
+
+            <!-- Right player -->
+            <match-card-player-info
+              v-if="entry.rightPlayer"
+              :player="entry.rightPlayer"
+              :left="false"
+              :not-clickable="unfinished"
+              :unfinished-match="unfinished"
+              :highlighted="alwaysLeftName === entry.rightPlayer.battleTag"
+              :spoiler-free-winner="true"
+            />
+          </div>
+
+          <!-- Card footer: map / gamemode / time / duration -->
+          <div class="match-card__footer" @click.stop>
+            <span class="footer-mode">{{ gameModeTranslation(entry.match.gameMode) }}</span>
+            <span class="footer-sep">·</span>
+            <span class="footer-map">{{ mapNameFromMatch(entry.match) }}</span>
+            <span class="footer-sep">·</span>
+            <span class="footer-time start-time-text" :data-tip="getStartTimeTooltip(entry.match)">{{ getStartTime(entry.match) }}</span>
+            <span class="footer-sep">·</span>
+            <span class="footer-duration number-text" :class="{ 'spoiler-mask': hideDurationSpoilers && !unfinished }">{{ getDuration(entry.match) }}</span>
+            <div
+              v-show="!unfinished"
+              class="footer-duration-bar"
+              :class="{ 'spoiler-mask': hideDurationSpoilers }"
+              :style="{ width: getDurationBarWidth(entry.match) }"
+            />
+            <div v-if="!unfinished" class="footer-replay" @click.stop>
+              <download-replay-icon v-if="showReplayDownload(entry.match)" :gameId="entry.match.id" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!--
       One shared tooltip re-targeted via event delegation (see onGridTipOver),
@@ -158,6 +193,7 @@ import { useI18n } from "vue-i18n";
 import { EGameMode, type Match, type PlayerInTeam, type Team } from "@/store/types";
 import { GAME_MODES_FFA } from "@/store/constants";
 import TeamMatchInfo from "@/components/matches/TeamMatchInfo.vue";
+import MatchCardPlayerInfo from "@/components/matches/MatchCardPlayerInfo.vue";
 import HostIcon from "@/components/matches/HostIcon.vue";
 import DownloadReplayIcon from "@/components/matches/DownloadReplayIcon.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
@@ -184,6 +220,7 @@ export default defineComponent({
   name: "MatchesGrid",
   components: {
     TeamMatchInfo,
+    MatchCardPlayerInfo,
     HostIcon,
     DownloadReplayIcon,
   },
@@ -243,6 +280,12 @@ export default defineComponent({
     const matches = computed<Match[]>(() => props.modelValue);
     const hideDurationSpoilers = computed<boolean>(() => spoilerFreeStore.hideDuration);
     const hideWinnerSpoilers = computed<boolean>(() => spoilerFreeStore.hideWinner && !props.unfinished);
+
+    // Partition matches into FFA and standard (non-FFA) for the two layout paths
+    const ffaMatches = computed<Match[]>(() => matches.value.filter((m) => isFfa(m.gameMode)));
+    const standardMatches = computed<Match[]>(() => matches.value.filter((m) => !isFfa(m.gameMode)));
+    const hasAnyFfa = computed<boolean>(() => ffaMatches.value.length > 0);
+
 
     // Shared hover tooltip, re-anchored via event delegation instead of mounting a
     // v-tooltip per hero icon. Elements opt in with a `data-tip` attribute (hero
@@ -325,6 +368,30 @@ export default defineComponent({
 
     const getLeftTeam = (match: Match): Team => orderTeams(match.teams)[0];
     const getRightTeam = (match: Match): Team => orderTeams(match.teams)[1];
+
+    // Convenience helpers that return the first player of each team for 1v1 card layout
+    const getLeftPlayer = (match: Match): PlayerInTeam => {
+      const team = props.alwaysLeftName ? getPlayerTeam(match) : getLeftTeam(match);
+      return team?.players[0];
+    };
+    const getRightPlayer = (match: Match): PlayerInTeam => {
+      const team = props.alwaysLeftName ? getOpponentTeam(match) : getRightTeam(match);
+      return team?.players[0];
+    };
+
+    // Precompute left/right players per standard match to keep the template clean
+    type MatchWithPlayers = { match: Match; leftPlayer: PlayerInTeam | undefined; rightPlayer: PlayerInTeam | undefined };
+    const standardMatchesWithPlayers = computed<MatchWithPlayers[]>(() =>
+      standardMatches.value.map((match) => ({
+        match,
+        leftPlayer: getLeftPlayer(match),
+        rightPlayer: getRightPlayer(match),
+      }))
+    );
+
+    // For multi-player standard matches (2v2, etc.) we still fall back to team-level info.
+    // The card layout currently surfaces only the first player per team.
+    // TODO: extend card to show all players for 2v2+
 
     function getPlayerTeam(match: Match): Team {
       const playerTeam = match.teams.find((team: Team) =>
@@ -452,6 +519,10 @@ export default defineComponent({
       gameModeTranslation,
       isFfa,
       matches,
+      ffaMatches,
+      standardMatches,
+      standardMatchesWithPlayers,
+      hasAnyFfa,
       currentMatchesLowRange,
       currentMatchesHighRange,
       onPageChanged,
@@ -462,6 +533,8 @@ export default defineComponent({
       goToMatchDetailPage,
       getLeftTeam,
       getRightTeam,
+      getLeftPlayer,
+      getRightPlayer,
       getPlayerTeam,
       getOpponentTeam,
       getOpponentTeams,
@@ -484,6 +557,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+// ── Shared ──────────────────────────────────────────────────
+
 .team-match-info-container {
   display: flex;
   align-items: center;
@@ -522,5 +597,111 @@ export default defineComponent({
 
 .force-no-wrap {
   flex-wrap: nowrap !important;
+}
+
+// ── Match cards ──────────────────────────────────────────────
+
+.matches-grid-container {
+  // gives card box-shadows room
+  padding: 4px 2px;
+}
+
+.match-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 8px 8px;
+}
+
+.match-cards-empty {
+  text-align: center;
+  padding: 24px;
+  opacity: 0.6;
+}
+
+.match-card {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+  background: rgba(var(--v-theme-surface-variant), 0.35);
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background: rgba(var(--v-theme-surface-variant), 0.6);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+:global(.v-theme--light) .match-card {
+  background: rgba(240, 240, 230, 0.95);
+
+  &:hover {
+    background: rgba(240, 240, 230, 1);
+  }
+}
+
+.match-card__body {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px 6px;
+  gap: 8px;
+  min-height: 88px;
+}
+
+// ── VS divider ───────────────────────────────────────────────
+
+.match-card__vs {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+}
+
+.vs-swords {
+  width: 28px;
+  height: 28px;
+  opacity: 0.75;
+}
+
+.vs-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
+  text-transform: uppercase;
+}
+
+// ── Card footer ──────────────────────────────────────────────
+
+.match-card__footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  padding: 4px 12px 6px;
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.07);
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
+.footer-sep {
+  opacity: 0.4;
+}
+
+.footer-duration-bar {
+  height: 2px;
+  background-color: rgb(var(--v-theme-primary));
+  border-radius: 1px;
+  margin-left: 2px;
+  // prevent it from participating in the flex row
+  flex-basis: 100%;
+  order: 99;
+  max-width: 140px;
+}
+
+.footer-replay {
+  margin-left: auto;
 }
 </style>
