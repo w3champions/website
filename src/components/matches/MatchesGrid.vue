@@ -27,14 +27,14 @@
               <div
                 v-if="isFfa(item.gameMode)"
                 :class="{ 'cursor-pointer': !unfinished }"
-                class="my-3"
+                class="my-3 position-relative d-flex flex-column align-center"
                 @click="goToMatchDetailPage(item)"
               >
                 <div v-if="hasServerInfo(item)" class="server-icon-row server-icon-row--ffa">
                   <host-icon :host="item.serverInfo" />
                 </div>
-                <v-row v-if="alwaysLeftName" justify="center">
-                  <v-col offset="4" class="py-1">
+                <div class="d-flex flex-column align-start">
+                  <div v-if="alwaysLeftName" class="py-1">
                     <team-match-info
                       :not-clickable="!unfinished"
                       :team="getPlayerTeam(item)"
@@ -45,10 +45,8 @@
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
                     />
-                  </v-col>
-                </v-row>
-                <v-row v-for="(team, index) in getOpponentTeams(item)" :key="index" justify="center">
-                  <v-col offset="4" class="py-1">
+                  </div>
+                  <div v-for="(team, index) in getOpponentTeams(item)" :key="index" class="py-1">
                     <team-match-info
                       :not-clickable="!unfinished"
                       :team="team"
@@ -58,8 +56,8 @@
                       :show-heroes="showHeroes"
                       :selectedHeroes="selectedHeroes"
                     />
-                  </v-col>
-                </v-row>
+                  </div>
+                </div>
               </div>
               <v-row
                 v-if="!isFfa(item.gameMode)"
