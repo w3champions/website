@@ -21,9 +21,9 @@
                 <v-tooltip
                   location="top"
                   content-class="w3-tooltip elevation-1"
-                  text="The node does not stamp its own clock on the packet, so this is the earliest of the
-                    reporting clients' own clocks - an approximate lower bound, not the stall's exact time.
-                    Hover a row's time to see every reporter's own timestamp."
+                  text="Each client stamps this on arrival, after the stall and the network trip - so it is an
+                    approximate upper bound on when the stall happened, not a lower one, and only as reliable
+                    as the reporting clients' own clocks. Hover a row's time to see every reporter's own timestamp."
                 >
                   <template v-slot:activator="{ props }">
                     <v-icon v-bind="props" size="14">{{ mdiInformationOutline }}</v-icon>
@@ -89,12 +89,12 @@
                 >
                   <template v-slot:activator="{ props }">
                     <v-chip v-bind="props" size="x-small" color="warning" variant="tonal">
-                      {{ row.reporters.length }} of {{ row.rosterSize }} clients
+                      {{ row.reporters.length }} of {{ row.playersTotal }} players
                     </v-chip>
                   </template>
                 </v-tooltip>
                 <span v-else class="text-medium-emphasis text-caption">
-                  ({{ row.reporters.length }} of {{ row.rosterSize }} clients)
+                  ({{ row.reporters.length }} of {{ row.playersTotal }} players)
                 </span>
               </div>
             </td>
