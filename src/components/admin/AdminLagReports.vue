@@ -141,6 +141,23 @@
       <template v-slot:[`item.createdAt`]="{ item }">
         {{ formatDate(item.createdAt) }}
       </template>
+      <template v-slot:[`item.serverNodeName`]="{ item }">
+        <div class="d-flex flex-wrap ga-1 align-center">
+          <span>{{ item.serverNodeName }}</span>
+          <v-tooltip
+            v-if="hostStallCount(item) !== null"
+            location="top"
+            content-class="w3-tooltip elevation-1"
+            text="The game node measured this many stalls in itself during this game."
+          >
+            <template v-slot:activator="{ props }">
+              <v-chip v-bind="props" size="x-small" color="warning" variant="tonal">
+                {{ hostStallCount(item) }}x stall
+              </v-chip>
+            </template>
+          </v-tooltip>
+        </div>
+      </template>
       <template v-slot:[`item.hasExplicitReport`]="{ item }">
         <v-icon :color="item.hasExplicitReport ? 'success' : 'grey'" size="small">
           {{ item.hasExplicitReport ? mdiCheckCircle : mdiCloseCircle }}
@@ -182,7 +199,8 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, ref } from "vue";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
-import { LagReportQueryParams } from "@/store/admin/lagReports/types";
+import { LagReportListItem, LagReportQueryParams } from "@/store/admin/lagReports/types";
+import { hostStallIndicatorCount } from "@/components/admin/lag-reports/hostStalls";
 import { mdiCheckCircle, mdiCloseCircle, mdiEye } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
@@ -441,6 +459,13 @@ export default defineComponent({
       return d.toLocaleString();
     }
 
+    // A host stall is the node's own measurement, so it is shown next to the server that
+    // made it. Null when no player carries a count - an older backend leaves the field out
+    // entirely, and drawing a zero there would claim a clean game it cannot vouch for.
+    function hostStallCount(item: LagReportListItem): number | null {
+      return hostStallIndicatorCount(item.players);
+    }
+
     function openDetail(id: string) {
       persistUiState();
       router.push({ name: EAdminRouteName.LAG_REPORT_DETAIL, params: { id }, query: routeQueryFromState() });
@@ -465,6 +490,7 @@ export default defineComponent({
       onTableOptionsUpdate,
       refreshResults,
       formatDate,
+      hostStallCount,
       openDetail,
       mdiCheckCircle,
       mdiCloseCircle,
