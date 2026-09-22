@@ -1,5 +1,5 @@
 import { API_URL } from "@/config/env";
-import { PersonalSetting, ProfilePicture } from "@/store/personalSettings/types";
+import { PersonalSetting, PersonalSettingSummary, ProfilePicture } from "@/store/personalSettings/types";
 import { authorizedFetch } from "@/helpers/general";
 
 export default class PersonalSettingsService {
@@ -8,6 +8,15 @@ export default class PersonalSettingsService {
 
     const response = await fetch(url);
     if (!response.ok) return {} as PersonalSetting;
+    return await response.json();
+  }
+
+  public static async retrievePersonalSettingSummaries(battleTags: string[]): Promise<PersonalSettingSummary[]> {
+    if (battleTags.length === 0) return [];
+    const url = `${API_URL}api/personal-settings/${encodeURIComponent(battleTags.join(","))}/many`;
+
+    const response = await fetch(url);
+    if (!response.ok) return [];
     return await response.json();
   }
 
