@@ -24,6 +24,14 @@
                 <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
                 <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
                 <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
+                <race-select
+                  v-if="!unfinished"
+                  label="Race"
+                  :race="race"
+                  :includeRandom="raceIncludeRandom"
+                  @raceChanged="raceChanged"
+                  @includeRandomChanged="raceIncludeRandomChanged"
+                />
                 <sort-select v-if="unfinished" />
                 <hero-select v-if="!unfinished && showHeroSelect" :selectedHeroes="selectedHeroes" @heroChanged="heroChanged" />
                 <div class="matches-table-options">
@@ -55,7 +63,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
-import { type Match, EGameMode } from "@/store/types";
+import { type Match, EGameMode, ERaceEnum } from "@/store/types";
 import { MatchStatus, type Mmr } from "@/store/match/types";
 import type { Season } from "@/store/ranking/types";
 import MatchesGrid from "@/components/matches/MatchesGrid.vue";
@@ -64,6 +72,7 @@ import GameModeSelect from "@/components/common/GameModeSelect.vue";
 import MapSelect from "@/components/common/MapSelect.vue";
 import MmrSelect from "@/components/common/MmrSelect.vue";
 import DurationSelect from "@/components/common/DurationSelect.vue";
+import RaceSelect from "@/components/common/RaceSelect.vue";
 import SortSelect from "@/components/matches/SortSelect.vue";
 import type { MatchesOnMapPerSeason } from "@/store/overallStats/types";
 import AppConstants from "@/constants";
@@ -88,6 +97,7 @@ export default defineComponent({
     SortSelect,
     HeroSelect,
     DurationSelect,
+    RaceSelect,
     TableOptionsMenu,
   },
   setup() {
@@ -107,6 +117,8 @@ export default defineComponent({
     const gameMode = computed<EGameMode>(() => matchStore.gameMode);
     const map = computed<string>(() => matchStore.map);
     const mmr = computed<Mmr>(() => matchStore.mmr);
+    const race = computed<ERaceEnum>(() => matchStore.race);
+    const raceIncludeRandom = computed<boolean>(() => matchStore.raceIncludeRandom);
     const duration = computed<{ min: number; max: number }>(() => matchStore.duration);
 
 
@@ -214,6 +226,14 @@ export default defineComponent({
       matchStore.setDuration(duration);
     }
 
+    function raceChanged(race: ERaceEnum): void {
+      matchStore.setRace(race);
+    }
+
+    function raceIncludeRandomChanged(includeRandom: boolean): void {
+      matchStore.setRaceIncludeRandom(includeRandom);
+    }
+
     async function selectSeason(season: Season): Promise<void> {
       await matchStore.setSeason(season);
     }
@@ -232,6 +252,10 @@ export default defineComponent({
       mmr,
       duration,
       durationFilterChanged,
+      race,
+      raceIncludeRandom,
+      raceChanged,
+      raceIncludeRandomChanged,
       selectSeason,
       unfinished,
       isMatchesLoading,
