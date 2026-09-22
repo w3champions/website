@@ -4,6 +4,7 @@ export type AdminMapsState = {
   totalMaps: number;
   maps: Map[];
   mapsFilter?: string;
+  includeTemporary: boolean;
   mapFiles: MapFileData[];
 };
 
@@ -20,6 +21,14 @@ export interface Map {
   mappedForces?: MapForce[];
   gameMap?: GameMap;
   disabled: boolean;
+  // Server-owned and read-only here. `uploader` is stamped by website-backend
+  // on admin create/update and on temporary-map upload; `temporary`,
+  // `fileState`, and `lastHostedAt` exist only on temporary (self-provided)
+  // maps. website-backend serialises nulls on permanent rows.
+  temporary?: boolean;
+  uploader?: string | null;
+  fileState?: "present" | "deleted" | null;
+  lastHostedAt?: number | null;
 }
 
 export interface MapForce {
