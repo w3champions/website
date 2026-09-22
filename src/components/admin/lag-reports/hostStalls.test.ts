@@ -33,7 +33,7 @@ describe("groupHostStalls", () => {
 
     expect(groups).toHaveLength(1);
     expect(groups[0].reporters.map((r) => r.battleTag)).toEqual(["Alice#1", "Bob#2", "Carol#3", "Dan#4"]);
-    expect(groups[0].rosterSize).toBe(4);
+    expect(groups[0].playersTotal).toBe(4);
     expect(groups[0].partiallyReported).toBe(false);
   });
 
@@ -100,8 +100,59 @@ describe("groupHostStalls", () => {
     ]);
 
     expect(groups[0].reporters).toHaveLength(2);
-    expect(groups[0].rosterSize).toBe(4);
+    expect(groups[0].playersTotal).toBe(4);
     expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("marks a stall partially reported even when every player in the lag report reported it", () => {
+    // A lag report only holds players who submitted diagnostics, so when the roster
+    // has already been narrowed to the upgraded clients, reporters.length equals the
+    // report's own player count and would read as complete. The node's playersTotal -
+    // the roster the node actually saw - is the only denominator that still catches
+    // the mixed-version roster this indicator exists to expose.
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 4 })]),
+      player("Bob#2", [stall({ playersTotal: 4 })]),
+    ]);
+
+    expect(groups[0].reporters).toHaveLength(2);
+    expect(groups[0].playersTotal).toBe(4);
+    expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("falls back to the reporter count when playersTotal is absent", () => {
+    // A total this build cannot trust must not render as "N of 0" or "N of undefined";
+    // treating the reporters themselves as the whole roster is the honest fallback.
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: undefined as unknown as number })]),
+      player("Bob#2", [stall({ playersTotal: undefined as unknown as number })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(2);
+    expect(groups[0].partiallyReported).toBe(false);
+  });
+
+  it("falls back to the reporter count when playersTotal is zero", () => {
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 0 })]),
+      player("Bob#2", [stall({ playersTotal: 0 })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(2);
+    expect(groups[0].partiallyReported).toBe(false);
+  });
+
+  it("floors playersTotal at the reporter count instead of showing an impossible shortfall", () => {
+    // A total smaller than the number of reporters can only come from a malformed or
+    // hand-edited document; showing it verbatim would render something like "2 of 1
+    // players" instead of anything meaningful.
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 1 })]),
+      player("Bob#2", [stall({ playersTotal: 1 })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(2);
+    expect(groups[0].partiallyReported).toBe(false);
   });
 
   it("orders several stalls by game time", () => {
@@ -148,10 +199,10 @@ describe("groupHostStalls", () => {
 
   it("counts a player that uploaded the same stall twice only once", () => {
     // A resent diagnostics report carries the packet again; a second count would push
-    // the reporter total past the roster and read as nonsense.
+    // the reporter total past playersTotal and read as nonsense.
     const groups = groupHostStalls([
-      player("Alice#1", [stall(), stall()]),
-      player("Bob#2", [stall()]),
+      player("Alice#1", [stall({ playersTotal: 2 }), stall({ playersTotal: 2 })]),
+      player("Bob#2", [stall({ playersTotal: 2 })]),
     ]);
 
     expect(groups).toHaveLength(1);
