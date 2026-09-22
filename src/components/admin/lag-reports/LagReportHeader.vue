@@ -14,6 +14,9 @@
       </div>
       <div class="d-flex flex-wrap ga-2 align-center">
         <span class="text-medium-emphasis text-caption">Events:</span>
+        <v-chip v-if="hostStallSummary" size="x-small" :color="hostStallSummary.color" variant="tonal">
+          {{ hostStallSummary.count }}x node stall ({{ formatStallDuration(hostStallSummary.totalStallMs) }} lost)
+        </v-chip>
         <template v-for="(player, pi) in report.players" :key="'ev-' + pi">
           <v-chip
             v-if="player.diagnostics.lagEvents.length"
@@ -62,9 +65,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { EConnectionEventType, LagReportDetail } from "@/store/admin/lagReports/types";
 import { playerColorStyle } from "@/helpers/lag-report-colors";
+import { formatStallDuration, groupHostStalls, summarizeHostStalls } from "@/components/admin/lag-reports/hostStalls";
 
 export default defineComponent({
   name: "LagReportHeader",
@@ -72,7 +76,11 @@ export default defineComponent({
     report: { type: Object as PropType<LagReportDetail>, required: true },
     playerColors: { type: Array as PropType<string[]>, required: true },
   },
-  setup() {
+  setup(props) {
+    // A stall belongs to the node, not to a player, so it leads the summary as one fact
+    // about the game rather than as a chip per player the way the events below do.
+    const hostStallSummary = computed(() => summarizeHostStalls(groupHostStalls(props.report.players)));
+
     const connectionEventLabelMap: Record<string, string> = {
       [EConnectionEventType.Reconnect]: "Reconnected",
       [EConnectionEventType.FailureDisconnect]: "Disconnected",
@@ -119,6 +127,8 @@ export default defineComponent({
     }
 
     return {
+      hostStallSummary,
+      formatStallDuration,
       playerName,
       formatDate,
       formatGameTime,

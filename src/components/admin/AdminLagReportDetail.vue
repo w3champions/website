@@ -12,6 +12,12 @@
     <v-container v-else-if="report" fluid class="pa-4">
       <lag-report-header :report="report" :player-colors="playerColors" />
 
+      <lag-report-host-stalls
+        :players="report.players"
+        :player-colors="playerColors"
+        :server-node-name="report.serverNodeName"
+      />
+
       <lag-report-topology
         :players="report.players"
         :player-colors="playerColors"
@@ -71,6 +77,7 @@ import { mdiArrowLeft } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
 import LagReportHeader from "@/components/admin/lag-reports/LagReportHeader.vue";
+import LagReportHostStalls from "@/components/admin/lag-reports/LagReportHostStalls.vue";
 import LagReportTopology from "@/components/admin/lag-reports/LagReportTopology.vue";
 import LagReportContinuousMonitoring from "@/components/admin/lag-reports/LagReportContinuousMonitoring.vue";
 import LagReportInspector from "@/components/admin/lag-reports/LagReportInspector.vue";
@@ -83,6 +90,7 @@ export default defineComponent({
   name: "AdminLagReportDetail",
   components: {
     LagReportHeader,
+    LagReportHostStalls,
     LagReportTopology,
     LagReportContinuousMonitoring,
     LagReportInspector,
