@@ -100,7 +100,9 @@ export const usePlayerStore = defineStore("player", {
         this.SET_PROFILE(profile);
         this.SET_BATTLE_TAG(params.battleTag);
         this.SET_LOAD_PROFILE_ERROR(undefined);
-        this.SET_SELECTED_SEASON(profile.participatedInSeasons[0]);
+        // A player with no ladder games has an empty participatedInSeasons; keep the empty-season
+        // sentinel so selectedSeason.id reads stay undefined instead of throwing on undefined.
+        this.SET_SELECTED_SEASON(profile.participatedInSeasons[0] ?? ({} as Season));
       } catch (err) {
         const ex = err as Error;
         this.SET_LOAD_PROFILE_ERROR(ex.message);
