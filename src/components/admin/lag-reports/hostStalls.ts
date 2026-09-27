@@ -68,6 +68,12 @@ const HOST_STALL_OUTCOMES = new Map<string, Omit<HostStallOutcome, "known">>([
     description: "The stall made the whole roster look laggy at once. The node suppressed the resulting mass lag "
       + "report rather than pause the game, which would have evicted every player 57 s later.",
   }],
+  ["paused", {
+    label: "Paused",
+    color: "error",
+    description: "A lag report got through while the node was still recovering from the stall, and the game "
+      + "paused. The flagged count is how many players that report named.",
+  }],
 ]);
 
 const UNKNOWN_OUTCOME_DESCRIPTION = "This build does not know this outcome - it comes from a newer game node. "

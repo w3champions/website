@@ -257,13 +257,21 @@ describe("hostStallOutcome", () => {
     expect(outcome.color).toBe("error");
   });
 
+  it("labels a pause during the stall as an error", () => {
+    const outcome = hostStallOutcome("paused");
+
+    expect(outcome.known).toBe(true);
+    expect(outcome.label).toBe("Paused");
+    expect(outcome.color).toBe("error");
+  });
+
   it("shows an outcome this build has never heard of verbatim", () => {
     // A newer node may emit anything; blanking it would hide the only clue to what
     // the node actually did.
-    const outcome = hostStallOutcome("paused");
+    const outcome = hostStallOutcome("evicted");
 
     expect(outcome.known).toBe(false);
-    expect(outcome.label).toBe("paused");
+    expect(outcome.label).toBe("evicted");
     expect(outcome.description).toContain("newer game node");
   });
 
