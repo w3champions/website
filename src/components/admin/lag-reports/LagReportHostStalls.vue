@@ -56,7 +56,7 @@
             <td>{{ formatGameTime(row.stall.gameTimeOffsetMs) }}</td>
             <td class="text-center">{{ formatStallDuration(row.stall.stallMs) }}</td>
             <td class="text-center" :class="row.stall.playersFlagged > 0 ? 'text-warning' : ''">
-              {{ row.stall.playersFlagged }} / {{ row.stall.playersTotal }}
+              {{ row.stall.playersFlagged }} / {{ row.playersTotal }}
             </td>
             <td>
               <v-tooltip
