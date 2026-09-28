@@ -346,22 +346,10 @@ export default defineComponent({
       }
     }
 
-    // get properties
-    function selectedRankBattleTags(): string[] {
-      if (!props.selectedRank || !props.selectedRank.player) {
-        return [];
-      }
-
-      return props.selectedRank.player.playerIds.map((playerId) => playerId.battleTag);
-    }
-
     function hasSelectedRank(rank: Ranking): boolean {
-      const selectedBattleTags = selectedRankBattleTags();
-      if (selectedBattleTags.length === 0) {
-        return false;
-      }
-
-      return rank.player.playerIds.some((playerId) => selectedBattleTags.includes(playerId.battleTag));
+      // Row identity, not member overlap: a player fielding several AT teams holds several rows,
+      // and only the selected one is theirs.
+      return rank.player.id === props.selectedRank?.player?.id;
     }
 
     const goToOptions: Partial<Partial<InternalGoToOptions>> = {
@@ -506,7 +494,6 @@ export default defineComponent({
       sortColumn,
       isSortedAsc,
       getStreamStatus,
-      selectedRankBattleTags,
       hasSelectedRank,
       goToRank,
       getRaceIcon,

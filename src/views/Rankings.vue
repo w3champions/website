@@ -86,6 +86,7 @@
             :append-inner-icon="mdiMagnify"
             label="Search"
             :items="searchRanks"
+            :no-filter="USE_NEW_SEARCH"
             single-line
             :loading="isLoading"
             :no-data-text="noDataText"
@@ -117,10 +118,10 @@
                         class="search-race-icon mr-3"
                       />
                       <div class="d-flex flex-column justify-center">
-                        <span v-if="!isDuplicateName(item.raw.player.name)">
+                        <span v-if="!needsDiscriminator(item.raw.player.name)">
                           {{ item.raw.player.name }}
                         </span>
-                        <span v-if="isDuplicateName(item.raw.player.name)">
+                        <span v-if="needsDiscriminator(item.raw.player.name)">
                           <span
                             v-for="(pid, index) in item.raw.player.playerIds"
                             :key="pid.battleTag"
@@ -135,13 +136,17 @@
                           | MMR: {{ item.raw.player.mmr }}
                         </v-list-item-subtitle>
                         <v-list-item-subtitle v-else>
-                          {{ $t(`views_rankings.unranked`) }}
+                          <!-- Scoped to the selected mode: these players may hold ranks on other ladders. -->
+                          {{ $t(`views_rankings.unranked`) }} · {{ $t(`gameModes.${EGameMode[selectedGameMode]}`) }}
                         </v-list-item-subtitle>
                       </div>
                     </div>
                   </template>
                 </v-list-item>
               </template>
+            </template>
+            <template v-slot:append-item>
+              <div v-intersect="endIntersect"></div>
             </template>
           </v-autocomplete>
         </div>
@@ -180,6 +185,8 @@ import RankingsGrid from "@/components/ladder/RankingsGrid.vue";
 import RankingsRaceDistribution from "@/components/ladder/RankingsRaceDistribution.vue";
 import AppConstants, { getDefaultGatewayForSeason, isGatewayNeededForSeason } from "../constants";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { USE_NEW_SEARCH } from "@/helpers/featureFlags";
+import { meetsSearchMinimum } from "@/helpers/search";
 import { useRankingStore } from "@/store/ranking/store";
 import { useMatchStore } from "@/store/match/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -231,7 +238,12 @@ export default defineComponent({
     const selectedRank = ref<Ranking | undefined>(undefined);
     const isLoading = ref<boolean>(false);
     const ongoingMatchesMap = ref<OngoingMatches>({});
-    const playerIdToScroll = ref<string | undefined>(undefined);
+    // All battleTags of the row to scroll to — both members for an AT team, so the scroll lands on
+    // that exact team and not on the first row sharing one of its players.
+    const playerIdsToScroll = ref<string[] | undefined>(undefined);
+    // Set only when the target row is known per race (a search selection); left undefined by the
+    // deep-link and highlight paths, which identify a player rather than one of their rows.
+    const raceToScroll = ref<ERaceEnum | undefined>(undefined);
     const isProgrammaticSelection = ref<boolean>(false);
 
     const isGatewayNeeded = computed<boolean>(() => isGatewayNeededForSeason(rankingsStore.selectedSeason.id));
@@ -319,7 +331,10 @@ export default defineComponent({
         return;
       }
 
-      playerIdToScroll.value = rank.player.playerIds[0]?.battleTag;
+      playerIdsToScroll.value = rank.player.playerIds.map((p) => p.battleTag);
+      // A 1v1 player holds one row per race they laddered, so the battleTags alone identify a person,
+      // not the row they picked.
+      raceToScroll.value = rank.race;
       setLeague(rank.league);
     }
 
@@ -328,18 +343,22 @@ export default defineComponent({
       isLoading.value = false;
     }
 
-    function rankingMatchesPlayerId(rank: Ranking, playerId: string): boolean {
-      return rank.player.playerIds.some((player) => player.battleTag === playerId);
+    function rankingMatchesPlayerIds(rank: Ranking, playerIds: string[], race?: ERaceEnum): boolean {
+      if (race !== undefined && rank.race !== race) return false;
+      return playerIds.every((playerId) => rank.player.playerIds.some((player) => player.battleTag === playerId));
     }
 
     const handlePlayerScroll = async () => {
-      if (playerIdToScroll.value && rankings.value.length > 0) {
+      if (playerIdsToScroll.value?.length && rankings.value.length > 0) {
         await nextTick();
-        const selectedPlayer = rankings.value.find((r) => rankingMatchesPlayerId(r, playerIdToScroll.value!));
+        const selectedPlayer = rankings.value.find((r) =>
+          rankingMatchesPlayerIds(r, playerIdsToScroll.value!, raceToScroll.value)
+        );
         if (selectedPlayer) {
           isProgrammaticSelection.value = true;
           selectedRank.value = selectedPlayer;
-          playerIdToScroll.value = undefined;
+          playerIdsToScroll.value = undefined;
+          raceToScroll.value = undefined;
           await nextTick();
           isProgrammaticSelection.value = false;
           const element = document.getElementById(`listitem_${selectedPlayer.rankNumber}`);
@@ -358,11 +377,33 @@ export default defineComponent({
       }, timeout);
     };
 
+    // Reached the end of the search list — load the next page onto it. Inert on the legacy path
+    // and past the last page (searchHasMore stays false there). Vuetify 3 passes isIntersecting
+    // FIRST to v-intersect handlers. The sentinel can also flash into view while the menu lays out
+    // fresh results, so only append once its own list really sits near its scrolled end — or is
+    // still too short to scroll at all.
+    async function endIntersect(isIntersecting: boolean, entries: IntersectionObserverEntry[]) {
+      if (!isIntersecting || isLoading.value || !rankingsStore.searchHasMore) return;
+      if (!meetsSearchMinimum(search.value)) return;
+      const list = entries[0]?.target.closest(".v-list");
+      if (list && list.scrollHeight > list.clientHeight && list.scrollTop + list.clientHeight < list.scrollHeight - 120) return;
+      isLoading.value = true;
+      try {
+        await rankingsStore.search({ searchText: search.value.toLowerCase(), gameMode: selectedGameMode.value, append: true });
+      } catch {
+        // A page that never arrives must not leave the list loading: isLoading also gates this
+        // handler, so a stuck spinner would block every further append until the next keystroke.
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
     watch(search, onSearchChanged);
     function onSearchChanged(newValue: string) {
-      if (newValue && newValue.length > 2) {
+      if (meetsSearchMinimum(newValue)) {
         searchDebounced(newValue);
       } else {
+        clearTimeout(searchTimer); // a scheduled search must not repopulate the cleared results
         rankingsStore.clearSearch();
         isLoading.value = false;
       }
@@ -387,6 +428,12 @@ export default defineComponent({
 
     function isDuplicateName(name: string): boolean {
       return searchRanks.value.filter((r) => r.player.name === name).length > 1;
+    }
+
+    // A term carrying '#' asks by tag, so the rows answer in tags: the discriminator shows even
+    // when the name alone would be unambiguous in this list.
+    function needsDiscriminator(name: string): boolean {
+      return search.value.includes("#") || isDuplicateName(name);
     }
 
     function listLeagueIcon(item: League): number {
@@ -423,7 +470,7 @@ export default defineComponent({
     }
 
     const noDataText = computed<string>(() => {
-      if (!search.value || search.value.length < 3) {
+      if (!meetsSearchMinimum(search.value)) {
         return "Type at least 3 letters";
       }
       if (isLoading.value) {
@@ -470,7 +517,7 @@ export default defineComponent({
       }
 
       if (props.playerId) {
-        playerIdToScroll.value = props.playerId;
+        playerIdsToScroll.value = [props.playerId];
       }
 
       await rankingsStore.retrieveSeasons();
@@ -502,8 +549,10 @@ export default defineComponent({
         // Data is already current — scroll immediately, then silently refresh in background
         await handlePlayerScroll();
         getRefreshRankings();
-      } else if (props.gamemode) {
-        await rankingsStore.setGameMode(props.gamemode);
+      } else if (hasGameMode) {
+        // targetGameMode, not props.gamemode: updateQueryParams() rewrites the URL from store state
+        // during the awaits above, so the live prop no longer holds what the URL asked for.
+        await rankingsStore.setGameMode(targetGameMode);
         await handlePlayerScroll();
       } else {
         await getRankings();
@@ -542,10 +591,10 @@ export default defineComponent({
     }
 
     async function selectSeason(season: Season) {
-      const highlightedPlayerId =
-        playerIdToScroll.value ??
-        props.playerId ??
-        selectedRank.value?.player.playerIds[0]?.battleTag;
+      const highlightedPlayerIds =
+        playerIdsToScroll.value ??
+        (props.playerId ? [props.playerId] : undefined) ??
+        selectedRank.value?.player.playerIds.map((p) => p.battleTag);
       const previousLeagueId = rankingsStore.league;
       rankingsStore.setSeason(season);
       rootStateStore.setGateway(getDefaultGatewayForSeason(season.id, rootStateStore.gateway));
@@ -562,8 +611,8 @@ export default defineComponent({
         }
       }
 
-      if (highlightedPlayerId) {
-        playerIdToScroll.value = highlightedPlayerId;
+      if (highlightedPlayerIds?.length) {
+        playerIdsToScroll.value = highlightedPlayerIds;
       }
 
       await setLeague(leagueToSelect);
@@ -585,6 +634,7 @@ export default defineComponent({
 
     return {
       mdiMagnify,
+      USE_NEW_SEARCH,
       EGameMode,
       ERaceEnum,
       onGatewayChanged,
@@ -605,7 +655,8 @@ export default defineComponent({
       isLoading,
       search,
       noDataText,
-      isDuplicateName,
+      endIntersect,
+      needsDiscriminator,
       playerIsRanked,
       selectedSeason,
       selectSeason,

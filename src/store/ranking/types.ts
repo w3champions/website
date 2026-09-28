@@ -11,6 +11,7 @@ export type RankingState = {
   rankings: Ranking[];
   topFive: Ranking[];
   searchRanks: Ranking[];
+  searchHasMore: boolean;
   countryRankings: CountryRanking[];
   countryRankingsLoading: boolean;
   gameMode: EGameMode;
@@ -106,6 +107,24 @@ export interface PlayerOverview extends WinLoss {
   season?: number;
   race?: number;
 }
+
+// A player's ladder rank within a specific season/gateway/gameMode context.
+// Returned by POST api/ladder/ranks-for-players ONLY for players who are ranked in that context —
+// callers infer "unranked" from absence. Mirrors the backend RankInContext DTO.
+export type RankInContext = {
+  players: PlayerId[]; // 1 for 1v1, 2 for AT teams
+  season: number;
+  gateWay: number;
+  gameMode: EGameMode;
+  race: ERaceEnum | null; // per-race for 1v1; null for team modes
+  league: number;
+  rankNumber: number;
+  rankingPoints: number;
+  mmr: number;
+  wins: number;
+  losses: number;
+  games: number;
+};
 
 export enum Gateways {
   America = 10,
