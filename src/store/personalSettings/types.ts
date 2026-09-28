@@ -55,6 +55,14 @@ export type PersonalSetting = {
   aliasSettings: AkaSettings;
 };
 
+// Subset returned by the personal-settings "many" endpoint.
+export type PersonalSettingSummary = {
+  id: string;
+  countryCode?: string;
+  location?: string;
+  profilePicture: ProfilePicture;
+};
+
 export type ProfilePlayerSocials = {
   twitch: string;
   youtube: string;

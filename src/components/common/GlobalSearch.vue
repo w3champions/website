@@ -63,6 +63,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { PlayerSearchInfo } from "@/store/globalSearch/types";
 import { useGlobalSearchStore } from "@/store/globalSearch/store";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { mdiMagnify } from "@mdi/js";
 import { Intersect } from "vuetify/directives";
 
@@ -75,6 +76,7 @@ export default defineComponent({
     intersect: Intersect,
   },
   setup() {
+    const { t } = useI18n();
     const router = useRouter();
     const searchModel = ref<PlayerSearchInfo | null>(null);
     const search = ref<string>("");
@@ -131,13 +133,13 @@ export default defineComponent({
 
     const noDataText = computed<string>(() => {
       if (!search.value || search.value.length < 3) {
-        return "Type at least 3 letters";
+        return t("components_common_playersearch.typeAtLeast3Letters");
       }
       if (isLoading.value) {
-        return "Loading...";
+        return t("components_common_playersearch.loading");
       }
 
-      return "No player found";
+      return t("components_common_playersearch.noPlayerFound");
     });
 
     const players = computed<PlayerSearchInfo[]>(() => globalSearchStore.players);

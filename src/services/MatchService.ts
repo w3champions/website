@@ -1,7 +1,7 @@
 import { EGameMode, ERaceEnum, Match, MatchDetail } from "@/store/types";
 import { API_URL } from "@/config/env";
 import { Gateways } from "@/store/ranking/types";
-import { Mmr } from "@/store/match/types";
+import { Mmr, OpponentInfo } from "@/store/match/types";
 
 export default class MatchService {
   static pageSize = 50;
@@ -92,6 +92,24 @@ export default class MatchService {
       return {} as Match;
     }
 
+    return await response.json();
+  }
+
+  // Searches the players someone shares matches with in the given season,
+  // ordered by shared match count. An empty search returns the most played
+  // opponents. matchCount is scoped to the game mode (all modes when UNDEFINED);
+  // opponents without matches in that mode still appear, with matchCount 0.
+  public static async searchOpponents(
+    battleTag: string,
+    search: string,
+    season: number,
+    gateway: Gateways,
+    gameMode: EGameMode = EGameMode.UNDEFINED,
+  ): Promise<OpponentInfo[]> {
+    const url = `${API_URL}api/matches/search-opponents?playerId=${encodeURIComponent(battleTag)}&search=${encodeURIComponent(search)}&season=${season}&gateWay=${gateway}&gameMode=${gameMode}`;
+
+    const response = await fetch(url);
+    if (!response.ok) return [];
     return await response.json();
   }
 
