@@ -138,7 +138,7 @@ export function groupHostStalls(players: readonly HostStallSource[]): GroupedHos
 
   return [...byKey.values()]
     .map(({ stall, reporters }) => {
-      const playersTotal = resolvePlayersTotal(stall.playersTotal, reporters.length);
+      const playersTotal = resolvePlayersTotal(stall.playersTotal, stall.playersFlagged, reporters.length);
       return { stall, reporters, playersTotal, partiallyReported: reporters.length < playersTotal };
     })
     .sort((a, b) => a.stall.gameTimeOffsetMs - b.stall.gameTimeOffsetMs);
@@ -151,15 +151,18 @@ export function groupHostStalls(players: readonly HostStallSource[]): GroupedHos
  * `playersTotal` is part of the grouping key (see {@link hostStallKey}), so every record
  * folded into a group already agrees on it - reading it off whichever record a group
  * happens to hold is safe. An absent, zero, or non-positive value means the field cannot
- * be trusted, so the reporter count itself stands in, which reads as fully reported rather
- * than manufacturing a bogus "N of 0". The same floor also catches a total that is
- * positive but smaller than the reporter count - a document could only reach that state by
- * being malformed or hand-edited - so the roster never renders fewer players than clients
- * that reported it.
+ * be trusted, so the reporter count stands in as a starting point, which reads as fully
+ * reported rather than manufacturing a bogus "N of 0". The floor also has to cover
+ * `playersFlagged`: the table renders "playersFlagged / playersTotal", and a total smaller
+ * than either the reporter count or the flagged count - a document could only reach that
+ * state by being malformed or hand-edited - would print an impossible shortfall like
+ * "3 / 2".
  */
-function resolvePlayersTotal(playersTotal: number, reporterCount: number): number {
-  if (!Number.isFinite(playersTotal) || playersTotal <= 0) return reporterCount;
-  return Math.max(playersTotal, reporterCount);
+function resolvePlayersTotal(playersTotal: number, playersFlagged: number, reporterCount: number): number {
+  const flaggedFloor = Number.isFinite(playersFlagged) && playersFlagged > 0 ? playersFlagged : 0;
+  const floor = Math.max(reporterCount, flaggedFloor);
+  if (!Number.isFinite(playersTotal) || playersTotal <= 0) return floor;
+  return Math.max(playersTotal, floor);
 }
 
 /**
