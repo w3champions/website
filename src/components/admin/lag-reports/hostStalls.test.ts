@@ -33,7 +33,7 @@ describe("groupHostStalls", () => {
 
     expect(groups).toHaveLength(1);
     expect(groups[0].reporters.map((r) => r.battleTag)).toEqual(["Alice#1", "Bob#2", "Carol#3", "Dan#4"]);
-    expect(groups[0].rosterSize).toBe(4);
+    expect(groups[0].playersTotal).toBe(4);
     expect(groups[0].partiallyReported).toBe(false);
   });
 
@@ -100,8 +100,75 @@ describe("groupHostStalls", () => {
     ]);
 
     expect(groups[0].reporters).toHaveLength(2);
-    expect(groups[0].rosterSize).toBe(4);
+    expect(groups[0].playersTotal).toBe(4);
     expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("marks a stall partially reported even when every player in the lag report reported it", () => {
+    // A lag report only holds players who submitted diagnostics, so when the roster
+    // has already been narrowed to the upgraded clients, reporters.length equals the
+    // report's own player count and would read as complete. The node's playersTotal -
+    // the roster the node actually saw - is the only denominator that still catches
+    // the mixed-version roster this indicator exists to expose.
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 4 })]),
+      player("Bob#2", [stall({ playersTotal: 4 })]),
+    ]);
+
+    expect(groups[0].reporters).toHaveLength(2);
+    expect(groups[0].playersTotal).toBe(4);
+    expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("falls back to the flagged count when playersTotal is absent", () => {
+    // A total this build cannot trust must not render as "N of 0" or "N of undefined".
+    // The fixture flags 3 players against only 2 reporters, so the honest fallback is
+    // the flagged count, not the reporter count - the table also prints
+    // "playersFlagged / playersTotal" and a total below the flagged count would read as
+    // an impossible "3 / 2".
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: undefined as unknown as number })]),
+      player("Bob#2", [stall({ playersTotal: undefined as unknown as number })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(3);
+    expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("falls back to the flagged count when playersTotal is zero", () => {
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 0 })]),
+      player("Bob#2", [stall({ playersTotal: 0 })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(3);
+    expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("floors playersTotal at the larger of the reporter count and the flagged count", () => {
+    // A total smaller than the number of reporters can only come from a malformed or
+    // hand-edited document; showing it verbatim would render something like "2 of 1
+    // players" instead of anything meaningful. The fixture's flagged count (3) is also
+    // larger than the reporter count here, so it is the one that ends up as the floor.
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 1 })]),
+      player("Bob#2", [stall({ playersTotal: 1 })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(3);
+    expect(groups[0].partiallyReported).toBe(true);
+  });
+
+  it("floors playersTotal at the flagged count even when it is below the reporter count too", () => {
+    // playersTotal (2) is on its face a plausible, positive number, but it is still
+    // smaller than playersFlagged (3) - a document only reaches that state by being
+    // malformed - so leaving it alone would render the impossible "3 / 2" the table
+    // shows as "playersFlagged / playersTotal".
+    const groups = groupHostStalls([
+      player("Alice#1", [stall({ playersTotal: 2, playersFlagged: 3 })]),
+    ]);
+
+    expect(groups[0].playersTotal).toBe(3);
   });
 
   it("orders several stalls by game time", () => {
@@ -148,10 +215,12 @@ describe("groupHostStalls", () => {
 
   it("counts a player that uploaded the same stall twice only once", () => {
     // A resent diagnostics report carries the packet again; a second count would push
-    // the reporter total past the roster and read as nonsense.
+    // the reporter total past playersTotal and read as nonsense. playersFlagged is
+    // pinned to the reporter count here so the flagged-count floor stays out of the way
+    // of what this test is actually about.
     const groups = groupHostStalls([
-      player("Alice#1", [stall(), stall()]),
-      player("Bob#2", [stall()]),
+      player("Alice#1", [stall({ playersTotal: 2, playersFlagged: 2 }), stall({ playersTotal: 2, playersFlagged: 2 })]),
+      player("Bob#2", [stall({ playersTotal: 2, playersFlagged: 2 })]),
     ]);
 
     expect(groups).toHaveLength(1);
@@ -206,13 +275,21 @@ describe("hostStallOutcome", () => {
     expect(outcome.color).toBe("error");
   });
 
+  it("labels a pause during the stall as an error", () => {
+    const outcome = hostStallOutcome("paused");
+
+    expect(outcome.known).toBe(true);
+    expect(outcome.label).toBe("Paused");
+    expect(outcome.color).toBe("error");
+  });
+
   it("shows an outcome this build has never heard of verbatim", () => {
     // A newer node may emit anything; blanking it would hide the only clue to what
     // the node actually did.
-    const outcome = hostStallOutcome("paused");
+    const outcome = hostStallOutcome("evicted");
 
     expect(outcome.known).toBe(false);
-    expect(outcome.label).toBe("paused");
+    expect(outcome.label).toBe("evicted");
     expect(outcome.description).toContain("newer game node");
   });
 

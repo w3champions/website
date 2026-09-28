@@ -26,10 +26,15 @@ export interface HostStallReporter {
 export interface GroupedHostStall {
   stall: HostStallData;
   reporters: HostStallReporter[];
-  /** Players in the report, to read the reporter count against. */
-  rosterSize: number;
   /**
-   * True when fewer clients reported the stall than the report has players. Only flo
+   * Players in the game when the node observed the stall, per the node's own count -
+   * not the number of players who ended up in this lag report. A report only holds
+   * players who actually submitted diagnostics, so sizing this against the report's
+   * roster would silently drop the mixed-version players the stall count exists to catch.
+   */
+  playersTotal: number;
+  /**
+   * True when fewer clients reported the stall than the node says the game had. Only flo
    * clients from 0.18.4 on are sent the packet, so this means a mixed-version roster -
    * never a stall that hit only some of the players.
    */
@@ -62,6 +67,12 @@ const HOST_STALL_OUTCOMES = new Map<string, Omit<HostStallOutcome, "known">>([
     color: "error",
     description: "The stall made the whole roster look laggy at once. The node suppressed the resulting mass lag "
       + "report rather than pause the game, which would have evicted every player 57 s later.",
+  }],
+  ["paused", {
+    label: "Paused",
+    color: "error",
+    description: "A lag report got through while the node was still recovering from the stall, and the game "
+      + "paused. The flagged count is how many players that report named.",
   }],
 ]);
 
@@ -101,7 +112,6 @@ function hostStallKey(stall: HostStallData): string {
  * server fault into N near-identical rows and read as N separate problems.
  */
 export function groupHostStalls(players: readonly HostStallSource[]): GroupedHostStall[] {
-  const rosterSize = players.length;
   const byKey = new Map<string, { stall: HostStallData; reporters: HostStallReporter[] }>();
 
   players.forEach((player, playerIndex) => {
@@ -127,23 +137,44 @@ export function groupHostStalls(players: readonly HostStallSource[]): GroupedHos
   });
 
   return [...byKey.values()]
-    .map(({ stall, reporters }) => ({
-      stall,
-      reporters,
-      rosterSize,
-      partiallyReported: reporters.length < rosterSize,
-    }))
+    .map(({ stall, reporters }) => {
+      const playersTotal = resolvePlayersTotal(stall.playersTotal, stall.playersFlagged, reporters.length);
+      return { stall, reporters, playersTotal, partiallyReported: reporters.length < playersTotal };
+    })
     .sort((a, b) => a.stall.gameTimeOffsetMs - b.stall.gameTimeOffsetMs);
+}
+
+/**
+ * The node-authored player count to show a group's reporters against, guarded against a
+ * malformed record.
+ *
+ * `playersTotal` is part of the grouping key (see {@link hostStallKey}), so every record
+ * folded into a group already agrees on it - reading it off whichever record a group
+ * happens to hold is safe. An absent, zero, or non-positive value means the field cannot
+ * be trusted, so the reporter count stands in as a starting point, which reads as fully
+ * reported rather than manufacturing a bogus "N of 0". The floor also has to cover
+ * `playersFlagged`: the table renders "playersFlagged / playersTotal", and a total smaller
+ * than either the reporter count or the flagged count - a document could only reach that
+ * state by being malformed or hand-edited - would print an impossible shortfall like
+ * "3 / 2".
+ */
+function resolvePlayersTotal(playersTotal: number, playersFlagged: number, reporterCount: number): number {
+  const flaggedFloor = Number.isFinite(playersFlagged) && playersFlagged > 0 ? playersFlagged : 0;
+  const floor = Math.max(reporterCount, flaggedFloor);
+  if (!Number.isFinite(playersTotal) || playersTotal <= 0) return floor;
+  return Math.max(playersTotal, floor);
 }
 
 /**
  * The earliest moment any reporter says it learned of the stall.
  *
- * Nothing in the packet carries the node's own wall-clock time, so this is only the
- * closest available lower bound on when the stall happened, never the stall's actual
- * time - each reporter's clock and network path to the node differ. Presenting this
- * instead of one reporter's record avoids passing off an arbitrary client's clock as the
- * event's own.
+ * The stall happens on the node, then the packet travels, then the receiving client
+ * stamps its own clock on arrival - so every report is at or after the real stall, and
+ * the earliest of them is an approximate upper bound on when it happened, not a lower
+ * one. It is only a bound at all if the reporting clients' clocks are roughly right:
+ * these are player machines, so clock skew can put it on either side of the truth.
+ * Presenting this instead of one reporter's record avoids passing off an arbitrary
+ * client's clock as the event's own.
  */
 export function earliestHostStallReport(reporters: readonly HostStallReporter[]): string | null {
   let earliest: { raw: string; instant: number } | null = null;
