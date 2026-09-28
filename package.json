@@ -83,7 +83,7 @@
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.16",
     "vite-plugin-vuetify": "2.1.2",
-    "vitest": "^4.1.10",
+    "vitest": "^4.1.11",
     "vue-tsc": "^3.2.7"
   }
 }
