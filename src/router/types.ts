@@ -67,6 +67,7 @@ export enum EPlayerRouteName {
   PLAYER_PROFILE_MATCHES = "Player Profile - Matches",
   PLAYER_PROFILE_TEAMS = "Player Profile - Teams",
   PLAYER_PROFILE_STATISTICS = "Player Profile - Statistics",
+  PLAYER_PROFILE_LIFETIME = "Player Profile - Lifetime",
   PLAYER_PROFILE_CLAN = "Player Profile - Clan",
 }
 

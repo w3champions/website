@@ -25,6 +25,7 @@ import Rewards from "@/views/Rewards.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
 import SsoContinue from "@/views/SsoContinue.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
+import PlayerLifetimeTab from "@/components/player/tabs/PlayerLifetimeTab.vue";
 import OverallStatistics from "@/views/OverallStatistics.vue";
 import PlayerActivityTab from "@/components/overall-statistics/tabs/PlayerActivityTab.vue";
 import MmrDistributionTab from "@/components/overall-statistics/tabs/MmrDistributionTab.vue";
@@ -214,6 +215,11 @@ const routes: RouteRecordRaw[] = [
         path: "statistics",
         name: EPlayerRouteName.PLAYER_PROFILE_STATISTICS,
         component: PlayerStatisticTab,
+      },
+      {
+        path: "lifetime",
+        name: EPlayerRouteName.PLAYER_PROFILE_LIFETIME,
+        component: PlayerLifetimeTab,
       },
       {
         path: "clan",
