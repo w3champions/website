@@ -39,7 +39,6 @@ export type Team = {
   players: PlayerInTeam[];
   won?: boolean;
   matchRanking?: number;
-  isAT?: boolean;
 };
 
 export type Match = {
