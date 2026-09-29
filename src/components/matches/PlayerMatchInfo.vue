@@ -7,7 +7,8 @@
       :big="bigRaceIcon"
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
-      <span>
+      <span class="d-flex align-center" :class="{ 'justify-end': left }">
+        <v-chip v-if="partyColor && left" size="x-small" :color="partyColor" variant="tonal" title="Arranged Team Party" class="mr-1">AT</v-chip>
         <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
@@ -47,6 +48,7 @@
             :location="player.location"
           />
         </span>
+        <v-chip v-if="partyColor && !left" size="x-small" :color="partyColor" variant="tonal" title="Arranged Team Party" class="ml-1">AT</v-chip>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :selectedHeroes="selectedHeroes" :size="24" />
     </div>
@@ -110,6 +112,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    partyColor: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     spoilerFreeWinner: {
       type: Boolean,

@@ -4,14 +4,13 @@
       {{ formatRanking(team.matchRanking) }}
     </div>
     <div class="team-content">
-      <div v-for="(player, index) in team.players" :key="index" class="player-row d-flex align-center w-100" :class="{ 'flex-row-reverse': left }">
-        <v-chip v-if="player.atTeamId" size="x-small" :color="partyColorMap.get(player.atTeamId)" variant="tonal" class="mx-1" title="Arranged Team Party">
-          AT
-        </v-chip>
-        <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking">
+      <div v-for="(player, index) in team.players" :key="index" class="player-row d-flex align-center w-100" :class="{ 'justify-end': left, 'justify-start': !left }">
+        <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking" :style="{ order: 2 }">
           {{ formatRanking(player.matchRanking) }}
         </div>
         <player-match-info
+          :partyColor="player.atTeamId ? partyColorMap.get(player.atTeamId) : undefined"
+          :style="{ order: left ? 3 : 1 }"
           :unfinishedMatch="unfinishedMatch"
           :player="player"
           :left="left"
