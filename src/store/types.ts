@@ -23,6 +23,7 @@ export type PlayerInTeam = {
   twitch?: string | null;
   heroes: Hero[];
   ranking?: Ranking;
+  atTeamId?: string;
 };
 
 export type Ranking = {
@@ -38,6 +39,7 @@ export type Team = {
   players: PlayerInTeam[];
   won?: boolean;
   matchRanking?: number;
+  isAT?: boolean;
 };
 
 export type Match = {
