@@ -105,10 +105,10 @@ export default defineComponent({
     const partyColorMap = computed(() => {
       const map = new Map<string, string>();
       if (!props.team) return map;
-      
+
       const colors = ["primary", "success", "warning", "info", "error"];
       let colorIndex = 0;
-      
+
       for (const player of props.team.players) {
         if (player.atTeamId) {
           if (!map.has(player.atTeamId)) {
