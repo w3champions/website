@@ -4,8 +4,8 @@
       {{ formatRanking(team.matchRanking) }}
     </div>
     <div class="team-content">
-      <div v-for="(player, index) in team.players" :key="index" class="player-row d-flex align-center w-100" :class="{ 'justify-end': left, 'justify-start': !left }">
-        <v-chip v-if="player.atTeamId" size="x-small" :color="partyColorMap.get(player.atTeamId)" variant="tonal" class="mr-1" title="Arranged Team Party">
+      <div v-for="(player, index) in team.players" :key="index" class="player-row d-flex align-center w-100" :class="{ 'flex-row-reverse': left }">
+        <v-chip v-if="player.atTeamId" size="x-small" :color="partyColorMap.get(player.atTeamId)" variant="tonal" class="mx-1" title="Arranged Team Party">
           AT
         </v-chip>
         <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking">
