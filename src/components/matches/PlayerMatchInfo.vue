@@ -8,7 +8,7 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span class="d-flex align-center" :class="{ 'justify-end': left }">
-        <v-chip v-if="partyColor && left" size="x-small" :color="partyColor" variant="tonal" title="Arranged Team Party" class="mr-1">AT</v-chip>
+        <at-icon v-if="partyColor && left" :size="16" :class="`text-${partyColor} mr-1`" title="Arranged Team Party" />
         <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
@@ -48,7 +48,7 @@
             :location="player.location"
           />
         </span>
-        <v-chip v-if="partyColor && !left" size="x-small" :color="partyColor" variant="tonal" title="Arranged Team Party" class="ml-1">AT</v-chip>
+        <at-icon v-if="partyColor && !left" :size="16" :class="`text-${partyColor} ml-1`" title="Arranged Team Party" />
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :selectedHeroes="selectedHeroes" :size="24" />
     </div>
@@ -72,6 +72,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { leagueNameFromOrder } from "@/helpers/leagues";
 import HeroIconRow from "@/components/matches/HeroIconRow.vue";
 import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
+import AtIcon from "@/components/matches/AtIcon.vue";
 
 export default defineComponent({
   name: "PlayerMatchInfo",
@@ -79,6 +80,7 @@ export default defineComponent({
     HeroIconRow,
     PlayerIcon,
     CountryFlagExtended,
+    AtIcon,
   },
   props: {
     player: {
