@@ -59,6 +59,10 @@ export interface LagReportPlayerSummary {
   issueCategories: EIssueCategory[];
   lagEventCount: number;
   connectionEventCount: number;
+  // Optional because the backend that emits it is not deployed everywhere: on an older
+  // one the field is absent from the payload, and a required number would let a read
+  // silently compare undefined instead of forcing the caller to handle the gap.
+  hostStallCount?: number;
 }
 
 export interface LagReportsResponse {
@@ -118,6 +122,7 @@ export interface PlayerDiagnostics {
   reverseMtr: TraceMeasurement[];
   pingHistory: PingSample[];
   connectionEvents: ConnectionEventData[];
+  hostStalls: HostStallData[];
 }
 
 export interface LagEvent {
@@ -165,6 +170,24 @@ export interface ConnectionEventData {
   gameTimeOffsetMs: number;
   eventType: EConnectionEventType;
   durationMs: number | null;
+}
+
+/**
+ * Wall time the game node lost while it was descheduled, as measured by the node itself.
+ *
+ * The node broadcasts one of these to every client in the game, so the same stall comes
+ * back once per player. That is what makes it diagnostic - it indicts the server rather
+ * than any one connection - and why it has to be de-duplicated before it is rendered.
+ */
+export interface HostStallData {
+  timestamp: string;
+  gameTimeOffsetMs: number;
+  stallMs: number;
+  playersTotal: number;
+  playersFlagged: number;
+  // Deliberately a plain string and not a union: a newer node may emit an outcome this
+  // build has never heard of, and it has to render verbatim rather than fail the type.
+  outcome: string;
 }
 
 export interface LagReportAnnotation {
