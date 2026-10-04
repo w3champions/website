@@ -8,7 +8,11 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span class="d-flex align-center" :class="{ 'justify-end': left }">
-        <at-icon v-if="partyColor && left" :size="16" :class="`text-${partyColor} mr-1`" title="Arranged Team Party" />
+        <v-tooltip v-if="partyColor && left" location="top" text="Arranged Team Party">
+          <template v-slot:activator="{ props }">
+            <at-icon v-bind="props" :size="16" :class="`text-${partyColor} mr-1`" />
+          </template>
+        </v-tooltip>
         <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
@@ -48,7 +52,11 @@
             :location="player.location"
           />
         </span>
-        <at-icon v-if="partyColor && !left" :size="16" :class="`text-${partyColor} ml-1`" title="Arranged Team Party" />
+        <v-tooltip v-if="partyColor && !left" location="top" text="Arranged Team Party">
+          <template v-slot:activator="{ props }">
+            <at-icon v-bind="props" :size="16" :class="`text-${partyColor} ml-1`" />
+          </template>
+        </v-tooltip>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :selectedHeroes="selectedHeroes" :size="24" />
     </div>
