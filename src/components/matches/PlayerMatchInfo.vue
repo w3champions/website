@@ -8,7 +8,7 @@
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
       <span class="d-flex align-center" :class="{ 'justify-end': left }">
-        <v-tooltip v-if="partyColor && left" location="top" text="Arranged Team Party">
+        <v-tooltip v-if="partyColor && left" location="top" text="Arranged Team Party" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <at-icon v-bind="props" :size="16" :class="`text-${partyColor} mr-1`" />
           </template>
@@ -52,7 +52,7 @@
             :location="player.location"
           />
         </span>
-        <v-tooltip v-if="partyColor && !left" location="top" text="Arranged Team Party">
+        <v-tooltip v-if="partyColor && !left" location="top" text="Arranged Team Party" content-class="w3-tooltip elevation-1">
           <template v-slot:activator="{ props }">
             <at-icon v-bind="props" :size="16" :class="`text-${partyColor} ml-1`" />
           </template>
