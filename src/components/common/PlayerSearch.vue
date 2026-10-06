@@ -36,7 +36,7 @@
       <template v-slot:item="{ props: itemProps, item }">
         <v-list-item :prepend-avatar="getAvatarUrlFor(item.raw.battleTag)" v-bind="{ ...itemProps, title: undefined }">
           <v-list-item-title>
-            {{ battleTagName(item.raw.battleTag) }}<span class="text-medium-emphasis">{{ battleTagNumber(item.raw.battleTag) }}</span>
+            {{ battleTagToName(item.raw.battleTag) }}<span class="text-medium-emphasis">{{ battleTagNumber(item.raw.battleTag) }}</span>
           </v-list-item-title>
           <v-list-item-subtitle v-if="item.raw.matchCount !== undefined">
             {{ subtitleText(item.raw) }}
@@ -55,9 +55,9 @@ import MatchService from "@/services/MatchService";
 import PersonalSettingsService from "@/services/PersonalSettingsService";
 import { ProfilePicture } from "@/store/personalSettings/types";
 import { getAvatarUrl } from "@/helpers/url-functions";
+import { battleTagToName } from "@/helpers/profile";
 import { EAvatarCategory, EGameMode } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
-import { useRankingStore } from "@/store/ranking/store";
 import { useI18n } from "vue-i18n";
 
 import { mdiMagnify } from "@mdi/js";
@@ -107,8 +107,8 @@ export default defineComponent({
       required: false,
       default: "",
     },
-    // When set to a battleTag, only players sharing matches with it are searched
-    // (scoped to season/gateway), so no result ever leads to an empty match list.
+    // When set to a battleTag, only players sharing matches with it in that
+    // season and gateway are suggested.
     opponentOf: {
       type: String,
       required: false,
@@ -132,32 +132,63 @@ export default defineComponent({
       required: false,
       default: EGameMode.UNDEFINED,
     },
+    // The name of `gameMode` as the mode filter shows it.
+    gameModeName: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
   setup: (props, context) => {
     const { t } = useI18n();
-    const rankingStore = useRankingStore();
     const input = ref<string>("");
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;
+    // The global player search is unbounded; real avatars are only looked up
+    // for the top of the list, the rest keep the starter fallback.
+    const AVATAR_LOOKUP_LIMIT = 50;
     const debouncedSearch = debounce((val: string) => dispatchSearch(val), SEARCH_DELAY);
     const searchedPlayers = ref<SearchedPlayer[]>([]);
     const selected = ref<string>();
     const profilePictures = ref<Record<string, ProfilePicture | undefined>>({});
+    // Bumped by every search and every cancel, so a response that arrives after
+    // the user moved on is dropped instead of refilling the list.
     let searchToken = 0;
 
     const isOpponentSearch = computed<boolean>(() => !!props.opponentOf);
     const minSearchLength = computed<number>(() => (isOpponentSearch.value ? 1 : 3));
     const label = computed<string>(() => props.searchLabel || t("components_common_playersearch.searchLabel"));
 
-    async function dispatchSearch(val: string) {
+    function startSearch(val: string, immediate = false): void {
+      isLoading.value = true;
+      if (immediate) {
+        debouncedSearch.clear();
+        dispatchSearch(val);
+      } else {
+        debouncedSearch(val);
+      }
+    }
+
+    function cancelSearch(): void {
+      debouncedSearch.clear();
+      searchToken++;
+      isLoading.value = false;
+    }
+
+    async function dispatchSearch(val: string): Promise<void> {
       const token = ++searchToken;
-      const players: SearchedPlayer[] = isOpponentSearch.value
-        ? await MatchService.searchOpponents(props.opponentOf, val, props.season, props.gateway, props.gameMode)
-        : await ProfileService.searchPlayer(val.toLowerCase());
+      let players: SearchedPlayer[] = [];
+      try {
+        players = isOpponentSearch.value
+          ? await MatchService.searchOpponents(props.opponentOf, val, props.season, props.gateway, props.gameMode)
+          : await ProfileService.searchPlayer(val.toLowerCase());
+      } catch {
+        // Shown as "no results"; the next keystroke tries again.
+      }
       if (token !== searchToken) return;
       searchedPlayers.value = players;
       isLoading.value = false;
-      loadProfilePictures(players.map((player) => player.battleTag));
+      loadProfilePictures(players.slice(0, AVATAR_LOOKUP_LIMIT).map((player) => player.battleTag));
     }
 
     // Keep opponent results in sync with the table when the season, gateway or
@@ -166,8 +197,9 @@ export default defineComponent({
       if (!isOpponentSearch.value) return;
       const current = input.value && input.value !== selected.value ? input.value : "";
       if (current.length >= minSearchLength.value) {
-        dispatchSearch(current);
+        startSearch(current, true);
       } else {
+        cancelSearch();
         searchedPlayers.value = [];
       }
     });
@@ -179,9 +211,13 @@ export default defineComponent({
         profilePictures.value[tag] = undefined;
       }
 
-      const settings = await PersonalSettingsService.retrievePersonalSettingSummaries(newTags);
-      for (const setting of settings) {
-        profilePictures.value[setting.id] = setting.profilePicture;
+      try {
+        const settings = await PersonalSettingsService.retrievePersonalSettingSummaries(newTags);
+        for (const setting of settings) {
+          profilePictures.value[setting.id] = setting.profilePicture;
+        }
+      } catch {
+        // Avatars are cosmetic: keep the starter fallback.
       }
     }
 
@@ -191,8 +227,8 @@ export default defineComponent({
         return getAvatarUrl(pfp.race, pfp.pictureId, pfp.isClassic);
       }
 
-      // Players without personal settings get the same default the backend uses:
-      // a starter avatar (1-5), derived from the battleTag so it is stable across renders.
+      // No personal settings: a starter portrait, like the backend default, but
+      // picked from the battleTag so it doesn't change on every re-render.
       let hash = 0;
       for (let i = 0; i < battleTag.length; i++) {
         hash = (hash * 31 + battleTag.charCodeAt(i)) | 0;
@@ -201,30 +237,17 @@ export default defineComponent({
     }
 
     // "Rampage#2131" -> "Rampage" + "#2131", so the number can be dimmed.
-    function battleTagName(battleTag: string): string {
-      const hashIndex = battleTag.lastIndexOf("#");
-      return hashIndex === -1 ? battleTag : battleTag.slice(0, hashIndex);
-    }
-
     function battleTagNumber(battleTag: string): string {
-      const hashIndex = battleTag.lastIndexOf("#");
-      return hashIndex === -1 ? "" : battleTag.slice(hashIndex);
+      return battleTag.slice(battleTagToName(battleTag).length);
     }
-
-    // Same display name the mode filter uses (translation first, API name as fallback).
-    const searchModeName = computed<string>(() => {
-      if (props.gameMode === EGameMode.UNDEFINED) return "";
-      const mode = rankingStore.activeModes.find((activeMode) => activeMode.id === props.gameMode);
-      return mode ? (t(`gameModes.${EGameMode[props.gameMode]}`) || mode.name) : "";
-    });
 
     // The count and record are scoped to the active mode filter; a zero says
     // which mode is empty, so a suggestion never looks like it has no shared
     // matches at all.
     function subtitleText(player: SearchedPlayer): string {
       const count = player.matchCount ?? 0;
-      if (count === 0 && searchModeName.value) {
-        return t("components_common_playersearch.noModeMatches", { mode: searchModeName.value });
+      if (count === 0 && props.gameMode !== EGameMode.UNDEFINED && props.gameModeName) {
+        return t("components_common_playersearch.noModeMatches", { mode: props.gameModeName });
       }
       const countText = t("components_common_playersearch.matchCount", count);
       if (count === 0 || player.wins === undefined || player.losses === undefined) {
@@ -237,6 +260,7 @@ export default defineComponent({
 
     function onSelect(btag: string | undefined): void {
       if (!btag) return;
+      cancelSearch();
       context.emit("playerFound", btag);
     }
 
@@ -257,16 +281,16 @@ export default defineComponent({
       // don't fire (and reopen) a new search for it.
       if (val && val === selected.value) return;
       if (!val || val.length < minSearchLength.value) {
+        cancelSearch();
         searchedPlayers.value = [];
         return;
       }
-      isLoading.value = true;
-      debouncedSearch(val);
+      startSearch(val);
     }
 
     const clearSearch = (): void => {
+      cancelSearch();
       context.emit("searchCleared");
-      isLoading.value = false;
     };
 
     context.expose({
@@ -296,7 +320,7 @@ export default defineComponent({
       isLoading,
       searchedPlayers,
       getAvatarUrlFor,
-      battleTagName,
+      battleTagToName,
       battleTagNumber,
       subtitleText,
       clearSearch,

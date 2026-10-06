@@ -13,11 +13,12 @@
               :setAutofocus="false"
               :showFloatingLabel="false"
               density="compact"
-              searchLabel="Search Opponents"
+              :searchLabel="$t('components_player_tabs_matchhistorytab.searchOpponents')"
               :opponentOf="battleTag"
               :season="selectedSeasonId"
               :gateway="gateway"
               :gameMode="selectedGameMode"
+              :gameModeName="selectedGameModeName"
               @playerFound="playerFound"
               @searchCleared="searchCleared"
             />
@@ -529,12 +530,18 @@ export default defineComponent({
       return ((opponentWins.value / matches.value.length) * 100).toFixed(1);
     });
 
-    // With an opponent and a mode filter both active, an empty result deserves
-    // a more specific message than the grid's generic "no matches found".
-    const matchesEmptyText = computed<string | undefined>(() =>
-      playerStore.opponentTag && selectedGameMode.value !== EGameMode.UNDEFINED
+    // With an opponent and only a mode filter active, an empty result can only
+    // mean "no matches in that mode", so say so. Race and hero filters can
+    // also empty the list, so with those the grid keeps its generic text.
+    const matchesEmptyText = computed<string | undefined>(() => {
+      const onlyModeFiltered = selectedGameMode.value !== EGameMode.UNDEFINED
+        && (playerStore.playerRace ?? ERaceEnum.TOTAL) === ERaceEnum.TOTAL
+        && (playerStore.opponentRace ?? ERaceEnum.TOTAL) === ERaceEnum.TOTAL
+        && selectedHeroes.value.length === 0;
+      return playerStore.opponentTag && onlyModeFiltered
         ? t("components_player_tabs_matchhistorytab.noModeMatchesVsOpponent", { mode: selectedGameModeName.value })
-        : undefined);
+        : undefined;
+    });
 
     function setSelectedGameModeForSearch(mode: IGameModeBrief): void {
       const gameMode = Number.isNaN(mode.id) ? EGameMode.UNDEFINED : mode.id;

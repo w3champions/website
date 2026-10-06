@@ -525,6 +525,7 @@ const en = {
   },
 
   components_player_tabs_matchhistorytab: {
+    searchOpponents: "Search Opponents",
     noModeMatchesVsOpponent: "No {mode} matches against this opponent",
   },
 
