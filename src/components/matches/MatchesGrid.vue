@@ -120,7 +120,7 @@
           </tr>
           <tr v-if="!matches || matches.length == 0">
             <td :colspan="emptyStateColspan" class="text-center">
-              {{ $t("components_matches_matchesgrid.nomatchesfound") }}
+              {{ emptyText || $t("components_matches_matchesgrid.nomatchesfound") }}
             </td>
           </tr>
         </tbody>
@@ -199,6 +199,12 @@ export default defineComponent({
     itemsPerPage: {
       type: Number,
       required: true,
+    },
+    // Overrides the generic "no matches found" empty-state text.
+    emptyText: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     alwaysLeftName: {
       type: String,
