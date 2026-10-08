@@ -44,7 +44,7 @@
           {{ error }}
         </v-alert>
 
-        <v-alert v-if="problem && draft.battleTag && !noteTooLong" type="warning" variant="tonal" density="compact" class="mt-4">
+        <v-alert v-if="showProblem" type="warning" variant="tonal" density="compact" class="mt-4">
           {{ problem }}
         </v-alert>
       </v-card-text>
@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
-import { draftFromTag, emptyDraft, NOTE_MAX_LENGTH, validateDraft } from "@/store/admin/commercialLicense/draft";
+import { draftFromTag, emptyDraft, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, validateDraft } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseDraft } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseTaggedPlayer } from "@/store/admin/commercialLicense/types";
 
@@ -93,9 +93,9 @@ const draft = reactive<CommercialLicenseDraft>(emptyDraft());
 const openCount = ref(0);
 
 const isEdit = computed(() => props.tag !== null);
-// The textarea's own rule already reports an over-long note.
-const noteTooLong = computed(() => draft.note.length > NOTE_MAX_LENGTH);
 const problem = computed(() => validateDraft(draft, isEdit.value, props.existingBattleTags));
+// The textarea's own rule already reports an over-long note.
+const showProblem = computed(() => !!draft.battleTag && problem.value !== null && problem.value !== NOTE_TOO_LONG_PROBLEM);
 
 watch(() => props.modelValue, (open) => {
   if (!open) return;

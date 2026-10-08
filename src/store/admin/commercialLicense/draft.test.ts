@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { draftFromTag, emptyDraft, NOTE_MAX_LENGTH, toTagRequest, validateDraft } from "./draft";
+import { draftFromTag, emptyDraft, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, toTagRequest, validateDraft } from "./draft";
 
 const tag = {
   battleTag: "Foo#1234",
@@ -42,4 +42,10 @@ test("the note is limited to NOTE_MAX_LENGTH characters", () => {
   const tooLong = { ...ok, note: "x".repeat(NOTE_MAX_LENGTH + 1) };
   assert.equal(validateDraft(ok, false, []), null);
   assert.equal(validateDraft(tooLong, false, []), `The note can be at most ${NOTE_MAX_LENGTH} characters.`);
+});
+
+test("a duplicate tag is reported before an over-long note", () => {
+  const draft = { battleTag: "Foo#1234", note: "x".repeat(NOTE_MAX_LENGTH + 1), notify: true };
+  assert.match(validateDraft(draft, false, ["foo#1234"])!, /already tagged/);
+  assert.equal(validateDraft(draft, false, []), NOTE_TOO_LONG_PROBLEM);
 });

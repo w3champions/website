@@ -3,6 +3,9 @@ import type { CommercialLicenseTaggedPlayer, CommercialLicenseTagRequest } from 
 /** Backend limit (contract C1/C2): note is 0..500 characters. */
 export const NOTE_MAX_LENGTH = 500;
 
+/** Problem reported by validateDraft for an over-long note. */
+export const NOTE_TOO_LONG_PROBLEM = `The note can be at most ${NOTE_MAX_LENGTH} characters.`;
+
 /** Form state of the add/edit dialog. Phase 2 adds its restriction fields here. */
 export interface CommercialLicenseDraft {
   battleTag: string;
@@ -32,6 +35,6 @@ export function validateDraft(draft: CommercialLicenseDraft, isEdit: boolean, ex
   if (!isEdit && existingBattleTags.some((t) => t.toLowerCase() === draft.battleTag.toLowerCase())) {
     return "This player is already tagged. Edit the existing entry instead.";
   }
-  if (draft.note.length > NOTE_MAX_LENGTH) return `The note can be at most ${NOTE_MAX_LENGTH} characters.`;
+  if (draft.note.length > NOTE_MAX_LENGTH) return NOTE_TOO_LONG_PROBLEM;
   return null;
 }

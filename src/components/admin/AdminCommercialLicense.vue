@@ -55,7 +55,7 @@
             size="small"
             title="Edit"
             :aria-label="`Edit ${item.battleTag}`"
-            :disabled="store.saving"
+            :disabled="store.saving || store.loading"
             @click="openEdit(item)"
           >
             <v-icon size="small">{{ mdiPencil }}</v-icon>
@@ -74,7 +74,7 @@
             size="small"
             title="Remove"
             :aria-label="`Remove ${item.battleTag}`"
-            :disabled="store.saving"
+            :disabled="store.saving || store.loading"
             @click="removeItem(item)"
           >
             <v-icon size="small">{{ mdiDelete }}</v-icon>
