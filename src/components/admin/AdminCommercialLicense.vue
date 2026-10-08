@@ -135,11 +135,16 @@ async function removeItem(tag: CommercialLicenseTaggedPlayer): Promise<void> {
 async function init(): Promise<void> {
   if (!hasPermission.value) {
     store.$reset();
+    dialog.value = false;
     return;
   }
   await store.load();
 }
 
 watch(hasPermission, init);
+// A cancelled failed save must not resurface in the page banner.
+watch(dialog, (open) => {
+  if (!open) store.error = "";
+});
 onMounted(init);
 </script>
