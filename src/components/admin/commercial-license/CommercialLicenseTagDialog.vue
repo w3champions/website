@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="modelValue" max-width="500px" @update:model-value="emit('update:modelValue', $event)">
+  <v-dialog :model-value="modelValue" :persistent="saving" max-width="500px" @update:model-value="emit('update:modelValue', $event)">
     <v-card>
       <v-card-title class="pt-3">
         {{ isEdit ? "Edit tagged player" : "Tag player" }}
@@ -40,6 +40,10 @@
           hide-details
         />
 
+        <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mt-4">
+          {{ error }}
+        </v-alert>
+
         <v-alert v-if="problem && draft.battleTag" type="warning" variant="tonal" density="compact" class="mt-4">
           {{ problem }}
         </v-alert>
@@ -47,7 +51,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn variant="text" @click="emit('update:modelValue', false)">
+        <v-btn variant="text" :disabled="saving" @click="emit('update:modelValue', false)">
           {{ $t(`views_admin.cancel`) }}
         </v-btn>
         <v-btn
@@ -76,6 +80,7 @@ const props = defineProps<{
   tag: CommercialLicenseTaggedPlayer | null;
   existingBattleTags: string[];
   saving: boolean;
+  error: string;
 }>();
 
 const emit = defineEmits<{

@@ -4,7 +4,7 @@
       Commercial License
     </v-card-title>
     <v-container class="w3-container-width">
-      <v-alert v-if="store.error" type="error" variant="tonal" class="mb-4" closable @click:close="store.error = ''">
+      <v-alert v-if="store.error && !dialog" type="error" variant="tonal" class="mb-4" closable @click:close="store.error = ''">
         {{ store.error }}
       </v-alert>
 
@@ -62,6 +62,7 @@
       :tag="editedTag"
       :existing-battle-tags="existingBattleTags"
       :saving="store.saving"
+      :error="store.error"
       @save="save"
     />
   </div>
@@ -109,11 +110,13 @@ function smurfCheckerLink(battleTag: string) {
 
 function openAdd(): void {
   editedTag.value = null;
+  store.error = "";
   dialog.value = true;
 }
 
 function openEdit(tag: CommercialLicenseTaggedPlayer): void {
   editedTag.value = tag;
+  store.error = "";
   dialog.value = true;
 }
 
@@ -130,7 +133,10 @@ async function removeItem(tag: CommercialLicenseTaggedPlayer): Promise<void> {
 }
 
 async function init(): Promise<void> {
-  if (!hasPermission.value) return;
+  if (!hasPermission.value) {
+    store.$reset();
+    return;
+  }
   await store.load();
 }
 
