@@ -44,7 +44,7 @@
           {{ error }}
         </v-alert>
 
-        <v-alert v-if="problem && draft.battleTag" type="warning" variant="tonal" density="compact" class="mt-4">
+        <v-alert v-if="problem && draft.battleTag && !noteTooLong" type="warning" variant="tonal" density="compact" class="mt-4">
           {{ problem }}
         </v-alert>
       </v-card-text>
@@ -93,6 +93,8 @@ const draft = reactive<CommercialLicenseDraft>(emptyDraft());
 const openCount = ref(0);
 
 const isEdit = computed(() => props.tag !== null);
+// The textarea's own rule already reports an over-long note.
+const noteTooLong = computed(() => draft.note.length > NOTE_MAX_LENGTH);
 const problem = computed(() => validateDraft(draft, isEdit.value, props.existingBattleTags));
 
 watch(() => props.modelValue, (open) => {

@@ -19,5 +19,8 @@ export type CommercialLicenseState = {
   taggedPlayers: CommercialLicenseTaggedPlayer[];
   loading: boolean;
   saving: boolean;
+  /** Last failed save/remove; shown in the dialog or banner. */
   error: string;
+  /** Last failed load; kept apart so closing the dialog cannot hide it. */
+  loadError: string;
 };

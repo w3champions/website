@@ -4,6 +4,12 @@
       Commercial License
     </v-card-title>
     <v-container class="w3-container-width">
+      <v-alert v-if="store.loadError" type="error" variant="tonal" class="mb-4">
+        {{ store.loadError }}
+        <template v-slot:append>
+          <v-btn variant="text" :disabled="store.loading" @click="store.load()">Retry</v-btn>
+        </template>
+      </v-alert>
       <v-alert v-if="store.error && !dialog" type="error" variant="tonal" class="mb-4" closable @click:close="store.error = ''">
         {{ store.error }}
       </v-alert>
@@ -11,7 +17,7 @@
       <v-data-table
         :headers="headers"
         :items="store.taggedPlayers"
-        :loading="store.loading"
+        :loading="store.loading || store.saving"
         :items-per-page="25"
         :sort-by="[{ key: 'battleTag', order: 'asc' }]"
         :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
@@ -20,7 +26,7 @@
         <template v-slot:top>
           <div class="d-flex align-center px-4">
             <v-spacer />
-            <v-btn class="mb-2 bg-primary text-w3-race-bg" @click="openAdd">
+            <v-btn class="mb-2 bg-primary text-w3-race-bg" :disabled="store.loading || !!store.loadError" @click="openAdd">
               Tag player
             </v-btn>
           </div>
@@ -43,16 +49,36 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon size="small" class="mr-2" title="Edit" @click="openEdit(item)">{{ mdiPencil }}</v-icon>
+          <v-btn
+            icon
+            variant="text"
+            size="small"
+            title="Edit"
+            :aria-label="`Edit ${item.battleTag}`"
+            :disabled="store.saving"
+            @click="openEdit(item)"
+          >
+            <v-icon size="small">{{ mdiPencil }}</v-icon>
+          </v-btn>
           <router-link
             v-if="canUseSmurfChecker"
             :to="smurfCheckerLink(item.battleTag)"
-            class="mr-2"
             title="Smurf checker"
+            :aria-label="`Smurf checker for ${item.battleTag}`"
           >
             <v-icon size="small">{{ mdiAccountSearch }}</v-icon>
           </router-link>
-          <v-icon size="small" title="Remove" @click="removeItem(item)">{{ mdiDelete }}</v-icon>
+          <v-btn
+            icon
+            variant="text"
+            size="small"
+            title="Remove"
+            :aria-label="`Remove ${item.battleTag}`"
+            :disabled="store.saving"
+            @click="removeItem(item)"
+          >
+            <v-icon size="small">{{ mdiDelete }}</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-container>
