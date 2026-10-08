@@ -76,6 +76,14 @@ export class AuthorizedClient {
     return await response.json() as T;
   }
 
+  /** Request whose success carries no body (e.g. 204), throwing {@link HttpError} on any non-OK status. */
+  async requestVoid(method: string, path: string, token: string, body?: unknown): Promise<void> {
+    const response = await this.request(method, path, token, body);
+    if (!response.ok) {
+      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response));
+    }
+  }
+
   async getJson<T>(path: string, token: string): Promise<T> {
     return await this.requestJson<T>("GET", path, token);
   }

@@ -128,3 +128,21 @@ test("invokes the global fetch with a valid receiver on the non-injected path", 
   // client; Chromium tolerates it. Node does not check, so assert it directly.
   assert.ok(receiverIsGlobal, `global fetch must not be called as a method (receiver: ${receiverLabel})`);
 });
+
+test("requestVoid resolves on a 204 without trying to parse a body", async () => {
+  const { client, calls } = clientWith([{ status: 204 }]);
+
+  await client.requestVoid("DELETE", "api/thing/1", "tok");
+
+  assert.equal(calls[0].init.method, "DELETE");
+  assert.equal(calls[0].url, "https://api.example.com/api/thing/1");
+});
+
+test("requestVoid throws HttpError carrying the status on a non-OK response", async () => {
+  const { client } = clientWith([{ status: 404, body: { error: "nope" } }]);
+
+  await assert.rejects(
+    () => client.requestVoid("DELETE", "api/thing/1", "tok"),
+    (e: unknown) => e instanceof HttpError && e.status === 404,
+  );
+});
