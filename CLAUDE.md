@@ -99,7 +99,7 @@ When implementing user search functionality, use the `PlayerSearch` component:
 ```vue
 <PlayerSearch
   @playerFound="onPlayerFound"
-  @playerSearchCleared="onPlayerSearchCleared"
+  @searchCleared="onPlayerSearchCleared"
 />
 ```
 
