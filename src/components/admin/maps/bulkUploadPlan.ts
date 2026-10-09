@@ -14,7 +14,7 @@ export type BulkPlanAction =
   | "reuse"
   // Another picked file holds the same bytes under the same name.
   | "duplicate"
-  // Not ours to upload (no map id in the name, or the map does not exist).
+  // Not ours to upload (no map id in the name, or no map in the list takes it).
   | "skip"
   // Uploading would either fail or overwrite something it should not.
   | "error"
@@ -30,6 +30,19 @@ export interface BulkPlanCandidate {
   storeAs: string;
   mapId: number | null;
   mapExists: boolean;
+  /**
+   * The named map exists but is temporary (self-provided), so it is not a target:
+   * its file belongs to the uploader and the matchmaking service rejects
+   * PUT api/maps/:id for it. Callers leave `mapExists` false for such a row - it
+   * is fixable in the same way an unknown id is - and set this so the row is told
+   * which of the two it is.
+   *
+   * A caller can only set it for a temporary map it can see: the admin Maps page
+   * leaves temporary maps out of the list unless "Show temporary maps" is ticked,
+   * so the usual case is a temporary map that reads as an unknown id. That is why
+   * the `mapExists` message below does not claim the map is missing.
+   */
+  mapTemporary?: boolean;
   /** Hex SHA-1 of the whole file, or null when it could not be computed. */
   sha1: string | null;
   /**
@@ -94,8 +107,17 @@ function rejectUpfront(candidate: BulkPlanCandidate): BulkPlanEntry | null {
   if (candidate.mapId === null) {
     return skipped(candidate, "The file name does not start with a map id, so it was left out of this run.");
   }
+  if (candidate.mapTemporary) {
+    return skipped(candidate, `Map ${candidate.mapId} is a temporary map; its file belongs to the uploader.`);
+  }
   if (!candidate.mapExists) {
-    return skipped(candidate, `Map with ID ${candidate.mapId} does not exist, so it was left out of this run.`);
+    // Not "does not exist": the id may well name a temporary map that the maps
+    // list is simply not showing (see `mapTemporary`), and sending the admin
+    // looking for a map that is there is exactly what this run must not do.
+    return skipped(
+      candidate,
+      `Map with ID ${candidate.mapId} is not in the maps list (it may not exist, or it may be a temporary map), so it was left out of this run.`,
+    );
   }
   if (!storedNameOf(candidate)) {
     return failed(candidate, "A name to store the file under is required.");
