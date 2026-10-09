@@ -50,10 +50,18 @@ test("a duplicate tag is reported before an over-long note", () => {
   assert.equal(validateDraft(draft, false, []), NOTE_TOO_LONG_PROBLEM);
 });
 
+test("blur resets the search to empty, which is not an edit", () => {
+  assert.equal(isStaleSelection("Foo#1234", ""), false);
+  assert.equal(isStaleSelection("Foo#1234", "  "), false);
+});
+
 test("editing the search text after a selection makes it stale", () => {
   assert.equal(isStaleSelection("Foo#1234", "Foo#1234"), false);
   assert.equal(isStaleSelection("Foo#1234", "foo#1234"), false);
   assert.equal(isStaleSelection("Foo#1234", "Bar#99"), true);
-  assert.equal(isStaleSelection("Foo#1234", ""), true);
+  assert.equal(isStaleSelection("Foo#1234", " Foo#1234 "), false);
+  assert.equal(isStaleSelection("Foo#1234", "FOO#1234"), false);
+  assert.equal(isStaleSelection("Foo#1234", "Foo#123"), true);
+  assert.equal(isStaleSelection("Foo#1234", " Bar#1 "), true);
   assert.equal(isStaleSelection("", "anything"), false);
 });

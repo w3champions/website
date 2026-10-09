@@ -42,7 +42,10 @@ export function validateDraft(draft: CommercialLicenseDraft, isEdit: boolean, ex
 /**
  * True when the search text no longer names the selected player, i.e. the user
  * edited the autocomplete after picking a result and the selection is stale.
+ * Empty text is not an edit: Vuetify resets the search to "" on blur while the
+ * selection stays shown, and an explicit clear arrives as `searchCleared`.
  */
 export function isStaleSelection(selectedBattleTag: string, searchText: string): boolean {
-  return selectedBattleTag !== "" && searchText.trim().toLowerCase() !== selectedBattleTag.toLowerCase();
+  const text = searchText.trim();
+  return selectedBattleTag !== "" && text !== "" && text.toLowerCase() !== selectedBattleTag.toLowerCase();
 }
