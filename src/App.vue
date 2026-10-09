@@ -149,6 +149,7 @@
         <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.IMPRINT }">Imprint</v-btn>
         <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.PRIVACY }">Privacy Policy</v-btn>
         <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.COOKIES }">Cookie Policy</v-btn>
+        <v-btn variant="text" tile class="my-2" :to="{ name: EMainRouteName.COMMERCIAL_EVENTS }">Commercial Events</v-btn>
         <v-btn variant="text" tile class="my-2" @click="openCookieSettings">Cookie settings</v-btn>
       </v-row>
     </v-footer>
