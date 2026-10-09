@@ -40,6 +40,35 @@
           color="primary"
           hide-details
         />
+        <div class="text-subtitle-2 mt-4">Restrictions</div>
+        <v-checkbox
+          v-model="draft.asPlayer"
+          label="Block playing custom games (player slot)"
+          color="primary"
+          density="compact"
+          hide-details
+        />
+        <v-checkbox
+          v-model="draft.asObserver"
+          label="Block observing custom games in game (observer slot)"
+          color="primary"
+          density="compact"
+          hide-details
+        />
+        <v-select
+          v-model="draft.floTv"
+          class="mt-2"
+          label="Block FloTV"
+          :items="FLO_TV_OPTIONS"
+          item-title="title"
+          item-value="value"
+          variant="underlined"
+          color="primary"
+          hide-details
+        />
+        <div class="text-caption text-medium-emphasis mt-2">
+          Restrictions also apply to direct smurfs of this account. Blocked players see a "Commercial Event Partnership required" notice in the launcher that links to the Commercial Events page.
+        </div>
 
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mt-4">
           {{ error }}
@@ -74,6 +103,7 @@ import { computed, reactive, ref, watch } from "vue";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { draftFromTag, emptyDraft, isStaleSelection, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, validateDraft } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseDraft } from "@/store/admin/commercialLicense/draft";
+import { FLO_TV_OPTIONS } from "@/store/admin/commercialLicense/restrictions";
 import type { CommercialLicenseTaggedPlayer } from "@/store/admin/commercialLicense/types";
 
 const props = defineProps<{

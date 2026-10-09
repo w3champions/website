@@ -48,6 +48,7 @@ export enum EMainRouteName {
   LOGIN = "Login",
   FAQ = "FAQ",
   IMPRINT = "Imprint",
+  COMMERCIAL_EVENTS = "Commercial Events",
   PRIVACY = "Privacy Policy",
   COOKIES = "Cookie Policy",
   RANKINGS = "Rankings",

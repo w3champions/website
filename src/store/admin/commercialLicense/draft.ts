@@ -1,4 +1,4 @@
-import type { CommercialLicenseTaggedPlayer, CommercialLicenseTagRequest } from "./types";
+import type { CommercialLicenseTaggedPlayer, CommercialLicenseTagRequest, FloTvRestriction } from "./types";
 
 /** Backend limit (contract C1/C2): note is 0..500 characters. */
 export const NOTE_MAX_LENGTH = 500;
@@ -6,23 +6,38 @@ export const NOTE_MAX_LENGTH = 500;
 /** Problem reported by validateDraft for an over-long note. */
 export const NOTE_TOO_LONG_PROBLEM = `The note can be at most ${NOTE_MAX_LENGTH} characters.`;
 
-/** Form state of the add/edit dialog. Phase 2 adds its restriction fields here. */
+/** Form state of the add/edit dialog. The restriction fields are flat; toTagRequest nests them. */
 export interface CommercialLicenseDraft {
   battleTag: string;
   note: string;
   notify: boolean;
+  asPlayer: boolean;
+  asObserver: boolean;
+  floTv: FloTvRestriction;
 }
 
 export function emptyDraft(): CommercialLicenseDraft {
-  return { battleTag: "", note: "", notify: true };
+  return { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none" };
 }
 
 export function draftFromTag(tag: CommercialLicenseTaggedPlayer): CommercialLicenseDraft {
-  return { battleTag: tag.battleTag, note: tag.note, notify: tag.notify };
+  return {
+    battleTag: tag.battleTag,
+    note: tag.note,
+    notify: tag.notify,
+    asPlayer: tag.restrictions.asPlayer,
+    asObserver: tag.restrictions.asObserver,
+    floTv: tag.restrictions.floTv,
+  };
 }
 
+/** Always includes `restrictions`: omitting it would make the backend keep the stored value. */
 export function toTagRequest(draft: CommercialLicenseDraft): CommercialLicenseTagRequest {
-  return { note: draft.note, notify: draft.notify };
+  return {
+    note: draft.note,
+    notify: draft.notify,
+    restrictions: { asPlayer: draft.asPlayer, asObserver: draft.asObserver, floTv: draft.floTv },
+  };
 }
 
 /**

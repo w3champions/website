@@ -1,0 +1,308 @@
+<template>
+  <v-container class="pa-3 w3-container-width">
+    <v-row>
+      <v-col cols="12">
+        <v-card class="commercial-events">
+          <article :lang="content.htmlLang" class="commercial-events__body px-4 py-6">
+            <h1 class="commercial-events__title">{{ content.title }}</h1>
+            <p class="commercial-events__lead">
+              <InlineText :text="content.lead" />
+            </p>
+            <p>{{ content.intro }}</p>
+
+            <section
+              v-for="section in content.sections"
+              :key="section.id"
+              :aria-labelledby="`ce-${section.id}`"
+              :class="['commercial-events__section', { 'commercial-events__summary': section.highlight }]"
+            >
+              <h2 :id="`ce-${section.id}`" class="commercial-events__heading">
+                <InlineText :text="section.title" />
+              </h2>
+              <template v-for="(block, index) in section.blocks" :key="index">
+                <p v-if="block.type === 'p'">
+                  <InlineText :text="block.text" />
+                </p>
+                <ul v-else>
+                  <li v-for="item in block.items" :key="item">
+                    <InlineText :text="item" />
+                  </li>
+                </ul>
+              </template>
+            </section>
+
+            <section class="commercial-events__section" aria-labelledby="ce-faq">
+              <h2 id="ce-faq" class="commercial-events__heading">{{ content.faq.title }}</h2>
+              <dl class="commercial-events__faq">
+                <div v-for="item in content.faq.items" :key="item.q" class="commercial-events__faq-item">
+                  <dt>{{ item.q }}</dt>
+                  <dd>{{ item.a }}</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="commercial-events__section" aria-labelledby="ce-contact">
+              <h2 id="ce-contact" class="commercial-events__heading">{{ content.contact.title }}</h2>
+              <p>{{ content.contact.intro }}</p>
+              <ul>
+                <li>
+                  <template v-for="(part, index) in wechatParts" :key="index">
+                    <template v-if="part.kind === 'token' && part.token === 'id'">
+                      <span ref="wechatIdEl" class="commercial-events__wechat-id">{{ WECHAT_ID }}</span>
+                      <v-btn
+                        size="x-small"
+                        variant="outlined"
+                        class="commercial-events__copy ml-2"
+                        @click="copyWechatId"
+                      >
+                        {{ content.contact.copy.label }}
+                        <span class="commercial-events__sr-only">&nbsp;{{ WECHAT_ID }}</span>
+                      </v-btn>
+                      <span class="commercial-events__sr-only" role="status" aria-live="polite">
+                        {{ copied ? content.contact.copy.done : "" }}
+                      </span>
+                    </template>
+                    <InlineText v-else-if="part.kind === 'text'" :text="part.text" />
+                  </template>
+                  <figure class="commercial-events__qr">
+                    <img
+                      :src="WECHAT_QR_PATH"
+                      :alt="content.contact.qr.alt"
+                      :width="WECHAT_QR_WIDTH"
+                      :height="WECHAT_QR_HEIGHT"
+                      loading="lazy"
+                    />
+                    <figcaption>{{ content.contact.qr.caption }}</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <template v-for="(part, index) in discordParts" :key="index">
+                    <a
+                      v-if="part.kind === 'token' && part.token === 'invite'"
+                      :href="DISCORD_URL"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-primary"
+                    >{{ DISCORD_URL }}</a>
+                    <a
+                      v-else-if="part.kind === 'token' && part.token === 'contact'"
+                      :href="DISCORD_PROFILE_URL"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-primary"
+                    >{{ DISCORD_CONTACT_NAME }}</a>
+                    <template v-else-if="part.kind === 'token' && part.token === 'username'">{{ DISCORD_USERNAME }}</template>
+                    <InlineText v-else-if="part.kind === 'text'" :text="part.text" />
+                  </template>
+                </li>
+              </ul>
+            </section>
+          </article>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, onBeforeUnmount, ref, watch } from "vue";
+import { getActiveLanguages, useSiteLocale } from "@/composables/useSiteLocale";
+import { useRoute, useRouter } from "vue-router";
+import InlineText from "./commercial-events/InlineText.vue";
+import { parseTemplate } from "./commercial-events/inline";
+import {
+  commercialEventsContent,
+  DISCORD_CONTACT_NAME,
+  DISCORD_PROFILE_URL,
+  DISCORD_URL,
+  DISCORD_USERNAME,
+  parseLangQuery,
+  resolveLang,
+  WECHAT_ID,
+  WECHAT_QR_HEIGHT,
+  WECHAT_QR_PATH,
+  WECHAT_QR_WIDTH,
+} from "./commercial-events/content";
+
+export default defineComponent({
+  name: "CommercialEventsView",
+  components: { InlineText },
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const { locale, setSiteLocale } = useSiteLocale();
+
+    const lang = computed(() => resolveLang(locale.value));
+
+    // Deep link: `?lang=zh|en` switches the site language once, then is dropped from the URL.
+    watch(
+      () => route.query.lang,
+      (queryLang) => {
+        if (queryLang === undefined) return;
+        const requested = parseLangQuery(queryLang);
+        if (requested && getActiveLanguages().includes(requested)) {
+          setSiteLocale(requested);
+        }
+        const { lang: _lang, ...query } = route.query;
+        void router.replace({ query, hash: route.hash });
+      },
+      { immediate: true },
+    );
+
+    const content = computed(() => commercialEventsContent[lang.value]);
+    const wechatParts = computed(() => parseTemplate(content.value.contact.wechatLine));
+    const discordParts = computed(() => parseTemplate(content.value.contact.discordLine));
+
+    const wechatIdEl = ref<HTMLElement[]>([]);
+    const copied = ref(false);
+    let copiedTimer: ReturnType<typeof setTimeout> | undefined;
+    onBeforeUnmount(() => clearTimeout(copiedTimer));
+
+    const selectWechatId = () => {
+      const el = wechatIdEl.value[0];
+      const selection = window.getSelection();
+      if (!el || !selection) return;
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    };
+
+    const copyWechatId = async () => {
+      try {
+        await navigator.clipboard.writeText(WECHAT_ID);
+        copied.value = true;
+        clearTimeout(copiedTimer);
+        copiedTimer = setTimeout(() => copied.value = false, 2000);
+      } catch {
+        // Clipboard unavailable or denied: select the text so the user can copy it manually.
+        selectWechatId();
+      }
+    };
+
+    return {
+      content,
+      wechatParts,
+      discordParts,
+      wechatIdEl,
+      copied,
+      copyWechatId,
+      WECHAT_ID,
+      WECHAT_QR_PATH,
+      WECHAT_QR_WIDTH,
+      WECHAT_QR_HEIGHT,
+      DISCORD_URL,
+      DISCORD_PROFILE_URL,
+      DISCORD_CONTACT_NAME,
+      DISCORD_USERNAME,
+    };
+  },
+});
+</script>
+
+<style scoped lang="scss">
+.commercial-events {
+  &__body {
+    max-width: 70ch;
+    margin: 0 auto;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+
+    p,
+    ul {
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      padding-left: 1.25rem;
+    }
+  }
+
+  &__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  &__qr {
+    margin: 0.75rem 0 0.5rem;
+    width: 200px;
+    max-width: 100%;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      padding: 8px;
+      background: #fff;
+      border-radius: 4px;
+    }
+
+    figcaption {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  &__wechat-id {
+    user-select: all;
+    font-family: monospace;
+  }
+
+  &__title {
+    font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  &__lead {
+    font-size: clamp(1.15rem, 1rem + 1vw, 1.5rem);
+    line-height: 1.4;
+    border-left: 4px solid rgb(var(--v-theme-primary));
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__section {
+    margin-top: 2rem;
+  }
+
+  &__heading {
+    font-size: 1.35rem;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+
+  &__summary {
+    padding: 1rem 1.25rem 0.25rem;
+    border: 1px solid rgba(var(--v-theme-primary), 0.5);
+    border-radius: 4px;
+    background: rgba(var(--v-theme-primary), 0.1);
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__faq-item {
+    margin-bottom: 1.25rem;
+
+    dt {
+      font-weight: 700;
+    }
+
+    dd {
+      margin: 0.25rem 0 0;
+    }
+  }
+}
+</style>
