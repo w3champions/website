@@ -75,6 +75,12 @@ describe("buildServerPingPoints", () => {
       { x: START + 25_000, y: 60 },
     ]);
   });
+
+  it("keeps a sample without an average as a gap, not a drop to zero", () => {
+    const points = buildServerPingPoints([{ time: 10, avg: 50 }, { time: 20, avg: null }], [], START);
+
+    expect(points[1]).toEqual({ x: START + 20_000, y: null });
+  });
 });
 
 describe("collectPauseIntervals", () => {

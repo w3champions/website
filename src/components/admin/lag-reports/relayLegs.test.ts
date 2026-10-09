@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { RelayConnection, RelayLeg, RelaySeries } from "@/store/admin/lagReports/types";
-import { displayedEnds, isMeasurableStatus, legChainLabel, legStatusText, relayConnections, roleText, selectWorstLeg, summarizeLegs, withClientEnd } from "./relayLegs";
+import { describeWorstLeg, displayedEnds, isMeasurableStatus, legChainLabel, legStatusText, relayConnections, roleText, selectWorstLeg, summarizeLegs, withClientEnd } from "./relayLegs";
 import { clientTransportSeries } from "./relaySeries";
 import { MATCH_START_MS, starbuckRelayChain, starbuckTransportStats } from "./__fixtures__/starbuckRelay";
 
@@ -285,5 +285,50 @@ describe("displayedEnds", () => {
     const [summary] = summarizeLegs([connection([leg("a", "b", { near: series([40]), far: series([41]) })])]);
 
     expect(displayedEnds(summary).map((e) => e.end)).toEqual(["near", "far"]);
+  });
+});
+
+describe("retransmits not reported", () => {
+  it("keeps a leg's retransmits unknown when no end reports them, and still ranks it on stalls", () => {
+    const quic = series([40, 41], { retransDelta: [null, null], stallSecs: [0, 2] }, "node_quic");
+    const legs = summarizeLegs([connection([leg("client", "node", { far: quic })])]);
+
+    expect(legs[0].retransmits).toBeNull();
+    expect(selectWorstLeg(legs)).toBe(0);
+  });
+});
+
+describe("end transport", () => {
+  it("names the transports a client slice actually used, falling back to the series kind", () => {
+    const tcpThenQuic = { ...series([30, 31], {}, "client"), kind: "tcp", kinds: ["QUIC", "QUIC"] };
+    const old = series([30], {}, "client");
+    const [a, b] = summarizeLegs([
+      connection([leg("client", "n", { near: tcpThenQuic })]),
+      connection([leg("client", "n", { near: old })], START + 1),
+    ]);
+
+    expect(a.ends[0].kind).toBe("quic");
+    expect(b.ends[0].kind).toBe("tcp");
+  });
+
+  it("lists both transports when a slice mixes them", () => {
+    const mixed = { ...series([30, 31], {}, "client"), kinds: ["TCP", "QUIC"] };
+
+    expect(summarizeLegs([connection([leg("client", "n", { near: mixed })])])[0].ends[0].kind).toBe("tcp+quic");
+  });
+});
+
+describe("describeWorstLeg", () => {
+  it("states every ranking input, including the srtt jump over the leg's own p10", () => {
+    const legs = summarizeLegs([connection([leg("a", "b", { far: series([40, 45, 900]) })])]);
+
+    expect(describeWorstLeg(legs[0])).toBe("a → b: 0 s stalled, 0 retransmits, srtt peaked 860 ms over its p10");
+  });
+
+  it("says retransmits were not reported rather than claiming none", () => {
+    const quic = series([40, 41], { retransDelta: [null, null], stallSecs: [0, 2] }, "node_quic");
+    const legs = summarizeLegs([connection([leg("client", "node", { far: quic })])]);
+
+    expect(describeWorstLeg(legs[0])).toBe("client → node: 2 s stalled, retransmits not reported, srtt peaked 1 ms over its p10");
   });
 });

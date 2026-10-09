@@ -51,7 +51,8 @@ export interface LegSummary {
   ends: LegEndSummary[];
   close: RelayCloseLine | null;
   stallSecs: number;
-  retransmits: number;
+  /** Null when no end reports retransmits (QUIC); otherwise the sum of what was reported. */
+  retransmits: number | null;
   srttJumpMs: number;
 }
 
@@ -103,9 +104,15 @@ export function withClientEnd(connections: RelayConnection[], client: RelaySerie
   });
 }
 
+/** The transports this series' own buckets used; a client slice may differ from the game-wide kind. */
+function seriesTransport(series: RelaySeries): string {
+  const kinds = [...new Set((series.kinds ?? []).map((k) => k.toLowerCase()))];
+  return kinds.length ? kinds.join("+") : series.kind;
+}
+
 function endSummary(end: LegEnd, series: RelaySeries | null): LegEndSummary | null {
   if (!series) return null;
-  return { end, role: series.role, kind: series.kind, stats: seriesStats(series) };
+  return { end, role: series.role, kind: seriesTransport(series), stats: seriesStats(series) };
 }
 
 /**
@@ -119,6 +126,11 @@ export function showsEnd(status: string, role: string): boolean {
 /** The ends of a leg that the chart and the hop table show. */
 export function displayedEnds(summary: LegSummary): LegEndSummary[] {
   return summary.ends.filter((e) => e.stats.bucketsWithData > 0 && showsEnd(summary.status, e.role));
+}
+
+function sumReported(values: (number | null)[]): number | null {
+  const reported = values.filter((v): v is number => v != null);
+  return reported.length ? reported.reduce((a, b) => a + b, 0) : null;
 }
 
 function maxOf(ends: LegEndSummary[], pick: (s: SeriesStats) => number | null): number {
@@ -142,7 +154,7 @@ function summarizeLeg(leg: RelayLeg, connectionIndex: number, legIndex: number):
     close: leg.close,
     stallSecs: maxOf(ends, (s) => s.stallSecsTotal),
     // Each end counts only what it retransmitted itself, i.e. its own sending direction.
-    retransmits: ends.reduce((sum, e) => sum + (e.stats.retransTotal ?? 0), 0),
+    retransmits: sumReported(ends.map((e) => e.stats.retransTotal)),
     srttJumpMs: maxOf(ends, (s) => s.srttJumpMs),
   };
 }
@@ -152,7 +164,7 @@ export function summarizeLegs(connections: RelayConnection[]): LegSummary[] {
 }
 
 function isSuspect(s: LegSummary): boolean {
-  return s.stallSecs > 0 || s.retransmits > 0 || s.srttJumpMs >= WORST_LEG_MIN_JUMP_MS;
+  return s.stallSecs > 0 || (s.retransmits ?? 0) > 0 || s.srttJumpMs >= WORST_LEG_MIN_JUMP_MS;
 }
 
 /**
@@ -168,8 +180,15 @@ export function selectWorstLeg(summaries: LegSummary[]): number | null {
       return;
     }
     const w = summaries[worst];
-    const diff = s.stallSecs - w.stallSecs || s.retransmits - w.retransmits || s.srttJumpMs - w.srttJumpMs;
+    // Unreported retransmits rank as none: a QUIC leg can still be named on stalls or srtt.
+    const diff = s.stallSecs - w.stallSecs || (s.retransmits ?? 0) - (w.retransmits ?? 0) || s.srttJumpMs - w.srttJumpMs;
     if (diff > 0) worst = i;
   });
   return worst;
+}
+
+/** The ranking inputs behind a worst-leg verdict, so a reader can check why it was named. */
+export function describeWorstLeg(leg: LegSummary): string {
+  const retransmits = leg.retransmits == null ? "retransmits not reported" : `${leg.retransmits} retransmits`;
+  return `${leg.label}: ${leg.stallSecs} s stalled, ${retransmits}, srtt peaked ${leg.srttJumpMs} ms over its p10`;
 }

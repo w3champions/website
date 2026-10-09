@@ -78,7 +78,7 @@ export function buildServerPingPoints(
         points.push({ x: gameTimeToWallClockMs(pause.gameTimeSec, pauses, gameStartMs), y: null });
       }
     }
-    points.push({ x: gameTimeToWallClockMs(s.time, pauses, gameStartMs), y: s.avg ?? 0 });
+    points.push({ x: gameTimeToWallClockMs(s.time, pauses, gameStartMs), y: s.avg });
     prevTime = s.time;
   }
   return points;

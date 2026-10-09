@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, type PropType } from "vue";
-import { displayedEnds, type LegEndSummary, type LegSummary, roleText, WORST_LEG_MIN_JUMP_MS } from "./relayLegs";
+import { describeWorstLeg, displayedEnds, type LegEndSummary, type LegSummary, roleText, WORST_LEG_MIN_JUMP_MS } from "./relayLegs";
 
 export default defineComponent({
   name: "LagReportHopTable",
@@ -60,7 +60,7 @@ export default defineComponent({
     const caption = computed(() => {
       const worst = props.worstIndex != null ? props.legs[props.worstIndex] : null;
       let verdict = "No leg was measured.";
-      if (worst) verdict = `Worst leg: ${worst.label} (ranked by stall seconds, then retransmits, then srtt jump over its own p10).`;
+      if (worst) verdict = `Worst leg: ${describeWorstLeg(worst)} (ranked by stall seconds, then retransmits, then srtt jump).`;
       else if (props.legs.some((l) => l.measurable)) {
         verdict = `No leg stood out: no stalls, no retransmits, and no srtt jump of ${WORST_LEG_MIN_JUMP_MS} ms or more.`;
       }

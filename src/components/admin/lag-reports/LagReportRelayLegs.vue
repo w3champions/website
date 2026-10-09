@@ -48,6 +48,7 @@ import LagReportHopTable from "./LagReportHopTable.vue";
 import LagReportRelayChart from "./LagReportRelayChart.vue";
 import { buildEventMarkers, type EventMarkerInfo, playerName } from "./chartMarkers";
 import { collectPauseIntervals, isWithinPause } from "./gameTimeline";
+import { describeWorstLeg } from "./relayLegs";
 import { buildPlayerRelayView, type PlayerRelayView } from "./relayPlayerView";
 
 const PAUSE_EVENTS = [EConnectionEventType.GamePaused, EConnectionEventType.GameResumed];
@@ -85,7 +86,7 @@ export default defineComponent({
 
     function chartLabel(view: PlayerRelayView): string {
       const worst = view.worstIndex != null ? view.legs[view.worstIndex] : null;
-      const verdict = worst ? ` Worst leg: ${worst.label}, ${worst.stallSecs} s stalled, ${worst.retransmits} retransmits.` : "";
+      const verdict = worst ? ` Worst leg: ${describeWorstLeg(worst)}.` : "";
       return `Round-trip times over the game for ${playerName(view.battleTag)}: felt echo-RTT, ServerSidePing and each relay leg.${verdict} The hop table below has the numbers.`;
     }
 
