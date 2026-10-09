@@ -8,16 +8,19 @@ export const FLO_TV_OPTIONS: { title: string; value: FloTvRestriction }[] = [
 ];
 
 /** What a tag without restrictions reads as (contract C-R1). */
-export function noRestrictions(): CommercialLicenseRestrictions {
+function noRestrictions(): CommercialLicenseRestrictions {
   return { asPlayer: false, asObserver: false, floTv: "none" };
 }
+
+/** A tag as it arrives on the wire: `restrictions` may be null or missing (old matchmaking behind a new website-backend). */
+export type CommercialLicenseTaggedPlayerWire = Omit<CommercialLicenseTaggedPlayer, "restrictions"> & { restrictions?: CommercialLicenseRestrictions | null };
 
 /**
  * Normalizes a tag DTO from the wire. A new website-backend in front of an old
  * matchmaking sends `restrictions: null` (Newtonsoft leaves the field null) or omits it;
  * downstream code (draftFromTag, restrictionSummary, the table) must never see that.
  */
-export function normalizeTag(raw: Omit<CommercialLicenseTaggedPlayer, "restrictions"> & { restrictions?: CommercialLicenseRestrictions | null }): CommercialLicenseTaggedPlayer {
+export function normalizeTag(raw: CommercialLicenseTaggedPlayerWire): CommercialLicenseTaggedPlayer {
   return { ...raw, restrictions: raw.restrictions ?? noRestrictions() };
 }
 
