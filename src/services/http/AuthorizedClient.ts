@@ -54,6 +54,13 @@ export class AuthorizedClient {
     return `${this.endpoint}${path.startsWith("/") ? path.slice(1) : path}`;
   }
 
+  /** Throws {@link HttpError} when the response status is not OK. */
+  private async assertOk(response: Response, method: string, path: string): Promise<void> {
+    if (!response.ok) {
+      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response));
+    }
+  }
+
   /** Raw request, for the rare caller that needs the Response itself. */
   async request(method: string, path: string, token: string, body?: unknown): Promise<Response> {
     const headers: Record<string, string> = { Accept: "application/json" };
@@ -70,10 +77,14 @@ export class AuthorizedClient {
   /** Request and parse JSON, throwing {@link HttpError} on any non-OK status. */
   async requestJson<T>(method: string, path: string, token: string, body?: unknown): Promise<T> {
     const response = await this.request(method, path, token, body);
-    if (!response.ok) {
-      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response));
-    }
+    await this.assertOk(response, method, path);
     return await response.json() as T;
+  }
+
+  /** Request whose success carries no body (e.g. 204), throwing {@link HttpError} on any non-OK status. */
+  async requestVoid(method: string, path: string, token: string, body?: unknown): Promise<void> {
+    const response = await this.request(method, path, token, body);
+    await this.assertOk(response, method, path);
   }
 
   async getJson<T>(path: string, token: string): Promise<T> {
@@ -87,9 +98,7 @@ export class AuthorizedClient {
   async getJsonOrNull<T>(path: string, token: string): Promise<T | null> {
     const response = await this.request("GET", path, token);
     if (response.status === 404) return null;
-    if (!response.ok) {
-      throw new HttpError(response.status, "GET", this.resolve(path), await readErrorBody(response));
-    }
+    await this.assertOk(response, "GET", path);
     return await response.json() as T;
   }
 }

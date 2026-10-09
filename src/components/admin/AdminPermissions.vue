@@ -160,6 +160,7 @@ export default defineComponent({
       { name: EPermission[EPermission.SmurfCheckerQueryExplanation], value: EPermission.SmurfCheckerQueryExplanation },
       { name: EPermission[EPermission.SmurfCheckerAdministration], value: EPermission.SmurfCheckerAdministration },
       { name: EPermission[EPermission.Jobs], value: EPermission.Jobs },
+      { name: EPermission[EPermission.CommercialLicense], value: EPermission.CommercialLicense },
     ];
 
     const defaultItem: IPermission = {

@@ -33,6 +33,7 @@ export enum EAdminRouteName {
   LAG_REPORTS = "Admin - Lag Reports",
   LAG_REPORT_DETAIL = "Admin - Lag Report Detail",
   JOBS = "Admin - Jobs",
+  COMMERCIAL_LICENSE = "Admin - Commercial License",
 }
 
 export enum EStatisticsRouteName {

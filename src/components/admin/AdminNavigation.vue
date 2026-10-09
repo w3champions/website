@@ -69,7 +69,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline, mdiPlayBoxOutline,
+  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -186,6 +186,13 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-lounge-mute",
             routeName: EAdminRouteName.LOUNGE_MUTE,
+          },
+          {
+            title: "Commercial License",
+            icon: mdiCertificate,
+            permission: EPermission.CommercialLicense,
+            component: "admin-commercial-license",
+            routeName: EAdminRouteName.COMMERCIAL_LICENSE,
           },
           {
             title: "View Game Chat",
