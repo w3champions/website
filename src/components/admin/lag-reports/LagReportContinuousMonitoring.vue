@@ -178,6 +178,7 @@ import { mdiCircle } from "@mdi/js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
+import { buildActionLatencyPoints } from "./actionLatencyPoints";
 import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle, type SemanticColors } from "@/helpers/lag-report-colors";
 
 const PLAYER_COLORS = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d", "#ab47bc", "#26c6da", "#ec407a", "#8d6e63"];
@@ -494,10 +495,9 @@ export default defineComponent({
       // actual game start by seconds. Using matchWallStart keeps the buckets
       // aligned with the wall-clock x-axis the lag-event markers also use.
       //
-      // Pauses are not corrected here: gameTimeOffsetsMs freezes during a
-      // pause (by design in flo's pause-corrected telemetry), so adding the
-      // offset directly produces a naive wall-clock that visualizes the pause
-      // as a vertical flatline — the intended behavior on this axis.
+      // Bucket x is wall clock (matchWallStart + i * 1s), not gameTimeOffsetsMs: game time
+      // freezes during a pause, so a pause shows as a gap that lines up with the GamePaused
+      // markers and later points stay aligned with ServerSidePing (gameTimeToWallClockMs).
       const matchStartMs = props.telemetry.matchWallStart.getTime();
       props.telemetry.players.forEach((p) => {
         if (p.bucketCount === 0) return;
@@ -506,17 +506,7 @@ export default defineComponent({
         const color = pi >= 0
           ? PLAYER_COLORS[pi % PLAYER_COLORS.length]
           : PLAYER_COLORS[0];
-        // Backend now returns plain number arrays — no BinData decoding needed.
-        const gameTimes = p.gameTimeOffsetsMs;
-        const means = p.meansMs;
-        const counts = p.sampleCounts;
-        const points: Array<{ x: number; y: number | null }> = [];
-        for (let i = 0; i < p.bucketCount; i++) {
-          points.push({
-            x: matchStartMs + gameTimes[i],
-            y: counts[i] > 0 ? means[i] : null,
-          });
-        }
+        const points = buildActionLatencyPoints(matchStartMs, p.meansMs, p.sampleCounts);
         out.push({
           type: "line",
           label: `${playerName(p.battleTag)} action latency`,
