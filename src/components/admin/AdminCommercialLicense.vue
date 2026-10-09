@@ -3,7 +3,12 @@
     <v-card-title class="pt-3">
       Commercial License
     </v-card-title>
-    <v-container class="w3-container-width">
+    <v-container v-if="!hasPermission" class="w3-container-width">
+      <v-alert type="warning" variant="tonal">
+        You don't have the CommercialLicense permission.
+      </v-alert>
+    </v-container>
+    <v-container v-else class="w3-container-width">
       <v-alert v-if="store.loadError" type="error" variant="tonal" class="mb-4">
         {{ store.loadError }}
         <template v-slot:append>
@@ -84,6 +89,7 @@
     </v-container>
 
     <commercial-license-tag-dialog
+      v-if="hasPermission"
       v-model="dialog"
       :tag="editedTag"
       :existing-battle-tags="existingBattleTags"
