@@ -95,5 +95,6 @@ export const en: CommercialEventsContent = {
     wechatLine: `**WeChat:** {id} (please mention "赛事合作" when adding)`,
     discordLine: "**Discord:** join our server {invite} and send a direct message to {contact} ({username}).",
     copy: { label: "Copy", done: "Copied" },
+    qr: { alt: "WeChat QR code for Faro (w3c_faro)", caption: "Scan with WeChat to add us" },
   },
 };

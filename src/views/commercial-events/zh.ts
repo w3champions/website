@@ -95,5 +95,6 @@ export const zh: CommercialEventsContent = {
     wechatLine: `**微信：** {id}（添加时请备注"赛事合作"）`,
     discordLine: "**Discord：** 加入我们的服务器 {invite}，私信 {contact}（{username}）。",
     copy: { label: "复制", done: "已复制" },
+    qr: { alt: "Faro 的微信二维码（w3c_faro）", caption: "使用微信扫一扫添加" },
   },
 };

@@ -79,6 +79,16 @@
                     </template>
                     <InlineText v-else-if="part.kind === 'text'" :text="part.text" />
                   </template>
+                  <figure class="commercial-events__qr">
+                    <img
+                      :src="WECHAT_QR_PATH"
+                      :alt="content.contact.qr.alt"
+                      :width="WECHAT_QR_WIDTH"
+                      :height="WECHAT_QR_HEIGHT"
+                      loading="lazy"
+                    />
+                    <figcaption>{{ content.contact.qr.caption }}</figcaption>
+                  </figure>
                 </li>
                 <li>
                   <template v-for="(part, index) in discordParts" :key="index">
@@ -124,6 +134,9 @@ import {
   DISCORD_USERNAME,
   resolveLang,
   WECHAT_ID,
+  WECHAT_QR_HEIGHT,
+  WECHAT_QR_PATH,
+  WECHAT_QR_WIDTH,
 } from "./commercial-events/content";
 
 export default defineComponent({
@@ -183,6 +196,9 @@ export default defineComponent({
       copied,
       copyWechatId,
       WECHAT_ID,
+      WECHAT_QR_PATH,
+      WECHAT_QR_WIDTH,
+      WECHAT_QR_HEIGHT,
       DISCORD_URL,
       DISCORD_PROFILE_URL,
       DISCORD_CONTACT_NAME,
@@ -218,6 +234,26 @@ export default defineComponent({
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+
+  &__qr {
+    margin: 0.75rem 0 0.5rem;
+    width: 200px;
+    max-width: 100%;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      padding: 8px;
+      background: #fff;
+      border-radius: 4px;
+    }
+
+    figcaption {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+    }
   }
 
   &__wechat-id {

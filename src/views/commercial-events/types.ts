@@ -31,5 +31,6 @@ export interface CommercialEventsContent {
     discordLine: string;
     /** UI labels for the WeChat ID copy button. */
     copy: { label: string; done: string };
+    qr: { alt: string; caption: string };
   };
 }
