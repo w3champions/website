@@ -1,5 +1,5 @@
 import type { RelayConnection, RelayLeg, RelaySeries } from "@/store/admin/lagReports/types";
-import { isMeasurableStatus, legLabel, legStatusText } from "./relayLegs";
+import { isMeasurableStatus, legLabel, legStatusText, showsEnd } from "./relayLegs";
 import { type ChartPoint, seriesHighlight, seriesSrttPoints } from "./relaySeries";
 
 export const FELT_GROUP = "Felt by the player";
@@ -50,7 +50,7 @@ export interface RelayChartInput {
   serverPing: ChartPoint[];
 }
 
-type GroupBuilder = { group: LegendGroup; color: string };
+type GroupBuilder = { group: LegendGroup; color: string; notes: { connection: number; text: string }[]; connections: number };
 
 function hasPoints(points: ChartPoint[]): boolean {
   return points.some((p) => p.y != null);
@@ -100,28 +100,33 @@ export function buildRelayChartSeries(input: RelayChartInput): { series: RelayCh
   const groups: LegendGroup[] = series.length ? [{ title: FELT_GROUP, items: series.map(legendItem) }] : [];
   const legGroups = new Map<string, GroupBuilder>();
 
-  for (const connection of input.connections) {
+  input.connections.forEach((connection, ci) => {
     for (const leg of connection.legs) {
       const label = legLabel(leg);
       let builder = legGroups.get(label);
       if (!builder) {
-        builder = { group: { title: label, items: [] }, color: LEG_COLORS[legGroups.size % LEG_COLORS.length] };
+        builder = { group: { title: label, items: [] }, color: LEG_COLORS[legGroups.size % LEG_COLORS.length], notes: [], connections: 0 };
         legGroups.set(label, builder);
         groups.push(builder.group);
       }
-      if (!isMeasurableStatus(leg.status)) {
-        builder.group.note ??= legStatusText(leg.status);
-        continue;
-      }
+      builder.connections++;
+      if (!isMeasurableStatus(leg.status)) builder.notes.push({ connection: ci + 1, text: legStatusText(leg.status) });
       for (const end of ["near", "far"] as const) {
         const s = leg[end];
-        if (!s?.buckets.srttMaxMs.length) continue;
+        if (!s?.buckets.srttMaxMs.length || !showsEnd(leg.status, s.role)) continue;
         for (const line of endSeries(leg, end, s, builder.color)) {
           series.push(line);
           if (!builder.group.items.some((i) => i.key === line.legendKey)) builder.group.items.push(legendItem(line));
         }
       }
     }
+  });
+
+  // A leg crossed by several connections shares one legend group, so a reason names the
+  // connection it applies to rather than claiming the whole leg went unmeasured.
+  for (const { group, notes, connections } of legGroups.values()) {
+    if (!notes.length) continue;
+    group.note = notes.map((n) => (connections > 1 ? `Connection ${n.connection}: ${n.text}` : n.text)).join("; ");
   }
 
   return { series, groups };

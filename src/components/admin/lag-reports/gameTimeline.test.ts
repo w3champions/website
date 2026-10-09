@@ -28,6 +28,15 @@ describe("computeGameStartMs", () => {
 });
 
 describe("collectGameClockPauses", () => {
+  it("counts a pause once when clients stamp it at slightly different game times", () => {
+    const players = [
+      player("a#1", [event(EConnectionEventType.GameResumed, START + 100_000, 60_000, 30_000)]),
+      player("b#2", [event(EConnectionEventType.GameResumed, START + 100_040, 60_040, 30_020)]),
+    ];
+
+    expect(collectGameClockPauses(players)).toEqual([{ gameTimeSec: 60, durationMs: 30_000 }]);
+  });
+
   it("collects the durations that froze game time, once per game time, in order", () => {
     const players = [
       player("a#1", [event(EConnectionEventType.GameResumed, START + 100_000, 60_000, 30_000)]),

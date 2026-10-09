@@ -46,12 +46,10 @@ export function collectGameClockPauses(players: TimelinePlayer[]): GameClockPaus
       }
     }
   }
-  const seen = new Set<number>();
-  return pauses.filter((p) => {
-    if (seen.has(p.gameTimeSec)) return false;
-    seen.add(p.gameTimeSec);
-    return true;
-  }).sort((a, b) => a.gameTimeSec - b.gameTimeSec);
+  // Every client reports the same freeze, stamped with its own clock; summing each copy would
+  // shift later points by the pause length once per extra reporter.
+  const sorted = [...pauses].sort((a, b) => a.gameTimeSec - b.gameTimeSec);
+  return sorted.filter((p, i) => i === 0 || (p.gameTimeSec - sorted[i - 1].gameTimeSec) * 1000 > PAUSE_MATCH_TOLERANCE_MS);
 }
 
 export function gameTimeToWallClockMs(gameTimeSec: number, pauses: GameClockPause[], gameStartMs: number): number {

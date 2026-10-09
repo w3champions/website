@@ -41,7 +41,9 @@ export function buildPlayerRelayView(
     : [];
   const ssp = report.serverSidePing?.find((s) => s.playerName === player.battleTag);
   const serverPing = ssp
-    ? buildServerPingPoints(ssp.samples, collectGameClockPauses(report.players), computeGameStartMs(report.players, report.createdAt))
+    // matchWallStart is game time zero; the report's own estimate (first ping sample, else its
+    // creation time) is only a fallback for games without telemetry.
+    ? buildServerPingPoints(ssp.samples, collectGameClockPauses(report.players), matchStartMs ?? computeGameStartMs(report.players, report.createdAt))
     : [];
 
   const { series, groups } = buildRelayChartSeries({ connections, echoRtt, serverPing });

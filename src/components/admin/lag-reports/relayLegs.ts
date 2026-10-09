@@ -108,6 +108,19 @@ function endSummary(end: LegEnd, series: RelaySeries | null): LegEndSummary | nu
   return { end, role: series.role, kind: series.kind, stats: seriesStats(series) };
 }
 
+/**
+ * Whether an end's data is shown. The client measures its own socket, so its end stays valid
+ * when the relay side of the leg could not be measured; relay data on such a leg is not trusted.
+ */
+export function showsEnd(status: string, role: string): boolean {
+  return isMeasurableStatus(status) || role === CLIENT_LABEL;
+}
+
+/** The ends of a leg that the chart and the hop table show. */
+export function displayedEnds(summary: LegSummary): LegEndSummary[] {
+  return summary.ends.filter((e) => e.stats.bucketsWithData > 0 && showsEnd(summary.status, e.role));
+}
+
 function maxOf(ends: LegEndSummary[], pick: (s: SeriesStats) => number | null): number {
   return Math.max(0, ...ends.map((e) => pick(e.stats) ?? 0));
 }
@@ -128,7 +141,8 @@ function summarizeLeg(leg: RelayLeg, connectionIndex: number, legIndex: number):
     ends,
     close: leg.close,
     stallSecs: maxOf(ends, (s) => s.stallSecsTotal),
-    retransmits: maxOf(ends, (s) => s.retransTotal),
+    // Each end counts only what it retransmitted itself, i.e. its own sending direction.
+    retransmits: ends.reduce((sum, e) => sum + (e.stats.retransTotal ?? 0), 0),
     srttJumpMs: maxOf(ends, (s) => s.srttJumpMs),
   };
 }

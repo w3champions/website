@@ -107,6 +107,29 @@ describe("buildRelayChartSeries", () => {
     expect(groups[0].items).toHaveLength(1);
   });
 
+  it("names the connection whose leg went unmeasured when another connection measured it", () => {
+    const connections: RelayConnection[] = [
+      { connectedUnixMs: START, legs: [leg("a", "b", { status: "expired" })] },
+      { connectedUnixMs: START + 60_000, legs: [leg("a", "b", { far: series([40]) })] },
+    ];
+
+    const { series: out, groups } = buildRelayChartSeries({ connections, echoRtt: [], serverPing: [] });
+
+    expect(out).toHaveLength(1);
+    expect(groups[0].note).toBe("Connection 1: Not measured: the node no longer holds this data (report too late, or the node restarted)");
+  });
+
+  it("keeps the client's own socket line when the relay end of the first leg was not measured", () => {
+    const connections: RelayConnection[] = [
+      { connectedUnixMs: START, legs: [leg("client", "relay", { status: "node_unavailable", near: series([30, 31], undefined, "client") })] },
+    ];
+
+    const { series: out, groups } = buildRelayChartSeries({ connections, echoRtt: [], serverPing: [] });
+
+    expect(out.map((s) => s.label)).toEqual(["srtt at client"]);
+    expect(groups[0].note).toBe("Not measured: the node did not answer");
+  });
+
   it("lists an unmeasured leg in the legend with its reason and no lines", () => {
     const connections: RelayConnection[] = [{ connectedUnixMs: START, legs: [leg("a", "b", { status: "unmeasured_no_flo_node" })] }];
 

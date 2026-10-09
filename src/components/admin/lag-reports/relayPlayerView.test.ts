@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { LagReportDetail } from "@/store/admin/lagReports/types";
 import { buildPlayerRelayView, reportHasRelayTelemetry } from "./relayPlayerView";
-import { SPIKE_FROM_MS, SPIKE_TO_MS, starbuckReport, starbuckTelemetry } from "./__fixtures__/starbuckRelay";
+import { MATCH_START_MS, SPIKE_FROM_MS, SPIKE_TO_MS, starbuckReport, starbuckTelemetry } from "./__fixtures__/starbuckRelay";
 
 function withoutRelay(report: LagReportDetail): LagReportDetail {
   // Reports stored before relay telemetry have neither field at all.
@@ -69,6 +69,13 @@ describe("buildPlayerRelayView", () => {
     expect(Math.max(...felt)).toBeLessThanOrEqual(SPIKE_TO_MS);
     expect(Math.min(...relay)).toBeGreaterThanOrEqual(SPIKE_FROM_MS - 5_000);
     expect(Math.max(...relay)).toBeLessThanOrEqual(SPIKE_TO_MS);
+  });
+
+  it("anchors ServerSidePing at the telemetry match start, not at the report's creation", () => {
+    const view = buildPlayerRelayView(starbuckReport, 0, starbuckTelemetry)!;
+
+    const ssp = view.series.find((s) => s.label === "ServerSidePing")!;
+    expect(ssp.points[0].x).toBe(MATCH_START_MS);
   });
 
   it("still draws the relay legs without match telemetry", () => {

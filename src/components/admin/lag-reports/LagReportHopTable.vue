@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, type PropType } from "vue";
-import { type LegEndSummary, type LegSummary, roleText, WORST_LEG_MIN_JUMP_MS } from "./relayLegs";
+import { displayedEnds, type LegEndSummary, type LegSummary, roleText, WORST_LEG_MIN_JUMP_MS } from "./relayLegs";
 
 export default defineComponent({
   name: "LagReportHopTable",
@@ -67,10 +67,10 @@ export default defineComponent({
       return `TCP legs of ${props.playerName}'s game connection. ${verdict}`;
     });
 
-    // An unmeasured leg still gets one row so its reason is visible.
+    // An unmeasured leg still gets a row for its reason, after any end the client measured itself.
     function rowsOf(leg: LegSummary): (LegEndSummary | null)[] {
-      const ends = leg.ends.filter((e) => e.stats.bucketsWithData > 0);
-      return leg.measurable && ends.length ? ends : [null];
+      const ends = displayedEnds(leg);
+      return leg.measurable ? (ends.length ? ends : [null]) : [...ends, null];
     }
 
     function rowClass(leg: LegSummary, i: number): string {

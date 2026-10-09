@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { RelayConnection, RelayLeg, RelaySeries } from "@/store/admin/lagReports/types";
-import { isMeasurableStatus, legChainLabel, legStatusText, relayConnections, roleText, selectWorstLeg, summarizeLegs, withClientEnd } from "./relayLegs";
+import { displayedEnds, isMeasurableStatus, legChainLabel, legStatusText, relayConnections, roleText, selectWorstLeg, summarizeLegs, withClientEnd } from "./relayLegs";
 import { clientTransportSeries } from "./relaySeries";
 import { MATCH_START_MS, starbuckRelayChain, starbuckTransportStats } from "./__fixtures__/starbuckRelay";
 
@@ -139,7 +139,7 @@ describe("withClientEnd", () => {
 });
 
 describe("summarizeLegs", () => {
-  it("takes the leg's stall seconds and retransmits from whichever end saw more", () => {
+  it("takes stall seconds from the end that saw more, and adds both ends' retransmits", () => {
     const [summary] = summarizeLegs([
       connection([
         leg("a", "b", {
@@ -150,7 +150,8 @@ describe("summarizeLegs", () => {
     ]);
 
     expect(summary.stallSecs).toBe(3);
-    expect(summary.retransmits).toBe(5);
+    // Both ends watch the same silence, but each end retransmits its own direction.
+    expect(summary.retransmits).toBe(6);
     expect(summary.ends.map((e) => e.end)).toEqual(["near", "far"]);
   });
 
@@ -179,6 +180,15 @@ describe("selectWorstLeg", () => {
     const worst = selectWorstLeg(summaries(
       leg("a", "b", { far: series([40, 2000], { retransDelta: [0, 9] }) }),
       leg("b", "c", { far: series([40, 41], { stallSecs: [0, 1] }) }),
+    ));
+
+    expect(worst).toBe(1);
+  });
+
+  it("ranks a leg retransmitting in both directions above a one-directional one with a higher single end", () => {
+    const worst = selectWorstLeg(summaries(
+      leg("a", "b", { near: series([40, 41], { retransDelta: [0, 5] }) }),
+      leg("b", "c", { near: series([40, 41], { retransDelta: [0, 4] }), far: series([40, 41], { retransDelta: [4, 0] }) }),
     ));
 
     expect(worst).toBe(1);
@@ -252,5 +262,28 @@ describe("roleText", () => {
     expect(roleText("haproxy_be")).toBe("HAProxy backend");
     expect(roleText("client")).toBe("client socket");
     expect(roleText("new_role")).toBe("new_role");
+  });
+});
+
+describe("displayedEnds", () => {
+  it("shows the client's own socket on a first leg whose relay end could not be measured", () => {
+    const [summary] = summarizeLegs([
+      connection([leg("client", "relay", { status: "expired", near: series([30, 31], {}, "client") })]),
+    ]);
+
+    expect(summary.measurable).toBe(false);
+    expect(displayedEnds(summary).map((e) => e.role)).toEqual(["client"]);
+  });
+
+  it("hides stray relay data on an unmeasured leg", () => {
+    const [summary] = summarizeLegs([connection([leg("a", "b", { status: "expired", far: series([40]) })])]);
+
+    expect(displayedEnds(summary)).toEqual([]);
+  });
+
+  it("shows every end with data on a measured leg", () => {
+    const [summary] = summarizeLegs([connection([leg("a", "b", { near: series([40]), far: series([41]) })])]);
+
+    expect(displayedEnds(summary).map((e) => e.end)).toEqual(["near", "far"]);
   });
 });
