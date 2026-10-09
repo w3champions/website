@@ -110,6 +110,7 @@ export default defineComponent({
     watch(input, onInput);
 
     function onInput(val: string): void {
+      context.emit("searchTextChanged", val);
       if (!val || val.length < 3) {
         searchedPlayers.value = [];
         return;

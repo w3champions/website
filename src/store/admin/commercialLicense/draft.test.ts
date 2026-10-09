@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { draftFromTag, emptyDraft, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, toTagRequest, validateDraft } from "./draft";
+import { draftFromTag, emptyDraft, isStaleSelection, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, toTagRequest, validateDraft } from "./draft";
 
 const tag = {
   battleTag: "Foo#1234",
@@ -48,4 +48,12 @@ test("a duplicate tag is reported before an over-long note", () => {
   const draft = { battleTag: "Foo#1234", note: "x".repeat(NOTE_MAX_LENGTH + 1), notify: true };
   assert.match(validateDraft(draft, false, ["foo#1234"])!, /already tagged/);
   assert.equal(validateDraft(draft, false, []), NOTE_TOO_LONG_PROBLEM);
+});
+
+test("editing the search text after a selection makes it stale", () => {
+  assert.equal(isStaleSelection("Foo#1234", "Foo#1234"), false);
+  assert.equal(isStaleSelection("Foo#1234", "foo#1234"), false);
+  assert.equal(isStaleSelection("Foo#1234", "Bar#99"), true);
+  assert.equal(isStaleSelection("Foo#1234", ""), true);
+  assert.equal(isStaleSelection("", "anything"), false);
 });

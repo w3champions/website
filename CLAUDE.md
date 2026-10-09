@@ -102,6 +102,7 @@ When implementing user search functionality, use the `PlayerSearch` component:
   @searchCleared="onPlayerSearchCleared"
 />
 ```
+Optional `@searchTextChanged="(text) => ..."` fires on every edit of the search text; use it to drop a previous selection once the text no longer matches.
 
 #### URL Encoding for BattleTags
 Always encode BattleTags in URLs due to the # character:

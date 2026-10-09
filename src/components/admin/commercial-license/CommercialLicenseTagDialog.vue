@@ -19,6 +19,7 @@
           :key="openCount"
           @playerFound="onPlayerFound"
           @searchCleared="draft.battleTag = ''"
+          @searchTextChanged="onSearchTextChanged"
         />
 
         <v-textarea
@@ -71,7 +72,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
-import { draftFromTag, emptyDraft, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, validateDraft } from "@/store/admin/commercialLicense/draft";
+import { draftFromTag, emptyDraft, isStaleSelection, NOTE_MAX_LENGTH, NOTE_TOO_LONG_PROBLEM, validateDraft } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseDraft } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseTaggedPlayer } from "@/store/admin/commercialLicense/types";
 
@@ -105,6 +106,11 @@ watch(() => props.modelValue, (open) => {
 
 function noteRule(v: string): true | string {
   return v.length <= NOTE_MAX_LENGTH || `At most ${NOTE_MAX_LENGTH} characters`;
+}
+
+// Typing over a selected player must not leave the old player in the draft.
+function onSearchTextChanged(text: string): void {
+  if (isStaleSelection(draft.battleTag, text)) draft.battleTag = "";
 }
 
 function onPlayerFound(battleTag: string): void {

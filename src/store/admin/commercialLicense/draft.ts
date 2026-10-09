@@ -38,3 +38,11 @@ export function validateDraft(draft: CommercialLicenseDraft, isEdit: boolean, ex
   if (draft.note.length > NOTE_MAX_LENGTH) return NOTE_TOO_LONG_PROBLEM;
   return null;
 }
+
+/**
+ * True when the search text no longer names the selected player, i.e. the user
+ * edited the autocomplete after picking a result and the selection is stale.
+ */
+export function isStaleSelection(selectedBattleTag: string, searchText: string): boolean {
+  return selectedBattleTag !== "" && searchText.trim().toLowerCase() !== selectedBattleTag.toLowerCase();
+}
