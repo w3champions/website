@@ -168,7 +168,7 @@
 <script lang="ts">
 import { computed, defineComponent, type PropType, reactive, ref, watch } from "vue";
 import { useTheme } from "vuetify";
-import { EConnectionEventType, EConnectionType, type LagReportDetail } from "@/store/admin/lagReports/types";
+import { EConnectionType, type LagReportDetail } from "@/store/admin/lagReports/types";
 import type {
   IDisconnectEvent,
   IPlayerMatchTelemetry,
@@ -178,18 +178,12 @@ import { mdiCircle } from "@mdi/js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle, type SemanticColors } from "@/helpers/lag-report-colors";
+import { buildActionLatencyPoints } from "./actionLatencyPoints";
+import { buildEventMarkers, type EventMarkerInfo, formatWallClock, playerName } from "./chartMarkers";
+import { buildServerPingPoints, collectGameClockPauses, computeGameStartMs } from "./gameTimeline";
+import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle } from "@/helpers/lag-report-colors";
 
 const PLAYER_COLORS = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d", "#ab47bc", "#26c6da", "#ec407a", "#8d6e63"];
-
-type EventMarkerInfo = {
-  id: string;
-  ts: number;
-  shortLabel: string;
-  detailLines: string[];
-  style: LagAnnotationStyle;
-  dashed?: boolean;
-};
 
 type HoveredEventTooltip = {
   left: number;
@@ -254,21 +248,6 @@ export default defineComponent({
     const hoveredMarkerId = ref<string | null>(null);
     const visiblePlayers = reactive<Record<number, boolean>>({});
 
-    function playerName(battleTag: string): string {
-      return battleTag.split("#")[0];
-    }
-
-    function formatGameTime(ms: number): string {
-      const totalSec = Math.floor(ms / 1000);
-      const min = Math.floor(totalSec / 60);
-      const sec = totalSec % 60;
-      return `${min}:${sec.toString().padStart(2, "0")}`;
-    }
-
-    function formatWallClock(ms: number): string {
-      return new Date(ms).toLocaleTimeString();
-    }
-
     function tooltipBgColor(_color: string): string {
       return theme.current.value.dark ? "rgba(10, 14, 22, 0.94)" : "rgba(245, 248, 255, 0.96)";
     }
@@ -307,61 +286,9 @@ export default defineComponent({
       zoomRangeMs.value = { min, max };
     }
 
-    const connectionEventLabelMap: Record<string, string> = {
-      [EConnectionEventType.Reconnect]: "Reconnected",
-      [EConnectionEventType.FailureDisconnect]: "Disconnected",
-      [EConnectionEventType.GameCrashed]: "Game crashed",
-      [EConnectionEventType.GamePaused]: "Game paused",
-      [EConnectionEventType.GameResumed]: "Game resumed",
-      [EConnectionEventType.StartLag]: "Lag detected",
-      [EConnectionEventType.StopLag]: "Lag resolved",
-    };
-
     // ── Game clock alignment ─────────────────────────────────────────
-    const gameStartMs = computed(() => {
-      let earliest = Infinity;
-      for (const player of props.report.players) {
-        for (const p of player.diagnostics.pingHistory) {
-          const t = new Date(p.timestamp).getTime();
-          if (t < earliest) earliest = t;
-        }
-      }
-      return earliest === Infinity ? new Date(props.report.createdAt).getTime() : earliest;
-    });
-
-    const gameClockPauses = computed(() => {
-      const pauses: { gameTimeSec: number; durationMs: number }[] = [];
-      for (const player of props.report.players) {
-        for (const ce of player.diagnostics.connectionEvents) {
-          if (
-            (ce.eventType === EConnectionEventType.Reconnect ||
-             ce.eventType === EConnectionEventType.GameResumed ||
-             ce.eventType === EConnectionEventType.StopLag) &&
-            ce.durationMs
-          ) {
-            pauses.push({ gameTimeSec: ce.gameTimeOffsetMs / 1000, durationMs: ce.durationMs });
-          }
-        }
-      }
-      const seen = new Set<number>();
-      return pauses.filter((p) => {
-        if (seen.has(p.gameTimeSec)) return false;
-        seen.add(p.gameTimeSec);
-        return true;
-      }).sort((a, b) => a.gameTimeSec - b.gameTimeSec);
-    });
-
-    function gameTimeToWallClockMs(gameTimeSec: number): number {
-      let extraMs = 0;
-      for (const pause of gameClockPauses.value) {
-        if (pause.gameTimeSec < gameTimeSec) {
-          extraMs += pause.durationMs;
-        } else {
-          break;
-        }
-      }
-      return gameStartMs.value + gameTimeSec * 1000 + extraMs;
-    }
+    const gameStartMs = computed(() => computeGameStartMs(props.report.players, props.report.createdAt));
+    const gameClockPauses = computed(() => collectGameClockPauses(props.report.players));
 
     // ── Ping + Loss combined chart ──────────────────────────────────
     const pingChartData = computed<ChartData<PingChartType>>(() => {
@@ -425,18 +352,7 @@ export default defineComponent({
           if (pi >= 0 && !visiblePlayers[pi]) return;
           const color = pi >= 0 ? PLAYER_COLORS[pi % PLAYER_COLORS.length] : PLAYER_COLORS[si % PLAYER_COLORS.length];
           if (sp.samples.length) {
-            const points: { x: number; y: number | null }[] = [];
-            const pauses = gameClockPauses.value;
-            let prevTime = -1;
-            for (const s of sp.samples) {
-              for (const pause of pauses) {
-                if (pause.gameTimeSec > prevTime && pause.gameTimeSec <= s.time) {
-                  points.push({ x: gameTimeToWallClockMs(pause.gameTimeSec), y: null });
-                }
-              }
-              points.push({ x: gameTimeToWallClockMs(s.time), y: s.avg ?? 0 });
-              prevTime = s.time;
-            }
+            const points = buildServerPingPoints(sp.samples, gameClockPauses.value, gameStartMs.value);
             datasets.push({
               type: "line",
               label: `${sp.playerName.split("#")[0]} server`,
@@ -494,10 +410,9 @@ export default defineComponent({
       // actual game start by seconds. Using matchWallStart keeps the buckets
       // aligned with the wall-clock x-axis the lag-event markers also use.
       //
-      // Pauses are not corrected here: gameTimeOffsetsMs freezes during a
-      // pause (by design in flo's pause-corrected telemetry), so adding the
-      // offset directly produces a naive wall-clock that visualizes the pause
-      // as a vertical flatline — the intended behavior on this axis.
+      // Bucket x is wall clock (matchWallStart + i * 1s), not gameTimeOffsetsMs: game time
+      // freezes during a pause, so a pause shows as a gap that lines up with the GamePaused
+      // markers and later points stay aligned with ServerSidePing (buildServerPingPoints).
       const matchStartMs = props.telemetry.matchWallStart.getTime();
       props.telemetry.players.forEach((p) => {
         if (p.bucketCount === 0) return;
@@ -506,17 +421,7 @@ export default defineComponent({
         const color = pi >= 0
           ? PLAYER_COLORS[pi % PLAYER_COLORS.length]
           : PLAYER_COLORS[0];
-        // Backend now returns plain number arrays — no BinData decoding needed.
-        const gameTimes = p.gameTimeOffsetsMs;
-        const means = p.meansMs;
-        const counts = p.sampleCounts;
-        const points: Array<{ x: number; y: number | null }> = [];
-        for (let i = 0; i < p.bucketCount; i++) {
-          points.push({
-            x: matchStartMs + gameTimes[i],
-            y: counts[i] > 0 ? means[i] : null,
-          });
-        }
+        const points = buildActionLatencyPoints(matchStartMs, p.meansMs, p.sampleCounts);
         out.push({
           type: "line",
           label: `${playerName(p.battleTag)} action latency`,
@@ -540,72 +445,14 @@ export default defineComponent({
     });
 
     const eventMarkers = computed<EventMarkerInfo[]>(() => {
-      const markers: EventMarkerInfo[] = [];
-      const chipColors = readLagChipColors();
-      let idx = 0;
-
-      props.report.players.forEach((player, pi) => {
-        if (!visiblePlayers[pi]) return;
-        const pName = playerName(player.battleTag);
-        const pStyle = playerColorTonalStyle(PLAYER_COLORS[pi % PLAYER_COLORS.length]);
-
-        player.diagnostics.lagEvents.forEach((le) => {
-          const ts = new Date(le.timestamp).getTime();
-          markers.push({
-            id: `lag-${idx}`,
-            ts,
-            shortLabel: `-lag (${pName})`,
-            detailLines: [
-              `Game ${formatGameTime(le.gameTimeOffsetMs)}`,
-              `At ${formatWallClock(ts)}`,
-            ],
-            style: pStyle,
-          });
-          idx++;
-        });
-
-        player.diagnostics.connectionEvents.forEach((ce) => {
-          const ts = new Date(ce.timestamp).getTime();
-          const ceLabel = connectionEventLabelMap[ce.eventType] ?? ce.eventType;
-          const semanticKey: keyof SemanticColors = (
-            [EConnectionEventType.Reconnect, EConnectionEventType.GamePaused, EConnectionEventType.StartLag].includes(ce.eventType)
-              ? "warning"
-              : [EConnectionEventType.GameResumed, EConnectionEventType.StopLag].includes(ce.eventType)
-                ? "info"
-                : "error"
-          );
-
-          if (ce.eventType === EConnectionEventType.Reconnect && ce.durationMs) {
-            const disconnectTs = ts - ce.durationMs;
-            const disconnectGameMs = Math.max(0, ce.gameTimeOffsetMs - ce.durationMs);
-            markers.push({
-              id: `disc-${idx}`,
-              ts: disconnectTs,
-              shortLabel: `Disconnected (${pName})`,
-              detailLines: [
-                `Game ${formatGameTime(disconnectGameMs)}`,
-                `At ${formatWallClock(disconnectTs)}`,
-              ],
-              style: chipColors.error,
-            });
-          }
-
-          markers.push({
-            id: `conn-${idx}`,
-            ts,
-            shortLabel: `${ceLabel} (${pName})`,
-            detailLines: [
-              `Game ${formatGameTime(ce.gameTimeOffsetMs)}`,
-              `At ${formatWallClock(ts)}`,
-            ],
-            style: chipColors[semanticKey],
-            dashed: true,
-          });
-          idx++;
-        });
+      // readLagChipColors reads CSS variables, which Vue cannot track; this re-reads them on a theme switch.
+      void theme.current.value.dark;
+      return buildEventMarkers(props.report.players, {
+        chipColors: readLagChipColors(),
+        playerColors: PLAYER_COLORS,
+        includeLagEvents: (pi) => !!visiblePlayers[pi],
+        includeConnectionEvent: (pi) => !!visiblePlayers[pi],
       });
-
-      return markers;
     });
 
     const hoverMarkers = computed<EventMarkerInfo[]>(() => {

@@ -118,11 +118,11 @@ Use Vuetify's loading components consistently:
 ```
 
 ### Testing Approach
-The project doesn't have a traditional test suite. When making changes:
-1. Run `npm run lint` to catch TypeScript and linting errors
-2. Run `npm run dprint` to ensure consistent formatting
-3. Test functionality manually in development mode
-4. Verify no console errors in browser developer tools
+Vitest covers pure helpers only (`npm test`; tests live beside the code as `src/**/*.test.ts`, run in the `node` environment with `node:assert/strict`). There are no component tests. When making changes:
+1. Run `npm test` for the helper tests (add one when you change a pure helper)
+2. Run `npm run lint` to catch TypeScript and linting errors
+3. Run `npm run dprint` to ensure consistent formatting
+4. Test UI functionality manually in development mode and verify no console errors in the browser developer tools
 
 ### Environment Configuration
 Development environment variables are in `/public/env.js`:

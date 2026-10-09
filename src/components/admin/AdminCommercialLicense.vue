@@ -45,6 +45,22 @@
           <v-icon size="small">{{ item.notify ? mdiCheck : mdiClose }}</v-icon>
         </template>
 
+        <template v-slot:[`item.restrictions`]="{ item }">
+          <template v-if="summaries[item.battleTag].length > 0">
+            <v-chip
+              v-for="label in summaries[item.battleTag]"
+              :key="label"
+              class="mr-1 my-1"
+              size="small"
+              variant="flat"
+              color="warning"
+            >
+              {{ label }}
+            </v-chip>
+          </template>
+          <span v-else class="text-medium-emphasis">&mdash;</span>
+        </template>
+
         <template v-slot:[`item.createdAt`]="{ item }">
           {{ formatTimestampStringToDateTime(item.createdAt) }}
         </template>
@@ -108,6 +124,7 @@ import CommercialLicenseTagDialog from "@/components/admin/commercial-license/Co
 import { useCommercialLicenseStore } from "@/store/admin/commercialLicense/store";
 import { toTagRequest } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseDraft } from "@/store/admin/commercialLicense/draft";
+import { restrictionSummary } from "@/store/admin/commercialLicense/restrictions";
 import type { CommercialLicenseTaggedPlayer } from "@/store/admin/commercialLicense/types";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
@@ -126,11 +143,13 @@ const hasPermission = computed(() => oauthStore.permissions.includes(EPermission
 const permissionsKnown = computed(() => oauthStore.permissions.length > 0);
 const canUseSmurfChecker = computed(() => oauthStore.permissions.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const existingBattleTags = computed(() => store.taggedPlayers.map((p) => p.battleTag));
+const summaries = computed(() => Object.fromEntries(store.taggedPlayers.map((p) => [p.battleTag, restrictionSummary(p.restrictions)])));
 
 const headers: DataTableHeader[] = [
   { title: "BattleTag", value: "battleTag", sortable: true },
   { title: "Note", value: "note", sortable: false },
   { title: "Notify", value: "notify", sortable: true },
+  { title: "Restrictions", value: "restrictions", sortable: false },
   { title: "Created by", value: "createdBy", sortable: true },
   { title: "Created at", value: "createdAt", sortable: true },
   { title: "Updated by", value: "updatedBy", sortable: true },
