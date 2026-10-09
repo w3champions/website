@@ -1,5 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
+import type { FloTvRestriction } from "./types";
 import { FLO_TV_OPTIONS, normalizeTag, restrictionSummary } from "./restrictions";
 
 const base = {
@@ -43,4 +44,12 @@ test("the FloTV select offers none, custom and all, in that order", () => {
     { title: "Custom games", value: "custom" },
     { title: "All games", value: "all" },
   ]);
+});
+
+test("restrictionSummary surfaces an unknown future FloTV value instead of hiding it", () => {
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "future" as FloTvRestriction }), ["FloTV: future"]);
+});
+
+test("restrictionSummary shows no FloTV chip for none", () => {
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "none" }), []);
 });

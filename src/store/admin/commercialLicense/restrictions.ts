@@ -30,6 +30,7 @@ export function restrictionSummary(restrictions: CommercialLicenseRestrictions):
   if (restrictions.asPlayer) labels.push("Player");
   if (restrictions.asObserver) labels.push("Observer");
   if (restrictions.floTv === "custom") labels.push("FloTV: custom games");
-  if (restrictions.floTv === "all") labels.push("FloTV: all games");
+  else if (restrictions.floTv === "all") labels.push("FloTV: all games");
+  else if (restrictions.floTv !== "none") labels.push("FloTV: " + String(restrictions.floTv)); // unknown future value: never look unrestricted
   return labels;
 }
