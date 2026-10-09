@@ -165,8 +165,7 @@ import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRoute, useRouter } from "vue-router";
-import languages from "@/locales/languages";
-import { useI18n } from "vue-i18n";
+import { getActiveLanguages, useSiteLocale } from "@/composables/useSiteLocale";
 import noop from "lodash/noop";
 import { useTheme } from "vuetify";
 import { battleTagToName } from "./helpers/profile";
@@ -206,7 +205,7 @@ export default defineComponent({
     LocaleIcon,
   },
   setup() {
-    const { locale } = useI18n();
+    const { locale, setSiteLocale } = useSiteLocale();
     const router = useRouter();
     const route = useRoute();
     const oauthStore = useOauthStore();
@@ -307,14 +306,11 @@ export default defineComponent({
 
     const savedLocale = ({
       get: () => rootStateStore.locale,
-      set: (newVal: string) => {
-        locale.value = newVal;
-        rootStateStore.saveLocale(newVal);
-      }
+      set: setSiteLocale,
     });
 
     const activeLanguages = ({
-      get: () => Object.keys(languages),
+      get: getActiveLanguages,
     });
 
     function setTheme(val: string) {
