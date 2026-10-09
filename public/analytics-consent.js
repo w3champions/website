@@ -29,7 +29,7 @@
   function analyticsPreviouslyGranted() {
     try {
       return window.localStorage.getItem(ANALYTICS_CONSENT_KEY) === "true";
-    } catch (e) {
+    } catch {
       return false;
     }
   }
@@ -66,9 +66,20 @@
     // navigations). Deferred so it is queued after Silktide's synchronous
     // gtag('consent','update','granted') on a fresh Accept.
     setTimeout(function () {
+      // Strip credentials / one-time OAuth params (keep in sync with src/analytics/analytics.ts).
+      var url = new URL(window.location.href);
+      // Matching is case-insensitive. The hash is kept on purpose (auth code flow + history mode: no tokens in the fragment).
+      var sensitiveParams = ["code", "state", "jwt", "authorization", "token", "access_token", "ticket"];
+      Array.from(new Set(Array.from(url.searchParams.keys())))
+        .filter(function (key) {
+          return sensitiveParams.indexOf(key.toLowerCase()) !== -1;
+        })
+        .forEach(function (key) {
+          url.searchParams.delete(key);
+        });
       window.gtag("event", "page_view", {
-        page_location: window.location.href,
-        page_path: window.location.pathname + window.location.search,
+        page_location: url.href,
+        page_path: url.pathname + url.search,
         page_title: document.title,
       });
     }, 0);
