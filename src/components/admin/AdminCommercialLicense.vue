@@ -46,9 +46,9 @@
         </template>
 
         <template v-slot:[`item.restrictions`]="{ item }">
-          <template v-if="restrictionSummary(item.restrictions).length > 0">
+          <template v-if="summaries[item.battleTag].length > 0">
             <v-chip
-              v-for="label in restrictionSummary(item.restrictions)"
+              v-for="label in summaries[item.battleTag]"
               :key="label"
               class="mr-1 my-1"
               size="small"
@@ -143,6 +143,7 @@ const hasPermission = computed(() => oauthStore.permissions.includes(EPermission
 const permissionsKnown = computed(() => oauthStore.permissions.length > 0);
 const canUseSmurfChecker = computed(() => oauthStore.permissions.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const existingBattleTags = computed(() => store.taggedPlayers.map((p) => p.battleTag));
+const summaries = computed(() => Object.fromEntries(store.taggedPlayers.map((p) => [p.battleTag, restrictionSummary(p.restrictions)])));
 
 const headers: DataTableHeader[] = [
   { title: "BattleTag", value: "battleTag", sortable: true },

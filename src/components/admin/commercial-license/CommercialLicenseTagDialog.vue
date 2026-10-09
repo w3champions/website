@@ -67,7 +67,7 @@
           hide-details
         />
         <div class="text-caption text-medium-emphasis mt-2">
-          Restrictions also apply to direct smurfs of this account. Blocked players are told: "Commercial license agreement necessary - please reach out to the W3Champions administration via Discord".
+          Restrictions also apply to direct smurfs of this account. Blocked players see a "Commercial Event Partnership required" notice in the launcher that links to the Commercial Events page.
         </div>
 
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mt-4">
