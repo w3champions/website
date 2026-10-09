@@ -26,6 +26,8 @@ export interface RelayChartSeries {
   retransmitAt?: boolean[];
   /** srtt lines only: retransmits per bucket, for the tooltip. */
   retransmits?: (number | null)[];
+  /** Client srtt line only, when reported: the transport of each bucket, for the tooltip. */
+  transports?: string[];
   yAxis: "y" | "yStall";
 }
 
@@ -86,6 +88,7 @@ function endSeries(leg: RelayLeg, end: "near" | "far", series: RelaySeries, colo
     points: seriesSrttPoints(series),
     retransmitAt: highlight.retransmitAt,
     retransmits: series.buckets.retransDelta,
+    ...(series.kinds ? { transports: series.kinds } : {}),
     yAxis: "y",
   }];
   if (highlight.hasStall) {

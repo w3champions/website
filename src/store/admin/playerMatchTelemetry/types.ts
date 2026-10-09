@@ -51,12 +51,16 @@ export interface ITransportStats {
   sampleCounts: number[];
   srttMaxMs: number[];
   rttvarMaxMs: number[] | null;
-  retransDelta: number[];
+  /** null entries are QUIC buckets, which report no retransmits; null overall for an all-QUIC series. */
+  retransDelta: (number | null)[] | null;
   lostMax: number[] | null;
   unackedMax: number[] | null;
   rxBytesDelta: number[];
   txBytesDelta: number[];
+  /** Seconds the client waited beyond the usual node ping gap. */
   stallSecs: number[];
+  /** Transport per bucket; absent or null from older clients, which report only `kind`. */
+  kinds?: FloNodeTransport[] | null;
 }
 
 /** How the launcher routed the game, captured at game start. */

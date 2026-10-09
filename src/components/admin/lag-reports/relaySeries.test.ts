@@ -172,6 +172,29 @@ describe("clientTransportSeries", () => {
     expect(s.buckets.unackedMax).toEqual([1, 1, null]);
   });
 
+  it("keeps unreported retransmits as null, per QUIC bucket and for an all-QUIC series", () => {
+    const mixed = clientTransportSeries(transport({ retransDelta: [0, null, 0], kinds: ["TCP", "QUIC", "TCP"] }), START);
+    const allQuic = clientTransportSeries(transport({ retransDelta: null, kinds: ["QUIC", "QUIC", "QUIC"] }), START);
+
+    expect(mixed.buckets.retransDelta).toEqual([0, null, null]);
+    expect(allQuic.buckets.retransDelta).toEqual([null, null, null]);
+    expect(seriesStats(allQuic).retransTotal).toBeNull();
+  });
+
+  it("carries the per-bucket transport when the client reports it", () => {
+    const s = clientTransportSeries(transport({ kinds: ["TCP", "QUIC", "QUIC"] }), START);
+
+    expect(s.kinds).toEqual(["TCP", "QUIC", "QUIC"]);
+    expect(sliceSeries(s, START + 5_000, Infinity).kinds).toEqual(["QUIC", "QUIC"]);
+  });
+
+  it("leaves the per-bucket transport out for older clients", () => {
+    const s = clientTransportSeries(transport({ kinds: null }), START);
+
+    expect(s.kinds).toBeUndefined();
+    expect(sliceSeries(s, START, Infinity).kinds).toBeUndefined();
+  });
+
   it("labels the series as the client end and lower-cases the transport", () => {
     const s = clientTransportSeries(transport({ kind: "QUIC" }), START);
 

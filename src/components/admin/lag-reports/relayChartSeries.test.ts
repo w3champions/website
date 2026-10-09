@@ -139,6 +139,16 @@ describe("buildRelayChartSeries", () => {
     expect(groups[0].note).toBe("Not measured: this relay runs HAProxy without flo-node");
   });
 
+  it("passes the client's per-bucket transport to its line, and none to relay lines", () => {
+    const client = { ...series([30, 31], undefined, "client"), kinds: ["TCP", "QUIC"] };
+    const connections: RelayConnection[] = [{ connectedUnixMs: START, legs: [leg("client", "relay", { near: client, far: series([30, 31]) })] }];
+
+    const { series: out } = buildRelayChartSeries({ connections, echoRtt: [], serverPing: [] });
+
+    expect(out.find((s) => s.label === "srtt at client")?.transports).toEqual(["TCP", "QUIC"]);
+    expect(out.find((s) => s.label === "srtt at relay")?.transports).toBeUndefined();
+  });
+
   it("draws the StarBuck client end of the first leg from match telemetry", () => {
     const connections = withClientEnd(starbuckRelayChain.connections, clientTransportSeries(starbuckTransportStats, MATCH_START_MS));
 

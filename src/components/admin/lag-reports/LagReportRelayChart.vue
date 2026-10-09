@@ -154,9 +154,11 @@ export default defineComponent({
               const y = item.parsed.y;
               if (y == null) return `${item.dataset.label}: gap`;
               if (item.dataset.yAxisID === "yStall") return `${item.dataset.label}: ${y} s`;
-              const retransmits = props.series[item.datasetIndex]?.retransmits?.[item.dataIndex] ?? 0;
+              const line = props.series[item.datasetIndex];
+              const transport = line?.transports?.[item.dataIndex];
+              const retransmits = line?.retransmits?.[item.dataIndex] ?? 0;
               const suffix = retransmits > 0 ? `, ${retransmits} retransmits` : "";
-              return `${item.dataset.label}: ${Math.round(y)} ms${suffix}`;
+              return `${item.dataset.label}${transport ? ` (${transport})` : ""}: ${Math.round(y)} ms${suffix}`;
             },
           },
         },

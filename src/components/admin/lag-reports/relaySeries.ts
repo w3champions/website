@@ -99,7 +99,7 @@ export function seriesStats(series: RelaySeries): SeriesStats {
  */
 export function clientTransportSeries(ts: ITransportStats, matchWallStartMs: number): RelaySeries {
   const sampled = (i: number) => (ts.sampleCounts[i] ?? 0) > 0;
-  const column = (values: number[] | null | undefined): (number | null)[] => ts.srttMaxMs.map((_, i) => (values && sampled(i) ? values[i] ?? null : null));
+  const column = (values: (number | null)[] | null | undefined): (number | null)[] => ts.srttMaxMs.map((_, i) => (values && sampled(i) ? values[i] ?? null : null));
 
   return {
     role: "client",
@@ -109,6 +109,7 @@ export function clientTransportSeries(ts: ITransportStats, matchWallStartMs: num
     bucketsStartUnixMs: matchWallStartMs,
     bucketSecs: CLIENT_BUCKET_SECS,
     bucketCount: ts.srttMaxMs.length,
+    ...(ts.kinds ? { kinds: [...ts.kinds] } : {}),
     buckets: {
       srttMaxMs: column(ts.srttMaxMs),
       rttvarMaxMs: column(ts.rttvarMaxMs),
@@ -146,6 +147,7 @@ export function sliceSeries(series: RelaySeries, fromMs: number, toMs: number): 
 
   return {
     ...series,
+    ...(series.kinds ? { kinds: series.kinds.slice(first, first + count) } : {}),
     bucketsStartUnixMs: series.bucketsStartUnixMs + first * width,
     bucketCount: count,
     buckets,

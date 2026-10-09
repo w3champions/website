@@ -158,6 +158,8 @@ export interface RelaySeries {
   bucketSecs: number;
   bucketCount: number;
   buckets: RelayBucketColumns;
+  /** Client series only, from clients that report it: the transport of each bucket. */
+  kinds?: string[];
 }
 
 /** Parallel per-bucket arrays; null means not exposed by the transport, or a sampler gap. */
