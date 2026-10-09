@@ -113,6 +113,76 @@ export interface LagReportPlayer {
   freeText: string;
   annotations: LagReportAnnotation[];
   diagnostics: PlayerDiagnostics;
+  // Optional: absent from older backends, and null until the relay telemetry fetch succeeds.
+  floPlayerId?: number | null;
+  relayChain?: RelayChain | null;
+}
+
+// ── Per-hop relay telemetry (flo controller GetGameRelayTelemetry) ───
+
+/** One player's recent game connections, each split into the TCP legs it crossed. */
+export interface RelayChain {
+  fetchedAt: string;
+  connections: RelayConnection[];
+}
+
+export interface RelayConnection {
+  connectedUnixMs: number;
+  /** Ordered client first, game node last. */
+  legs: RelayLeg[];
+}
+
+export interface RelayLeg {
+  fromLabel: string;
+  toLabel: string;
+  // A plain string, not a union: a newer controller may emit a status this build does not
+  // know, and it has to render verbatim rather than fail the type.
+  status: string;
+  /** Measured at the leg's sending end; null for the client end. */
+  near: RelaySeries | null;
+  /** Measured at the leg's receiving end. */
+  far: RelaySeries | null;
+  close: RelayCloseLine | null;
+}
+
+export interface RelaySeries {
+  /** node_player, node_quic, haproxy_fe or haproxy_be. */
+  role: string;
+  /** tcp or quic. */
+  kind: string;
+  firstSeenUnixMs: number;
+  /** 0 while the connection is still open. */
+  closedUnixMs: number;
+  /** Bucket i covers [start + i*bucketSecs, start + (i+1)*bucketSecs). */
+  bucketsStartUnixMs: number;
+  bucketSecs: number;
+  bucketCount: number;
+  buckets: RelayBucketColumns;
+}
+
+/** Parallel per-bucket arrays; null means not exposed by the transport, or a sampler gap. */
+export interface RelayBucketColumns {
+  srttMaxMs: (number | null)[];
+  rttvarMaxMs: (number | null)[];
+  retransDelta: (number | null)[];
+  lostMax: (number | null)[];
+  unackedMax: (number | null)[];
+  rxBytesDelta: (number | null)[];
+  txBytesDelta: (number | null)[];
+  stallSecs: (number | null)[];
+}
+
+/** HAProxy's close-line summary for a relayed connection. */
+export interface RelayCloseLine {
+  fcRttMs: number;
+  fcRttvarMs: number;
+  fcRetrans: number;
+  fcLost: number;
+  bcRttMs: number;
+  term: string | null;
+  bytesIn: number;
+  bytesOut: number;
+  durationMs: number;
 }
 
 export interface PlayerDiagnostics {

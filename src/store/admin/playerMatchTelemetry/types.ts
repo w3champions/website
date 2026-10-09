@@ -31,6 +31,40 @@ export interface IPlayerMatchTelemetryEntry {
   sampleCounts: number[];
   droppedUnmatchedCount: number;
   submittedAt: Date;
+  // Optional: absent from older backends, null from older clients and launchers.
+  transportStats?: ITransportStats | null;
+  clientVersion?: string | null;
+  launcherVersion?: string | null;
+  routing?: IMatchTelemetryRouting | null;
+}
+
+/**
+ * The client's own game-socket stats in 5 s wall-clock buckets: bucket i starts
+ * i * 5 s after matchWallStart. The nullable arrays are absent when the client's
+ * platform does not expose them (Windows: rttvar, lost; macOS: unacked; QUIC: rttvar, unacked).
+ */
+export interface ITransportStats {
+  kind: FloNodeTransport;
+  bucketCount: number;
+  gameTimeOffsetsMs: number[];
+  /** 1 Hz samples in the bucket; 0 means the client took none (a gap). */
+  sampleCounts: number[];
+  srttMaxMs: number[];
+  rttvarMaxMs: number[] | null;
+  retransDelta: number[];
+  lostMax: number[] | null;
+  unackedMax: number[] | null;
+  rxBytesDelta: number[];
+  txBytesDelta: number[];
+  stallSecs: number[];
+}
+
+/** How the launcher routed the game, captured at game start. */
+export interface IMatchTelemetryRouting {
+  proxyName: string | null;
+  proxyAddress: string | null;
+  /** "direct" or "proxied"; a plain string so a new kind renders verbatim. */
+  connectionKind: string | null;
 }
 
 export interface IPlayerMatchTelemetry {
