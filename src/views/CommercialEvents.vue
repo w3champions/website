@@ -3,22 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-card class="commercial-events">
-          <div class="commercial-events__toolbar px-4 pt-4">
-            <v-btn-toggle
-              v-model="lang"
-              mandatory
-              density="compact"
-              variant="outlined"
-              color="primary"
-              divided
-              aria-label="Language / 语言"
-            >
-              <v-btn value="en" lang="en">EN</v-btn>
-              <v-btn value="zh" lang="zh-Hans">中文</v-btn>
-            </v-btn-toggle>
-          </div>
-
-          <article :lang="content.htmlLang" class="commercial-events__body px-4 pb-6 pt-2">
+          <article :lang="content.htmlLang" class="commercial-events__body px-4 py-6">
             <h1 class="commercial-events__title">{{ content.title }}</h1>
             <p class="commercial-events__lead">
               <InlineText :text="content.lead" />
@@ -120,18 +105,18 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeUnmount, ref } from "vue";
-import { useI18n } from "vue-i18n";
+import { computed, defineComponent, onBeforeUnmount, ref, watch } from "vue";
+import { getActiveLanguages, useSiteLocale } from "@/composables/useSiteLocale";
 import { useRoute, useRouter } from "vue-router";
 import InlineText from "./commercial-events/InlineText.vue";
 import { parseTemplate } from "./commercial-events/inline";
 import {
-  type CommercialEventsLang,
   commercialEventsContent,
   DISCORD_CONTACT_NAME,
   DISCORD_PROFILE_URL,
   DISCORD_URL,
   DISCORD_USERNAME,
+  parseLangQuery,
   resolveLang,
   WECHAT_ID,
   WECHAT_QR_HEIGHT,
@@ -145,16 +130,24 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const { locale } = useI18n();
+    const { locale, setSiteLocale } = useSiteLocale();
 
-    const lang = computed<CommercialEventsLang>({
-      get: () => resolveLang(route.query.lang, locale.value),
-      set: (value) => {
-        if (route.query.lang !== value) {
-          void router.replace({ query: { ...route.query, lang: value } });
+    const lang = computed(() => resolveLang(locale.value));
+
+    // Deep link: `?lang=zh|en` switches the site language once, then is dropped from the URL.
+    watch(
+      () => route.query.lang,
+      (queryLang) => {
+        if (queryLang === undefined) return;
+        const requested = parseLangQuery(queryLang);
+        if (requested && getActiveLanguages().includes(requested)) {
+          setSiteLocale(requested);
         }
+        const { lang: _lang, ...query } = route.query;
+        void router.replace({ query, hash: route.hash });
       },
-    });
+      { immediate: true },
+    );
 
     const content = computed(() => commercialEventsContent[lang.value]);
     const wechatParts = computed(() => parseTemplate(content.value.contact.wechatLine));
@@ -188,7 +181,6 @@ export default defineComponent({
     };
 
     return {
-      lang,
       content,
       wechatParts,
       discordParts,
@@ -259,11 +251,6 @@ export default defineComponent({
   &__wechat-id {
     user-select: all;
     font-family: monospace;
-  }
-
-  &__toolbar {
-    display: flex;
-    justify-content: flex-end;
   }
 
   &__title {
