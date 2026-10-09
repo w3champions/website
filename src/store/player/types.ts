@@ -25,6 +25,9 @@ export type PlayerState = {
   ongoingMatch: Match;
   gameModeStats: ModeStat[];
   mmrRpTimeline: PlayerMmrRpTimeline;
+  lifetimeTimeline: PlayerLifetimeTimeline | undefined;
+  loadingLifetimeTimeline: boolean;
+  lifetimeGameMode: EGameMode;
   playerGameLengthStats: PlayerGameLengthStats | undefined;
   loadProfileError: string | undefined;
   playerIncludeRandom: boolean;
@@ -113,6 +116,40 @@ export type MmrRpAtDate = {
   mmr: number;
   rp: number;
   date: timestampString;
+};
+
+export type LifetimePoint = {
+  date: timestampString;
+  mmr: number;
+  rp: number | null;
+  /** Null on days recorded before games were counted. */
+  games: number | null;
+};
+
+export type LifetimePeak = {
+  mmr: number;
+  date: timestampString;
+  season: number;
+};
+
+export type LifetimeRaceSeries = {
+  race: ERaceEnum;
+  points: LifetimePoint[];
+  /** Null until the player's history has been migrated; see the backend, which
+   * withholds a peak rather than reporting an uncalibrated one. */
+  peak: LifetimePeak | null;
+};
+
+export type LifetimeSeason = {
+  season: number;
+  start: timestampString;
+  end: timestampString;
+};
+
+export type PlayerLifetimeTimeline = {
+  gameMode: EGameMode;
+  series: LifetimeRaceSeries[];
+  seasons: LifetimeSeason[];
 };
 
 export type PlayerMmrRpTimeline = {

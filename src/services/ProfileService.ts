@@ -1,4 +1,4 @@
-import { AliasData, ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/player/types";
+import { AliasData, ModeStat, PlayerGameLengthStats, PlayerLifetimeTimeline, PlayerMmrRpTimeline, PlayerProfile, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "@/store/player/types";
 import { API_URL } from "@/config/env";
 import { Gateways } from "@/store/ranking/types";
 import { EGameMode, ERaceEnum } from "@/store/types";
@@ -115,6 +115,19 @@ export default class ProfileService {
       return {} as PlayerMmrRpTimeline;
     }
   }
+  public static async retrievePlayerLifetimeTimeline(
+    battleTag: string,
+    gameMode: EGameMode,
+  ): Promise<PlayerLifetimeTimeline | undefined> {
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}/mmr-rp-timeline/lifetime?gameMode=${gameMode}`;
+
+    const response = await fetch(url);
+    if (response.ok && response.status == 200) {
+      return await response.json();
+    }
+    return undefined;
+  }
+
   public static async retrievePlayerGameLengthStats(
     battleTag: string,
     season: number,
