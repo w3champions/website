@@ -35,7 +35,7 @@
       <v-row v-if="loading" justify="center" class="ma-1">
         <v-progress-circular indeterminate />
       </v-row>
-      <v-alert v-else-if="errorMessage" type="error" variant="tonal" class="ma-1">
+      <v-alert v-else-if="errorMessage" :type="isUnavailable ? 'info' : 'error'" variant="tonal" class="ma-1">
         <div class="d-flex align-center justify-space-between flex-wrap ga-2">
           <span>{{ errorMessage }}</span>
           <v-btn v-if="showLoginButton" variant="text" @click="promptLogin">
@@ -83,6 +83,7 @@ import { EReplayGameEventType, ReplayChatLog, ReplayGameEvent, ReplayMessage } f
 import { useReplayManagementStore } from "@/store/admin/replayManagement/store";
 import { OPEN_SIGN_IN_DIALOG_EVENT } from "@/constants/sso";
 import { useRoute } from "vue-router";
+import { describeChatLogFailure } from "@/components/admin/replays/chatLogError";
 
 export default defineComponent({
   name: "AdminReplayChatLogMessages",
@@ -103,6 +104,7 @@ export default defineComponent({
     const loading = ref(false);
     const errorMessage = ref<string>("");
     const showLoginButton = ref(false);
+    const isUnavailable = ref(false);
 
     // Toggle (switch at the top) shared with every ReplayLogTime via inject.
     const showRealTime = ref(false);
@@ -183,24 +185,21 @@ export default defineComponent({
     }
 
     function handleLoadError(error: unknown): void {
-      const status = typeof error === "object" && error !== null && "status" in error
-        ? (error as { status?: number }).status
-        : undefined;
+      const failure = describeChatLogFailure(error);
+      errorMessage.value = failure.message;
+      isUnavailable.value = failure.kind === "unavailable";
 
-      if (status === 401) {
+      if (failure.kind === "session-expired") {
         showLoginButton.value = true;
         promptLogin();
-        errorMessage.value = "Your session expired while loading the chat log. Please log in again.";
-        return;
       }
-
-      errorMessage.value = "We could not load the chat log right now. Please try again.";
     }
 
     onMounted(async (): Promise<void> => {
       loading.value = true;
       errorMessage.value = "";
       showLoginButton.value = false;
+      isUnavailable.value = false;
 
       try {
         await replayManagementStore.loadChatLog(props.matchId);
@@ -224,6 +223,7 @@ export default defineComponent({
       getPrivateRecipientName,
       getPlayerName,
       errorMessage,
+      isUnavailable,
       showLoginButton,
       promptLogin,
     };
