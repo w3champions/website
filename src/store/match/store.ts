@@ -1,4 +1,4 @@
-import { EGameMode, type PlayerScore } from "@/store/types";
+import { EGameMode, ERaceEnum, type PlayerScore } from "@/store/types";
 import { type MatchState, MatchStatus, type Mmr } from "./types";
 import type { Match, MatchDetail } from "../types";
 import MatchService from "@/services/MatchService";
@@ -76,6 +76,8 @@ export const useMatchStore = defineStore("match", {
       status: MatchStatus.onGoing,
       gameMode: persistedViewSettings.gameMode,
       map: "Overall",
+      race: ERaceEnum.TOTAL,
+      raceIncludeRandom: false,
       mmr: { min: 0, max: 3000 },
       duration: { min: 0, max: 14400 },
       sort: "startTimeDescending",
@@ -127,6 +129,8 @@ export const useMatchStore = defineStore("match", {
             this.duration,
             this.selectedSeason.id,
             this.selectedHeroFilter,
+            this.race,
+            this.raceIncludeRandom,
           );
         }
 
@@ -199,6 +203,23 @@ export const useMatchStore = defineStore("match", {
     async setMap(map: string) {
       this.SET_LOADING_MATCHES(true);
       this.SET_MAP(map);
+      this.SET_PAGE(1);
+      await this.loadMatches(true);
+    },
+    async setRace(race: ERaceEnum) {
+      this.SET_LOADING_MATCHES(true);
+      this.SET_RACE(race);
+      // "With Random" means "also count Random picks that rolled this race", which says nothing
+      // for Any (no filter) or for Random itself (every Random pick already matches).
+      if (race === ERaceEnum.TOTAL || race === ERaceEnum.RANDOM) {
+        this.SET_RACE_INCLUDE_RANDOM(false);
+      }
+      this.SET_PAGE(1);
+      await this.loadMatches(true);
+    },
+    async setRaceIncludeRandom(includeRandom: boolean) {
+      this.SET_LOADING_MATCHES(true);
+      this.SET_RACE_INCLUDE_RANDOM(includeRandom);
       this.SET_PAGE(1);
       await this.loadMatches(true);
     },
@@ -276,6 +297,12 @@ export const useMatchStore = defineStore("match", {
     },
     SET_MAP(map: string): void {
       this.map = map;
+    },
+    SET_RACE(race: ERaceEnum): void {
+      this.race = race;
+    },
+    SET_RACE_INCLUDE_RANDOM(includeRandom: boolean): void {
+      this.raceIncludeRandom = includeRandom;
     },
     SET_MMR(mmr: Mmr): void {
       this.mmr = mmr;
