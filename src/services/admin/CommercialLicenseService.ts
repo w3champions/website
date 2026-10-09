@@ -1,4 +1,5 @@
 import { AuthorizedClient, type AuthorizedClientDeps } from "@/services/http/AuthorizedClient";
+import { normalizeTag } from "@/store/admin/commercialLicense/restrictions";
 import type { CommercialLicenseTaggedPlayer, CommercialLicenseTagRequest } from "@/store/admin/commercialLicense/types";
 
 /**
@@ -16,12 +17,14 @@ export class CommercialLicenseService {
   }
 
   async getTaggedPlayers(token: string): Promise<CommercialLicenseTaggedPlayer[]> {
-    return await this.client.getJson<CommercialLicenseTaggedPlayer[]>(this.path(), token);
+    const raw = await this.client.getJson<Parameters<typeof normalizeTag>[0][]>(this.path(), token);
+    return raw.map(normalizeTag);
   }
 
   /** Creates or updates; the backend preserves createdBy/createdAt on update. */
   async upsertTaggedPlayer(token: string, battleTag: string, request: CommercialLicenseTagRequest): Promise<CommercialLicenseTaggedPlayer> {
-    return await this.client.requestJson<CommercialLicenseTaggedPlayer>("PUT", this.path(battleTag), token, request);
+    const raw = await this.client.requestJson<Parameters<typeof normalizeTag>[0]>("PUT", this.path(battleTag), token, request);
+    return normalizeTag(raw);
   }
 
   async removeTaggedPlayer(token: string, battleTag: string): Promise<void> {
