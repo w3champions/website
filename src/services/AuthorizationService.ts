@@ -41,19 +41,6 @@ export default class AuthorizationService {
     return await response.json();
   }
 
-  public static async logoutEverywhere(code: string): Promise<boolean> {
-    const url = `${IDENTIFICATION_URL}api/oauth/token?authorization=${code}`;
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    return response.ok;
-  }
-
   public static async authorizeWithTwitch(): Promise<TwitchToken> {
     const url = `${IDENTIFICATION_URL}api/oauth/twitch`;
     const response = await fetch(url, {
@@ -110,10 +97,11 @@ export default class AuthorizationService {
   }
 
   public static async getProfile(bearer: string): Promise<W3cToken | null> {
-    const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${bearer}`;
+    const url = `${IDENTIFICATION_URL}api/oauth/user-info`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
+        Authorization: `Bearer ${bearer}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -134,10 +122,11 @@ export default class AuthorizationService {
     if (isJwtExpired(jwt)) return { status: "invalid", profile: null };
 
     try {
-      const url = `${IDENTIFICATION_URL}api/oauth/user-info?jwt=${encodeURIComponent(jwt)}`;
+      const url = `${IDENTIFICATION_URL}api/oauth/user-info`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
+          Authorization: `Bearer ${jwt}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },

@@ -189,14 +189,10 @@ const routes: RouteRecordRaw[] = [
     path: "/player/:id",
     component: Player,
     props: (route: {
-      query: {
-        freshLogin?: "true";
-      };
       params: {
         id: string;
       };
     }) => ({
-      freshLogin: route.query.freshLogin === "true",
       id: route.params.id,
     }),
     children: [
