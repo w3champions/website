@@ -10,7 +10,7 @@ export default defineConfigWithVueTs([
   // vueTsConfigs.recommended,
   vueTsConfigs.recommendedTypeChecked,
   eslintPluginVue.configs["flat/recommended"],
-  globalIgnores(["**/dist/**", "src/locales/data.ts", "src/locales/en.ts", "public/env.js"]),
+  globalIgnores(["**/dist/**", "src/locales/data.ts", "src/locales/en.ts", "public/env.js", "src/lib/chart-timestack/**"]),
   {
     name: "eslint",
     files: ["*.{ts,mts,tsx,vue}", "**/*.{ts,mts,tsx,vue}"],
