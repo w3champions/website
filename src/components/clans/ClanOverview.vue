@@ -233,7 +233,6 @@ export default defineComponent({
 
       await playerStore.loadProfile({
         battleTag: battleTag.value,
-        freshLogin: false,
       });
 
       await clanStore.retrievePlayersMembership();

@@ -156,11 +156,6 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    freshLogin: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
   setup(props) {
     const playerStore = usePlayerStore();
@@ -292,7 +287,7 @@ export default defineComponent({
 
       if (isRequestedProfileAlreadyLoaded) return;
 
-      await playerStore.loadFullProfile({ battleTag: battleTag.value, freshLogin: props.freshLogin });
+      await playerStore.loadFullProfile({ battleTag: battleTag.value });
       rootStateStore.setGateway(
         getDefaultGatewayForSeason(playerStore.selectedSeason.id, rootStateStore.gateway)
       );

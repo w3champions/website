@@ -1,7 +1,6 @@
 import type { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerState, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "./types";
 import { EGameMode, ERaceEnum, type Match } from "../types";
 import type { Season } from "@/store/ranking/types";
-import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRankingStore } from "@/store/ranking/store";
 import { usePersonalSettingsStore } from "@/store/personalSettings/store";
@@ -90,13 +89,9 @@ export const usePlayerStore = defineStore("player", {
     opponentIncludeRandom: false,
   }),
   actions: {
-    async loadProfile(params: { battleTag: string; freshLogin: boolean }) {
-      const oauthStore = useOauthStore();
+    async loadProfile(params: { battleTag: string }) {
       try {
-        const profile = await ProfileService.retrieveProfile(
-          params.battleTag,
-          params.freshLogin ? oauthStore.token : null,
-        );
+        const profile = await ProfileService.retrieveProfile(params.battleTag);
         this.SET_PROFILE(profile);
         this.SET_BATTLE_TAG(params.battleTag);
         this.SET_LOAD_PROFILE_ERROR(undefined);
@@ -307,7 +302,7 @@ export const usePlayerStore = defineStore("player", {
 
       await this.loadPlayerMmrRpTimeline();
     },
-    async loadFullProfile(params: { battleTag: string; freshLogin: boolean }) {
+    async loadFullProfile(params: { battleTag: string }) {
       this.SET_LOADING_PROFILE(true);
       this.SET_PROFILE({} as PlayerProfile); // clear old data
       try {

@@ -12,13 +12,8 @@ export default class ProfileService {
     return data.stats;
   }
 
-  public static async retrieveProfile(battleTag: string, authCode: string | null): Promise<PlayerProfile> {
-    let url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
-
-    if (authCode) {
-      url += `?authorization=${authCode}`;
-    }
-
+  public static async retrieveProfile(battleTag: string): Promise<PlayerProfile> {
+    const url = `${API_URL}api/players/${encodeURIComponent(battleTag)}`;
     const response = await fetch(url);
 
     if (response.status === 404) {
@@ -49,27 +44,6 @@ export default class ProfileService {
     const response = await fetch(url);
 
     return await response.json();
-  }
-
-  public static async invitePlayer(
-    battleTag: string,
-    clanId: string,
-    token: string,
-  ): Promise<string> {
-    const url = `${API_URL}api/clans/${clanId}/invites?authorization=${token}`;
-
-    const post = { PlayerBattleTag: battleTag };
-    const data = JSON.stringify(post);
-    const response = await fetch(url, {
-      method: "POST",
-      body: data,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    return response.ok ? "" : (await response.json()).error;
   }
 
   public static async retrieveGameModeStats(battleTag: string, gateWay: Gateways, season: number): Promise<ModeStat[]> {
