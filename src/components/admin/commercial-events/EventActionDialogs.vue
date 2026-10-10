@@ -86,8 +86,10 @@ const eventDialogOpen = dialogModel("create", "edit");
 const moveDialogOpen = dialogModel("move");
 const suspendDialogOpen = dialogModel("suspend");
 
+// The create and move dialogs offer the allocations: reload them on open (another admin may have ended or changed one),
+// unless a load is already running.
 function ensureAllocations(): void {
-  if (allocationsStore.allocations.length === 0 && !allocationsStore.loading) void allocationsStore.load();
+  if (!allocationsStore.loading) void allocationsStore.load();
 }
 
 function open(next: Mode, event: AdminEvent | null): void {

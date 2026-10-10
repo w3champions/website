@@ -25,11 +25,16 @@ interface EventsState {
    * A create that was saved, or may have been, after its page was left. Kept across visits (endVisit leaves it) until
    * the events list shows it (`loadOrShowUnconfirmedCreate`).
    */
-  unconfirmedCreate: { request: EventCreateRequest; created: boolean } | null;
+  unconfirmedCreate: { request: EventCreateRequest; created: boolean; author: string } | null;
 }
 
 function token(): string {
   return useOauthStore().token;
+}
+
+/** Battle tag of the logged-in admin. */
+function currentAdmin(): string {
+  return useOauthStore().blizzardVerifiedBtag;
 }
 
 // Filters change while the admin types: only the newest list request may write the result.
@@ -131,10 +136,10 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
       // A notice from an earlier create no longer explains what this one will show.
       this.dismissFilterNotice();
       const visit = visits.current();
-      const author = token();
-      // Kept for the next events list only for the same login: another admin on this tab must not see it.
+      // Kept for the next events list of the same admin only (checked when it is shown).
+      const author = currentAdmin();
       const keepForNextVisit = (created: boolean) => {
-        if (token() === author) this.unconfirmedCreate = { request, created };
+        this.unconfirmedCreate = { request, created, author };
       };
       let outcome: "created" | "uncertain" | "refused" = "refused";
       const action = () =>
@@ -182,8 +187,9 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     /** Shows the create that settled after its page was left (see `unconfirmedCreate`), else loads the list. */
     async loadOrShowUnconfirmedCreate(): Promise<boolean> {
       const pending = this.unconfirmedCreate;
-      if (pending === null) return await this.load();
       this.unconfirmedCreate = null;
+      // Another admin logged in on this tab meanwhile: not theirs to see.
+      if (pending === null || pending.author !== currentAdmin()) return await this.load();
       return await this.showAttemptedCreate(pending.request, pending.created);
     },
 

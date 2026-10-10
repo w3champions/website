@@ -30,7 +30,7 @@ const service = vi.hoisted(() => ({
 }));
 
 vi.mock("./service", () => ({ commercialEventsService: () => service }));
-const oauth = vi.hoisted(() => ({ token: "tok" }));
+const oauth = vi.hoisted(() => ({ token: "tok", blizzardVerifiedBtag: "Admin#1" }));
 vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => oauth }));
 
 import { useCommercialEventActiveGamesStore } from "./activeGamesStore";
@@ -45,6 +45,7 @@ beforeEach(() => {
   service.getAudit.mockResolvedValue([]);
   service.getEventGames.mockResolvedValue({ games: [], nextCursor: null });
   oauth.token = "tok";
+  oauth.blizzardVerifiedBtag = "Admin#1";
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
@@ -782,17 +783,45 @@ test("an uncertain event create whose page is left during its reload is shown by
   expect(store.filterNotice).toContain("Cup");
 });
 
-test("a create that settles after a logout is not kept for the next login", async () => {
+test("a kept create is only shown to the admin who made it", async () => {
   const write = deferred<never>();
   service.createEvent.mockReturnValueOnce(write.promise);
-  oauth.token = "admin-a";
+  service.getEvents.mockResolvedValue([]);
+  oauth.blizzardVerifiedBtag = "AdminA#1";
   const store = useCommercialEventsStore();
 
   const creating = store.create({ allocationId: "a1", name: "Cup" } as never);
   store.endVisit();
-  oauth.token = "admin-b";
   write.reject(gatewayTimeout());
   await creating;
+  // Another admin logs in on this tab before the events list is opened again.
+  oauth.blizzardVerifiedBtag = "AdminB#1";
 
+  await store.loadOrShowUnconfirmedCreate();
+
+  expect(store.filters).toEqual({ status: "", phase: "", allocationId: "", q: "" });
+  expect(store.filterNotice).toBe("");
   expect(store.unconfirmedCreate).toBeNull();
+  expect(service.getEvents).toHaveBeenCalledTimes(1);
+});
+
+test("a terminate refused after its page was left still refreshes that game's event page if it is shown now", async () => {
+  const write = deferred<never>();
+  service.terminateGame.mockReturnValueOnce(write.promise);
+  service.getActiveGames.mockResolvedValue([]);
+  service.getEvent.mockResolvedValue({ id: "e1" });
+  const store = useCommercialEventActiveGamesStore();
+  store.games = [{ matchId: "m1", eventId: "e1" }] as never;
+  const detail = useCommercialEventDetailStore();
+
+  const terminating = store.terminate("m1");
+  store.endVisit();
+  detail.eventId = "e1";
+  write.reject(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "TERMINATE_FAILED" })));
+  expect(await terminating).toBe(false);
+
+  expect(store.error).toBe("");
+  await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(service.getEventGames).toHaveBeenCalledTimes(1);
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
 });

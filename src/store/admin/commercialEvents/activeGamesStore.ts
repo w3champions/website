@@ -84,9 +84,9 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
         // matchmaking marks the game terminated before it answers, so a fresh list no longer has it.
         this.games = this.games.filter((game) => game.matchId !== matchId);
         this.supersedePendingLoad();
-      } else if (!refreshed && visits.isLatest(visit)) {
+      } else if (!refreshed) {
         // Any other refusal too: TERMINATE_FAILED can come after the flo cancel, with the game already marked terminated.
-        void this.load();
+        void (visits.isLatest(visit) ? this.load() : refresh("elsewhere"));
       }
       return terminated ?? false;
     },
