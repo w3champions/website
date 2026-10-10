@@ -825,3 +825,40 @@ test("a terminate refused after its page was left still refreshes that game's ev
   expect(service.getEventGames).toHaveBeenCalledTimes(1);
   expect(service.getAudit).toHaveBeenCalledTimes(1);
 });
+
+test("a failed list reload keeps the rows already shown and reports the error", async () => {
+  const failure = new HttpError(503, "GET", "https://x", "");
+  service.getAllocations.mockRejectedValue(failure);
+  service.getEvents.mockRejectedValue(failure);
+  service.getActiveGames.mockRejectedValue(failure);
+  const allocations = useCommercialEventAllocationsStore();
+  allocations.allocations = [{ id: "a1" }] as never;
+  const events = useCommercialEventsStore();
+  events.events = [{ id: "e1" }] as never;
+  const games = useCommercialEventActiveGamesStore();
+  games.games = [{ matchId: "m1" }] as never;
+
+  expect(await allocations.load()).toBe(false);
+  expect(await events.load()).toBe(false);
+  expect(await games.load()).toBe(false);
+
+  expect(allocations.allocations).toEqual([{ id: "a1" }]);
+  expect(allocations.loadError).not.toBe("");
+  expect(events.events).toEqual([{ id: "e1" }]);
+  expect(events.loadError).not.toBe("");
+  expect(games.games).toEqual([{ matchId: "m1" }]);
+  expect(games.loadError).not.toBe("");
+});
+
+test("a failed reload of an expanded allocation keeps its periods and events and reports the error", async () => {
+  service.getAllocationPeriods.mockRejectedValue(new HttpError(503, "GET", "https://x", ""));
+  service.getEvents.mockResolvedValue([]);
+  const store = useCommercialEventAllocationsStore();
+  store.details.a1 = { periods: [{ index: 0 }], events: [{ id: "e1" }], loading: false, error: "" } as never;
+
+  expect(await store.loadDetails("a1")).toBe(false);
+
+  expect(store.details.a1?.periods).toEqual([{ index: 0 }]);
+  expect(store.details.a1?.events).toEqual([{ id: "e1" }]);
+  expect(store.details.a1?.error).not.toBe("");
+});

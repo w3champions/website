@@ -58,11 +58,8 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
           this.taggedPlayers = taggedPlayers;
           applied = true;
         },
-        // The service throws on a non-OK status; show it rather than an empty table.
-        fail: (e) => {
-          this.loadError = describeError(e);
-          this.taggedPlayers = [];
-        },
+        // The service throws on a non-OK status: show it, and keep the rows already shown (they may be out of date).
+        fail: (e) => (this.loadError = describeError(e)),
       });
       if (applied) await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag), { full: true });
       return listed;

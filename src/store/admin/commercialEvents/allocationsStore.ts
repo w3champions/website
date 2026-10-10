@@ -68,10 +68,8 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
             delete this.details[id];
           }
         },
-        fail: (e) => {
-          this.loadError = describeCommercialEventsError(e);
-          this.allocations = [];
-        },
+        // A failed load keeps the rows already shown; the error says they may be out of date.
+        fail: (e) => (this.loadError = describeCommercialEventsError(e)),
       });
     },
 
@@ -195,7 +193,8 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
             commercialEventsService().getEvents(token(), { ...emptyEventFilters(), allocationId }),
           ]),
         apply: ([periods, events]) => (this.details[allocationId] = { ...row(), periods, events }),
-        fail: (e) => (this.details[allocationId] = { ...row(), periods: [], events: [], error: describeCommercialEventsError(e) }),
+        // Keeps the periods and events already shown.
+        fail: (e) => (this.details[allocationId] = { ...row(), error: describeCommercialEventsError(e) }),
       });
     },
   },

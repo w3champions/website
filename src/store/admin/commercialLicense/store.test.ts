@@ -161,3 +161,14 @@ test("a failing lookup of a tag no longer listed does not report on the new list
 
   expect(store.roleHintsError).toBe("");
 });
+
+test("a failed reload keeps the tagged accounts already shown and reports the error", async () => {
+  license.getTaggedPlayers.mockRejectedValue(new Error("down"));
+  const store = useCommercialLicenseStore();
+  store.taggedPlayers = [{ battleTag: "Foo#1" }] as never;
+
+  expect(await store.load()).toBe(false);
+
+  expect(store.taggedPlayers).toEqual([{ battleTag: "Foo#1" }]);
+  expect(store.loadError).not.toBe("");
+});

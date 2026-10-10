@@ -66,10 +66,8 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
         setLoading: (loading) => (this.loading = loading),
         fetch: () => commercialEventsService().getEvents(token(), filters),
         apply: (events) => (this.events = events),
-        fail: (e) => {
-          this.loadError = describeCommercialEventsError(e);
-          this.events = [];
-        },
+        // A failed load keeps the rows already shown; the error says they may be out of date.
+        fail: (e) => (this.loadError = describeCommercialEventsError(e)),
       });
     },
 
