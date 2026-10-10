@@ -251,3 +251,20 @@ test("a person write for an event no longer shown leaves the shown event alone",
   expect(store.event).toEqual({ id: "e2", hosts: [] });
   expect(service.getEvent).not.toHaveBeenCalled();
 });
+
+test("showing another event keeps a pending people write marked until it settles", async () => {
+  const write = deferred<unknown>();
+  service.addEventPerson.mockReturnValueOnce(write.promise);
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+  store.event = { id: "e1", hosts: [] } as never;
+
+  const adding = store.addPerson("Tag#1", "host");
+  store.clear();
+  store.eventId = "e2";
+
+  expect(store.saving).toBe(true);
+  write.resolve({ hosts: [{ battleTag: "Tag#1" }] });
+  await adding;
+  expect(store.saving).toBe(false);
+});

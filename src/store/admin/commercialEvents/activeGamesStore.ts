@@ -4,7 +4,7 @@ import { describeCommercialEventsError } from "./errors";
 import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import type { ActiveEventGame } from "./types";
-import { runAdminWrite } from "./write";
+import { resetKeepingWrite, runAdminWrite } from "./write";
 
 interface ActiveGamesState {
   games: ActiveEventGame[];
@@ -49,10 +49,10 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
       }
     },
 
-    /** Drops the list and every pending list response. */
+    /** Drops the list and every pending list response; a write in flight stays marked. */
     clear(): void {
       loads.invalidate();
-      this.$reset();
+      resetKeepingWrite(this);
     },
 
     async terminate(matchId: string): Promise<boolean> {

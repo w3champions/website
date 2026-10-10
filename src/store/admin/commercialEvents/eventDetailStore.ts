@@ -4,7 +4,7 @@ import { describeCommercialEventsError } from "./errors";
 import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import type { AdminEventDetail, AuditEntry, EventGame, EventPeople, ManagedRole } from "./types";
-import { runAdminWrite } from "./write";
+import { resetKeepingWrite, runAdminWrite } from "./write";
 
 interface EventDetailState {
   /** The event shown; write and match page responses for another id are dropped. */
@@ -77,10 +77,10 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
       await Promise.all([this.loadEvent(), this.loadGames(true), this.loadAudit()]);
     },
 
-    /** Drops the shown event and every pending load. */
+    /** Drops the shown event and every pending load; a write in flight stays marked. */
     clear(): void {
       invalidateLoads();
-      this.$reset();
+      resetKeepingWrite(this);
     },
 
     /** Resolves to whether the request succeeded. */

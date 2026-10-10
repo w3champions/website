@@ -43,3 +43,14 @@ export async function runAdminWrite<T>(target: WriteTarget, context: ErrorContex
     target.saving = false;
   }
 }
+
+/**
+ * `$reset()` for a store that runs writes, keeping `saving`: a write still in flight
+ * keeps targeting the store and clears `saving` when it settles, and resetting it
+ * earlier would let a second write overlap the first.
+ */
+export function resetKeepingWrite(store: WriteTarget & { $reset(): void }): void {
+  const saving = store.saving;
+  store.$reset();
+  store.saving = saving;
+}

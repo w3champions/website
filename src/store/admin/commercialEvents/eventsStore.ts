@@ -6,7 +6,7 @@ import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, AdminEventDetail, EventCreateRequest, EventFilters, EventUpdateRequest, SuspendRequest } from "./types";
-import { runAdminWrite } from "./write";
+import { resetKeepingWrite, runAdminWrite } from "./write";
 
 interface EventsState {
   events: AdminEvent[];
@@ -58,10 +58,10 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
       }
     },
 
-    /** Drops the list and every pending list response. */
+    /** Drops the list and every pending list response; a write in flight stays marked. */
     clear(): void {
       loads.invalidate();
-      this.$reset();
+      resetKeepingWrite(this);
     },
 
     /** After a write whose outcome is unknown: reloads the list and, when it shows that event, the detail page's event. Resolves to whether both loaded. */

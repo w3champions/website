@@ -5,7 +5,7 @@ import { keyedRequestSequence, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, Allocation, AllocationCreateRequest, AllocationUpdateRequest, PeriodUsage } from "./types";
-import { runAdminWrite } from "./write";
+import { resetKeepingWrite, runAdminWrite } from "./write";
 
 /** Expanded-row data of one allocation. */
 export interface AllocationRowDetails {
@@ -71,11 +71,11 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
       }
     },
 
-    /** Drops the list, every row's details and every pending load. */
+    /** Drops the list, every row's details and every pending load; a write in flight stays marked. */
     clear(): void {
       loads.invalidate();
       detailLoads.clear();
-      this.$reset();
+      resetKeepingWrite(this);
     },
 
     /** Reloads the list and the expanded rows' details, after a write whose outcome is unknown; resolves to whether the list loaded. */
