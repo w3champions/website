@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
-import { describeCommercialEventsError } from "./errors";
+import { allocationCreatedText, describeCommercialEventsError, MAYBE_SAVED_TEXT } from "./errors";
 import { keyedRequestSequence, loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
@@ -59,7 +59,15 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
         what: "allocations",
         setLoading: (loading) => (this.loading = loading),
         fetch: () => commercialEventsService().getAllocations(token()),
-        apply: (allocations) => (this.allocations = allocations),
+        apply: (allocations) => {
+          this.allocations = allocations;
+          // Details of allocations no longer listed (deleted elsewhere): drop them and their pending loads.
+          const listed = new Set(allocations.map((a) => a.id));
+          for (const id of Object.keys(this.details).filter((id) => !listed.has(id))) {
+            detailLoads.invalidate(id);
+            delete this.details[id];
+          }
+        },
         fail: (e) => {
           this.loadError = describeCommercialEventsError(e);
           this.allocations = [];
@@ -97,10 +105,16 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async create(request: AllocationCreateRequest): Promise<Allocation | null> {
+      const known = new Set(this.allocations.map((a) => a.id));
       const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.refresh(), visits);
       if (created) {
         this.allocations = [created, ...this.allocations];
         this.supersedePendingLoad();
+      } else if (this.error === MAYBE_SAVED_TEXT) {
+        // The table may be sorted or paged so that the new row is out of sight: say so when the reload has it. A missing
+        // row proves nothing (the create may still be running), so then the general text stays.
+        const name = request.name.trim();
+        if (this.allocations.some((a) => a.name === name && !known.has(a.id))) this.error = allocationCreatedText(name);
       }
       return created;
     },

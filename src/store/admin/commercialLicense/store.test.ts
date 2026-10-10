@@ -131,3 +131,33 @@ test("a superseded list load waits for the newest load's role hints", async () =
   await Promise.all([first, second]);
   expect(store.roleHints["New#1"]).toEqual(hints("New#1", ["EV-1"]));
 });
+
+test("a full hint lookup supersedes pending lookups of tags it no longer lists", async () => {
+  const removedTag = deferred<unknown[]>();
+  events.getRoleHints.mockReturnValueOnce(removedTag.promise);
+  events.getRoleHints.mockResolvedValueOnce([hints("B#2", [])]);
+  const store = useCommercialLicenseStore();
+  store.roleHints = { "A#1": hints("A#1", ["EV-1"]) } as never;
+
+  const pending = store.loadRoleHints(["A#1"]);
+  await store.loadRoleHints(["B#2"], { full: true });
+  removedTag.resolve([hints("A#1", ["EV-2"])]);
+  await pending;
+
+  expect(store.roleHints).toEqual({ "B#2": hints("B#2", []) });
+  expect(store.roleHintsError).toBe("");
+});
+
+test("a failing lookup of a tag no longer listed does not report on the new list", async () => {
+  let rejectRemoved: (reason: unknown) => void = () => undefined;
+  events.getRoleHints.mockReturnValueOnce(new Promise((_resolve, reject) => (rejectRemoved = reject)));
+  events.getRoleHints.mockResolvedValueOnce([hints("B#2", [])]);
+  const store = useCommercialLicenseStore();
+
+  const pending = store.loadRoleHints(["A#1"]);
+  await store.loadRoleHints(["B#2"], { full: true });
+  rejectRemoved(new Error("down"));
+  await pending;
+
+  expect(store.roleHintsError).toBe("");
+});

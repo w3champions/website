@@ -57,9 +57,6 @@ const CODE_TEXT: Record<string, string> = {
   INTERNAL: "Something went wrong in the matchmaking service. Please try again.",
 };
 
-/** Statuses after which a write may nevertheless have been saved (the response, not the write, failed or timed out). */
-const MAYBE_SAVED_STATUSES = [500, 502, 503, 504];
-
 /** Shown after a write whose outcome is unknown, once the list has been reloaded. */
 export const MAYBE_SAVED_TEXT = "The change may have been saved. The list was refreshed — check it before trying again.";
 
@@ -67,13 +64,19 @@ export const MAYBE_SAVED_TEXT = "The change may have been saved. The list was re
 export const MAYBE_SAVED_RELOAD_FAILED_TEXT = "The change may have been saved, but the list couldn't be reloaded. Reload it and check before trying again.";
 
 /**
- * True when a failed write may nevertheless have been applied: a 5xx, or any
- * failure without an HTTP status (fetch rejects with a TypeError when the
- * connection drops, which can happen after the server processed the request).
- * Only a 4xx proves the write was refused.
+ * True when a failed write may nevertheless have been applied: any 5xx (the
+ * response, not necessarily the write, failed: matchmaking errors, gateway and
+ * proxy timeouts such as 504 or 524), or any failure without an HTTP status
+ * (fetch rejects with a TypeError when the connection drops, which can happen
+ * after the server processed the request). Only a 4xx proves the write was refused.
  */
 export function mayHaveBeenSaved(e: unknown): boolean {
-  return !(e instanceof HttpError) || MAYBE_SAVED_STATUSES.includes(e.status);
+  return !(e instanceof HttpError) || e.status >= 500;
+}
+
+/** After an uncertain allocation create whose reload lists a new allocation of that name. */
+export function allocationCreatedText(name: string): string {
+  return `The allocation was created: "${name}" is listed now. Edit it instead of creating it again.`;
 }
 
 interface ErrorBody {

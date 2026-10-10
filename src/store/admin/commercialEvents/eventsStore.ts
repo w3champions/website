@@ -16,6 +16,8 @@ interface EventsState {
   /** Last failed event write; shown by the event dialogs. */
   error: string;
   loadError: string;
+  /** Why the filters changed without the admin (after an uncertain create); shown above the list. */
+  filterNotice: string;
 }
 
 function token(): string {
@@ -36,6 +38,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     saving: false,
     error: "",
     loadError: "",
+    filterNotice: "",
   }),
 
   actions: {
@@ -66,6 +69,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     endVisit(): void {
       visits.invalidate();
       this.error = "";
+      this.filterNotice = "";
     },
 
     /**
@@ -89,10 +93,21 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     },
 
     async create(request: EventCreateRequest): Promise<AdminEventDetail | null> {
-      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), () => this.load(), visits);
+      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), () => this.showAttemptedCreate(request), visits);
       // Reload: the filters decide whether and where the new event is listed.
       if (created) void this.load();
       return created;
+    },
+
+    /**
+     * After an uncertain create: the current filters may hide the new event (a status filter, a search), so they are
+     * replaced by its allocation and its name, a search that lists the event if it was created, and the page says so.
+     */
+    async showAttemptedCreate(request: EventCreateRequest): Promise<boolean> {
+      const name = request.name.trim();
+      this.filters = { ...emptyEventFilters(), allocationId: request.allocationId, q: name };
+      this.filterNotice = `The filters now show the events named "${name}" in the chosen allocation, so you can check whether the new event was created.`;
+      return await this.load();
     },
 
     async update(eventId: string, request: EventUpdateRequest): Promise<AdminEventDetail | null> {

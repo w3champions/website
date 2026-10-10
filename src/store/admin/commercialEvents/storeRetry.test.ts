@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { HttpError } from "@/services/http/AuthorizedClient";
-import { MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT } from "./errors";
+import { allocationCreatedText, MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT } from "./errors";
 
 const service = vi.hoisted(() => ({
   getEvents: vi.fn(),
@@ -49,7 +49,7 @@ test("a 504 on event create reloads the list and tells the admin to check it", a
   service.getEvents.mockResolvedValue([{ id: "e1" }]);
   const store = useCommercialEventsStore();
 
-  const result = await store.create({} as never);
+  const result = await store.create({ allocationId: "a1", name: "Cup" } as never);
 
   expect(result).toBeNull();
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
@@ -61,7 +61,7 @@ test("a 409 on event create does not reload", async () => {
   service.createEvent.mockRejectedValue(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "EVENT_CLOSED" })));
   const store = useCommercialEventsStore();
 
-  await store.create({} as never);
+  await store.create({ allocationId: "a1", name: "Cup" } as never);
 
   expect(service.getEvents).not.toHaveBeenCalled();
   expect(store.error).toBe("This event is closed. Closed events can't be changed.");
@@ -75,7 +75,7 @@ test("a 500 on allocation create reloads the list; a stale older load cannot ove
   const store = useCommercialEventAllocationsStore();
 
   const oldLoad = store.load();
-  await store.create({} as never);
+  await store.create({ name: "Spring" } as never);
   await vi.waitFor(() => expect(store.allocations).toEqual([{ id: "a-saved" }]));
   resolveOld([]);
   await oldLoad;
@@ -141,7 +141,7 @@ test("a superseded list reload keeps saving until the newest load has answered",
   service.getAllocations.mockReturnValueOnce(older.promise).mockReturnValueOnce(newer.promise);
   const store = useCommercialEventAllocationsStore();
 
-  const creating = store.create({} as never);
+  const creating = store.create({ name: "Spring" } as never);
   await vi.waitFor(() => expect(service.getAllocations).toHaveBeenCalledTimes(1));
   // The admin reloads meanwhile: a newer list load supersedes the write's reload.
   void store.load();
@@ -273,7 +273,7 @@ test("a failed reload after an uncertain allocation write says the list couldn't
   service.getAllocations.mockRejectedValue(new TypeError("Failed to fetch"));
   const store = useCommercialEventAllocationsStore();
 
-  expect(await store.create({} as never)).toBeNull();
+  expect(await store.create({ name: "Spring" } as never)).toBeNull();
 
   expect(store.error).toBe(MAYBE_SAVED_RELOAD_FAILED_TEXT);
   expect(store.saving).toBe(false);
@@ -450,4 +450,60 @@ test("a failed terminate that settles after the page was left does not reload th
 
   expect(service.getActiveGames).not.toHaveBeenCalled();
   expect(store.error).toBe("");
+});
+
+test("an uncertain event create replaces the filters with a search sure to list the event, and says so", async () => {
+  service.createEvent.mockRejectedValue(new HttpError(524, "POST", "https://x", ""));
+  service.getEvents.mockResolvedValue([{ id: "EV-NEW1", name: "Spring Cup" }]);
+  const store = useCommercialEventsStore();
+  store.filters = { status: "suspended", phase: "", allocationId: "a-other", q: "zzz" };
+
+  await store.create({ allocationId: "a1", name: " Spring Cup " } as never);
+
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
+  expect(store.filters).toEqual({ status: "", phase: "", allocationId: "a1", q: "Spring Cup" });
+  expect(service.getEvents).toHaveBeenCalledWith("tok", { status: "", phase: "", allocationId: "a1", q: "Spring Cup" });
+  expect(store.events).toEqual([{ id: "EV-NEW1", name: "Spring Cup" }]);
+  expect(store.filterNotice).toContain('"Spring Cup"');
+
+  store.endVisit();
+  expect(store.filterNotice).toBe("");
+});
+
+test("an uncertain allocation create says it was created when the reload lists a new allocation of that name", async () => {
+  service.createAllocation.mockRejectedValue(gatewayTimeout());
+  service.getAllocations.mockResolvedValue([{ id: "a-new", name: "Spring" }, { id: "a-old", name: "Other" }]);
+  const store = useCommercialEventAllocationsStore();
+  store.allocations = [{ id: "a-old", name: "Other" }] as never;
+
+  await store.create({ name: "Spring " } as never);
+
+  expect(store.error).toBe(allocationCreatedText("Spring"));
+});
+
+test("an uncertain allocation create keeps the general text when only an older allocation has that name", async () => {
+  service.createAllocation.mockRejectedValue(gatewayTimeout());
+  service.getAllocations.mockResolvedValue([{ id: "a-old", name: "Spring" }]);
+  const store = useCommercialEventAllocationsStore();
+  store.allocations = [{ id: "a-old", name: "Spring" }] as never;
+
+  await store.create({ name: "Spring" } as never);
+
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
+});
+
+test("a list reload without an allocation drops its details and their pending load", async () => {
+  const details = deferred<unknown[]>();
+  service.getAllocationPeriods.mockReturnValueOnce(details.promise);
+  service.getEvents.mockResolvedValue([]);
+  service.getAllocations.mockResolvedValue([{ id: "a2" }]);
+  const store = useCommercialEventAllocationsStore();
+  store.allocations = [{ id: "a1" }, { id: "a2" }] as never;
+
+  const loadingDetails = store.loadDetails("a1");
+  await store.load();
+  details.resolve([{ periodId: "p1" }]);
+  await loadingDetails;
+
+  expect(store.details).toEqual({});
 });

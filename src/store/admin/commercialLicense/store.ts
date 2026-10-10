@@ -87,8 +87,14 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
      * Only the `full` lookup of every listed tag clears that error.
      */
     async loadRoleHints(battleTags: string[], { full = false }: { full?: boolean } = {}): Promise<void> {
+      if (full) {
+        // The listed tags can change: every earlier lookup, also of tags no longer listed, is superseded.
+        hintLoads.clear();
+        this.roleHintsError = "";
+        const listed = new Set(battleTags);
+        this.roleHints = Object.fromEntries(Object.entries(this.roleHints).filter(([battleTag]) => listed.has(battleTag)));
+      }
       if (battleTags.length === 0) return;
-      if (full) this.roleHintsError = "";
       const requests = new Map(battleTags.map((battleTag) => [battleTag, hintLoads.next(battleTag)]));
       // A newer lookup of a tag supersedes this one for that tag, so an older answer cannot bring back a changed role.
       const latestTags = () => battleTags.filter((battleTag) => hintLoads.isLatest(battleTag, requests.get(battleTag) ?? -1));
