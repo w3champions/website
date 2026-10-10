@@ -640,3 +640,18 @@ test("filters the admin changed after an uncertain create are kept on leaving", 
 
   expect(store.filters).toEqual({ status: "open", phase: "", allocationId: "a1", q: "Cup" });
 });
+
+test("a refused terminate reloads the list once: the game may be gone or already marked terminated", async () => {
+  for (const code of ["TERMINATE_FAILED", "UNKNOWN_GAME"]) {
+    vi.clearAllMocks();
+    service.terminateGame.mockRejectedValue(new HttpError(409, "POST", "https://x", JSON.stringify({ code })));
+    service.getActiveGames.mockResolvedValue([{ matchId: "m2" }]);
+    const store = useCommercialEventActiveGamesStore();
+
+    expect(await store.terminate("m1")).toBe(false);
+
+    await vi.waitFor(() => expect(store.games).toEqual([{ matchId: "m2" }]));
+    expect(service.getActiveGames).toHaveBeenCalledTimes(1);
+    expect(store.error).not.toBe("");
+  }
+});

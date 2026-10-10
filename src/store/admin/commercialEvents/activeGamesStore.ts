@@ -66,12 +66,20 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
     },
 
     async terminate(matchId: string): Promise<boolean> {
+      const visit = visits.current();
+      let refreshed = false;
       // UNKNOWN_GAME (it ended meanwhile) is a state conflict: runAdminWrite reloads the list, as after an uncertain answer.
-      const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), () => this.load(), visits);
+      const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), () => {
+        refreshed = true;
+        return this.load();
+      }, visits);
       if (terminated) {
         // matchmaking marks the game terminated before it answers, so a fresh list no longer has it.
         this.games = this.games.filter((game) => game.matchId !== matchId);
         this.supersedePendingLoad();
+      } else if (!refreshed && visits.isLatest(visit)) {
+        // Any other refusal too: TERMINATE_FAILED can come after the flo cancel, with the game already marked terminated.
+        void this.load();
       }
       return terminated ?? false;
     },
