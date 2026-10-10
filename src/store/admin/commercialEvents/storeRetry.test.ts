@@ -38,7 +38,9 @@ import { useCommercialEventsStore } from "./eventsStore";
 
 beforeEach(() => {
   setActivePinia(createPinia());
-  vi.clearAllMocks();
+  // Reset, not clear: an implementation set by one test must not leak into the next.
+  vi.resetAllMocks();
+  service.getAudit.mockResolvedValue([]);
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
@@ -90,11 +92,9 @@ test.each([
   ["close", (s: ReturnType<typeof useCommercialEventsStore>) => s.close("e1"), service.closeEvent],
   ["suspend", (s: ReturnType<typeof useCommercialEventsStore>) => s.suspend("e1", {} as never), service.suspendEvent],
   ["unsuspend", (s: ReturnType<typeof useCommercialEventsStore>) => s.unsuspend("e1"), service.unsuspendEvent],
-])("a 504 on event %s reloads the list and the shown event with its audit log", async (_name, run, write) => {
+])("a 504 on event %s on its detail page reloads the event and its audit log", async (_name, run, write) => {
   write.mockRejectedValue(gatewayTimeout());
-  service.getEvents.mockResolvedValue([]);
   service.getEvent.mockResolvedValue({ id: "e1" });
-  service.getAudit.mockResolvedValue([]);
   const detail = useCommercialEventDetailStore();
   detail.eventId = "e1";
   const store = useCommercialEventsStore();
@@ -102,9 +102,59 @@ test.each([
   await run(store);
 
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
-  await vi.waitFor(() => expect(service.getEvents).toHaveBeenCalledTimes(1));
-  await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(service.getEvent).toHaveBeenCalledTimes(1);
   expect(service.getAudit).toHaveBeenCalledTimes(1);
+  // The list is not on screen; its page reloads it when it opens.
+  expect(service.getEvents).not.toHaveBeenCalled();
+});
+
+test("a 504 on an event write on the list page reloads the list", async () => {
+  service.closeEvent.mockRejectedValue(gatewayTimeout());
+  service.getEvents.mockResolvedValue([{ id: "e1" }]);
+  const store = useCommercialEventsStore();
+
+  await store.close("e1");
+
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
+  expect(store.events).toEqual([{ id: "e1" }]);
+  expect(service.getEvent).not.toHaveBeenCalled();
+});
+
+test("a write that settles after its page was left reports nothing there", async () => {
+  const write = deferred<unknown>();
+  service.closeEvent.mockReturnValueOnce(write.promise);
+  const store = useCommercialEventsStore();
+
+  const closing = store.close("e1");
+  store.endVisit();
+  write.reject(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "EVENT_CLOSED" })));
+  await closing;
+
+  expect(store.error).toBe("");
+  expect(store.saving).toBe(false);
+});
+
+test("a superseded list reload keeps saving until the newest load has answered", async () => {
+  const older = deferred<unknown[]>();
+  const newer = deferred<unknown[]>();
+  service.createAllocation.mockRejectedValue(gatewayTimeout());
+  service.getAllocations.mockReturnValueOnce(older.promise).mockReturnValueOnce(newer.promise);
+  const store = useCommercialEventAllocationsStore();
+
+  const creating = store.create({} as never);
+  await vi.waitFor(() => expect(service.getAllocations).toHaveBeenCalledTimes(1));
+  // The admin reloads meanwhile: a newer list load supersedes the write's reload.
+  void store.load();
+  older.resolve([{ id: "a-old" }]);
+  await vi.waitFor(() => expect(service.getAllocations).toHaveBeenCalledTimes(2));
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  expect(store.saving).toBe(true);
+
+  newer.resolve([{ id: "a-new" }]);
+  await creating;
+  expect(store.saving).toBe(false);
+  expect(store.allocations).toEqual([{ id: "a-new" }]);
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
 });
 
 test.each([
@@ -296,31 +346,42 @@ test("a terminate during a list load replaces that load with a fresh one", async
 });
 
 test("an uncertain terminate keeps saving until the list is reloaded, once", async () => {
+  const reload = deferred<unknown[]>();
   service.terminateGame.mockRejectedValue(gatewayTimeout());
-  service.getActiveGames.mockResolvedValue([{ matchId: "m2" }]);
+  service.getActiveGames.mockReturnValueOnce(reload.promise);
   const store = useCommercialEventActiveGamesStore();
 
-  expect(await store.terminate("m1")).toBe(false);
+  const terminating = store.terminate("m1");
+  await vi.waitFor(() => expect(service.getActiveGames).toHaveBeenCalledTimes(1));
+  expect(store.saving).toBe(true);
+  reload.resolve([{ matchId: "m2" }]);
+  expect(await terminating).toBe(false);
 
+  expect(store.saving).toBe(false);
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
   expect(store.games).toEqual([{ matchId: "m2" }]);
   expect(service.getActiveGames).toHaveBeenCalledTimes(1);
 });
 
 test("a match-page lookup that answers after the same event was reopened is dropped", async () => {
-  const lookup = deferred<string | null>();
-  service.resolveMatchPageId.mockReturnValueOnce(lookup.promise);
+  const old = deferred<string | null>();
+  const current = deferred<string | null>();
+  service.resolveMatchPageId.mockReturnValueOnce(old.promise).mockReturnValueOnce(current.promise);
   const store = useCommercialEventDetailStore();
   store.eventId = "e1";
 
-  const resolving = store.resolveMatchPage("m1");
+  const stale = store.resolveMatchPage("m1");
   store.clear();
   store.eventId = "e1";
-  lookup.resolve("website-id");
+  const fresh = store.resolveMatchPage("m2");
+  old.resolve(null);
 
-  expect(await resolving).toBeNull();
-  expect(store.resolvingMatchId).toBe("");
+  expect(await stale).toBeNull();
+  // Neither the old "no match page" error nor the end of the old lookup reaches the new visit.
   expect(store.matchLinkError).toBe("");
+  expect(store.resolvingMatchId).toBe("m2");
+  current.resolve("website-id");
+  expect(await fresh).toBe("website-id");
 });
 
 test("a people write that settles after the same event was reopened leaves the new visit alone", async () => {
@@ -347,8 +408,21 @@ test("taking an event write reloads the audit log", () => {
   const store = useCommercialEventDetailStore();
   store.eventId = "e1";
 
-  store.applyEvent({ id: "e1" } as never);
+  store.applyEvent({ id: "e1" } as never, store.visitToken());
 
   expect(store.event).toEqual({ id: "e1" });
   expect(service.getAudit).toHaveBeenCalledTimes(1);
+});
+
+test("an event write begun in an earlier visit of the same event is not taken", () => {
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+  const visit = store.visitToken();
+  store.clear();
+  store.eventId = "e1";
+
+  store.applyEvent({ id: "e1", name: "old answer" } as never, visit);
+
+  expect(store.event).toBeNull();
+  expect(service.getAudit).not.toHaveBeenCalled();
 });

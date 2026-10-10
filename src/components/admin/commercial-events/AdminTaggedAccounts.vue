@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { mdiAccountSearch, mdiCheck, mdiClose, mdiDelete, mdiPencil } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import CommercialLicenseTagDialog from "@/components/admin/commercial-license/CommercialLicenseTagDialog.vue";
@@ -217,4 +217,6 @@ watch(dialog, (open) => {
   if (!open) store.error = "";
 });
 onMounted(init);
+// Writes still in flight no longer report into this page once it is left.
+onBeforeUnmount(() => store.endVisit());
 </script>

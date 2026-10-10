@@ -34,6 +34,8 @@ function token(): string {
 const loads = requestSequence();
 // Per allocation id: only the newest details request may write, and none after a delete.
 const detailLoads = keyedRequestSequence();
+// One number per page visit: a write that settles after its page was left drops its error and reload.
+const visits = requestSequence();
 
 export const useCommercialEventAllocationsStore = defineStore("commercialEventAllocations", {
   state: (): AllocationsState => ({
@@ -69,7 +71,13 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     clear(): void {
       loads.invalidate();
       detailLoads.clear();
+      visits.invalidate();
       resetKeepingWrite(this);
+    },
+
+    /** The page was left: writes still in flight no longer report into it. */
+    endVisit(): void {
+      visits.invalidate();
     },
 
     /** Reloads the list and the expanded rows' details, after a write whose outcome is unknown; resolves to whether the list loaded. */
@@ -88,7 +96,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async create(request: AllocationCreateRequest): Promise<Allocation | null> {
-      const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.refresh());
+      const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.refresh(), visits);
       if (created) {
         this.allocations = [created, ...this.allocations];
         this.supersedePendingLoad();
@@ -97,7 +105,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async update(allocationId: string, request: AllocationUpdateRequest): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request), () => this.refresh());
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request), () => this.refresh(), visits);
       if (updated) {
         this.replace(updated);
         this.supersedePendingLoad();
@@ -108,7 +116,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async addMember(allocationId: string, battleTag: string): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().addAllocationMember(token(), allocationId, battleTag), () => this.refresh());
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().addAllocationMember(token(), allocationId, battleTag), () => this.refresh(), visits);
       if (updated) {
         this.replace(updated);
         this.supersedePendingLoad();
@@ -117,7 +125,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async removeMember(allocationId: string, battleTag: string): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().removeAllocationMember(token(), allocationId, battleTag), () => this.refresh());
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().removeAllocationMember(token(), allocationId, battleTag), () => this.refresh(), visits);
       if (updated) {
         this.replace(updated);
         this.supersedePendingLoad();
@@ -127,7 +135,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
 
     /** End now: endsAt = now on the server. */
     async end(allocationId: string): Promise<Allocation | null> {
-      const ended = await runAdminWrite(this, "allocation", () => commercialEventsService().endAllocation(token(), allocationId), () => this.refresh());
+      const ended = await runAdminWrite(this, "allocation", () => commercialEventsService().endAllocation(token(), allocationId), () => this.refresh(), visits);
       if (ended) {
         this.replace(ended);
         this.supersedePendingLoad();
@@ -137,10 +145,16 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async remove(allocationId: string): Promise<boolean> {
-      const removed = await runAdminWrite(this, "allocation", async () => {
-        await commercialEventsService().deleteAllocation(token(), allocationId);
-        return true;
-      }, () => this.load());
+      const removed = await runAdminWrite(
+        this,
+        "allocation",
+        async () => {
+          await commercialEventsService().deleteAllocation(token(), allocationId);
+          return true;
+        },
+        () => this.load(),
+        visits,
+      );
       if (removed) {
         this.allocations = this.allocations.filter((a) => a.id !== allocationId);
         // An older list response would bring the deleted row back.

@@ -91,7 +91,7 @@
             size="small"
             title="End now"
             :aria-label="`End ${item.name} now`"
-            :disabled="store.saving || item.state !== 'active'"
+            :disabled="store.saving || store.loading || item.state !== 'active'"
             @click="endNow(item)"
           >
             <v-icon size="small">{{ mdiStop }}</v-icon>
@@ -102,7 +102,7 @@
             size="small"
             :title="hasRecordedUsage(item) ? 'Used allocations can only be ended' : 'Delete'"
             :aria-label="`Delete ${item.name}`"
-            :disabled="store.saving || hasRecordedUsage(item)"
+            :disabled="store.saving || store.loading || hasRecordedUsage(item)"
             @click="removeItem(item)"
           >
             <v-icon size="small">{{ mdiDelete }}</v-icon>
@@ -133,7 +133,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { mdiCheck, mdiClose, mdiDelete, mdiPencil, mdiRefresh, mdiStop } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import AllocationDetails from "@/components/admin/commercial-events/AllocationDetails.vue";
@@ -235,4 +235,6 @@ watch(dialog, (open) => {
   if (!open) store.error = "";
 });
 onMounted(init);
+// Writes still in flight no longer report into this page once it is left.
+onBeforeUnmount(() => store.endVisit());
 </script>

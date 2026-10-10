@@ -19,6 +19,8 @@ function token(): string {
 }
 
 const loads = requestSequence();
+// One number per page visit: a write that settles after its page was left drops its error and reload.
+const visits = requestSequence();
 
 /** Running event games of every event (Terminate). */
 export const useCommercialEventActiveGamesStore = defineStore("commercialEventActiveGames", {
@@ -53,7 +55,13 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
     /** Drops the list and every pending list response; a write in flight stays marked. */
     clear(): void {
       loads.invalidate();
+      visits.invalidate();
       resetKeepingWrite(this);
+    },
+
+    /** The page was left: writes still in flight no longer report into it. */
+    endVisit(): void {
+      visits.invalidate();
     },
 
     async terminate(matchId: string): Promise<boolean> {
@@ -61,7 +69,7 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
       const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), () => {
         refreshed = true;
         return this.load();
-      });
+      }, visits);
       if (terminated) {
         // matchmaking marks the game terminated before it answers, so a fresh list no longer has it.
         this.games = this.games.filter((game) => game.matchId !== matchId);

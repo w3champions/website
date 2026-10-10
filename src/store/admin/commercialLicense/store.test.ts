@@ -98,12 +98,17 @@ test("clearing drops a pending load and keeps a write in flight marked", async (
 });
 
 test("an uncertain tag write reloads the list before saving clears", async () => {
+  const reload = deferred<unknown[]>();
   license.upsertTaggedPlayer.mockRejectedValue(new TypeError("Failed to fetch"));
-  license.getTaggedPlayers.mockResolvedValue([{ battleTag: "Foo#1" }]);
+  license.getTaggedPlayers.mockReturnValueOnce(reload.promise);
   events.getRoleHints.mockResolvedValue([hints("Foo#1", [])]);
   const store = useCommercialLicenseStore();
 
-  expect(await store.upsert("Foo#1", {} as never)).toBe(false);
+  const saving = store.upsert("Foo#1", {} as never);
+  await vi.waitFor(() => expect(license.getTaggedPlayers).toHaveBeenCalledTimes(1));
+  expect(store.saving).toBe(true);
+  reload.resolve([{ battleTag: "Foo#1" }]);
+  expect(await saving).toBe(false);
 
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
   expect(store.taggedPlayers).toEqual([{ battleTag: "Foo#1" }]);

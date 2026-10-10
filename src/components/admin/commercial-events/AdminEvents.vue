@@ -132,7 +132,7 @@
               size="small"
               title="Edit"
               :aria-label="`Edit ${item.name}`"
-              :disabled="store.saving"
+              :disabled="store.saving || store.loading"
               @click="actionDialogs?.openEdit(item)"
             >
               <v-icon size="small">{{ mdiPencil }}</v-icon>
@@ -144,7 +144,7 @@
               size="small"
               title="Move to another allocation"
               :aria-label="`Move ${item.name}`"
-              :disabled="store.saving"
+              :disabled="store.saving || store.loading"
               @click="actionDialogs?.openMove(item)"
             >
               <v-icon size="small">{{ mdiSwapHorizontal }}</v-icon>
@@ -156,7 +156,7 @@
               size="small"
               title="Suspend"
               :aria-label="`Suspend ${item.name}`"
-              :disabled="store.saving"
+              :disabled="store.saving || store.loading"
               @click="actionDialogs?.openSuspend(item)"
             >
               <v-icon size="small">{{ mdiPauseCircleOutline }}</v-icon>
@@ -168,7 +168,7 @@
               size="small"
               title="Lift suspension"
               :aria-label="`Lift the suspension of ${item.name}`"
-              :disabled="store.saving"
+              :disabled="store.saving || store.loading"
               @click="actionDialogs?.lift(item)"
             >
               <v-icon size="small">{{ mdiPlayCircleOutline }}</v-icon>
@@ -180,7 +180,7 @@
               size="small"
               title="Close now"
               :aria-label="`Close ${item.name}`"
-              :disabled="store.saving"
+              :disabled="store.saving || store.loading"
               @click="actionDialogs?.close(item)"
             >
               <v-icon size="small">{{ mdiLock }}</v-icon>
@@ -271,5 +271,9 @@ async function init(): Promise<void> {
 
 watch(hasPermission, init);
 onMounted(init);
-onBeforeUnmount(() => debouncedLoad.clear());
+onBeforeUnmount(() => {
+  debouncedLoad.clear();
+  // Writes still in flight no longer report into this page once it is left.
+  store.endVisit();
+});
 </script>

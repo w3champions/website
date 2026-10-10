@@ -56,7 +56,7 @@
             size="small"
             color="error"
             :prepend-icon="mdiStopCircleOutline"
-            :disabled="store.saving"
+            :disabled="store.saving || store.loading"
             @click="terminate(item)"
           >
             Terminate
@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch } from "vue";
+import { onBeforeUnmount, onMounted, watch } from "vue";
 import { mdiRefresh, mdiStopCircleOutline } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
@@ -106,4 +106,6 @@ async function init(): Promise<void> {
 
 watch(hasPermission, init);
 onMounted(init);
+// Writes still in flight no longer report into this page once it is left.
+onBeforeUnmount(() => store.endVisit());
 </script>

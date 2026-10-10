@@ -128,18 +128,20 @@ const rows = computed(() => {
 
 type EventAction = "openEdit" | "openMove" | "openSuspend" | "lift" | "close";
 
+// The visit an action began in: its result is dropped once the page was left or reopened, even for the same event.
+let actionVisit = store.visitToken();
+
 // Template click handlers are callbacks, where `v-if="store.event"` no longer narrows.
 function act(action: EventAction): void {
   const event = store.event;
-  if (event) void actionDialogs.value?.[action](event);
+  if (!event) return;
+  actionVisit = store.visitToken();
+  void actionDialogs.value?.[action](event);
 }
-
-// Set once this visit ends: a dialog write that settles afterwards must not reach the next visit, even of the same event.
-let left = false;
 
 // The store reloads the audit log after every write it takes.
 function onChanged(event: AdminEventDetail): void {
-  if (!left) store.applyEvent(event);
+  store.applyEvent(event, actionVisit);
 }
 
 async function refresh(): Promise<void> {
@@ -147,6 +149,8 @@ async function refresh(): Promise<void> {
 }
 
 async function init(): Promise<void> {
+  // Event writes of the previous event (or visit) no longer report here.
+  eventsStore.endVisit();
   if (!hasPermission.value) {
     store.clear();
     return;
@@ -159,7 +163,7 @@ watch(() => props.eventId, init);
 onMounted(init);
 // Leaving the page drops the event, so a later write elsewhere does not reload it (eventsStore.refresh).
 onBeforeUnmount(() => {
-  left = true;
+  eventsStore.endVisit();
   store.clear();
 });
 </script>

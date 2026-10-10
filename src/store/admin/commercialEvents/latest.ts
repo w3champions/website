@@ -46,13 +46,28 @@ export interface LatestLoad<T> {
   fail(e: unknown): void;
 }
 
+// Per sequence, the outcome of its newest load: a superseded load resolves with that one's.
+const newestOutcome = new WeakMap<object, Promise<boolean>>();
+
 /**
  * Runs one latest-only load under `sequence`: sets `loading`, then lets `apply`
  * (or `fail`) write and clears `loading` only while this is still the newest
- * request. Every failure is logged. Resolves to whether the request itself
- * succeeded, superseded or not.
+ * request. Every failure is logged. Resolves to whether the data now shown came
+ * from a successful request: a load superseded by a newer one waits for that one
+ * and resolves with its outcome, so a caller never sees "done" while the newest
+ * load is still pending. A load superseded only by `invalidate()` resolves with
+ * its own outcome.
  */
-export async function loadLatest<T>(sequence: Pick<RequestSequence, "next" | "isLatest">, load: LatestLoad<T>): Promise<boolean> {
+export function loadLatest<T>(sequence: Pick<RequestSequence, "next" | "isLatest">, load: LatestLoad<T>): Promise<boolean> {
+  const outcome: Promise<boolean> = runLoad(sequence, load).then(async (succeeded) => {
+    const newest = newestOutcome.get(sequence);
+    return newest !== undefined && newest !== outcome ? await newest : succeeded;
+  });
+  newestOutcome.set(sequence, outcome);
+  return outcome;
+}
+
+async function runLoad<T>(sequence: Pick<RequestSequence, "next" | "isLatest">, load: LatestLoad<T>): Promise<boolean> {
   const request = sequence.next();
   load.setLoading(true);
   try {
@@ -82,6 +97,8 @@ export interface KeyedRequestSequence {
 export function keyedRequestSequence(): KeyedRequestSequence {
   let counter = 0;
   const latest = new Map<string, number>();
+  // One view per key, so loadLatest can follow a key's newest load.
+  const views = new Map<string, Pick<RequestSequence, "next" | "isLatest">>();
   return {
     next: (key) => {
       latest.set(key, ++counter);
@@ -95,7 +112,12 @@ export function keyedRequestSequence(): KeyedRequestSequence {
       latest.clear();
     },
     forKey(key) {
-      return { next: () => this.next(key), isLatest: (request) => this.isLatest(key, request) };
+      let view = views.get(key);
+      if (view === undefined) {
+        view = { next: () => this.next(key), isLatest: (request) => this.isLatest(key, request) };
+        views.set(key, view);
+      }
+      return view;
     },
   };
 }

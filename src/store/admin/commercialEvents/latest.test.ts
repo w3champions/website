@@ -134,3 +134,24 @@ test("loadLatest logs every failure, writes it only while newest, and an invalid
   consoleError.mockRestore();
   assert.deepEqual(log, ["x loading=true", "x fail", "x loading=false", "y loading=true"]);
 });
+
+test("a superseded loadLatest resolves with the newest load's outcome once that one answers", async () => {
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  const sequence = requestSequence();
+  const { load } = recorder();
+  const newer = deferred<string>();
+  let firstDone = false;
+
+  const first = loadLatest(sequence, load("old", () => Promise.resolve("A"))).then((ok) => {
+    firstDone = true;
+    return ok;
+  });
+  const second = loadLatest(sequence, load("new", () => newer.promise));
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(firstDone, false);
+
+  newer.reject(new Error("down"));
+  assert.equal(await second, false);
+  assert.equal(await first, false);
+});

@@ -160,9 +160,17 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
       }
     },
 
-    /** Takes the result of an event write (EventActionDialogs `changed`), which also adds an audit entry. */
-    applyEvent(event: AdminEventDetail): void {
-      if (event.id !== this.eventId) return;
+    /** A token for the current visit, to pass back to {@link applyEvent}. */
+    visitToken(): number {
+      return visits.current();
+    },
+
+    /**
+     * Takes the result of an event write (EventActionDialogs `changed`), which also adds an audit entry. `visit` is the
+     * token taken when the write began: once the page was left or reopened, even for the same event, it is dropped.
+     */
+    applyEvent(event: AdminEventDetail, visit: number): void {
+      if (!visits.isLatest(visit) || event.id !== this.eventId) return;
       this.event = event;
       this.supersedePendingLoad();
       void this.loadAudit();
@@ -173,15 +181,12 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
       if (this.loading) void this.loadEvent();
     },
 
-    /** A people write for the shown event. Once the page was left or reopened, its result and its error are dropped. */
+    /** A people write for the shown event. Once the page was left or reopened, its result, error and reload are dropped. */
     async writePeople(write: (eventId: string) => Promise<EventPeople>): Promise<boolean> {
       const eventId = this.eventId;
       const visit = visits.current();
-      const people = await runAdminWrite(this, "other", () => write(eventId), () => (visits.isLatest(visit) ? this.refreshAfterWrite() : Promise.resolve(true)));
-      if (!visits.isLatest(visit)) {
-        // clear() reset the store for the next visit; this write's error belongs to the previous one.
-        this.error = "";
-      } else if (people && this.event) {
+      const people = await runAdminWrite(this, "other", () => write(eventId), () => this.refreshAfterWrite(), visits);
+      if (people && this.event && visits.isLatest(visit)) {
         this.event = { ...this.event, ...people };
         this.supersedePendingLoad();
         void this.loadAudit();

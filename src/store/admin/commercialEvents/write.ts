@@ -1,4 +1,5 @@
 import { HttpError } from "@/services/http/AuthorizedClient";
+import type { RequestSequence } from "./latest";
 import { describeCommercialEventsError, type ErrorContext, MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT, mayHaveBeenSaved } from "./errors";
 
 /** The part of a store state that a write reports into. */
@@ -21,26 +22,35 @@ export interface WriteTarget {
  * stays set until the reload has finished, so the retry is only offered once the
  * list is current. `refresh` resolves to false when the reload failed; the admin
  * is then told to reload before trying again.
+ *
+ * With `visits`, the write belongs to the page visit current when it starts. Once
+ * that visit has ended (the store's `endVisit()` or `clear()`), its error and its
+ * reload are dropped, so they cannot show up on the next page. `saving` still
+ * waits for it.
  */
 export async function runAdminWrite<T>(
   target: WriteTarget,
   context: ErrorContext | ((e: unknown) => string),
   action: () => Promise<T>,
   refresh?: () => Promise<boolean>,
+  visits?: RequestSequence,
 ): Promise<T | null> {
+  const visit = visits?.current();
+  const stillVisiting = () => visits === undefined || visit === undefined || visits.isLatest(visit);
   target.saving = true;
   target.error = "";
   try {
     return await action();
   } catch (e) {
     console.error("Admin request failed:", e instanceof HttpError ? `${e.message}: ${e.bodyPreview}` : e);
+    if (!stillVisiting()) return null;
     if (refresh && mayHaveBeenSaved(e)) {
       // A failing reload must not fail the write handling; the stores report their own load errors.
       const reloaded = await Promise.resolve().then(refresh).catch((refreshError: unknown) => {
         console.error("Refresh after a failed write failed:", refreshError);
         return false;
       });
-      target.error = reloaded ? MAYBE_SAVED_TEXT : MAYBE_SAVED_RELOAD_FAILED_TEXT;
+      if (stillVisiting()) target.error = reloaded ? MAYBE_SAVED_TEXT : MAYBE_SAVED_RELOAD_FAILED_TEXT;
     } else {
       target.error = typeof context === "function" ? context(e) : describeCommercialEventsError(e, context);
     }

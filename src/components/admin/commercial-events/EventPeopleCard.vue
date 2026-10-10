@@ -79,20 +79,23 @@ import BattleTagPicker from "@/components/admin/commercial-events/BattleTagPicke
 import { formatUtc } from "@/store/admin/commercialEvents/dates";
 import { useCommercialEventDetailStore } from "@/store/admin/commercialEvents/eventDetailStore";
 import { eventActions, personProblem } from "@/store/admin/commercialEvents/eventDraft";
+import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";
 import { ROLE_OPTIONS } from "@/store/admin/commercialEvents/format";
 import type { AdminEventDetail, ManagedRole } from "@/store/admin/commercialEvents/types";
 
 const props = defineProps<{ event: AdminEventDetail }>();
 
 const store = useCommercialEventDetailStore();
+const eventsStore = useCommercialEventsStore();
 
 const role = ref<ManagedRole>("delegate");
 const battleTag = ref("");
 const pickerKey = ref(0);
 
 const canManage = computed(() => eventActions(props.event).managePeople);
-// While the event reloads, its status (and so whether people may change) is not known.
-const busy = computed(() => store.saving || store.loading);
+// While the event reloads, its status (and so whether people may change) is not known; while an event write runs,
+// its answer would replace the people.
+const busy = computed(() => store.saving || store.loading || eventsStore.saving);
 const problem = computed(() => personProblem(props.event, battleTag.value));
 const groups = computed(() => [
   { role: "delegate", title: "Delegates", singular: "delegate", entries: props.event.delegates },

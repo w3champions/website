@@ -21,6 +21,8 @@ function getService(): CommercialLicenseService {
 const loads = requestSequence();
 // Per battle tag: only the newest role-hint lookup may write that tag's hints.
 const hintLoads = keyedRequestSequence();
+// One number per page visit: a write that settles after its page was left drops its error and reload.
+const visits = requestSequence();
 
 export const useCommercialLicenseStore = defineStore("commercialLicense", {
   state: (): CommercialLicenseState => ({
@@ -60,7 +62,13 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
     clear(): void {
       loads.invalidate();
       hintLoads.clear();
+      visits.invalidate();
       resetKeepingWrite(this);
+    },
+
+    /** The page was left: writes still in flight no longer report into it. */
+    endVisit(): void {
+      visits.invalidate();
     },
 
     /**
@@ -89,7 +97,7 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
     },
 
     async upsert(battleTag: string, request: CommercialLicenseTagRequest): Promise<boolean> {
-      const saved = await runAdminWrite(this, describeError, () => getService().upsertTaggedPlayer(useOauthStore().token, battleTag, request), () => this.load());
+      const saved = await runAdminWrite(this, describeError, () => getService().upsertTaggedPlayer(useOauthStore().token, battleTag, request), () => this.load(), visits);
       if (!saved) return false;
       this.taggedPlayers = [...this.taggedPlayers.filter((p) => p.battleTag !== saved.battleTag), saved];
       this.supersedePendingLoad();
@@ -98,7 +106,7 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
     },
 
     async remove(battleTag: string): Promise<boolean> {
-      const removed = await runAdminWrite(this, describeError, () => getService().removeTaggedPlayer(useOauthStore().token, battleTag).then(() => true), () => this.load());
+      const removed = await runAdminWrite(this, describeError, () => getService().removeTaggedPlayer(useOauthStore().token, battleTag).then(() => true), () => this.load(), visits);
       if (!removed) return false;
       this.taggedPlayers = this.taggedPlayers.filter((p) => p.battleTag !== battleTag);
       this.supersedePendingLoad();
