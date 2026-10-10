@@ -46,6 +46,21 @@ export function isAllocationStarted(allocation: Pick<Allocation, "startsAt">, no
   return new Date(allocation.startsAt).getTime() <= now.getTime();
 }
 
+/**
+ * Start and recurrence can't change once the allocation has started, which can
+ * happen while the dialog is open: puts them back to `base` and returns true when
+ * the draft had changed them, so the admin is told instead of the change being
+ * dropped silently.
+ */
+export function revertStartedFields(draft: AllocationDraft, base: Allocation, now: Date): boolean {
+  if (!isAllocationStarted(base, now)) return false;
+  const original = draftFromAllocation(base);
+  const changed = draft.recurrence !== original.recurrence || draft.startsAt !== original.startsAt;
+  draft.recurrence = original.recurrence;
+  draft.startsAt = original.startsAt;
+  return changed;
+}
+
 /** First problem in spec §6.1 field order, or null when the draft can be saved. */
 export function validateAllocationDraft(draft: AllocationDraft): string | null {
   const name = nameProblem(draft.name, ALLOCATION_NAME_MAX_LENGTH);
@@ -68,7 +83,9 @@ export function toAllocationCreateRequest(draft: AllocationDraft): AllocationCre
 }
 
 /**
- * Only the fields the admin changed. Dates compare at minute precision (the form's),
+ * Only the fields the admin changed. `original` must be the allocation the draft was
+ * built from, not a newer copy: a field the admin left alone then keeps whatever the
+ * server holds now. Dates compare at minute precision (the form's),
  * so an endsAt with seconds (End now) is not re-sent unchanged. Start and recurrence
  * are left out once the allocation has started; the dialog locks them too.
  */

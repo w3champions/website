@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { draftFromAllocation, emptyAllocationDraft, hasRecordedUsage, isAllocationStarted, memberProblem, toAllocationCreateRequest, toAllocationUpdateRequest, validateAllocationDraft } from "./allocationDraft";
+import { draftFromAllocation, emptyAllocationDraft, hasRecordedUsage, isAllocationStarted, memberProblem, revertStartedFields, toAllocationCreateRequest, toAllocationUpdateRequest, validateAllocationDraft } from "./allocationDraft";
 import type { AllocationDraft } from "./allocationDraft";
 import type { Allocation } from "./types";
 
@@ -130,4 +130,31 @@ test("hasRecordedUsage is true only when the current period has counters", () =>
   assert.equal(hasRecordedUsage({ currentPeriod: period }), false);
   assert.equal(hasRecordedUsage({ currentPeriod: { ...period, invalid: 1 } }), true);
   assert.equal(hasRecordedUsage({ currentPeriod: { ...period, held: 1, used: 1 } }), true);
+});
+
+test("start and recurrence changed in the draft are put back once the allocation has started", () => {
+  const draft = valid({ recurrence: "monthly", startsAt: "2026-11-03T00:00", name: "Renamed" });
+
+  assert.equal(revertStartedFields(draft, allocation, afterStart), true);
+
+  assert.equal(draft.recurrence, "weekly");
+  assert.equal(draft.startsAt, "2026-11-01T00:00");
+  assert.equal(draft.name, "Renamed");
+});
+
+test("start and recurrence stay as drafted before the start, and an untouched draft reports no change", () => {
+  const draft = valid({ recurrence: "monthly" });
+  assert.equal(revertStartedFields(draft, allocation, beforeStart), false);
+  assert.equal(draft.recurrence, "monthly");
+
+  assert.equal(revertStartedFields(valid({ name: "Renamed" }), allocation, afterStart), false);
+});
+
+test("an update built against the draft's own base leaves fields changed on the server since then alone", () => {
+  const draft = valid({ name: "Renamed" });
+  const newer: Allocation = { ...allocation, gamesPerPeriod: 80, adminNote: "set elsewhere" };
+
+  assert.deepEqual(toAllocationUpdateRequest(draft, allocation, beforeStart), { name: "Renamed" });
+  // Against the newer copy the untouched draft fields would revert it.
+  assert.deepEqual(toAllocationUpdateRequest(draft, newer, beforeStart), { name: "Renamed", gamesPerPeriod: 50, adminNote: "" });
 });

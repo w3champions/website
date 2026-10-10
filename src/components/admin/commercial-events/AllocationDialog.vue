@@ -116,6 +116,9 @@
         <v-alert v-if="problem" type="warning" variant="tonal" density="compact" class="mt-4">
           {{ problem }}
         </v-alert>
+        <v-alert v-if="startedNotice" type="warning" variant="tonal" density="compact" class="mt-4">
+          This allocation has started meanwhile, so its start and recurrence can't be changed any more and were reset. Save again to keep your other changes.
+        </v-alert>
       </v-card-text>
 
       <v-card-actions>
@@ -128,7 +131,7 @@
           variant="text"
           :disabled="problem !== null"
           :loading="saving"
-          @click="emit('save', { ...draft })"
+          @click="save"
         >
           {{ allocation ? "Save" : "Create" }}
         </v-btn>
@@ -148,6 +151,7 @@ import {
   GAMES_PER_PERIOD_MAX,
   isAllocationStarted,
   memberProblem,
+  revertStartedFields,
   validateAllocationDraft,
 } from "@/store/admin/commercialEvents/allocationDraft";
 import type { AllocationDraft } from "@/store/admin/commercialEvents/allocationDraft";
@@ -165,13 +169,18 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "save", draft: AllocationDraft): void;
+  /** `base` is the allocation the draft was built from (null when creating). */
+  (e: "save", draft: AllocationDraft, base: Allocation | null): void;
   (e: "addMember", battleTag: string): void;
   (e: "removeMember", battleTag: string): void;
 }>();
 
 const openedAt = ref(new Date());
 const draft = reactive<AllocationDraft>(emptyAllocationDraft(openedAt.value));
+// The allocation the draft was built from: the update is computed against it, so a newer
+// copy loaded while the dialog is open cannot turn untouched draft fields into changes.
+const base = ref<Allocation | null>(null);
+const startedNotice = ref(false);
 const memberToAdd = ref("");
 // Remounts the picker so a previous selection never lingers.
 const pickerKey = ref(0);
@@ -182,7 +191,9 @@ const memberProblemText = computed(() => memberProblem(props.allocation?.members
 
 function reset(): void {
   openedAt.value = new Date();
-  Object.assign(draft, props.allocation ? draftFromAllocation(props.allocation) : emptyAllocationDraft(openedAt.value));
+  base.value = props.allocation ? { ...props.allocation } : null;
+  Object.assign(draft, base.value ? draftFromAllocation(base.value) : emptyAllocationDraft(openedAt.value));
+  startedNotice.value = false;
   memberToAdd.value = "";
   pickerKey.value++;
 }
@@ -199,6 +210,13 @@ watch(() => props.allocation?.members, (members) => {
     pickerKey.value++;
   }
 });
+
+function save(): void {
+  // Re-evaluates `started`, which locks start and recurrence from now on.
+  openedAt.value = new Date();
+  startedNotice.value = base.value !== null && revertStartedFields(draft, base.value, openedAt.value);
+  if (!startedNotice.value) emit("save", { ...draft }, base.value);
+}
 
 function addMember(): void {
   emit("addMember", memberToAdd.value);

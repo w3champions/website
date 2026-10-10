@@ -80,7 +80,7 @@
             size="small"
             title="Edit"
             :aria-label="`Edit ${item.name}`"
-            :disabled="store.saving"
+            :disabled="store.saving || store.loading"
             @click="openEdit(item)"
           >
             <v-icon size="small">{{ mdiPencil }}</v-icon>
@@ -180,7 +180,7 @@ function openEdit(allocation: Allocation): void {
   dialog.value = true;
 }
 
-async function save(draft: AllocationDraft): Promise<void> {
+async function save(draft: AllocationDraft, base: Allocation | null): Promise<void> {
   if (editedId.value === null) {
     // Stay open on the new allocation so its members can be added.
     const created = await store.create(toAllocationCreateRequest(draft));
@@ -193,7 +193,8 @@ async function save(draft: AllocationDraft): Promise<void> {
     store.error = "This allocation is no longer listed. Close the dialog and refresh.";
     return;
   }
-  const request = toAllocationUpdateRequest(draft, original, new Date());
+  // Against the copy the draft was built from: fields the admin left alone keep the server's newer values.
+  const request = toAllocationUpdateRequest(draft, base ?? original, new Date());
   if (Object.keys(request).length === 0 || await store.update(original.id, request)) {
     dialog.value = false;
   }
