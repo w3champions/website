@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
+import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import type { AdminEventDetail, AuditEntry, EventGame, ManagedRole } from "./types";
 import { runAdminWrite } from "./write";
 
 interface EventDetailState {
-  /** The event shown; responses for another id are dropped. */
+  /** The event shown; write and match page responses for another id are dropped. */
   eventId: string;
   event: AdminEventDetail | null;
   loading: boolean;
@@ -38,6 +39,17 @@ function token(): string {
   return useOauthStore().token;
 }
 
+// Only the newest request of each kind may write its result; `open()` supersedes them all.
+const eventLoads = requestSequence();
+const gamesLoads = requestSequence();
+const auditLoads = requestSequence();
+
+function invalidateLoads(): void {
+  eventLoads.invalidate();
+  gamesLoads.invalidate();
+  auditLoads.invalidate();
+}
+
 export const useCommercialEventDetailStore = defineStore("commercialEventDetail", {
   state: (): EventDetailState => ({
     eventId: "",
@@ -60,75 +72,87 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
   actions: {
     /** Shows another event: drops the previous one's data and loads everything. */
     async open(eventId: string): Promise<void> {
-      this.$reset();
+      this.clear();
       this.eventId = eventId;
       await Promise.all([this.loadEvent(), this.loadGames(true), this.loadAudit()]);
     },
 
+    /** Drops the shown event and every pending load. */
+    clear(): void {
+      invalidateLoads();
+      this.$reset();
+    },
+
     async loadEvent(): Promise<void> {
-      const eventId = this.eventId;
+      const request = eventLoads.next();
       this.loading = true;
       this.loadError = "";
       try {
-        const event = await commercialEventsService().getEvent(token(), eventId);
-        if (eventId === this.eventId) this.event = event;
+        const event = await commercialEventsService().getEvent(token(), this.eventId);
+        if (eventLoads.isLatest(request)) this.event = event;
       } catch (e) {
         console.error("Failed to load the event:", e);
-        if (eventId === this.eventId) this.loadError = describeCommercialEventsError(e);
+        if (eventLoads.isLatest(request)) this.loadError = describeCommercialEventsError(e);
       } finally {
-        if (eventId === this.eventId) this.loading = false;
+        if (eventLoads.isLatest(request)) this.loading = false;
       }
     },
 
-    /** First page when `reset`, else the next page (no-op after the last one). */
+    /**
+     * First page when `reset`, else the next page. The next page is a no-op after the
+     * last one and while games are loading; a first-page load supersedes a pending next page.
+     */
     async loadGames(reset: boolean): Promise<void> {
-      const eventId = this.eventId;
       const cursor = reset ? undefined : this.gamesCursor ?? undefined;
-      if (!reset && cursor === undefined) return;
+      if (!reset && (cursor === undefined || this.gamesLoading)) return;
+      const request = gamesLoads.next();
       this.gamesLoading = true;
       this.gamesError = "";
       try {
-        const page = await commercialEventsService().getEventGames(token(), eventId, cursor, EVENT_GAMES_PAGE_SIZE);
-        if (eventId !== this.eventId) return;
+        const page = await commercialEventsService().getEventGames(token(), this.eventId, cursor, EVENT_GAMES_PAGE_SIZE);
+        if (!gamesLoads.isLatest(request)) return;
         this.games = reset ? page.games : [...this.games, ...page.games];
         this.gamesCursor = page.nextCursor ?? null;
       } catch (e) {
         console.error("Failed to load event games:", e);
-        if (eventId === this.eventId) this.gamesError = describeCommercialEventsError(e);
+        if (gamesLoads.isLatest(request)) this.gamesError = describeCommercialEventsError(e);
       } finally {
-        if (eventId === this.eventId) this.gamesLoading = false;
+        if (gamesLoads.isLatest(request)) this.gamesLoading = false;
       }
     },
 
     async loadAudit(): Promise<void> {
-      const eventId = this.eventId;
+      const request = auditLoads.next();
       this.auditLoading = true;
       this.auditError = "";
       try {
-        const audit = await commercialEventsService().getAudit(token(), { eventId });
-        if (eventId === this.eventId) this.audit = audit;
+        const audit = await commercialEventsService().getAudit(token(), { eventId: this.eventId });
+        if (auditLoads.isLatest(request)) this.audit = audit;
       } catch (e) {
         console.error("Failed to load the audit log:", e);
-        if (eventId === this.eventId) this.auditError = describeCommercialEventsError(e);
+        if (auditLoads.isLatest(request)) this.auditError = describeCommercialEventsError(e);
       } finally {
-        if (eventId === this.eventId) this.auditLoading = false;
+        if (auditLoads.isLatest(request)) this.auditLoading = false;
       }
     },
 
     /** Website match id of a game (planning fact W7), or null with `matchLinkError` set. */
     async resolveMatchPage(matchId: string): Promise<string | null> {
+      const eventId = this.eventId;
       this.matchLinkError = "";
       this.resolvingMatchId = matchId;
       try {
         const id = await commercialEventsService().resolveMatchPageId(matchId);
+        // Another event is shown now: neither navigate nor report.
+        if (eventId !== this.eventId) return null;
         if (id === null) this.matchLinkError = NO_MATCH_PAGE;
         return id;
       } catch (e) {
         console.error("Failed to look up the match page:", e);
-        this.matchLinkError = describeCommercialEventsError(e);
+        if (eventId === this.eventId) this.matchLinkError = describeCommercialEventsError(e);
         return null;
       } finally {
-        this.resolvingMatchId = "";
+        if (eventId === this.eventId) this.resolvingMatchId = "";
       }
     },
 

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
+import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, AdminEventDetail, EventCreateRequest, EventFilters, EventUpdateRequest, SuspendRequest } from "./types";
@@ -21,7 +22,7 @@ function token(): string {
 }
 
 // Filters change while the admin types: only the newest list request may write the result.
-let latestLoad = 0;
+const loads = requestSequence();
 
 /** The events list and every event write (used by the list and the detail page). */
 export const useCommercialEventsStore = defineStore("commercialEvents", {
@@ -37,30 +38,35 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
   actions: {
     /** Server order: startsAt descending. */
     async load(): Promise<void> {
-      const request = ++latestLoad;
+      const request = loads.next();
       this.loading = true;
       this.loadError = "";
       try {
         const events = await commercialEventsService().getEvents(token(), { ...this.filters });
-        if (request === latestLoad) this.events = events;
+        if (loads.isLatest(request)) this.events = events;
       } catch (e) {
         console.error("Failed to load events:", e);
-        if (request === latestLoad) {
+        if (loads.isLatest(request)) {
           this.loadError = describeCommercialEventsError(e);
           this.events = [];
         }
       } finally {
-        if (request === latestLoad) this.loading = false;
+        if (loads.isLatest(request)) this.loading = false;
       }
     },
 
-    /** Replaces the listed copy of an event after a write (no-op when it is not listed). */
-    upsertLocal(event: AdminEventDetail): void {
-      this.events = this.events.map((e) => (e.id === event.id ? event : e));
+    /** Drops the list and every pending list response. */
+    clear(): void {
+      loads.invalidate();
+      this.$reset();
     },
 
+    /** Takes the result of a write into the list. */
     applied(event: AdminEventDetail | null): AdminEventDetail | null {
-      if (event) this.upsertLocal(event);
+      if (!event) return null;
+      this.events = this.events.map((e) => (e.id === event.id ? event : e));
+      // The write may take the event out of (or into) the filtered list.
+      if (Object.values(this.filters).some((value) => value !== "")) void this.load();
       return event;
     },
 

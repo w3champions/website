@@ -101,7 +101,7 @@ const eventsStore = useCommercialEventsStore();
 const { hasPermission, permissionsKnown } = useCommercialLicensePermission();
 const actionDialogs = useTemplateRef<InstanceType<typeof EventActionDialogs>>("actionDialogsComponent");
 
-const busy = computed(() => store.loading || eventsStore.saving);
+const busy = computed(() => store.loading || store.saving || eventsStore.saving);
 const actions = computed(() => eventActions(store.event ?? { status: "closed" as const }));
 
 const rows = computed(() => {
@@ -148,7 +148,7 @@ async function refresh(): Promise<void> {
 
 async function init(): Promise<void> {
   if (!hasPermission.value) {
-    store.$reset();
+    store.clear();
     return;
   }
   await store.open(props.eventId);

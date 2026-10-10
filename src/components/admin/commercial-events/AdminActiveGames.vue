@@ -31,7 +31,7 @@
         <template v-slot:top>
           <div class="d-flex align-center px-4">
             <v-spacer />
-            <v-btn variant="text" class="mb-2" :prepend-icon="mdiRefresh" :disabled="store.loading" @click="store.load()">
+            <v-btn variant="text" class="mb-2" :prepend-icon="mdiRefresh" :disabled="store.loading || store.saving" @click="store.load()">
               Refresh
             </v-btn>
           </div>
@@ -98,7 +98,7 @@ async function terminate(game: ActiveEventGame): Promise<void> {
 
 async function init(): Promise<void> {
   if (!hasPermission.value) {
-    store.$reset();
+    store.clear();
     return;
   }
   await store.load();

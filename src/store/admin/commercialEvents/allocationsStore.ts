@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
+import { keyedRequestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, Allocation, AllocationCreateRequest, AllocationUpdateRequest, PeriodUsage } from "./types";
@@ -28,6 +29,9 @@ interface AllocationsState {
 function token(): string {
   return useOauthStore().token;
 }
+
+// Per allocation id: only the newest details request may write, and none after a delete.
+const detailLoads = keyedRequestSequence();
 
 export const useCommercialEventAllocationsStore = defineStore("commercialEventAllocations", {
   state: (): AllocationsState => ({
@@ -71,7 +75,11 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
 
     async update(allocationId: string, request: AllocationUpdateRequest): Promise<Allocation | null> {
       const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request));
-      if (updated) this.replace(updated);
+      if (updated) {
+        this.replace(updated);
+        // Period sizes follow gamesPerPeriod.
+        if (this.details[allocationId]) void this.loadDetails(allocationId);
+      }
       return updated;
     },
 
@@ -104,6 +112,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
       });
       if (removed) {
         this.allocations = this.allocations.filter((a) => a.id !== allocationId);
+        detailLoads.invalidate(allocationId);
         delete this.details[allocationId];
       }
       return removed ?? false;
@@ -111,6 +120,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
 
     /** Periods and events of one allocation for its expanded row. */
     async loadDetails(allocationId: string): Promise<void> {
+      const request = detailLoads.next(allocationId);
       const previous = this.details[allocationId];
       this.details[allocationId] = { periods: previous?.periods ?? [], events: previous?.events ?? [], loading: true, error: "" };
       try {
@@ -118,10 +128,12 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
           commercialEventsService().getAllocationPeriods(token(), allocationId),
           commercialEventsService().getEvents(token(), { ...emptyEventFilters(), allocationId }),
         ]);
-        this.details[allocationId] = { periods, events, loading: false, error: "" };
+        if (detailLoads.isLatest(allocationId, request)) this.details[allocationId] = { periods, events, loading: false, error: "" };
       } catch (e) {
         console.error("Failed to load allocation details:", e);
-        this.details[allocationId] = { periods: [], events: [], loading: false, error: describeCommercialEventsError(e) };
+        if (detailLoads.isLatest(allocationId, request)) {
+          this.details[allocationId] = { periods: [], events: [], loading: false, error: describeCommercialEventsError(e) };
+        }
       }
     },
   },

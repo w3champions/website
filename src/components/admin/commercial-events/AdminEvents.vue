@@ -71,6 +71,8 @@
         </v-col>
       </v-row>
 
+      <event-action-dialogs ref="actionDialogsComponent" />
+
       <v-data-table
         class="mt-4"
         :headers="headers"
@@ -186,8 +188,6 @@
           </div>
         </template>
       </v-data-table>
-
-      <event-action-dialogs ref="actionDialogsComponent" class="mt-4" />
     </v-container>
   </div>
 </template>
@@ -263,7 +263,7 @@ watch(() => store.filters.q, () => debouncedLoad());
 async function init(): Promise<void> {
   if (!hasPermission.value) {
     debouncedLoad.clear();
-    store.$reset();
+    store.clear();
     return;
   }
   await Promise.all([store.load(), allocationsStore.load()]);
