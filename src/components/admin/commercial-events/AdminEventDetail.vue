@@ -149,8 +149,9 @@ async function refresh(): Promise<void> {
 }
 
 async function init(): Promise<void> {
-  // Event writes of the previous event (or visit) no longer report here.
+  // Event writes of the previous event (or visit) no longer report here, and its dialogs close.
   eventsStore.endVisit();
+  actionDialogs.value?.reset();
   if (!hasPermission.value) {
     store.clear();
     return;

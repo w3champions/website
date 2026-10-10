@@ -173,5 +173,11 @@ onMounted(() => {
   eventsStore.error = "";
 });
 
-defineExpose({ openCreate, openEdit, openMove, openSuspend, close, lift });
+/** Closes any open dialog, e.g. when the page shows another event. */
+function reset(): void {
+  mode.value = "none";
+  eventsStore.error = "";
+}
+
+defineExpose({ openCreate, openEdit, openMove, openSuspend, close, lift, reset });
 </script>

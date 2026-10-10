@@ -59,12 +59,14 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
       resetKeepingWrite(this);
     },
 
-    /** The page was left: writes still in flight no longer report into it. */
+    /** The page was left: writes still in flight no longer report into it, and its last write error is not shown again. */
     endVisit(): void {
       visits.invalidate();
+      this.error = "";
     },
 
     async terminate(matchId: string): Promise<boolean> {
+      const visit = visits.current();
       let refreshed = false;
       const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), () => {
         refreshed = true;
@@ -74,7 +76,7 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
         // matchmaking marks the game terminated before it answers, so a fresh list no longer has it.
         this.games = this.games.filter((game) => game.matchId !== matchId);
         this.supersedePendingLoad();
-      } else if (!refreshed) {
+      } else if (!refreshed && visits.isLatest(visit)) {
         // The game may have ended meanwhile (UNKNOWN_GAME): show the current list.
         void this.load();
       }

@@ -114,3 +114,20 @@ test("an uncertain tag write reloads the list before saving clears", async () =>
   expect(store.taggedPlayers).toEqual([{ battleTag: "Foo#1" }]);
   expect(store.saving).toBe(false);
 });
+
+test("a superseded list load waits for the newest load's role hints", async () => {
+  const hintLookup = deferred<unknown[]>();
+  license.getTaggedPlayers.mockResolvedValueOnce([{ battleTag: "Old#1" }]).mockResolvedValueOnce([{ battleTag: "New#1" }]);
+  events.getRoleHints.mockReturnValueOnce(hintLookup.promise);
+  const store = useCommercialLicenseStore();
+  let firstDone = false;
+
+  const first = store.load().then(() => (firstDone = true));
+  const second = store.load();
+  await vi.waitFor(() => expect(events.getRoleHints).toHaveBeenCalledTimes(1));
+  expect(firstDone).toBe(false);
+
+  hintLookup.resolve([hints("New#1", ["EV-1"])]);
+  await Promise.all([first, second]);
+  expect(store.roleHints["New#1"]).toEqual(hints("New#1", ["EV-1"]));
+});

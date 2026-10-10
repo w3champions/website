@@ -62,9 +62,10 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
       resetKeepingWrite(this);
     },
 
-    /** The page was left: writes still in flight no longer report into it. */
+    /** The page was left: writes still in flight no longer report into it, and its last write error is not shown again. */
     endVisit(): void {
       visits.invalidate();
+      this.error = "";
     },
 
     /**

@@ -19,6 +19,8 @@ function getService(): CommercialLicenseService {
 
 // Only the newest list request may write the list.
 const loads = requestSequence();
+// The newest full load (list plus role hints), which a superseded load waits for.
+let newestLoad: Promise<boolean> | undefined;
 // Per battle tag: only the newest role-hint lookup may write that tag's hints.
 const hintLoads = keyedRequestSequence();
 // One number per page visit: a write that settles after its page was left drops its error and reload.
@@ -36,8 +38,16 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
   }),
 
   actions: {
-    /** Then looks up the role hints of every listed tag. Resolves to whether the list request succeeded. */
-    async load(): Promise<boolean> {
+    /** Loads the list, then the role hints of every listed tag. Resolves to whether the list now shown loaded. */
+    load(): Promise<boolean> {
+      // Like loadLatest, but a superseded load also waits for the newest one's role hints.
+      const outcome: Promise<boolean> = this.loadOnce().then(async (listed) => (newestLoad !== undefined && newestLoad !== outcome ? await newestLoad : listed));
+      newestLoad = outcome;
+      return outcome;
+    },
+
+    /** One list load and, when it is applied, its role-hint lookup. Use {@link load}. */
+    async loadOnce(): Promise<boolean> {
       this.loadError = "";
       let applied = false;
       const listed = await loadLatest(loads, {
@@ -66,9 +76,10 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
       resetKeepingWrite(this);
     },
 
-    /** The page was left: writes still in flight no longer report into it. */
+    /** The page was left: writes still in flight no longer report into it, and its last write error is not shown again. */
     endVisit(): void {
       visits.invalidate();
+      this.error = "";
     },
 
     /**

@@ -426,3 +426,28 @@ test("an event write begun in an earlier visit of the same event is not taken", 
   expect(store.event).toBeNull();
   expect(service.getAudit).not.toHaveBeenCalled();
 });
+
+test("leaving a page hides its last write error when it is shown again", async () => {
+  service.deleteAllocation.mockRejectedValue(new HttpError(409, "DELETE", "https://x", JSON.stringify({ code: "ALLOCATION_IN_USE" })));
+  const store = useCommercialEventAllocationsStore();
+  await store.remove("a1");
+  expect(store.error).not.toBe("");
+
+  store.endVisit();
+
+  expect(store.error).toBe("");
+});
+
+test("a failed terminate that settles after the page was left does not reload the list", async () => {
+  const write = deferred<unknown>();
+  service.terminateGame.mockReturnValueOnce(write.promise);
+  const store = useCommercialEventActiveGamesStore();
+
+  const terminating = store.terminate("m1");
+  store.endVisit();
+  write.reject(new HttpError(404, "POST", "https://x", JSON.stringify({ code: "UNKNOWN_GAME" })));
+  expect(await terminating).toBe(false);
+
+  expect(service.getActiveGames).not.toHaveBeenCalled();
+  expect(store.error).toBe("");
+});

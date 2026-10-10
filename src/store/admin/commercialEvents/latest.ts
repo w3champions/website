@@ -55,8 +55,8 @@ const newestOutcome = new WeakMap<object, Promise<boolean>>();
  * request. Every failure is logged. Resolves to whether the data now shown came
  * from a successful request: a load superseded by a newer one waits for that one
  * and resolves with its outcome, so a caller never sees "done" while the newest
- * load is still pending. A load superseded only by `invalidate()` resolves with
- * its own outcome.
+ * load is still pending. A load superseded by `invalidate()` resolves with its
+ * own outcome, unless a newer load started before it settled.
  */
 export function loadLatest<T>(sequence: Pick<RequestSequence, "next" | "isLatest">, load: LatestLoad<T>): Promise<boolean> {
   const outcome: Promise<boolean> = runLoad(sequence, load).then(async (succeeded) => {
