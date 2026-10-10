@@ -276,9 +276,13 @@ async function init(): Promise<void> {
     store.clear();
     return;
   }
-  await Promise.all([store.load(), allocationsStore.load()]);
+  await Promise.all([store.loadOrShowUnconfirmedCreate(), allocationsStore.load()]);
 }
 
+// A create from an earlier visit that settles while this page is open.
+watch(() => store.unconfirmedCreate, (pending) => {
+  if (pending !== null) void store.loadOrShowUnconfirmedCreate();
+});
 watch(hasPermission, init);
 onMounted(init);
 onBeforeUnmount(() => {

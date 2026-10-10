@@ -103,9 +103,12 @@ export function isStateConflict(e: unknown): boolean {
   return e instanceof HttpError && e.status < 500 && STATE_CONFLICT_CODES.has(text(parseBody(e.responseBody).code) ?? "");
 }
 
-/** After an uncertain allocation create whose reload lists a new allocation of that name (the dialog then edits it). */
-export function allocationCreatedText(name: string): string {
-  return `The allocation "${name}" was created after all: it is listed now, and this dialog edits it.`;
+/**
+ * After an uncertain allocation create whose reload lists exactly one new allocation of that name. It may also be
+ * another admin's, so the dialog does not switch to editing it.
+ */
+export function allocationMaybeCreatedText(name: string): string {
+  return `An allocation named "${name}" is listed now. It may be the one you just created (or another admin's): check the list before creating it again.`;
 }
 
 interface ErrorBody {

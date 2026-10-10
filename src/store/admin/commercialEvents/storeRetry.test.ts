@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { HttpError } from "@/services/http/AuthorizedClient";
-import { allocationCreatedText, MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT } from "./errors";
+import { allocationMaybeCreatedText, MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT } from "./errors";
 
 const service = vi.hoisted(() => ({
   getEvents: vi.fn(),
@@ -548,16 +548,26 @@ test("the filter notice goes once the admin changes the filters, and when anothe
   expect(store.filterNotice).toBe("");
 });
 
-test("an uncertain allocation create says it was created when the reload lists a new allocation of that name", async () => {
+test("an uncertain allocation create points at one new allocation of that name, but never adopts it", async () => {
   service.createAllocation.mockRejectedValue(gatewayTimeout());
   service.getAllocations.mockResolvedValue([{ id: "a-new", name: "Spring" }, { id: "a-old", name: "Other" }]);
   const store = useCommercialEventAllocationsStore();
   store.allocations = [{ id: "a-old", name: "Other" }] as never;
 
-  // The found allocation is returned, so the dialog edits it instead of offering a second create.
-  expect(await store.create({ name: "Spring " } as never)).toEqual({ id: "a-new", name: "Spring" });
+  // Null: another admin may have created it, so the dialog must not switch to editing it.
+  expect(await store.create({ name: "Spring " } as never)).toBeNull();
 
-  expect(store.error).toBe(allocationCreatedText("Spring"));
+  expect(store.error).toBe(allocationMaybeCreatedText("Spring"));
+});
+
+test("an uncertain allocation create keeps the general text when several new allocations have that name", async () => {
+  service.createAllocation.mockRejectedValue(gatewayTimeout());
+  service.getAllocations.mockResolvedValue([{ id: "a-1", name: "Spring" }, { id: "a-2", name: "Spring" }]);
+  const store = useCommercialEventAllocationsStore();
+
+  expect(await store.create({ name: "Spring" } as never)).toBeNull();
+
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
 });
 
 test("an uncertain allocation create keeps the general text when only an older allocation has that name", async () => {
@@ -654,4 +664,96 @@ test("a refused terminate reloads the list once: the game may be gone or already
     expect(service.getActiveGames).toHaveBeenCalledTimes(1);
     expect(store.error).not.toBe("");
   }
+});
+
+test("a terminate that settles after the page was left refreshes that game's event page if it is shown now", async () => {
+  const write = deferred<undefined>();
+  service.terminateGame.mockReturnValueOnce(write.promise);
+  service.getActiveGames.mockResolvedValue([]);
+  service.getEvent.mockResolvedValue({ id: "e1" });
+  const store = useCommercialEventActiveGamesStore();
+  store.games = [{ matchId: "m1", eventId: "e1" }] as never;
+  const detail = useCommercialEventDetailStore();
+
+  const terminating = store.terminate("m1");
+  store.endVisit();
+  detail.eventId = "e1";
+  write.resolve(undefined);
+  expect(await terminating).toBe(false);
+
+  await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
+});
+
+test("a late terminate leaves another event's page alone", async () => {
+  const write = deferred<undefined>();
+  service.terminateGame.mockReturnValueOnce(write.promise);
+  service.getActiveGames.mockResolvedValue([]);
+  const store = useCommercialEventActiveGamesStore();
+  store.games = [{ matchId: "m1", eventId: "e1" }] as never;
+  const detail = useCommercialEventDetailStore();
+
+  const terminating = store.terminate("m1");
+  store.endVisit();
+  detail.eventId = "e2";
+  write.resolve(undefined);
+  await terminating;
+
+  await vi.waitFor(() => expect(service.getActiveGames).toHaveBeenCalledTimes(1));
+  expect(service.getEvent).not.toHaveBeenCalled();
+});
+
+test("an uncertain event create that settles after its page was left is shown by the next events list", async () => {
+  const write = deferred<never>();
+  service.createEvent.mockReturnValueOnce(write.promise);
+  service.getEvents.mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+
+  const creating = store.create({ allocationId: "a1", name: "Cup" } as never);
+  store.endVisit();
+  write.reject(gatewayTimeout());
+  expect(await creating).toBeNull();
+  expect(store.error).toBe("");
+  // Leaving another page (the detail page also ends the events visit) keeps it.
+  store.endVisit();
+
+  await store.loadOrShowUnconfirmedCreate();
+
+  expect(store.filters).toEqual({ status: "", phase: "", allocationId: "a1", q: "Cup" });
+  expect(store.filterNotice).toContain("Cup");
+  expect(store.unconfirmedCreate).toBeNull();
+  expect(service.getEvents).toHaveBeenCalledTimes(1);
+});
+
+test("an event create that succeeds after its page was left is shown by the next events list as created", async () => {
+  const write = deferred<unknown>();
+  service.createEvent.mockReturnValueOnce(write.promise);
+  service.getEvents.mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+
+  const creating = store.create({ allocationId: "a1", name: "Cup" } as never);
+  store.endVisit();
+  write.resolve({ id: "EV-1" });
+  expect(await creating).toBeNull();
+
+  await store.loadOrShowUnconfirmedCreate();
+
+  expect(store.filterNotice).toContain("was created after you left the page");
+});
+
+test("an event create refused after its page was left leaves nothing for the next visit", async () => {
+  const write = deferred<never>();
+  service.createEvent.mockReturnValueOnce(write.promise);
+  service.getEvents.mockResolvedValue([]);
+  service.getAllocations.mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+
+  const creating = store.create({ allocationId: "a1", name: "Cup" } as never);
+  store.endVisit();
+  write.reject(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "ALLOCATION_INACTIVE" })));
+  await creating;
+
+  expect(store.unconfirmedCreate).toBeNull();
+  await store.loadOrShowUnconfirmedCreate();
+  expect(store.filterNotice).toBe("");
 });

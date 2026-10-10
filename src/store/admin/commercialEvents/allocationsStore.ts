@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
-import { allocationCreatedText, describeCommercialEventsError, MAYBE_SAVED_TEXT } from "./errors";
+import { allocationMaybeCreatedText, describeCommercialEventsError, MAYBE_SAVED_TEXT } from "./errors";
 import { keyedRequestSequence, loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
@@ -112,15 +112,12 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
         this.allocations = [created, ...this.allocations.filter((a) => a.id !== created.id)];
         this.supersedePendingLoad();
       } else if (this.error === MAYBE_SAVED_TEXT) {
-        // The table may be sorted or paged so that the new row is out of sight: when the reload has it, say so and return
-        // it, so the dialog edits it instead of offering a second create. A missing row proves nothing (the create may
-        // still be running), so then the general text stays.
+        // The table may be sorted or paged so that the new row is out of sight: when the reload has exactly one new row of
+        // that name, point at it. Never adopt it: another admin may have created it. A missing row proves nothing (the
+        // create may still be running), so then the general text stays.
         const name = request.name.trim();
-        const found = this.allocations.find((a) => a.name === name && !known.has(a.id));
-        if (found) {
-          this.error = allocationCreatedText(name);
-          return found;
-        }
+        const fresh = this.allocations.filter((a) => a.name === name && !known.has(a.id));
+        if (fresh.length === 1) this.error = allocationMaybeCreatedText(name);
       }
       return created;
     },

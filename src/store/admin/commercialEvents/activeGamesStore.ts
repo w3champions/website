@@ -2,9 +2,10 @@ import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
 import { loadLatest, requestSequence } from "./latest";
+import { useCommercialEventDetailStore } from "./eventDetailStore";
 import { commercialEventsService } from "./service";
 import type { ActiveEventGame } from "./types";
-import { resetKeepingWrite, runAdminWrite } from "./write";
+import { type RefreshReason, resetKeepingWrite, runAdminWrite } from "./write";
 
 interface ActiveGamesState {
   games: ActiveEventGame[];
@@ -67,12 +68,18 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
 
     async terminate(matchId: string): Promise<boolean> {
       const visit = visits.current();
+      const eventId = this.games.find((game) => game.matchId === matchId)?.eventId;
       let refreshed = false;
       // UNKNOWN_GAME (it ended meanwhile) is a state conflict: runAdminWrite reloads the list, as after an uncertain answer.
-      const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), () => {
+      const refresh = async (reason: RefreshReason): Promise<boolean> => {
         refreshed = true;
-        return this.load();
-      }, visits);
+        // Settled after the page was left: the admin may be on that game's event page now (its games, its audit log).
+        const detail = useCommercialEventDetailStore();
+        const shown = reason === "elsewhere" && eventId !== undefined && detail.eventId === eventId;
+        const results = await Promise.all([this.load(), shown ? detail.refreshAfterWrite() : true]);
+        return results.every(Boolean);
+      };
+      const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), refresh, visits);
       if (terminated) {
         // matchmaking marks the game terminated before it answers, so a fresh list no longer has it.
         this.games = this.games.filter((game) => game.matchId !== matchId);

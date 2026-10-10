@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
-import { describeCommercialEventsError } from "./errors";
+import { describeCommercialEventsError, mayHaveBeenSaved } from "./errors";
 import { useCommercialEventAllocationsStore } from "./allocationsStore";
 import { useCommercialEventDetailStore } from "./eventDetailStore";
 import { loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, AdminEventDetail, EventCreateRequest, EventFilters, EventUpdateRequest, SuspendRequest } from "./types";
-import { resetKeepingWrite, runAdminWrite } from "./write";
+import { type RefreshReason, resetKeepingWrite, runAdminWrite } from "./write";
 
 interface EventsState {
   events: AdminEvent[];
@@ -21,6 +21,11 @@ interface EventsState {
   filterNotice: string;
   /** Filters set by the store after an uncertain create, not by the admin; null once the admin changes them. */
   autoFilters: EventFilters | null;
+  /**
+   * A create that was saved, or may have been, after its page was left. Kept across visits (endVisit leaves it) until
+   * the events list shows it (`loadOrShowUnconfirmedCreate`).
+   */
+  unconfirmedCreate: { request: EventCreateRequest; created: boolean } | null;
 }
 
 function token(): string {
@@ -43,6 +48,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     loadError: "",
     filterNotice: "",
     autoFilters: null,
+    unconfirmedCreate: null,
   }),
 
   actions: {
@@ -124,7 +130,25 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     async create(request: EventCreateRequest): Promise<AdminEventDetail | null> {
       // A notice from an earlier create no longer explains what this one will show.
       this.dismissFilterNotice();
-      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), (reason) => (reason === "uncertain" ? this.showAttemptedCreate(request) : this.refreshWithAllocations()), visits);
+      let outcome: "created" | "uncertain" | "refused" = "refused";
+      const action = () =>
+        commercialEventsService().createEvent(token(), request).then((event) => {
+          outcome = "created";
+          return event;
+        }, (e: unknown) => {
+          if (mayHaveBeenSaved(e)) outcome = "uncertain";
+          throw e;
+        });
+      const refresh = (reason: RefreshReason): Promise<boolean> => {
+        if (reason === "uncertain") return this.showAttemptedCreate(request);
+        if (reason === "elsewhere" && outcome !== "refused") {
+          // Its dialog is gone: the next events list shows it (at once if the list page is open).
+          this.unconfirmedCreate = { request, created: outcome === "created" };
+          return Promise.resolve(true);
+        }
+        return this.refreshWithAllocations();
+      };
+      const created = await runAdminWrite(this, "event", action, refresh, visits);
       // Reload: the filters decide whether and where the new event is listed.
       if (created) void this.load();
       return created;
@@ -134,12 +158,22 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
      * After an uncertain create: the current filters may hide the new event (a status filter, a search), so they are
      * replaced by its allocation and its name, a search that lists the event if it was created, and the page says so.
      */
-    async showAttemptedCreate(request: EventCreateRequest): Promise<boolean> {
+    async showAttemptedCreate(request: EventCreateRequest, created = false): Promise<boolean> {
       const name = request.name.trim();
       this.filters = { ...emptyEventFilters(), allocationId: request.allocationId, q: name };
       this.autoFilters = { ...this.filters };
-      this.filterNotice = `The filters now show the events named "${name}" in the chosen allocation, so you can check whether the new event was created.`;
+      this.filterNotice = created
+        ? `The event "${name}" was created after you left the page. The filters now show it.`
+        : `The filters now show the events named "${name}" in the chosen allocation, so you can check whether the new event was created.`;
       return await this.load();
+    },
+
+    /** Shows the create that settled after its page was left (see `unconfirmedCreate`), else loads the list. */
+    async loadOrShowUnconfirmedCreate(): Promise<boolean> {
+      const pending = this.unconfirmedCreate;
+      if (pending === null) return await this.load();
+      this.unconfirmedCreate = null;
+      return await this.showAttemptedCreate(pending.request, pending.created);
     },
 
     async update(eventId: string, request: EventUpdateRequest): Promise<AdminEventDetail | null> {
