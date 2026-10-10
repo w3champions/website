@@ -22,11 +22,16 @@ const service = vi.hoisted(() => ({
   removeAllocationMember: vi.fn(),
   endAllocation: vi.fn(),
   deleteAllocation: vi.fn(),
+  getAudit: vi.fn(),
+  resolveMatchPageId: vi.fn(),
+  getActiveGames: vi.fn(),
+  terminateGame: vi.fn(),
 }));
 
 vi.mock("./service", () => ({ commercialEventsService: () => service }));
 vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) }));
 
+import { useCommercialEventActiveGamesStore } from "./activeGamesStore";
 import { useCommercialEventAllocationsStore } from "./allocationsStore";
 import { useCommercialEventDetailStore } from "./eventDetailStore";
 import { useCommercialEventsStore } from "./eventsStore";
@@ -85,10 +90,11 @@ test.each([
   ["close", (s: ReturnType<typeof useCommercialEventsStore>) => s.close("e1"), service.closeEvent],
   ["suspend", (s: ReturnType<typeof useCommercialEventsStore>) => s.suspend("e1", {} as never), service.suspendEvent],
   ["unsuspend", (s: ReturnType<typeof useCommercialEventsStore>) => s.unsuspend("e1"), service.unsuspendEvent],
-])("a 504 on event %s reloads the list and the shown event", async (_name, run, write) => {
+])("a 504 on event %s reloads the list and the shown event with its audit log", async (_name, run, write) => {
   write.mockRejectedValue(gatewayTimeout());
   service.getEvents.mockResolvedValue([]);
   service.getEvent.mockResolvedValue({ id: "e1" });
+  service.getAudit.mockResolvedValue([]);
   const detail = useCommercialEventDetailStore();
   detail.eventId = "e1";
   const store = useCommercialEventsStore();
@@ -98,6 +104,7 @@ test.each([
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
   await vi.waitFor(() => expect(service.getEvents).toHaveBeenCalledTimes(1));
   await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
 });
 
 test.each([
@@ -117,9 +124,10 @@ test.each([
   await vi.waitFor(() => expect(service.getAllocations).toHaveBeenCalledTimes(1));
 });
 
-test("a 504 on an event person write reloads the event", async () => {
+test("a 504 on an event person write reloads the event and its audit log", async () => {
   service.addEventPerson.mockRejectedValue(gatewayTimeout());
   service.getEvent.mockResolvedValue({ id: "e1" });
+  service.getAudit.mockResolvedValue([]);
   const store = useCommercialEventDetailStore();
   store.eventId = "e1";
 
@@ -127,6 +135,7 @@ test("a 504 on an event person write reloads the event", async () => {
 
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
   await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
 });
 
 /** A promise whose resolution the test controls. */
@@ -267,4 +276,79 @@ test("showing another event keeps a pending people write marked until it settles
   write.resolve({ hosts: [{ battleTag: "Tag#1" }] });
   await adding;
   expect(store.saving).toBe(false);
+});
+
+test("a terminate during a list load replaces that load with a fresh one", async () => {
+  const old = deferred<unknown[]>();
+  service.getActiveGames.mockReturnValueOnce(old.promise);
+  service.getActiveGames.mockResolvedValueOnce([{ matchId: "m2" }, { matchId: "m4" }]);
+  service.terminateGame.mockResolvedValue(undefined);
+  const store = useCommercialEventActiveGamesStore();
+  store.games = [{ matchId: "m1" }, { matchId: "m2" }] as never;
+
+  const oldLoad = store.load();
+  expect(await store.terminate("m1")).toBe(true);
+  old.resolve([{ matchId: "m1" }, { matchId: "m2" }, { matchId: "m3" }]);
+  await oldLoad;
+
+  await vi.waitFor(() => expect(store.loading).toBe(false));
+  expect(store.games).toEqual([{ matchId: "m2" }, { matchId: "m4" }]);
+});
+
+test("an uncertain terminate keeps saving until the list is reloaded, once", async () => {
+  service.terminateGame.mockRejectedValue(gatewayTimeout());
+  service.getActiveGames.mockResolvedValue([{ matchId: "m2" }]);
+  const store = useCommercialEventActiveGamesStore();
+
+  expect(await store.terminate("m1")).toBe(false);
+
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
+  expect(store.games).toEqual([{ matchId: "m2" }]);
+  expect(service.getActiveGames).toHaveBeenCalledTimes(1);
+});
+
+test("a match-page lookup that answers after the same event was reopened is dropped", async () => {
+  const lookup = deferred<string | null>();
+  service.resolveMatchPageId.mockReturnValueOnce(lookup.promise);
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+
+  const resolving = store.resolveMatchPage("m1");
+  store.clear();
+  store.eventId = "e1";
+  lookup.resolve("website-id");
+
+  expect(await resolving).toBeNull();
+  expect(store.resolvingMatchId).toBe("");
+  expect(store.matchLinkError).toBe("");
+});
+
+test("a people write that settles after the same event was reopened leaves the new visit alone", async () => {
+  const write = deferred<unknown>();
+  service.addEventPerson.mockReturnValueOnce(write.promise);
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+  store.event = { id: "e1", hosts: [] } as never;
+
+  const adding = store.addPerson("Tag#1", "host");
+  store.clear();
+  store.eventId = "e1";
+  store.event = { id: "e1", hosts: [] } as never;
+  write.reject(gatewayTimeout());
+  await adding;
+
+  expect(store.error).toBe("");
+  expect(service.getEvent).not.toHaveBeenCalled();
+  expect(service.getAudit).not.toHaveBeenCalled();
+});
+
+test("taking an event write reloads the audit log", () => {
+  service.getAudit.mockResolvedValue([{ action: "event-updated" }]);
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+
+  store.applyEvent({ id: "e1" } as never);
+
+  expect(store.event).toEqual({ id: "e1" });
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
 });

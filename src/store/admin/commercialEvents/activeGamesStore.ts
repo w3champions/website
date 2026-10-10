@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
-import { requestSequence } from "./latest";
+import { loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import type { ActiveEventGame } from "./types";
 import { resetKeepingWrite, runAdminWrite } from "./write";
@@ -31,22 +31,23 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
   }),
 
   actions: {
-    async load(): Promise<void> {
-      const request = loads.next();
-      this.loading = true;
+    async load(): Promise<boolean> {
       this.loadError = "";
-      try {
-        const games = await commercialEventsService().getActiveGames(token());
-        if (loads.isLatest(request)) this.games = games;
-      } catch (e) {
-        console.error("Failed to load active event games:", e);
-        if (loads.isLatest(request)) {
+      return await loadLatest(loads, {
+        what: "active event games",
+        setLoading: (loading) => (this.loading = loading),
+        fetch: () => commercialEventsService().getActiveGames(token()),
+        apply: (games) => (this.games = games),
+        fail: (e) => {
           this.loadError = describeCommercialEventsError(e);
           this.games = [];
-        }
-      } finally {
-        if (loads.isLatest(request)) this.loading = false;
-      }
+        },
+      });
+    },
+
+    /** After a write applied locally: a list load already in flight may answer with the old state, so supersede it with a fresh one. */
+    supersedePendingLoad(): void {
+      if (this.loading) void this.load();
     },
 
     /** Drops the list and every pending list response; a write in flight stays marked. */
@@ -56,13 +57,16 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
     },
 
     async terminate(matchId: string): Promise<boolean> {
-      const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true));
+      let refreshed = false;
+      const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), () => {
+        refreshed = true;
+        return this.load();
+      });
       if (terminated) {
-        // A list request that started before the terminate could still bring the game back.
-        loads.invalidate();
-        this.loading = false;
+        // matchmaking marks the game terminated before it answers, so a fresh list no longer has it.
         this.games = this.games.filter((game) => game.matchId !== matchId);
-      } else {
+        this.supersedePendingLoad();
+      } else if (!refreshed) {
         // The game may have ended meanwhile (UNKNOWN_GAME): show the current list.
         void this.load();
       }

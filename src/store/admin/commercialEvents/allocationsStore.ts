@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
-import { keyedRequestSequence, requestSequence } from "./latest";
+import { keyedRequestSequence, loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, Allocation, AllocationCreateRequest, AllocationUpdateRequest, PeriodUsage } from "./types";
@@ -52,23 +52,17 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
   actions: {
     /** Server order: startsAt descending. Resolves to whether the request succeeded. */
     async load(): Promise<boolean> {
-      const request = loads.next();
-      this.loading = true;
       this.loadError = "";
-      try {
-        const allocations = await commercialEventsService().getAllocations(token());
-        if (loads.isLatest(request)) this.allocations = allocations;
-        return true;
-      } catch (e) {
-        console.error("Failed to load allocations:", e);
-        if (loads.isLatest(request)) {
+      return await loadLatest(loads, {
+        what: "allocations",
+        setLoading: (loading) => (this.loading = loading),
+        fetch: () => commercialEventsService().getAllocations(token()),
+        apply: (allocations) => (this.allocations = allocations),
+        fail: (e) => {
           this.loadError = describeCommercialEventsError(e);
           this.allocations = [];
-        }
-        return false;
-      } finally {
-        if (loads.isLatest(request)) this.loading = false;
-      }
+        },
+      });
     },
 
     /** Drops the list, every row's details and every pending load; a write in flight stays marked. */
@@ -158,22 +152,19 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     /** Periods and events of one allocation for its expanded row. */
-    async loadDetails(allocationId: string): Promise<void> {
-      const request = detailLoads.next(allocationId);
-      const previous = this.details[allocationId];
-      this.details[allocationId] = { periods: previous?.periods ?? [], events: previous?.events ?? [], loading: true, error: "" };
-      try {
-        const [periods, events] = await Promise.all([
-          commercialEventsService().getAllocationPeriods(token(), allocationId),
-          commercialEventsService().getEvents(token(), { ...emptyEventFilters(), allocationId }),
-        ]);
-        if (detailLoads.isLatest(allocationId, request)) this.details[allocationId] = { periods, events, loading: false, error: "" };
-      } catch (e) {
-        console.error("Failed to load allocation details:", e);
-        if (detailLoads.isLatest(allocationId, request)) {
-          this.details[allocationId] = { periods: [], events: [], loading: false, error: describeCommercialEventsError(e) };
-        }
-      }
+    async loadDetails(allocationId: string): Promise<boolean> {
+      const row = (): AllocationRowDetails => this.details[allocationId] ?? { periods: [], events: [], loading: false, error: "" };
+      return await loadLatest(detailLoads.forKey(allocationId), {
+        what: "allocation details",
+        setLoading: (loading) => (this.details[allocationId] = { ...row(), loading, ...(loading ? { error: "" } : {}) }),
+        fetch: () =>
+          Promise.all([
+            commercialEventsService().getAllocationPeriods(token(), allocationId),
+            commercialEventsService().getEvents(token(), { ...emptyEventFilters(), allocationId }),
+          ]),
+        apply: ([periods, events]) => (this.details[allocationId] = { ...row(), periods, events }),
+        fail: (e) => (this.details[allocationId] = { ...row(), periods: [], events: [], error: describeCommercialEventsError(e) }),
+      });
     },
   },
 });

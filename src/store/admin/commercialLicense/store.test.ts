@@ -17,6 +17,7 @@ vi.mock("@/services/admin/CommercialLicenseService", () => ({
 vi.mock("@/store/admin/commercialEvents/service", () => ({ commercialEventsService: () => events }));
 vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) }));
 
+import { MAYBE_SAVED_TEXT } from "@/store/admin/commercialEvents/errors";
 import { useCommercialLicenseStore } from "./store";
 
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
@@ -30,6 +31,7 @@ const hints = (battleTag: string, hostOf: string[]) => ({ battleTag, organizerOf
 beforeEach(() => {
   setActivePinia(createPinia());
   vi.clearAllMocks();
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
 test("an older role-hint lookup that answers last cannot overwrite a newer one", async () => {
@@ -93,4 +95,17 @@ test("clearing drops a pending load and keeps a write in flight marked", async (
   expect(store.loading).toBe(false);
   expect(store.saving).toBe(true);
   expect(events.getRoleHints).not.toHaveBeenCalled();
+});
+
+test("an uncertain tag write reloads the list before saving clears", async () => {
+  license.upsertTaggedPlayer.mockRejectedValue(new TypeError("Failed to fetch"));
+  license.getTaggedPlayers.mockResolvedValue([{ battleTag: "Foo#1" }]);
+  events.getRoleHints.mockResolvedValue([hints("Foo#1", [])]);
+  const store = useCommercialLicenseStore();
+
+  expect(await store.upsert("Foo#1", {} as never)).toBe(false);
+
+  expect(store.error).toBe(MAYBE_SAVED_TEXT);
+  expect(store.taggedPlayers).toEqual([{ battleTag: "Foo#1" }]);
+  expect(store.saving).toBe(false);
 });

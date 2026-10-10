@@ -4,9 +4,9 @@ import { useOauthStore } from "@/store/oauth/store";
 import { CommercialLicenseService } from "@/services/admin/CommercialLicenseService";
 import { commercialEventsService } from "@/store/admin/commercialEvents/service";
 import { describeCommercialEventsError } from "@/store/admin/commercialEvents/errors";
-import { keyedRequestSequence, requestSequence } from "@/store/admin/commercialEvents/latest";
+import { keyedRequestSequence, loadLatest, requestSequence } from "@/store/admin/commercialEvents/latest";
 import { roleHintsByBattleTag } from "@/store/admin/commercialEvents/roleHints";
-import { resetKeepingWrite } from "@/store/admin/commercialEvents/write";
+import { resetKeepingWrite, runAdminWrite } from "@/store/admin/commercialEvents/write";
 import { describeError } from "./errors";
 import type { CommercialLicenseState, CommercialLicenseTagRequest } from "./types";
 
@@ -34,27 +34,26 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
   }),
 
   actions: {
-    async load(): Promise<void> {
-      const request = loads.next();
-      this.loading = true;
+    /** Then looks up the role hints of every listed tag. Resolves to whether the list request succeeded. */
+    async load(): Promise<boolean> {
       this.loadError = "";
-      try {
-        const oauthStore = useOauthStore();
-        const taggedPlayers = await getService().getTaggedPlayers(oauthStore.token);
-        if (!loads.isLatest(request)) return;
-        this.taggedPlayers = taggedPlayers;
-      } catch (e) {
+      let applied = false;
+      const listed = await loadLatest(loads, {
+        what: "commercial license tags",
+        setLoading: (loading) => (this.loading = loading),
+        fetch: () => getService().getTaggedPlayers(useOauthStore().token),
+        apply: (taggedPlayers) => {
+          this.taggedPlayers = taggedPlayers;
+          applied = true;
+        },
         // The service throws on a non-OK status; show it rather than an empty table.
-        console.error("Failed to load commercial license tags:", e);
-        if (loads.isLatest(request)) {
+        fail: (e) => {
           this.loadError = describeError(e);
           this.taggedPlayers = [];
-        }
-        return;
-      } finally {
-        if (loads.isLatest(request)) this.loading = false;
-      }
-      await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag), { full: true });
+        },
+      });
+      if (applied) await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag), { full: true });
+      return listed;
     },
 
     /** Drops the list, the hints and every pending load; a write in flight stays marked. */
@@ -90,42 +89,22 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
     },
 
     async upsert(battleTag: string, request: CommercialLicenseTagRequest): Promise<boolean> {
-      this.saving = true;
-      this.error = "";
-      try {
-        const oauthStore = useOauthStore();
-        const saved = await getService().upsertTaggedPlayer(oauthStore.token, battleTag, request);
-        this.taggedPlayers = [...this.taggedPlayers.filter((p) => p.battleTag !== saved.battleTag), saved];
-        this.supersedePendingLoad();
-        void this.loadRoleHints([saved.battleTag]);
-        return true;
-      } catch (e) {
-        console.error("Commercial license request failed:", e);
-        this.error = describeError(e);
-        return false;
-      } finally {
-        this.saving = false;
-      }
+      const saved = await runAdminWrite(this, describeError, () => getService().upsertTaggedPlayer(useOauthStore().token, battleTag, request), () => this.load());
+      if (!saved) return false;
+      this.taggedPlayers = [...this.taggedPlayers.filter((p) => p.battleTag !== saved.battleTag), saved];
+      this.supersedePendingLoad();
+      void this.loadRoleHints([saved.battleTag]);
+      return true;
     },
 
     async remove(battleTag: string): Promise<boolean> {
-      this.saving = true;
-      this.error = "";
-      try {
-        const oauthStore = useOauthStore();
-        await getService().removeTaggedPlayer(oauthStore.token, battleTag);
-        this.taggedPlayers = this.taggedPlayers.filter((p) => p.battleTag !== battleTag);
-        this.supersedePendingLoad();
-        hintLoads.invalidate(battleTag);
-        delete this.roleHints[battleTag];
-        return true;
-      } catch (e) {
-        console.error("Commercial license request failed:", e);
-        this.error = describeError(e);
-        return false;
-      } finally {
-        this.saving = false;
-      }
+      const removed = await runAdminWrite(this, describeError, () => getService().removeTaggedPlayer(useOauthStore().token, battleTag).then(() => true), () => this.load());
+      if (!removed) return false;
+      this.taggedPlayers = this.taggedPlayers.filter((p) => p.battleTag !== battleTag);
+      this.supersedePendingLoad();
+      hintLoads.invalidate(battleTag);
+      delete this.roleHints[battleTag];
+      return true;
     },
   },
 });

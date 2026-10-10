@@ -70,7 +70,7 @@
           </v-table>
         </v-card>
 
-        <event-people-card class="mt-4" :event="store.event" @changed="onPeopleChanged" />
+        <event-people-card class="mt-4" :event="store.event" />
         <event-games-table class="mt-4" />
         <audit-log-table class="mt-4" />
       </template>
@@ -134,13 +134,12 @@ function act(action: EventAction): void {
   if (event) void actionDialogs.value?.[action](event);
 }
 
-function onChanged(event: AdminEventDetail): void {
-  store.applyEvent(event);
-  void store.loadAudit();
-}
+// Set once this visit ends: a dialog write that settles afterwards must not reach the next visit, even of the same event.
+let left = false;
 
-function onPeopleChanged(): void {
-  void store.loadAudit();
+// The store reloads the audit log after every write it takes.
+function onChanged(event: AdminEventDetail): void {
+  if (!left) store.applyEvent(event);
 }
 
 async function refresh(): Promise<void> {
@@ -159,5 +158,8 @@ watch(hasPermission, init);
 watch(() => props.eventId, init);
 onMounted(init);
 // Leaving the page drops the event, so a later write elsewhere does not reload it (eventsStore.refresh).
-onBeforeUnmount(() => store.clear());
+onBeforeUnmount(() => {
+  left = true;
+  store.clear();
+});
 </script>

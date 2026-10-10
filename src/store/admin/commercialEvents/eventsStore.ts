@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
 import { useCommercialEventDetailStore } from "./eventDetailStore";
-import { requestSequence } from "./latest";
+import { loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, AdminEventDetail, EventCreateRequest, EventFilters, EventUpdateRequest, SuspendRequest } from "./types";
@@ -39,23 +39,18 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
   actions: {
     /** Server order: startsAt descending. Resolves to whether the request succeeded. */
     async load(): Promise<boolean> {
-      const request = loads.next();
-      this.loading = true;
       this.loadError = "";
-      try {
-        const events = await commercialEventsService().getEvents(token(), { ...this.filters });
-        if (loads.isLatest(request)) this.events = events;
-        return true;
-      } catch (e) {
-        console.error("Failed to load events:", e);
-        if (loads.isLatest(request)) {
+      const filters = { ...this.filters };
+      return await loadLatest(loads, {
+        what: "events",
+        setLoading: (loading) => (this.loading = loading),
+        fetch: () => commercialEventsService().getEvents(token(), filters),
+        apply: (events) => (this.events = events),
+        fail: (e) => {
           this.loadError = describeCommercialEventsError(e);
           this.events = [];
-        }
-        return false;
-      } finally {
-        if (loads.isLatest(request)) this.loading = false;
-      }
+        },
+      });
     },
 
     /** Drops the list and every pending list response; a write in flight stays marked. */
@@ -64,10 +59,13 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
       resetKeepingWrite(this);
     },
 
-    /** After a write whose outcome is unknown: reloads the list and, when it shows that event, the detail page's event. Resolves to whether both loaded. */
+    /**
+     * After a write whose outcome is unknown: reloads the list and, when the detail page shows that event, everything
+     * a write can change there (the event and its audit log). Resolves to whether all of it loaded.
+     */
     async refresh(eventId?: string): Promise<boolean> {
       const detail = useCommercialEventDetailStore();
-      const results = await Promise.all([this.load(), eventId !== undefined && detail.eventId === eventId ? detail.loadEvent() : Promise.resolve(true)]);
+      const results = await Promise.all([this.load(), eventId !== undefined && detail.eventId === eventId ? detail.refreshAfterWrite() : Promise.resolve(true)]);
       return results.every(Boolean);
     },
 

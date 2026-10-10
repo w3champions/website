@@ -84,10 +84,6 @@ import type { AdminEventDetail, ManagedRole } from "@/store/admin/commercialEven
 
 const props = defineProps<{ event: AdminEventDetail }>();
 
-const emit = defineEmits<{
-  (e: "changed"): void;
-}>();
-
 const store = useCommercialEventDetailStore();
 
 const role = ref<ManagedRole>("delegate");
@@ -107,12 +103,11 @@ async function add(): Promise<void> {
   if (await store.addPerson(battleTag.value, role.value)) {
     battleTag.value = "";
     pickerKey.value++;
-    emit("changed");
   }
 }
 
 async function remove(tag: string, singular: string): Promise<void> {
   if (!confirm(`Remove ${tag} as ${singular} of this event?`)) return;
-  if (await store.removePerson(tag)) emit("changed");
+  await store.removePerson(tag);
 }
 </script>
