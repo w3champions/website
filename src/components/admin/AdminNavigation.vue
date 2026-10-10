@@ -70,7 +70,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline,
+  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline, mdiPlayCircleOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -234,6 +234,13 @@ export default defineComponent({
             permission: EPermission.CommercialLicense,
             component: "commercial-events/events",
             routeName: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS,
+          },
+          {
+            title: "Active games",
+            icon: mdiPlayCircleOutline,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/active-games",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_ACTIVE_GAMES,
           },
         ],
       },

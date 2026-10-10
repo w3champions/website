@@ -69,6 +69,7 @@ import AdminTaggedAccounts from "@/components/admin/commercial-events/AdminTagge
 import AdminAllocations from "@/components/admin/commercial-events/AdminAllocations.vue";
 import AdminEvents from "@/components/admin/commercial-events/AdminEvents.vue";
 import AdminEventDetail from "@/components/admin/commercial-events/AdminEventDetail.vue";
+import AdminActiveGames from "@/components/admin/commercial-events/AdminActiveGames.vue";
 import AdminLagReportDetail from "@/components/admin/AdminLagReportDetail.vue";
 
 const routes: RouteRecordRaw[] = [
@@ -284,6 +285,7 @@ const routes: RouteRecordRaw[] = [
       { path: "commercial-events/allocations", name: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS, component: AdminAllocations },
       { path: "commercial-events/events", name: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS, component: AdminEvents },
       { path: "commercial-events/events/:eventId", name: EAdminRouteName.COMMERCIAL_EVENTS_EVENT_DETAIL, component: AdminEventDetail, props: true },
+      { path: "commercial-events/active-games", name: EAdminRouteName.COMMERCIAL_EVENTS_ACTIVE_GAMES, component: AdminActiveGames },
       { path: "admin-warnings", name: EAdminRouteName.PLAYER_WARNINGS, component: AdminWarnings },
       { path: "admin-warning-templates", name: EAdminRouteName.WARNING_TEMPLATES, component: AdminWarningTemplates },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
