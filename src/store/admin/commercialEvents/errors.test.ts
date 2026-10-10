@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import { HttpError } from "@/services/http/AuthorizedClient";
-import { describeCommercialEventsError, ruleText } from "./errors";
+import { describeCommercialEventsError, mayHaveBeenSaved, ruleText } from "./errors";
 
 const http = (status: number, body: unknown) => new HttpError(status, "POST", "https://x/api/admin/commercial-events/events", typeof body === "string" ? body : JSON.stringify(body));
 
@@ -67,7 +67,30 @@ test("admin-only codes map to admin copy", () => {
   );
   assert.equal(describeCommercialEventsError(http(409, { error: "EVENT_CLOSED", code: "EVENT_CLOSED" })), "This event is closed. Closed events can't be changed.");
   assert.equal(describeCommercialEventsError(http(404, { error: "UNKNOWN_GAME", code: "UNKNOWN_GAME" })), "This game is no longer in progress.");
-  assert.equal(describeCommercialEventsError(http(409, { error: "ALLOCATION_INACTIVE", code: "ALLOCATION_INACTIVE" })), "Only an active allocation can be ended now.");
+  assert.equal(describeCommercialEventsError(http(409, { error: "ALLOCATION_INACTIVE", code: "ALLOCATION_INACTIVE" })), "Only an active allocation can be ended now. This allocation has already ended.");
+});
+
+test("EVENT_SUSPENDED shows the suspension note", () => {
+  const e = http(409, { error: "EVENT_SUSPENDED", code: "EVENT_SUSPENDED", data: { message: "Under review" } });
+  assert.equal(describeCommercialEventsError(e), "This event is suspended. Reason: Under review");
+  assert.equal(describeCommercialEventsError(http(409, { code: "EVENT_SUSPENDED" })), "This event is suspended.");
+});
+
+test("ALLOCATION_INACTIVE names the start of an upcoming allocation", () => {
+  const e = http(409, { code: "ALLOCATION_INACTIVE", data: { startsAt: "2026-10-09T14:05:00.000Z" } });
+  assert.equal(describeCommercialEventsError(e), "Only an active allocation can be ended now. This allocation starts 2026-10-09 14:05 UTC.");
+});
+
+test("a long EVENT_SUSPENDED body keeps its code and note", () => {
+  const note = "x".repeat(900);
+  const e = http(409, { code: "EVENT_SUSPENDED", data: { message: note } });
+  assert.equal(describeCommercialEventsError(e), `This event is suspended. Reason: ${note}`);
+});
+
+test("only 5xx statuses may have been saved", () => {
+  for (const status of [500, 502, 503, 504]) assert.equal(mayHaveBeenSaved(http(status, {})), true);
+  for (const status of [400, 404, 409]) assert.equal(mayHaveBeenSaved(http(status, {})), false);
+  assert.equal(mayHaveBeenSaved(new Error("x")), false);
 });
 
 test("an unknown code falls back to the error text", () => {

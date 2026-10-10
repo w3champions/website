@@ -1,4 +1,5 @@
 import { HttpError } from "@/services/http/AuthorizedClient";
+import { formatUtc } from "./dates";
 import { roleLabel } from "./format";
 import type { InvalidFieldRule } from "./types";
 
@@ -47,9 +48,7 @@ const CODE_TEXT: Record<string, string> = {
   UNKNOWN_ALLOCATION: "This allocation wasn't found.",
   EVENT_NOT_STARTED: "This event hasn't started yet.",
   EVENT_CLOSED: "This event is closed. Closed events can't be changed.",
-  EVENT_SUSPENDED: "This event is already suspended.",
   EVENT_NOT_SUSPENDED: "This event isn't suspended.",
-  ALLOCATION_INACTIVE: "Only an active allocation can be ended now.",
   EVENT_LIMIT_REACHED: "This event has reached its game limit.",
   ALLOCATION_EMPTY: "No games are left in this allocation's current period.",
   HOST_NOT_AUTHORIZED: "The lobby host isn't an authorized host for this event.",
@@ -57,6 +56,16 @@ const CODE_TEXT: Record<string, string> = {
   UNKNOWN_GAME: "This game is no longer in progress.",
   INTERNAL: "Something went wrong in the matchmaking service. Please try again.",
 };
+
+/** Statuses after which a write may nevertheless have been saved (the response, not the write, failed or timed out). */
+const MAYBE_SAVED_STATUSES = [500, 502, 503, 504];
+
+/** Shown after a write whose outcome is unknown, once the list has been reloaded. */
+export const MAYBE_SAVED_TEXT = "The change may have been saved. The list was refreshed — check it before trying again.";
+
+export function mayHaveBeenSaved(e: unknown): boolean {
+  return e instanceof HttpError && MAYBE_SAVED_STATUSES.includes(e.status);
+}
 
 interface ErrorBody {
   error?: unknown;
@@ -148,6 +157,16 @@ function codeText(code: string, body: ErrorBody, context: ErrorContext): string 
       return role === undefined
         ? `${battleTag} already has a role here. Remove it first to change it.`
         : `${battleTag} already has the role "${role}" here. Remove it first to change it.`;
+    }
+    case "EVENT_SUSPENDED": {
+      const note = text(data.message);
+      return note === undefined ? "This event is suspended." : `This event is suspended. Reason: ${note}`;
+    }
+    case "ALLOCATION_INACTIVE": {
+      const startsAt = text(data.startsAt);
+      return startsAt === undefined
+        ? "Only an active allocation can be ended now. This allocation has already ended."
+        : `Only an active allocation can be ended now. This allocation starts ${formatUtc(startsAt)}.`;
     }
     case "TERMINATE_FAILED":
       return `The game couldn't be terminated: ${text(data.message) ?? "unknown error"}`;
