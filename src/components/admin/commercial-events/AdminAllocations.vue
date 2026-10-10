@@ -15,7 +15,7 @@
           <v-btn variant="text" :disabled="store.loading" @click="store.load()">Retry</v-btn>
         </template>
       </v-alert>
-      <v-alert v-if="store.error" type="error" variant="tonal" class="mb-4" closable @click:close="store.error = ''">
+      <v-alert v-if="store.error && !dialog" type="error" variant="tonal" class="mb-4" closable @click:close="store.error = ''">
         {{ store.error }}
       </v-alert>
 
@@ -33,8 +33,11 @@
         <template v-slot:top>
           <div class="d-flex align-center px-4">
             <v-spacer />
-            <v-btn variant="text" class="mb-2" :prepend-icon="mdiRefresh" :disabled="store.loading" @click="store.load()">
+            <v-btn variant="text" class="mb-2 mr-2" :prepend-icon="mdiRefresh" :disabled="store.loading" @click="store.load()">
               Refresh
+            </v-btn>
+            <v-btn class="mb-2 bg-primary text-w3-race-bg" :disabled="store.loading || !!store.loadError" @click="openCreate">
+              Create allocation
             </v-btn>
           </div>
         </template>
@@ -75,6 +78,17 @@
             icon
             variant="text"
             size="small"
+            title="Edit"
+            :aria-label="`Edit ${item.name}`"
+            :disabled="store.saving"
+            @click="openEdit(item)"
+          >
+            <v-icon size="small">{{ mdiPencil }}</v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            variant="text"
+            size="small"
             title="End now"
             :aria-label="`End ${item.name} now`"
             :disabled="store.saving || item.state !== 'active'"
@@ -104,17 +118,30 @@
         </template>
       </v-data-table>
     </v-container>
+
+    <allocation-dialog
+      v-if="hasPermission"
+      v-model="dialog"
+      :allocation="editedAllocation"
+      :saving="store.saving"
+      :error="store.error"
+      @save="save"
+      @addMember="addMember"
+      @removeMember="removeMember"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
-import { mdiCheck, mdiClose, mdiDelete, mdiRefresh, mdiStop } from "@mdi/js";
+import { computed, onMounted, ref, watch } from "vue";
+import { mdiCheck, mdiClose, mdiDelete, mdiPencil, mdiRefresh, mdiStop } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import AllocationDetails from "@/components/admin/commercial-events/AllocationDetails.vue";
+import AllocationDialog from "@/components/admin/commercial-events/AllocationDialog.vue";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
-import { hasRecordedUsage } from "@/store/admin/commercialEvents/allocationDraft";
+import { hasRecordedUsage, toAllocationCreateRequest, toAllocationUpdateRequest } from "@/store/admin/commercialEvents/allocationDraft";
+import type { AllocationDraft } from "@/store/admin/commercialEvents/allocationDraft";
 import { formatUtc } from "@/store/admin/commercialEvents/dates";
 import { allocationStateLabel, memberSummary, periodUsageLabel, recurrenceLabel } from "@/store/admin/commercialEvents/format";
 import type { Allocation } from "@/store/admin/commercialEvents/types";
@@ -123,6 +150,10 @@ const store = useCommercialEventAllocationsStore();
 const { hasPermission, permissionsKnown } = useCommercialLicensePermission();
 
 const expanded = ref<string[]>([]);
+const dialog = ref(false);
+// By id, so the dialog follows the store copy after member changes.
+const editedId = ref<string | null>(null);
+const editedAllocation = computed<Allocation | null>(() => (editedId.value === null ? null : store.byId(editedId.value) ?? null));
 
 const headers: DataTableHeader[] = [
   { title: "Name", value: "name", sortable: true },
@@ -136,6 +167,40 @@ const headers: DataTableHeader[] = [
   { title: "State", value: "state", sortable: true },
   { title: "Actions", value: "actions", sortable: false, align: "center" },
 ];
+
+function openCreate(): void {
+  editedId.value = null;
+  store.error = "";
+  dialog.value = true;
+}
+
+function openEdit(allocation: Allocation): void {
+  editedId.value = allocation.id;
+  store.error = "";
+  dialog.value = true;
+}
+
+async function save(draft: AllocationDraft): Promise<void> {
+  const original = editedAllocation.value;
+  if (original === null) {
+    // Stay open on the new allocation so its members can be added.
+    const created = await store.create(toAllocationCreateRequest(draft));
+    if (created) editedId.value = created.id;
+    return;
+  }
+  const request = toAllocationUpdateRequest(draft, original, new Date());
+  if (Object.keys(request).length === 0 || await store.update(original.id, request)) {
+    dialog.value = false;
+  }
+}
+
+async function addMember(battleTag: string): Promise<void> {
+  if (editedId.value !== null) await store.addMember(editedId.value, battleTag);
+}
+
+async function removeMember(battleTag: string): Promise<void> {
+  if (editedId.value !== null) await store.removeMember(editedId.value, battleTag);
+}
 
 async function endNow(allocation: Allocation): Promise<void> {
   if (confirm(`End "${allocation.name}" now? Members can no longer start event games from it, and its events become read-only for organizers.`)) {
@@ -152,11 +217,16 @@ async function removeItem(allocation: Allocation): Promise<void> {
 async function init(): Promise<void> {
   if (!hasPermission.value) {
     store.$reset();
+    dialog.value = false;
     return;
   }
   await store.load();
 }
 
 watch(hasPermission, init);
+// A cancelled failed save must not resurface in the page banner.
+watch(dialog, (open) => {
+  if (!open) store.error = "";
+});
 onMounted(init);
 </script>
