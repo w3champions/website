@@ -15,7 +15,7 @@
           <v-btn variant="text" :disabled="store.loading" @click="store.load()">Retry</v-btn>
         </template>
       </v-alert>
-      <v-alert v-if="store.filterNotice" type="info" variant="tonal" density="compact" class="mb-4" closable @click:close="store.filterNotice = ''">
+      <v-alert v-if="store.filterNotice" type="info" variant="tonal" density="compact" class="mb-4" closable @click:close="store.dismissFilterNotice()">
         {{ store.filterNotice }}
       </v-alert>
       <v-alert v-if="allocationsStore.loadError" type="warning" variant="tonal" density="compact" class="mb-4">

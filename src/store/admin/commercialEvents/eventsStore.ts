@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
+import { useCommercialEventAllocationsStore } from "./allocationsStore";
 import { useCommercialEventDetailStore } from "./eventDetailStore";
 import { loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
@@ -18,8 +19,8 @@ interface EventsState {
   loadError: string;
   /** Why the filters changed without the admin (after an uncertain create); shown above the list. */
   filterNotice: string;
-  /** The filters `filterNotice` describes; once they differ, the notice goes. */
-  noticeFilters: EventFilters | null;
+  /** Filters set by the store after an uncertain create, not by the admin; null once the admin changes them. */
+  autoFilters: EventFilters | null;
 }
 
 function token(): string {
@@ -41,7 +42,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     error: "",
     loadError: "",
     filterNotice: "",
-    noticeFilters: null,
+    autoFilters: null,
   }),
 
   actions: {
@@ -72,21 +73,32 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     endVisit(): void {
       visits.invalidate();
       this.error = "";
-      // Filters set for an uncertain create are not the admin's: don't leave them behind unexplained.
-      if (this.filterNotice !== "") this.filters = emptyEventFilters();
-      this.dropFilterNotice();
-    },
-
-    /** Called when the filters change: the notice only explains the filters it was set for. */
-    filtersChanged(): void {
-      const notice = this.noticeFilters;
-      const same = notice !== null && (Object.keys(notice) as Array<keyof EventFilters>).every((key) => notice[key] === this.filters[key]);
-      if (!same) this.dropFilterNotice();
-    },
-
-    dropFilterNotice(): void {
+      // Filters set for an uncertain create are not the admin's, even once the notice was dismissed: don't leave them
+      // behind unexplained.
+      if (this.autoFilters !== null) this.filters = emptyEventFilters();
+      this.autoFilters = null;
       this.filterNotice = "";
-      this.noticeFilters = null;
+    },
+
+    /** Called when the filters change: once they differ from the ones the store set, they are the admin's again. */
+    filtersChanged(): void {
+      const auto = this.autoFilters;
+      const same = auto !== null && (Object.keys(auto) as Array<keyof EventFilters>).every((key) => auto[key] === this.filters[key]);
+      if (!same) {
+        this.autoFilters = null;
+        this.filterNotice = "";
+      }
+    },
+
+    /** Hides the notice; the filters stay marked as set by the store. */
+    dismissFilterNotice(): void {
+      this.filterNotice = "";
+    },
+
+    /** Reloads the list and the allocations the create and move dialogs offer (after a create or move was refused). */
+    async refreshWithAllocations(eventId?: string): Promise<boolean> {
+      const results = await Promise.all([this.refresh(eventId), useCommercialEventAllocationsStore().load()]);
+      return results.every(Boolean);
     },
 
     /**
@@ -110,8 +122,9 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     },
 
     async create(request: EventCreateRequest): Promise<AdminEventDetail | null> {
-      this.dropFilterNotice();
-      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), () => this.showAttemptedCreate(request), visits);
+      // A notice from an earlier create no longer explains what this one will show.
+      this.dismissFilterNotice();
+      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), (reason) => (reason === "uncertain" ? this.showAttemptedCreate(request) : this.refreshWithAllocations()), visits);
       // Reload: the filters decide whether and where the new event is listed.
       if (created) void this.load();
       return created;
@@ -124,7 +137,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     async showAttemptedCreate(request: EventCreateRequest): Promise<boolean> {
       const name = request.name.trim();
       this.filters = { ...emptyEventFilters(), allocationId: request.allocationId, q: name };
-      this.noticeFilters = { ...this.filters };
+      this.autoFilters = { ...this.filters };
       this.filterNotice = `The filters now show the events named "${name}" in the chosen allocation, so you can check whether the new event was created.`;
       return await this.load();
     },
@@ -134,7 +147,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     },
 
     async move(eventId: string, allocationId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().moveEvent(token(), eventId, allocationId), () => this.refresh(eventId), visits));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().moveEvent(token(), eventId, allocationId), (reason) => (reason === "conflict" ? this.refreshWithAllocations(eventId) : this.refresh(eventId)), visits));
     },
 
     async close(eventId: string): Promise<AdminEventDetail | null> {

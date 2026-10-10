@@ -122,7 +122,7 @@
     <allocation-dialog
       v-if="hasPermission"
       v-model="dialog"
-      :allocation="editedAllocation"
+      :allocation="dialogAllocation"
       :saving="store.saving"
       :error="store.error"
       @save="save"
@@ -140,7 +140,7 @@ import AllocationDetails from "@/components/admin/commercial-events/AllocationDe
 import AllocationDialog from "@/components/admin/commercial-events/AllocationDialog.vue";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
-import { hasRecordedUsage, toAllocationCreateRequest, toAllocationUpdateRequest } from "@/store/admin/commercialEvents/allocationDraft";
+import { editedAllocationView, hasRecordedUsage, toAllocationCreateRequest, toAllocationUpdateRequest } from "@/store/admin/commercialEvents/allocationDraft";
 import type { AllocationDraft } from "@/store/admin/commercialEvents/allocationDraft";
 import { formatUtc } from "@/store/admin/commercialEvents/dates";
 import { allocationStateLabel, memberSummary, periodUsageLabel, recurrenceLabel } from "@/store/admin/commercialEvents/format";
@@ -154,6 +154,8 @@ const dialog = ref(false);
 // By id, so the dialog follows the store copy after member changes.
 const editedId = ref<string | null>(null);
 const editedAllocation = computed<Allocation | null>(() => (editedId.value === null ? null : store.byId(editedId.value) ?? null));
+// Keeps editing the last copy if a reload drops it; saving then reports that it is no longer listed.
+const dialogAllocation = editedAllocationView(() => editedId.value, (id) => store.byId(id));
 
 const headers: DataTableHeader[] = [
   { title: "Name", value: "name", sortable: true },

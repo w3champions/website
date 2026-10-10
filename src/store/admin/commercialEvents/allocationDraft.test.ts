@@ -1,6 +1,7 @@
 import { test } from "vitest";
+import { ref } from "vue";
 import { strict as assert } from "node:assert";
-import { draftFromAllocation, emptyAllocationDraft, hasRecordedUsage, isAllocationStarted, memberProblem, revertStartedFields, toAllocationCreateRequest, toAllocationUpdateRequest, validateAllocationDraft } from "./allocationDraft";
+import { draftFromAllocation, editedAllocationView, emptyAllocationDraft, hasRecordedUsage, isAllocationStarted, memberProblem, revertStartedFields, toAllocationCreateRequest, toAllocationUpdateRequest, validateAllocationDraft } from "./allocationDraft";
 import type { AllocationDraft } from "./allocationDraft";
 import type { Allocation } from "./types";
 
@@ -157,4 +158,18 @@ test("an update built against the draft's own base leaves fields changed on the 
   assert.deepEqual(toAllocationUpdateRequest(draft, allocation, beforeStart), { name: "Renamed" });
   // Against the newer copy the untouched draft fields would revert it.
   assert.deepEqual(toAllocationUpdateRequest(draft, newer, beforeStart), { name: "Renamed", gamesPerPeriod: 50, adminNote: "" });
+});
+
+test("the edit dialog keeps the last copy of an allocation a reload no longer lists", () => {
+  const listed = ref<Allocation[]>([allocation]);
+  const id = ref<string | null>("a1");
+  const view = editedAllocationView(() => id.value, (wanted) => listed.value.find((a) => a.id === wanted));
+
+  assert.deepEqual(view.value, allocation);
+  listed.value = [];
+  assert.deepEqual(view.value, allocation);
+  id.value = "a2";
+  assert.equal(view.value, null);
+  id.value = null;
+  assert.equal(view.value, null);
 });

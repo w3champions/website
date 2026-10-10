@@ -74,6 +74,35 @@ export function mayHaveBeenSaved(e: unknown): boolean {
   return !(e instanceof HttpError) || e.status >= 500;
 }
 
+/**
+ * Error codes (matchmaking docs/commercial-events.md, "Error codes") that refuse a write because the server state is not
+ * what the page showed: another admin or the clock changed it (closed at endsAt, suspended, lifted, deleted, used,
+ * expired, a role added). The write was not applied, but the page should reload. Validation (`INVALID_FIELD`,
+ * `INVALID_REQUEST`, `UNKNOWN_BATTLE_TAG`), permission (`NOT_AUTHORIZED`) and refusal (`TERMINATE_FAILED`) codes
+ * are not state conflicts.
+ */
+const STATE_CONFLICT_CODES = new Set([
+  "READ_ONLY",
+  "UNKNOWN_EVENT",
+  "UNKNOWN_ALLOCATION",
+  "ROLE_EXISTS",
+  "EVENT_NOT_STARTED",
+  "EVENT_CLOSED",
+  "EVENT_SUSPENDED",
+  "EVENT_NOT_SUSPENDED",
+  "ALLOCATION_INACTIVE",
+  "EVENT_LIMIT_REACHED",
+  "ALLOCATION_EMPTY",
+  "HOST_NOT_AUTHORIZED",
+  "ALLOCATION_IN_USE",
+  "UNKNOWN_GAME",
+]);
+
+/** True for a refused write whose code says the page's data is out of date (see STATE_CONFLICT_CODES). */
+export function isStateConflict(e: unknown): boolean {
+  return e instanceof HttpError && e.status < 500 && STATE_CONFLICT_CODES.has(text(parseBody(e.responseBody).code) ?? "");
+}
+
 /** After an uncertain allocation create whose reload lists a new allocation of that name (the dialog then edits it). */
 export function allocationCreatedText(name: string): string {
   return `The allocation "${name}" was created after all: it is listed now, and this dialog edits it.`;

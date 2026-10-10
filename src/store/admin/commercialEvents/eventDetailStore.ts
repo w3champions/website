@@ -4,7 +4,7 @@ import { describeCommercialEventsError } from "./errors";
 import { loadLatest, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import type { AdminEventDetail, AuditEntry, EventGame, EventPeople, ManagedRole } from "./types";
-import { resetKeepingWrite, runAdminWrite } from "./write";
+import { type RefreshReason, resetKeepingWrite, runAdminWrite } from "./write";
 
 interface EventDetailState {
   /** The event shown; write and match page responses for another id are dropped. */
@@ -185,7 +185,9 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
     async writePeople(write: (eventId: string) => Promise<EventPeople>): Promise<boolean> {
       const eventId = this.eventId;
       const visit = visits.current();
-      const people = await runAdminWrite(this, "other", () => write(eventId), () => this.refreshAfterWrite(), visits);
+      // After the page was left, reload only if it shows the same event again; another event is not affected.
+      const reload = (reason: RefreshReason) => (reason !== "elsewhere" || this.eventId === eventId ? this.refreshAfterWrite() : Promise.resolve(true));
+      const people = await runAdminWrite(this, "other", () => write(eventId), reload, visits);
       if (people && this.event && visits.isLatest(visit)) {
         this.event = { ...this.event, ...people };
         this.supersedePendingLoad();

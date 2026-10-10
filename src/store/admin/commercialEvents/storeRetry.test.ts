@@ -57,14 +57,67 @@ test("a 504 on event create reloads the list and tells the admin to check it", a
   expect(service.getEvents).toHaveBeenCalledTimes(1);
 });
 
-test("a 409 on event create does not reload", async () => {
-  service.createEvent.mockRejectedValue(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "EVENT_CLOSED" })));
+test("a validation error on event create does not reload", async () => {
+  service.createEvent.mockRejectedValue(new HttpError(400, "POST", "https://x", JSON.stringify({ code: "INVALID_FIELD", field: "name", rule: "too-long" })));
   const store = useCommercialEventsStore();
 
   await store.create({ allocationId: "a1", name: "Cup" } as never);
 
   expect(service.getEvents).not.toHaveBeenCalled();
+  expect(store.error).toBe("Name: Use at most 32 characters.");
+});
+
+test("a state conflict on an event write keeps its message and reloads the shown event before saving clears", async () => {
+  const reload = deferred<unknown>();
+  service.suspendEvent.mockRejectedValue(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "EVENT_CLOSED" })));
+  service.getEvent.mockReturnValueOnce(reload.promise);
+  const detail = useCommercialEventDetailStore();
+  detail.eventId = "e1";
+  const store = useCommercialEventsStore();
+
+  const suspending = store.suspend("e1", {} as never);
+  await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(store.saving).toBe(true);
+  reload.resolve({ id: "e1", status: "closed" });
+  expect(await suspending).toBeNull();
+
   expect(store.error).toBe("This event is closed. Closed events can't be changed.");
+  expect(detail.event).toEqual({ id: "e1", status: "closed" });
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
+});
+
+test("a refused move onto an allocation that changed reloads the allocations too", async () => {
+  service.moveEvent.mockRejectedValue(new HttpError(409, "POST", "https://x", JSON.stringify({ code: "ALLOCATION_INACTIVE" })));
+  service.getEvents.mockResolvedValue([]);
+  service.getAllocations.mockResolvedValue([{ id: "a2" }]);
+  const allocations = useCommercialEventAllocationsStore();
+  const store = useCommercialEventsStore();
+
+  await store.move("e1", "a1");
+
+  expect(store.error).toContain("Only an active allocation");
+  expect(service.getEvents).toHaveBeenCalledTimes(1);
+  expect(allocations.allocations).toEqual([{ id: "a2" }]);
+});
+
+test("validation and permission refusals are not state conflicts", async () => {
+  service.addAllocationMember.mockRejectedValue(new HttpError(400, "PUT", "https://x", JSON.stringify({ code: "UNKNOWN_BATTLE_TAG", data: { battleTag: "X#1" } })));
+  const store = useCommercialEventAllocationsStore();
+
+  await store.addMember("a1", "X#1");
+
+  expect(service.getAllocations).not.toHaveBeenCalled();
+});
+
+test("a member add refused because the account already has a role reloads the allocations", async () => {
+  service.addAllocationMember.mockRejectedValue(new HttpError(409, "PUT", "https://x", JSON.stringify({ code: "ROLE_EXISTS", data: { battleTag: "X#1", role: "member" } })));
+  service.getAllocations.mockResolvedValue([]);
+  const store = useCommercialEventAllocationsStore();
+
+  await store.addMember("a1", "X#1");
+
+  expect(service.getAllocations).toHaveBeenCalledTimes(1);
+  expect(store.error).toContain("X#1");
 });
 
 test("a 500 on allocation create reloads the list; a stale older load cannot overwrite it", async () => {
@@ -308,6 +361,7 @@ test("a person write for an event no longer shown leaves the shown event alone",
 
   expect(store.error).toBe("");
   expect(store.event).toEqual({ id: "e2", hosts: [] });
+  // The write was for e1: the page showing e2 has nothing to reload.
   expect(service.getEvent).not.toHaveBeenCalled();
 });
 
@@ -398,9 +452,10 @@ test("a people write that settles after the same event was reopened leaves the n
   write.reject(gatewayTimeout());
   await adding;
 
+  // Nothing reported into the new visit, but it reloads: the write may have been saved.
   expect(store.error).toBe("");
-  expect(service.getEvent).not.toHaveBeenCalled();
-  expect(service.getAudit).not.toHaveBeenCalled();
+  await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
+  expect(service.getAudit).toHaveBeenCalledTimes(1);
 });
 
 test("taking an event write reloads the audit log", () => {
@@ -438,7 +493,7 @@ test("leaving a page hides its last write error when it is shown again", async (
   expect(store.error).toBe("");
 });
 
-test("a failed terminate that settles after the page was left does not reload the list", async () => {
+test("a terminate that fails after the page was left reports nothing, and reloads the list on a state conflict", async () => {
   const write = deferred<unknown>();
   service.terminateGame.mockReturnValueOnce(write.promise);
   const store = useCommercialEventActiveGamesStore();
@@ -448,8 +503,8 @@ test("a failed terminate that settles after the page was left does not reload th
   write.reject(new HttpError(404, "POST", "https://x", JSON.stringify({ code: "UNKNOWN_GAME" })));
   expect(await terminating).toBe(false);
 
-  expect(service.getActiveGames).not.toHaveBeenCalled();
   expect(store.error).toBe("");
+  await vi.waitFor(() => expect(service.getActiveGames).toHaveBeenCalledTimes(1));
 });
 
 test("an uncertain event create replaces the filters with a search sure to list the event, and says so", async () => {
@@ -530,4 +585,58 @@ test("a list reload without an allocation drops its details and their pending lo
   await loadingDetails;
 
   expect(store.details).toEqual({});
+});
+
+test("a create that succeeds after its page was left is not applied there; the list reloads instead", async () => {
+  const write = deferred<unknown>();
+  service.createAllocation.mockReturnValueOnce(write.promise);
+  service.getAllocations.mockResolvedValue([{ id: "a-new" }]);
+  const store = useCommercialEventAllocationsStore();
+
+  const creating = store.create({ name: "Spring" } as never);
+  store.endVisit();
+  // The next visit's load already lists the new allocation.
+  store.allocations = [{ id: "a-new" }] as never;
+  write.resolve({ id: "a-new" });
+
+  expect(await creating).toBeNull();
+  expect(store.allocations).toEqual([{ id: "a-new" }]);
+  await vi.waitFor(() => expect(service.getAllocations).toHaveBeenCalledTimes(1));
+  expect(store.allocations).toEqual([{ id: "a-new" }]);
+});
+
+test("a create answer never lists an allocation twice", async () => {
+  service.createAllocation.mockResolvedValue({ id: "a-new" });
+  const store = useCommercialEventAllocationsStore();
+  store.allocations = [{ id: "a-new" }, { id: "a-old" }] as never;
+
+  await store.create({ name: "Spring" } as never);
+
+  expect(store.allocations).toEqual([{ id: "a-new" }, { id: "a-old" }]);
+});
+
+test("filters set after an uncertain create are reset on leaving, even after the notice was dismissed", async () => {
+  service.createEvent.mockRejectedValue(gatewayTimeout());
+  service.getEvents.mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+  await store.create({ allocationId: "a1", name: "Cup" } as never);
+
+  store.dismissFilterNotice();
+  expect(store.filterNotice).toBe("");
+  store.endVisit();
+
+  expect(store.filters).toEqual({ status: "", phase: "", allocationId: "", q: "" });
+});
+
+test("filters the admin changed after an uncertain create are kept on leaving", async () => {
+  service.createEvent.mockRejectedValue(gatewayTimeout());
+  service.getEvents.mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+  await store.create({ allocationId: "a1", name: "Cup" } as never);
+
+  store.filters.status = "open";
+  store.filtersChanged();
+  store.endVisit();
+
+  expect(store.filters).toEqual({ status: "open", phase: "", allocationId: "a1", q: "Cup" });
 });

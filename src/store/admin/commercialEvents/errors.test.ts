@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import { HttpError } from "@/services/http/AuthorizedClient";
-import { describeCommercialEventsError, mayHaveBeenSaved, ruleText } from "./errors";
+import { describeCommercialEventsError, isStateConflict, mayHaveBeenSaved, ruleText } from "./errors";
 
 const http = (status: number, body: unknown) => new HttpError(status, "POST", "https://x/api/admin/commercial-events/events", typeof body === "string" ? body : JSON.stringify(body));
 
@@ -129,4 +129,15 @@ test("403 is the matchmaking admin-secret refusal passed through", () => {
 test("non-HTTP errors keep their message", () => {
   assert.equal(describeCommercialEventsError(new Error("network down")), "network down");
   assert.equal(describeCommercialEventsError("oops"), "oops");
+});
+
+test("state conflicts are the contract codes for a changed server state, not validation or permission", () => {
+  for (const code of ["EVENT_CLOSED", "EVENT_SUSPENDED", "EVENT_NOT_SUSPENDED", "ALLOCATION_INACTIVE", "ALLOCATION_IN_USE", "UNKNOWN_EVENT", "UNKNOWN_ALLOCATION", "ROLE_EXISTS", "UNKNOWN_GAME", "READ_ONLY"]) {
+    assert.equal(isStateConflict(http(409, { code })), true, code);
+  }
+  for (const code of ["INVALID_FIELD", "INVALID_REQUEST", "UNKNOWN_BATTLE_TAG", "NOT_AUTHORIZED", "TERMINATE_FAILED"]) {
+    assert.equal(isStateConflict(http(400, { code })), false, code);
+  }
+  assert.equal(isStateConflict(http(500, { code: "EVENT_CLOSED" })), false);
+  assert.equal(isStateConflict(new Error("x")), false);
 });

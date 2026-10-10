@@ -1,3 +1,4 @@
+import { computed, type ComputedRef } from "vue";
 import { isoToUtcInput, utcDayStartInput } from "./dates";
 import type { Allocation, AllocationCreateRequest, AllocationUpdateRequest, Recurrence, RoleEntry } from "./types";
 import { adminNoteProblem, dateRangeProblem, nameProblem, requireIso, requireWholeNumber, wholeNumberProblem } from "./validation";
@@ -118,4 +119,20 @@ export function memberProblem(members: RoleEntry[], battleTag: string): string |
 export function hasRecordedUsage(allocation: Pick<Allocation, "currentPeriod">): boolean {
   const period = allocation.currentPeriod;
   return !!period && period.consumed + period.held + period.invalid > 0;
+}
+
+/**
+ * The allocation the edit dialog shows: the store copy of `id()`, or, once a reload no longer lists it (deleted
+ * elsewhere, or a failed load), the last copy seen, so the dialog keeps editing it instead of turning into an empty
+ * create form. Null while no allocation is edited.
+ */
+export function editedAllocationView(id: () => string | null, find: (id: string) => Allocation | undefined): ComputedRef<Allocation | null> {
+  let last: Allocation | null = null;
+  return computed(() => {
+    const current = id();
+    if (current === null) return null;
+    const found = find(current);
+    if (found) last = found;
+    return last?.id === current ? last : null;
+  });
 }

@@ -108,7 +108,8 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
       const known = new Set(this.allocations.map((a) => a.id));
       const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.refresh(), visits);
       if (created) {
-        this.allocations = [created, ...this.allocations];
+        // A reload that ran meanwhile may already list it.
+        this.allocations = [created, ...this.allocations.filter((a) => a.id !== created.id)];
         this.supersedePendingLoad();
       } else if (this.error === MAYBE_SAVED_TEXT) {
         // The table may be sorted or paged so that the new row is out of sight: when the reload has it, say so and return
