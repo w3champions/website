@@ -76,7 +76,7 @@ export const useCommercialEventActiveGamesStore = defineStore("commercialEventAc
         // Settled after the page was left: the admin may be on that game's event page now (its games, its audit log).
         const detail = useCommercialEventDetailStore();
         const shown = reason === "elsewhere" && eventId !== undefined && detail.eventId === eventId;
-        const results = await Promise.all([this.load(), shown ? detail.refreshAfterWrite() : true]);
+        const results = await Promise.all([this.load(), ...(shown ? [detail.refreshAfterWrite(), detail.loadGames(true)] : [])]);
         return results.every(Boolean);
       };
       const terminated = await runAdminWrite(this, "other", () => commercialEventsService().terminateGame(token(), matchId).then(() => true), refresh, visits);

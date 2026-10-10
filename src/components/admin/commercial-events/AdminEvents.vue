@@ -281,7 +281,7 @@ async function init(): Promise<void> {
 
 // A create from an earlier visit that settles while this page is open.
 watch(() => store.unconfirmedCreate, (pending) => {
-  if (pending !== null) void store.loadOrShowUnconfirmedCreate();
+  if (pending !== null && hasPermission.value) void store.loadOrShowUnconfirmedCreate();
 });
 watch(hasPermission, init);
 onMounted(init);

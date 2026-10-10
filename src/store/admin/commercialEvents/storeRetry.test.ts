@@ -23,13 +23,15 @@ const service = vi.hoisted(() => ({
   endAllocation: vi.fn(),
   deleteAllocation: vi.fn(),
   getAudit: vi.fn(),
+  getEventGames: vi.fn(),
   resolveMatchPageId: vi.fn(),
   getActiveGames: vi.fn(),
   terminateGame: vi.fn(),
 }));
 
 vi.mock("./service", () => ({ commercialEventsService: () => service }));
-vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) }));
+const oauth = vi.hoisted(() => ({ token: "tok" }));
+vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => oauth }));
 
 import { useCommercialEventActiveGamesStore } from "./activeGamesStore";
 import { useCommercialEventAllocationsStore } from "./allocationsStore";
@@ -41,6 +43,8 @@ beforeEach(() => {
   // Reset, not clear: an implementation set by one test must not leak into the next.
   vi.resetAllMocks();
   service.getAudit.mockResolvedValue([]);
+  service.getEventGames.mockResolvedValue({ games: [], nextCursor: null });
+  oauth.token = "tok";
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
@@ -683,6 +687,7 @@ test("a terminate that settles after the page was left refreshes that game's eve
 
   await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
   expect(service.getAudit).toHaveBeenCalledTimes(1);
+  expect(service.getEventGames).toHaveBeenCalledTimes(1);
 });
 
 test("a late terminate leaves another event's page alone", async () => {
@@ -756,4 +761,38 @@ test("an event create refused after its page was left leaves nothing for the nex
   expect(store.unconfirmedCreate).toBeNull();
   await store.loadOrShowUnconfirmedCreate();
   expect(store.filterNotice).toBe("");
+});
+
+test("an uncertain event create whose page is left during its reload is shown by the next events list", async () => {
+  const reload = deferred<unknown[]>();
+  service.createEvent.mockRejectedValue(gatewayTimeout());
+  service.getEvents.mockReturnValueOnce(reload.promise).mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+
+  const creating = store.create({ allocationId: "a1", name: "Cup" } as never);
+  await vi.waitFor(() => expect(service.getEvents).toHaveBeenCalledTimes(1));
+  store.endVisit();
+  reload.resolve([]);
+  await creating;
+  expect(store.filterNotice).toBe("");
+
+  await store.loadOrShowUnconfirmedCreate();
+
+  expect(store.filters).toEqual({ status: "", phase: "", allocationId: "a1", q: "Cup" });
+  expect(store.filterNotice).toContain("Cup");
+});
+
+test("a create that settles after a logout is not kept for the next login", async () => {
+  const write = deferred<never>();
+  service.createEvent.mockReturnValueOnce(write.promise);
+  oauth.token = "admin-a";
+  const store = useCommercialEventsStore();
+
+  const creating = store.create({ allocationId: "a1", name: "Cup" } as never);
+  store.endVisit();
+  oauth.token = "admin-b";
+  write.reject(gatewayTimeout());
+  await creating;
+
+  expect(store.unconfirmedCreate).toBeNull();
 });

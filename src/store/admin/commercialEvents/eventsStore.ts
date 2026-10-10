@@ -130,6 +130,12 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     async create(request: EventCreateRequest): Promise<AdminEventDetail | null> {
       // A notice from an earlier create no longer explains what this one will show.
       this.dismissFilterNotice();
+      const visit = visits.current();
+      const author = token();
+      // Kept for the next events list only for the same login: another admin on this tab must not see it.
+      const keepForNextVisit = (created: boolean) => {
+        if (token() === author) this.unconfirmedCreate = { request, created };
+      };
       let outcome: "created" | "uncertain" | "refused" = "refused";
       const action = () =>
         commercialEventsService().createEvent(token(), request).then((event) => {
@@ -139,14 +145,19 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
           if (mayHaveBeenSaved(e)) outcome = "uncertain";
           throw e;
         });
-      const refresh = (reason: RefreshReason): Promise<boolean> => {
-        if (reason === "uncertain") return this.showAttemptedCreate(request);
+      const refresh = async (reason: RefreshReason): Promise<boolean> => {
+        if (reason === "uncertain") {
+          const loaded = await this.showAttemptedCreate(request);
+          // Left during that reload: endVisit dropped the filters and notice, so the next events list shows it again.
+          if (!visits.isLatest(visit)) keepForNextVisit(false);
+          return loaded;
+        }
         if (reason === "elsewhere" && outcome !== "refused") {
           // Its dialog is gone: the next events list shows it (at once if the list page is open).
-          this.unconfirmedCreate = { request, created: outcome === "created" };
-          return Promise.resolve(true);
+          keepForNextVisit(outcome === "created");
+          return true;
         }
-        return this.refreshWithAllocations();
+        return await this.refreshWithAllocations();
       };
       const created = await runAdminWrite(this, "event", action, refresh, visits);
       // Reload: the filters decide whether and where the new event is listed.
