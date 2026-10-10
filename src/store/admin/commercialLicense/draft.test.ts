@@ -8,6 +8,7 @@ const tag = {
   note: "streams on twitch",
   notify: false,
   restrictions: { asPlayer: true, asObserver: false, floTv: "custom" as const },
+  commercialEventNotice: true,
   createdBy: "Mod#1",
   createdAt: "2026-10-08T10:00:00Z",
   updatedBy: "Mod#2",
@@ -18,8 +19,8 @@ function draftWith(overrides: Partial<CommercialLicenseDraft>): CommercialLicens
   return { ...emptyDraft(), ...overrides };
 }
 
-test("emptyDraft starts with notifications on and no restrictions", () => {
-  assert.deepEqual(emptyDraft(), { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none" });
+test("emptyDraft starts with notifications on, no restrictions and no event notice", () => {
+  assert.deepEqual(emptyDraft(), { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none", commercialEventNotice: false });
 });
 
 test("draftFromTag copies only the editable fields, flattening the restrictions", () => {
@@ -30,6 +31,7 @@ test("draftFromTag copies only the editable fields, flattening the restrictions"
     asPlayer: true,
     asObserver: false,
     floTv: "custom",
+    commercialEventNotice: true,
   });
 });
 
@@ -38,6 +40,7 @@ test("toTagRequest drops the battleTag and always sends the restrictions", () =>
     note: "n",
     notify: true,
     restrictions: { asPlayer: false, asObserver: false, floTv: "none" },
+    commercialEventNotice: false,
   });
   assert.deepEqual(toTagRequest(draftWith({ asPlayer: true, asObserver: true, floTv: "all" })).restrictions, {
     asPlayer: true,
@@ -94,4 +97,10 @@ test("editing the search text after a selection makes it stale", () => {
   assert.equal(isStaleSelection("Foo#1234", "Foo#123"), true);
   assert.equal(isStaleSelection("Foo#1234", " Bar#1 "), true);
   assert.equal(isStaleSelection("", "anything"), false);
+});
+
+test("toTagRequest always sends commercialEventNotice and editing round-trips it", () => {
+  assert.equal(toTagRequest(draftWith({ battleTag: "Foo#1", commercialEventNotice: true })).commercialEventNotice, true);
+  assert.equal(toTagRequest(draftFromTag(tag)).commercialEventNotice, true);
+  assert.equal(toTagRequest(draftFromTag({ ...tag, commercialEventNotice: false })).commercialEventNotice, false);
 });
