@@ -146,3 +146,14 @@ test("requestVoid throws HttpError carrying the status on a non-OK response", as
     (e: unknown) => e instanceof HttpError && e.status === 404,
   );
 });
+
+test("keeps the full error body and truncates only the preview", async () => {
+  const body = { code: "EVENT_SUSPENDED", data: { message: "x".repeat(900) } };
+  const { client } = clientWith([{ status: 409, body }]);
+
+  const error = await client.getJson("api/thing", "tok").then(() => null, (e: unknown) => e);
+
+  assert.ok(error instanceof HttpError);
+  assert.deepEqual(JSON.parse(error.responseBody), body);
+  assert.equal(error.bodyPreview.length, 500);
+});
