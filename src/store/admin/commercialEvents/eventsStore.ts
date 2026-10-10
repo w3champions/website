@@ -18,6 +18,8 @@ interface EventsState {
   loadError: string;
   /** Why the filters changed without the admin (after an uncertain create); shown above the list. */
   filterNotice: string;
+  /** The filters `filterNotice` describes; once they differ, the notice goes. */
+  noticeFilters: EventFilters | null;
 }
 
 function token(): string {
@@ -39,6 +41,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     error: "",
     loadError: "",
     filterNotice: "",
+    noticeFilters: null,
   }),
 
   actions: {
@@ -69,7 +72,21 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     endVisit(): void {
       visits.invalidate();
       this.error = "";
+      // Filters set for an uncertain create are not the admin's: don't leave them behind unexplained.
+      if (this.filterNotice !== "") this.filters = emptyEventFilters();
+      this.dropFilterNotice();
+    },
+
+    /** Called when the filters change: the notice only explains the filters it was set for. */
+    filtersChanged(): void {
+      const notice = this.noticeFilters;
+      const same = notice !== null && (Object.keys(notice) as Array<keyof EventFilters>).every((key) => notice[key] === this.filters[key]);
+      if (!same) this.dropFilterNotice();
+    },
+
+    dropFilterNotice(): void {
       this.filterNotice = "";
+      this.noticeFilters = null;
     },
 
     /**
@@ -93,6 +110,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     },
 
     async create(request: EventCreateRequest): Promise<AdminEventDetail | null> {
+      this.dropFilterNotice();
       const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), () => this.showAttemptedCreate(request), visits);
       // Reload: the filters decide whether and where the new event is listed.
       if (created) void this.load();
@@ -106,6 +124,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     async showAttemptedCreate(request: EventCreateRequest): Promise<boolean> {
       const name = request.name.trim();
       this.filters = { ...emptyEventFilters(), allocationId: request.allocationId, q: name };
+      this.noticeFilters = { ...this.filters };
       this.filterNotice = `The filters now show the events named "${name}" in the chosen allocation, so you can check whether the new event was created.`;
       return await this.load();
     },

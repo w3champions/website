@@ -74,9 +74,9 @@ export function mayHaveBeenSaved(e: unknown): boolean {
   return !(e instanceof HttpError) || e.status >= 500;
 }
 
-/** After an uncertain allocation create whose reload lists a new allocation of that name. */
+/** After an uncertain allocation create whose reload lists a new allocation of that name (the dialog then edits it). */
 export function allocationCreatedText(name: string): string {
-  return `The allocation was created: "${name}" is listed now. Edit it instead of creating it again.`;
+  return `The allocation "${name}" was created after all: it is listed now, and this dialog edits it.`;
 }
 
 interface ErrorBody {

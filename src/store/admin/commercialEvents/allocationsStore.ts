@@ -111,10 +111,15 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
         this.allocations = [created, ...this.allocations];
         this.supersedePendingLoad();
       } else if (this.error === MAYBE_SAVED_TEXT) {
-        // The table may be sorted or paged so that the new row is out of sight: say so when the reload has it. A missing
-        // row proves nothing (the create may still be running), so then the general text stays.
+        // The table may be sorted or paged so that the new row is out of sight: when the reload has it, say so and return
+        // it, so the dialog edits it instead of offering a second create. A missing row proves nothing (the create may
+        // still be running), so then the general text stays.
         const name = request.name.trim();
-        if (this.allocations.some((a) => a.name === name && !known.has(a.id))) this.error = allocationCreatedText(name);
+        const found = this.allocations.find((a) => a.name === name && !known.has(a.id));
+        if (found) {
+          this.error = allocationCreatedText(name);
+          return found;
+        }
       }
       return created;
     },

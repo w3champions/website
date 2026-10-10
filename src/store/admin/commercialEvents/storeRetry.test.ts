@@ -464,9 +464,32 @@ test("an uncertain event create replaces the filters with a search sure to list 
   expect(store.filters).toEqual({ status: "", phase: "", allocationId: "a1", q: "Spring Cup" });
   expect(service.getEvents).toHaveBeenCalledWith("tok", { status: "", phase: "", allocationId: "a1", q: "Spring Cup" });
   expect(store.events).toEqual([{ id: "EV-NEW1", name: "Spring Cup" }]);
-  expect(store.filterNotice).toContain('"Spring Cup"');
+  expect(store.filterNotice).toContain("Spring Cup");
 
+  store.filtersChanged();
+  expect(store.filterNotice).not.toBe("");
+
+  // Leaving the page drops the notice and the filters it explained.
   store.endVisit();
+  expect(store.filterNotice).toBe("");
+  expect(store.filters).toEqual({ status: "", phase: "", allocationId: "", q: "" });
+});
+
+test("the filter notice goes once the admin changes the filters, and when another create starts", async () => {
+  service.createEvent.mockRejectedValueOnce(gatewayTimeout()).mockRejectedValueOnce(gatewayTimeout());
+  service.getEvents.mockResolvedValue([]);
+  const store = useCommercialEventsStore();
+  await store.create({ allocationId: "a1", name: "Cup" } as never);
+  expect(store.filterNotice).not.toBe("");
+
+  store.filters.q = "";
+  store.filtersChanged();
+  expect(store.filterNotice).toBe("");
+
+  await store.create({ allocationId: "a1", name: "Cup" } as never);
+  expect(store.filterNotice).not.toBe("");
+  service.createEvent.mockResolvedValueOnce({ id: "EV-2" });
+  await store.create({ allocationId: "a1", name: "Other" } as never);
   expect(store.filterNotice).toBe("");
 });
 
@@ -476,7 +499,8 @@ test("an uncertain allocation create says it was created when the reload lists a
   const store = useCommercialEventAllocationsStore();
   store.allocations = [{ id: "a-old", name: "Other" }] as never;
 
-  await store.create({ name: "Spring " } as never);
+  // The found allocation is returned, so the dialog edits it instead of offering a second create.
+  expect(await store.create({ name: "Spring " } as never)).toEqual({ id: "a-new", name: "Spring" });
 
   expect(store.error).toBe(allocationCreatedText("Spring"));
 });

@@ -250,18 +250,25 @@ const allocationItems = computed(() => [
 
 const debouncedLoad = debounce(() => void store.load(), SEARCH_DELAY);
 
+// One watcher for every filter: typing in the search is debounced, any other change (also several at once, as after an
+// uncertain create) loads once, right away.
 watch(
-  () => [store.filters.status, store.filters.phase, store.filters.allocationId] as const,
-  () => {
+  () => ({ ...store.filters }),
+  (now, before) => {
+    store.filtersChanged();
     if (!phaseApplies.value && store.filters.phase !== "") {
       store.filters.phase = ""; // re-triggers this watcher, which then loads
+      return;
+    }
+    const onlySearch = now.q !== before.q && now.status === before.status && now.phase === before.phase && now.allocationId === before.allocationId;
+    if (onlySearch) {
+      debouncedLoad();
       return;
     }
     debouncedLoad.clear();
     void store.load();
   },
 );
-watch(() => store.filters.q, () => debouncedLoad());
 
 async function init(): Promise<void> {
   if (!hasPermission.value) {
