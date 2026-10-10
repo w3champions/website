@@ -71,6 +71,8 @@
         </v-card>
 
         <event-people-card class="mt-4" :event="store.event" @changed="onPeopleChanged" />
+        <event-games-table class="mt-4" />
+        <audit-log-table class="mt-4" />
       </template>
     </v-container>
   </div>
@@ -79,7 +81,9 @@
 <script lang="ts" setup>
 import { computed, onMounted, useTemplateRef, watch } from "vue";
 import { mdiArrowLeft, mdiLock, mdiPauseCircleOutline, mdiPencil, mdiPlayCircleOutline, mdiRefresh, mdiSwapHorizontal } from "@mdi/js";
+import AuditLogTable from "@/components/admin/commercial-events/AuditLogTable.vue";
 import EventActionDialogs from "@/components/admin/commercial-events/EventActionDialogs.vue";
+import EventGamesTable from "@/components/admin/commercial-events/EventGamesTable.vue";
 import EventPeopleCard from "@/components/admin/commercial-events/EventPeopleCard.vue";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { EAdminRouteName } from "@/router/types";
@@ -131,14 +135,15 @@ function act(action: EventAction): void {
 
 function onChanged(event: AdminEventDetail): void {
   store.applyEvent(event);
+  void store.loadAudit();
 }
 
 function onPeopleChanged(): void {
-  // Task 13 reloads the audit log here.
+  void store.loadAudit();
 }
 
 async function refresh(): Promise<void> {
-  await store.loadEvent();
+  await Promise.all([store.loadEvent(), store.loadGames(true), store.loadAudit()]);
 }
 
 async function init(): Promise<void> {
