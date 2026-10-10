@@ -9,6 +9,7 @@ const STATUS_TEXT: Record<string, string> = {
   one_sided: "Measured at one end only: HAProxy's close line for this connection never arrived",
   pending_close: "Still open when fetched; completed at match end",
   unmeasured_no_flo_node: "Not measured: this relay runs HAProxy without flo-node",
+  unmeasured_quic_relay: "Not measured: relays forward QUIC in the kernel, so hops before the last relay can't be traced",
   unmeasured_port_rewritten: "Not measured: NAT rewrote the source port, so the hop could not be matched",
   node_too_old: "Not measured: the node's flo-node predates relay telemetry",
   expired: "Not measured: the node no longer holds this data (report too late, or the node restarted)",
