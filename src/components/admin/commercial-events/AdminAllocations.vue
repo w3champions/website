@@ -33,7 +33,7 @@
         <template v-slot:top>
           <div class="d-flex align-center px-4">
             <v-spacer />
-            <v-btn variant="text" class="mb-2 mr-2" :prepend-icon="mdiRefresh" :disabled="store.loading" @click="store.load()">
+            <v-btn variant="text" class="mb-2 mr-2" :prepend-icon="mdiRefresh" :disabled="store.loading || store.saving" @click="store.load()">
               Refresh
             </v-btn>
             <v-btn class="mb-2 bg-primary text-w3-race-bg" :disabled="store.loading || !!store.loadError" @click="openCreate">
@@ -221,7 +221,7 @@ async function removeItem(allocation: Allocation): Promise<void> {
 
 async function init(): Promise<void> {
   if (!hasPermission.value) {
-    store.$reset();
+    store.clear();
     dialog.value = false;
     return;
   }

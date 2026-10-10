@@ -50,3 +50,13 @@ test("invalidating a key drops only that key's requests", () => {
   assert.equal(sequence.isLatest("b", b), true);
   assert.equal(sequence.isLatest("a", sequence.next("a")), true);
 });
+
+test("clearing a keyed sequence drops the requests of every key", () => {
+  const sequence = keyedRequestSequence();
+  const a = sequence.next("a");
+  const b = sequence.next("b");
+  sequence.clear();
+  assert.equal(sequence.isLatest("a", a), false);
+  assert.equal(sequence.isLatest("b", b), false);
+  assert.equal(sequence.isLatest("a", sequence.next("a")), true);
+});

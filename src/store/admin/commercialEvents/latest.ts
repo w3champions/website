@@ -28,6 +28,8 @@ export interface KeyedRequestSequence {
   next(key: string): number;
   isLatest(key: string, request: number): boolean;
   invalidate(key: string): void;
+  /** Supersedes the requests of every key. */
+  clear(): void;
 }
 
 export function keyedRequestSequence(): KeyedRequestSequence {
@@ -41,6 +43,9 @@ export function keyedRequestSequence(): KeyedRequestSequence {
     isLatest: (key, request) => latest.get(key) === request,
     invalidate: (key) => {
       latest.delete(key);
+    },
+    clear: () => {
+      latest.clear();
     },
   };
 }

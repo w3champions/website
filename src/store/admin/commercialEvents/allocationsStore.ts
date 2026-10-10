@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
-import { keyedRequestSequence } from "./latest";
+import { keyedRequestSequence, requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, Allocation, AllocationCreateRequest, AllocationUpdateRequest, PeriodUsage } from "./types";
@@ -30,6 +30,8 @@ function token(): string {
   return useOauthStore().token;
 }
 
+// Only the newest list request may write the list.
+const loads = requestSequence();
 // Per allocation id: only the newest details request may write, and none after a delete.
 const detailLoads = keyedRequestSequence();
 
@@ -50,17 +52,28 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
   actions: {
     /** Server order: startsAt descending. */
     async load(): Promise<void> {
+      const request = loads.next();
       this.loading = true;
       this.loadError = "";
       try {
-        this.allocations = await commercialEventsService().getAllocations(token());
+        const allocations = await commercialEventsService().getAllocations(token());
+        if (loads.isLatest(request)) this.allocations = allocations;
       } catch (e) {
         console.error("Failed to load allocations:", e);
-        this.loadError = describeCommercialEventsError(e);
-        this.allocations = [];
+        if (loads.isLatest(request)) {
+          this.loadError = describeCommercialEventsError(e);
+          this.allocations = [];
+        }
       } finally {
-        this.loading = false;
+        if (loads.isLatest(request)) this.loading = false;
       }
+    },
+
+    /** Drops the list, every row's details and every pending load. */
+    clear(): void {
+      loads.invalidate();
+      detailLoads.clear();
+      this.$reset();
     },
 
     replace(allocation: Allocation): void {
