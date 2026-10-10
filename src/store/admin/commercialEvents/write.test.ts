@@ -47,13 +47,43 @@ test("a 5xx with a refresh text reloads and asks the admin to check the list", a
   consoleError.mockRestore();
 });
 
-test("a 4xx, a network error or a missing refresh does not reload", async () => {
+test("a dropped connection reloads and asks the admin to check the list", async () => {
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  const target = { saving: false, error: "" };
+  const refresh = vi.fn();
+
+  const result = await runAdminWrite(target, "event", () => Promise.reject(new TypeError("Failed to fetch")), refresh);
+
+  consoleError.mockRestore();
+  assert.equal(result, null);
+  assert.equal(refresh.mock.calls.length, 1);
+  assert.equal(target.error, MAYBE_SAVED_TEXT);
+});
+
+test("saving stays set until the reload after an uncertain write has finished", async () => {
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  const target = { saving: false, error: "" };
+  let finishRefresh: () => void = () => undefined;
+  const refresh = vi.fn(() => new Promise<void>((resolve) => (finishRefresh = resolve)));
+
+  const write = runAdminWrite(target, "event", () => Promise.reject(new HttpError(504, "POST", "https://x", "")), refresh);
+  await vi.waitFor(() => assert.equal(refresh.mock.calls.length, 1));
+  assert.equal(target.saving, true);
+  assert.equal(target.error, "");
+
+  finishRefresh();
+  await write;
+  consoleError.mockRestore();
+  assert.equal(target.saving, false);
+  assert.equal(target.error, MAYBE_SAVED_TEXT);
+});
+
+test("a 4xx or a missing refresh does not reload", async () => {
   const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
   const target = { saving: false, error: "" };
   const refresh = vi.fn();
 
   await runAdminWrite(target, "event", () => Promise.reject(new HttpError(409, "POST", "https://x", "{}")), refresh);
-  await runAdminWrite(target, "event", () => Promise.reject(new Error("offline")), refresh);
   assert.equal(refresh.mock.calls.length, 0);
 
   await runAdminWrite(target, "event", () => Promise.reject(new HttpError(500, "POST", "https://x", JSON.stringify({ code: "INTERNAL" }))));
@@ -67,7 +97,7 @@ test("a refresh that rejects is swallowed", async () => {
   const refresh = vi.fn(() => Promise.reject(new Error("reload failed")));
 
   const result = await runAdminWrite(target, "event", () => Promise.reject(new HttpError(504, "POST", "https://x", "")), refresh);
-  await vi.waitFor(() => expect(consoleError).toHaveBeenCalledWith("Refresh after a failed write failed:", expect.any(Error)));
+  expect(consoleError).toHaveBeenCalledWith("Refresh after a failed write failed:", expect.any(Error));
 
   consoleError.mockRestore();
   assert.equal(result, null);

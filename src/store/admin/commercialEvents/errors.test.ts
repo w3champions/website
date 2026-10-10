@@ -92,10 +92,11 @@ test("a long EVENT_SUSPENDED body keeps its code and note", () => {
   assert.equal(describeCommercialEventsError(e), `This event is suspended. Reason: ${note}`);
 });
 
-test("only 5xx statuses may have been saved", () => {
+test("a 5xx or a failure without a status may have been saved; a 4xx was refused", () => {
   for (const status of [500, 502, 503, 504]) assert.equal(mayHaveBeenSaved(http(status, {})), true);
   for (const status of [400, 404, 409]) assert.equal(mayHaveBeenSaved(http(status, {})), false);
-  assert.equal(mayHaveBeenSaved(new Error("x")), false);
+  // fetch rejects with a TypeError when the connection drops, possibly after the server applied the write.
+  assert.equal(mayHaveBeenSaved(new TypeError("Failed to fetch")), true);
 });
 
 test("an unknown code falls back to the error text", () => {

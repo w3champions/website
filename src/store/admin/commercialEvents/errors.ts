@@ -63,8 +63,14 @@ const MAYBE_SAVED_STATUSES = [500, 502, 503, 504];
 /** Shown after a write whose outcome is unknown, once the list has been reloaded. */
 export const MAYBE_SAVED_TEXT = "The change may have been saved. The list was refreshed — check it before trying again.";
 
+/**
+ * True when a failed write may nevertheless have been applied: a 5xx, or any
+ * failure without an HTTP status (fetch rejects with a TypeError when the
+ * connection drops, which can happen after the server processed the request).
+ * Only a 4xx proves the write was refused.
+ */
 export function mayHaveBeenSaved(e: unknown): boolean {
-  return e instanceof HttpError && MAYBE_SAVED_STATUSES.includes(e.status);
+  return !(e instanceof HttpError) || MAYBE_SAVED_STATUSES.includes(e.status);
 }
 
 interface ErrorBody {
