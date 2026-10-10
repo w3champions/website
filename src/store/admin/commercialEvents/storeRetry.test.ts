@@ -835,6 +835,7 @@ test("a failed list reload keeps the rows already shown and reports the error", 
   allocations.allocations = [{ id: "a1" }] as never;
   const events = useCommercialEventsStore();
   events.events = [{ id: "e1" }] as never;
+  events.listedFilters = { ...events.filters };
   const games = useCommercialEventActiveGamesStore();
   games.games = [{ matchId: "m1" }] as never;
 
@@ -861,4 +862,19 @@ test("a failed reload of an expanded allocation keeps its periods and events and
   expect(store.details.a1?.periods).toEqual([{ index: 0 }]);
   expect(store.details.a1?.events).toEqual([{ id: "e1" }]);
   expect(store.details.a1?.error).not.toBe("");
+});
+
+test("a failed events load for changed filters clears the rows of the old filters", async () => {
+  service.getEvents.mockResolvedValueOnce([{ id: "e1" }]).mockRejectedValue(new HttpError(503, "GET", "https://x", ""));
+  const store = useCommercialEventsStore();
+  await store.load();
+  expect(await store.load()).toBe(false);
+  // Same filters: the rows stay.
+  expect(store.events).toEqual([{ id: "e1" }]);
+
+  store.filters.status = "open";
+  expect(await store.load()).toBe(false);
+
+  expect(store.events).toEqual([]);
+  expect(store.loadError).not.toBe("");
 });

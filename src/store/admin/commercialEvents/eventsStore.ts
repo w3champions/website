@@ -11,6 +11,8 @@ import { type RefreshReason, resetKeepingWrite, runAdminWrite } from "./write";
 
 interface EventsState {
   events: AdminEvent[];
+  /** The filters `events` was loaded with; null before the first load. */
+  listedFilters: EventFilters | null;
   filters: EventFilters;
   loading: boolean;
   saving: boolean;
@@ -32,6 +34,10 @@ function token(): string {
   return useOauthStore().token;
 }
 
+function sameFilters(a: EventFilters | null, b: EventFilters): boolean {
+  return a !== null && (Object.keys(b) as Array<keyof EventFilters>).every((key) => a[key] === b[key]);
+}
+
 /** Battle tag of the logged-in admin. */
 function currentAdmin(): string {
   return useOauthStore().blizzardVerifiedBtag;
@@ -46,6 +52,7 @@ const visits = requestSequence();
 export const useCommercialEventsStore = defineStore("commercialEvents", {
   state: (): EventsState => ({
     events: [],
+    listedFilters: null,
     filters: emptyEventFilters(),
     loading: false,
     saving: false,
@@ -65,9 +72,19 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
         what: "events",
         setLoading: (loading) => (this.loading = loading),
         fetch: () => commercialEventsService().getEvents(token(), filters),
-        apply: (events) => (this.events = events),
-        // A failed load keeps the rows already shown; the error says they may be out of date.
-        fail: (e) => (this.loadError = describeCommercialEventsError(e)),
+        apply: (events) => {
+          this.events = events;
+          this.listedFilters = filters;
+        },
+        fail: (e) => {
+          this.loadError = describeCommercialEventsError(e);
+          // A failed reload of the same query keeps the rows shown (the error says they may be out of date); rows of
+          // other filters would contradict the filters on screen.
+          if (!sameFilters(this.listedFilters, filters)) {
+            this.events = [];
+            this.listedFilters = null;
+          }
+        },
       });
     },
 
@@ -91,9 +108,7 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
 
     /** Called when the filters change: once they differ from the ones the store set, they are the admin's again. */
     filtersChanged(): void {
-      const auto = this.autoFilters;
-      const same = auto !== null && (Object.keys(auto) as Array<keyof EventFilters>).every((key) => auto[key] === this.filters[key]);
-      if (!same) {
+      if (!sameFilters(this.autoFilters, this.filters)) {
         this.autoFilters = null;
         this.filterNotice = "";
       }
