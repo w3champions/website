@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { allocationOptionLabel, allocationStateLabel, auditActionLabel, auditDetailsSummary, eventStatusColor, eventStatusLabel, eventUsedLabel, formatPrizePool, formatWatchTime, kindLabel, memberSummary, outcomeLabel, periodRangeLabel, periodUsageLabel, recurrenceLabel, roleLabel, teamLines } from "./format";
+import { allocationOptionLabel, allocationStateLabel, auditActionLabel, auditDetailsSummary, eventStatusColor, eventStatusLabel, eventUsedLabel, formatPrizePool, formatWatchTime, kindLabel, memberSummary, outcomeLabel, periodRangeLabel, periodUsageLabel, recurrenceLabel, roleLabel, suspensionNotice, teamLines } from "./format";
 import type { PeriodUsage } from "./types";
 
 const period: PeriodUsage = {
@@ -119,4 +119,13 @@ test("auditDetailsSummary shows ISO-looking strings as UTC display dates", () =>
     "endsAt: 2026-11-02 18:00 UTC → 2026-11-03 18:30 UTC",
   );
   assert.equal(auditDetailsSummary({ suspendedAt: "2026-11-01T09:15:00Z", note: "2026 plans" }), "suspendedAt: 2026-11-01 09:15 UTC; note: 2026 plans");
+});
+
+test("the suspension notice shows only while the event is suspended", () => {
+  const suspension = { suspensionMessage: "Rules broken", suspendedBy: "Admin#1", suspendedAt: "2026-10-05T12:00:00.000Z" };
+  assert.equal(suspensionNotice({ status: "suspended", ...suspension }), "Suspended by Admin#1 on 2026-10-05 12:00 UTC: Rules broken");
+  assert.equal(suspensionNotice({ status: "suspended", suspensionMessage: "Rules broken" }), "Suspended by an admin on —: Rules broken");
+  // A closed event keeps the fields of an earlier suspension.
+  assert.equal(suspensionNotice({ status: "closed", ...suspension }), null);
+  assert.equal(suspensionNotice({ status: "open", suspensionMessage: null }), null);
 });

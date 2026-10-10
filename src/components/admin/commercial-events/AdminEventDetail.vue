@@ -31,8 +31,8 @@
       <v-progress-linear v-if="store.loading" indeterminate color="primary" class="mb-2" />
 
       <template v-if="store.event">
-        <v-alert v-if="store.event.suspensionMessage" type="warning" variant="tonal" class="mb-4">
-          Suspended by {{ store.event.suspendedBy ?? "an admin" }} on {{ formatUtc(store.event.suspendedAt) }}: {{ store.event.suspensionMessage }}
+        <v-alert v-if="suspension" type="warning" variant="tonal" class="mb-4">
+          {{ suspension }}
         </v-alert>
 
         <div class="d-flex flex-wrap mb-4">
@@ -91,7 +91,7 @@ import { formatUtc } from "@/store/admin/commercialEvents/dates";
 import { useCommercialEventDetailStore } from "@/store/admin/commercialEvents/eventDetailStore";
 import { eventActions } from "@/store/admin/commercialEvents/eventDraft";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";
-import { eventStatusColor, eventStatusLabel, eventUsedLabel, formatPrizePool, kindLabel } from "@/store/admin/commercialEvents/format";
+import { eventStatusColor, eventStatusLabel, eventUsedLabel, formatPrizePool, kindLabel, suspensionNotice } from "@/store/admin/commercialEvents/format";
 import type { AdminEventDetail } from "@/store/admin/commercialEvents/types";
 
 const props = defineProps<{ eventId: string }>();
@@ -103,6 +103,7 @@ const actionDialogs = useTemplateRef<InstanceType<typeof EventActionDialogs>>("a
 
 const busy = computed(() => store.loading || store.saving || eventsStore.saving);
 const actions = computed(() => eventActions(store.event ?? { status: "closed" as const }));
+const suspension = computed(() => (store.event ? suspensionNotice(store.event) : null));
 
 const rows = computed(() => {
   const event = store.event;

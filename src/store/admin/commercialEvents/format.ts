@@ -80,6 +80,16 @@ export function eventStatusColor(event: Pick<AdminEvent, "status" | "phase">): s
   return event.status === "suspended" ? "warning" : "grey";
 }
 
+/**
+ * The suspension banner text, or null. Only a suspended event shows it: a closed
+ * event keeps the suspension fields it had, and showing them would present a past
+ * suspension as the current state (the audit log keeps the history).
+ */
+export function suspensionNotice(event: Pick<AdminEvent, "status" | "suspensionMessage" | "suspendedBy" | "suspendedAt">): string | null {
+  if (event.status !== "suspended" || !event.suspensionMessage) return null;
+  return `Suspended by ${event.suspendedBy ?? "an admin"} on ${formatUtc(event.suspendedAt)}: ${event.suspensionMessage}`;
+}
+
 export function outcomeLabel(game: Pick<EventGame, "outcome" | "invalidReason">): string {
   if (game.outcome === "in-progress") return "In progress";
   if (game.outcome === "valid") return "Counted";
