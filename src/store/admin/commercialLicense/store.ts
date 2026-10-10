@@ -4,6 +4,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { CommercialLicenseService } from "@/services/admin/CommercialLicenseService";
 import { commercialEventsService } from "@/store/admin/commercialEvents/service";
 import { describeCommercialEventsError } from "@/store/admin/commercialEvents/errors";
+import { keyedRequestSequence, requestSequence } from "@/store/admin/commercialEvents/latest";
 import { roleHintsByBattleTag } from "@/store/admin/commercialEvents/roleHints";
 import { describeError } from "./errors";
 import type { CommercialLicenseState, CommercialLicenseTagRequest } from "./types";
@@ -14,6 +15,11 @@ let _service: CommercialLicenseService | null = null;
 function getService(): CommercialLicenseService {
   return _service ??= new CommercialLicenseService({ endpoint: API_URL });
 }
+
+// Only the newest list request may write the list.
+const loads = requestSequence();
+// Per battle tag: only the newest role-hint lookup may write that tag's hints.
+const hintLoads = keyedRequestSequence();
 
 export const useCommercialLicenseStore = defineStore("commercialLicense", {
   state: (): CommercialLicenseState => ({
@@ -28,19 +34,24 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
 
   actions: {
     async load(): Promise<void> {
+      const request = loads.next();
       this.loading = true;
       this.loadError = "";
       try {
         const oauthStore = useOauthStore();
-        this.taggedPlayers = await getService().getTaggedPlayers(oauthStore.token);
+        const taggedPlayers = await getService().getTaggedPlayers(oauthStore.token);
+        if (!loads.isLatest(request)) return;
+        this.taggedPlayers = taggedPlayers;
       } catch (e) {
         // The service throws on a non-OK status; show it rather than an empty table.
         console.error("Failed to load commercial license tags:", e);
-        this.loadError = describeError(e);
-        this.taggedPlayers = [];
+        if (loads.isLatest(request)) {
+          this.loadError = describeError(e);
+          this.taggedPlayers = [];
+        }
         return;
       } finally {
-        this.loading = false;
+        if (loads.isLatest(request)) this.loading = false;
       }
       await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag), { full: true });
     },
@@ -52,13 +63,22 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
     async loadRoleHints(battleTags: string[], { full = false }: { full?: boolean } = {}): Promise<void> {
       if (battleTags.length === 0) return;
       if (full) this.roleHintsError = "";
+      const requests = new Map(battleTags.map((battleTag) => [battleTag, hintLoads.next(battleTag)]));
+      // A newer lookup of a tag supersedes this one for that tag, so an older answer cannot bring back a changed role.
+      const latestTags = () => battleTags.filter((battleTag) => hintLoads.isLatest(battleTag, requests.get(battleTag) ?? -1));
       try {
-        const hints = await commercialEventsService().getRoleHints(useOauthStore().token, battleTags);
-        this.roleHints = { ...this.roleHints, ...roleHintsByBattleTag(hints) };
+        const hints = roleHintsByBattleTag(await commercialEventsService().getRoleHints(useOauthStore().token, battleTags));
+        const current = Object.fromEntries(latestTags().filter((battleTag) => battleTag in hints).map((battleTag) => [battleTag, hints[battleTag]]));
+        this.roleHints = { ...this.roleHints, ...current };
       } catch (e) {
         console.error("Failed to load commercial event role hints:", e);
-        this.roleHintsError = describeCommercialEventsError(e);
+        if (latestTags().length > 0) this.roleHintsError = describeCommercialEventsError(e);
       }
+    },
+
+    /** After a write applied locally: a list load already in flight may answer with the old state, so supersede it with a fresh one. */
+    supersedePendingLoad(): void {
+      if (this.loading) void this.load();
     },
 
     async upsert(battleTag: string, request: CommercialLicenseTagRequest): Promise<boolean> {
@@ -68,6 +88,7 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
         const oauthStore = useOauthStore();
         const saved = await getService().upsertTaggedPlayer(oauthStore.token, battleTag, request);
         this.taggedPlayers = [...this.taggedPlayers.filter((p) => p.battleTag !== saved.battleTag), saved];
+        this.supersedePendingLoad();
         void this.loadRoleHints([saved.battleTag]);
         return true;
       } catch (e) {
@@ -86,6 +107,8 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
         const oauthStore = useOauthStore();
         await getService().removeTaggedPlayer(oauthStore.token, battleTag);
         this.taggedPlayers = this.taggedPlayers.filter((p) => p.battleTag !== battleTag);
+        this.supersedePendingLoad();
+        hintLoads.invalidate(battleTag);
         delete this.roleHints[battleTag];
         return true;
       } catch (e) {
