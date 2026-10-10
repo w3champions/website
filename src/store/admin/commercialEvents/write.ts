@@ -1,5 +1,5 @@
 import { HttpError } from "@/services/http/AuthorizedClient";
-import { describeCommercialEventsError, type ErrorContext, MAYBE_SAVED_TEXT, mayHaveBeenSaved } from "./errors";
+import { describeCommercialEventsError, type ErrorContext, MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT, mayHaveBeenSaved } from "./errors";
 
 /** The part of a store state that a write reports into. */
 export interface WriteTarget {
@@ -18,9 +18,10 @@ export interface WriteTarget {
  * sent). With `refresh`, that case reloads the list and tells the admin to check
  * it before retrying, so a retry cannot silently duplicate the write. `saving`
  * stays set until the reload has finished, so the retry is only offered once the
- * list is current.
+ * list is current. `refresh` resolves to false when the reload failed; the admin
+ * is then told to reload before trying again.
  */
-export async function runAdminWrite<T>(target: WriteTarget, context: ErrorContext, action: () => Promise<T>, refresh?: () => unknown): Promise<T | null> {
+export async function runAdminWrite<T>(target: WriteTarget, context: ErrorContext, action: () => Promise<T>, refresh?: () => Promise<boolean>): Promise<T | null> {
   target.saving = true;
   target.error = "";
   try {
@@ -29,8 +30,11 @@ export async function runAdminWrite<T>(target: WriteTarget, context: ErrorContex
     console.error("Commercial events request failed:", e instanceof HttpError ? `${e.message}: ${e.bodyPreview}` : e);
     if (refresh && mayHaveBeenSaved(e)) {
       // A failing reload must not fail the write handling; the stores report their own load errors.
-      await Promise.resolve().then(refresh).catch((refreshError: unknown) => console.error("Refresh after a failed write failed:", refreshError));
-      target.error = MAYBE_SAVED_TEXT;
+      const reloaded = await Promise.resolve().then(refresh).catch((refreshError: unknown) => {
+        console.error("Refresh after a failed write failed:", refreshError);
+        return false;
+      });
+      target.error = reloaded ? MAYBE_SAVED_TEXT : MAYBE_SAVED_RELOAD_FAILED_TEXT;
     } else {
       target.error = describeCommercialEventsError(e, context);
     }

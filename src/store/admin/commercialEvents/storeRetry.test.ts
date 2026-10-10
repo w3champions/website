@@ -1,7 +1,7 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import { HttpError } from "@/services/http/AuthorizedClient";
-import { MAYBE_SAVED_TEXT } from "./errors";
+import { MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT } from "./errors";
 
 const service = vi.hoisted(() => ({
   getEvents: vi.fn(),
@@ -130,10 +130,14 @@ test("a 504 on an event person write reloads the event", async () => {
 });
 
 /** A promise whose resolution the test controls. */
-function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void; reject: (reason: unknown) => void } {
   let resolve: (value: T) => void = () => undefined;
-  const promise = new Promise<T>((r) => (resolve = r));
-  return { promise, resolve };
+  let reject: (reason: unknown) => void = () => undefined;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
 }
 
 test("a list load in flight during an allocation delete cannot bring the deleted row back", async () => {
@@ -203,4 +207,47 @@ test("an event load in flight during a person write cannot restore the old peopl
 
   await vi.waitFor(() => expect(store.loading).toBe(false));
   expect(store.event).toEqual({ id: "e1", hosts: [{ battleTag: "Tag#1" }] });
+});
+
+test("a failed reload after an uncertain allocation write says the list couldn't be reloaded", async () => {
+  service.createAllocation.mockRejectedValue(new TypeError("Failed to fetch"));
+  service.getAllocations.mockRejectedValue(new TypeError("Failed to fetch"));
+  const store = useCommercialEventAllocationsStore();
+
+  expect(await store.create({} as never)).toBeNull();
+
+  expect(store.error).toBe(MAYBE_SAVED_RELOAD_FAILED_TEXT);
+  expect(store.saving).toBe(false);
+});
+
+test("a failed reload of the shown event after an uncertain event write says the list couldn't be reloaded", async () => {
+  service.updateEvent.mockRejectedValue(gatewayTimeout());
+  service.getEvents.mockResolvedValue([]);
+  service.getEvent.mockRejectedValue(gatewayTimeout());
+  const detail = useCommercialEventDetailStore();
+  detail.eventId = "e1";
+  const store = useCommercialEventsStore();
+
+  await store.update("e1", {});
+
+  expect(store.error).toBe(MAYBE_SAVED_RELOAD_FAILED_TEXT);
+});
+
+test("a person write for an event no longer shown leaves the shown event alone", async () => {
+  const write = deferred<unknown>();
+  service.addEventPerson.mockReturnValueOnce(write.promise);
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+  store.event = { id: "e1", hosts: [] } as never;
+
+  const adding = store.addPerson("Tag#1", "host");
+  store.clear();
+  store.eventId = "e2";
+  store.event = { id: "e2", hosts: [] } as never;
+  write.reject(gatewayTimeout());
+  await adding;
+
+  expect(store.error).toBe("");
+  expect(store.event).toEqual({ id: "e2", hosts: [] });
+  expect(service.getEvent).not.toHaveBeenCalled();
 });

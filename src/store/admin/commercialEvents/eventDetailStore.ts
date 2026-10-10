@@ -3,7 +3,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
 import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
-import type { AdminEventDetail, AuditEntry, EventGame, ManagedRole } from "./types";
+import type { AdminEventDetail, AuditEntry, EventGame, EventPeople, ManagedRole } from "./types";
 import { runAdminWrite } from "./write";
 
 interface EventDetailState {
@@ -83,16 +83,19 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
       this.$reset();
     },
 
-    async loadEvent(): Promise<void> {
+    /** Resolves to whether the request succeeded. */
+    async loadEvent(): Promise<boolean> {
       const request = eventLoads.next();
       this.loading = true;
       this.loadError = "";
       try {
         const event = await commercialEventsService().getEvent(token(), this.eventId);
         if (eventLoads.isLatest(request)) this.event = event;
+        return true;
       } catch (e) {
         console.error("Failed to load the event:", e);
         if (eventLoads.isLatest(request)) this.loadError = describeCommercialEventsError(e);
+        return false;
       } finally {
         if (eventLoads.isLatest(request)) this.loading = false;
       }
@@ -168,24 +171,26 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
       if (this.loading) void this.loadEvent();
     },
 
-    async addPerson(battleTag: string, role: ManagedRole): Promise<boolean> {
+    /** A people write for the shown event. Once another event is shown, its result and its error are dropped. */
+    async writePeople(write: (eventId: string) => Promise<EventPeople>): Promise<boolean> {
       const eventId = this.eventId;
-      const people = await runAdminWrite(this, "other", () => commercialEventsService().addEventPerson(token(), eventId, battleTag, role), () => this.loadEvent());
-      if (people && this.event && eventId === this.eventId) {
+      const people = await runAdminWrite(this, "other", () => write(eventId), () => (eventId === this.eventId ? this.loadEvent() : Promise.resolve(true)));
+      if (eventId !== this.eventId) {
+        // open() reset the store for the other event; this write's error belongs to the previous one.
+        this.error = "";
+      } else if (people && this.event) {
         this.event = { ...this.event, ...people };
         this.supersedePendingLoad();
       }
       return people !== null;
     },
 
+    async addPerson(battleTag: string, role: ManagedRole): Promise<boolean> {
+      return await this.writePeople((eventId) => commercialEventsService().addEventPerson(token(), eventId, battleTag, role));
+    },
+
     async removePerson(battleTag: string): Promise<boolean> {
-      const eventId = this.eventId;
-      const people = await runAdminWrite(this, "other", () => commercialEventsService().removeEventPerson(token(), eventId, battleTag), () => this.loadEvent());
-      if (people && this.event && eventId === this.eventId) {
-        this.event = { ...this.event, ...people };
-        this.supersedePendingLoad();
-      }
-      return people !== null;
+      return await this.writePeople((eventId) => commercialEventsService().removeEventPerson(token(), eventId, battleTag));
     },
   },
 });

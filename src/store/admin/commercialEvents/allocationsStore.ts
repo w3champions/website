@@ -50,20 +50,22 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
   },
 
   actions: {
-    /** Server order: startsAt descending. */
-    async load(): Promise<void> {
+    /** Server order: startsAt descending. Resolves to whether the request succeeded. */
+    async load(): Promise<boolean> {
       const request = loads.next();
       this.loading = true;
       this.loadError = "";
       try {
         const allocations = await commercialEventsService().getAllocations(token());
         if (loads.isLatest(request)) this.allocations = allocations;
+        return true;
       } catch (e) {
         console.error("Failed to load allocations:", e);
         if (loads.isLatest(request)) {
           this.loadError = describeCommercialEventsError(e);
           this.allocations = [];
         }
+        return false;
       } finally {
         if (loads.isLatest(request)) this.loading = false;
       }
@@ -76,9 +78,10 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
       this.$reset();
     },
 
-    /** Reloads the list and the expanded rows' details, after a write whose outcome is unknown. */
-    async refresh(): Promise<void> {
-      await Promise.all([this.load(), ...Object.keys(this.details).map((id) => this.loadDetails(id))]);
+    /** Reloads the list and the expanded rows' details, after a write whose outcome is unknown; resolves to whether the list loaded. */
+    async refresh(): Promise<boolean> {
+      const [listed] = await Promise.all([this.load(), ...Object.keys(this.details).map((id) => this.loadDetails(id))]);
+      return listed;
     },
 
     replace(allocation: Allocation): void {

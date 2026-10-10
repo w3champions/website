@@ -37,20 +37,22 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
   }),
 
   actions: {
-    /** Server order: startsAt descending. */
-    async load(): Promise<void> {
+    /** Server order: startsAt descending. Resolves to whether the request succeeded. */
+    async load(): Promise<boolean> {
       const request = loads.next();
       this.loading = true;
       this.loadError = "";
       try {
         const events = await commercialEventsService().getEvents(token(), { ...this.filters });
         if (loads.isLatest(request)) this.events = events;
+        return true;
       } catch (e) {
         console.error("Failed to load events:", e);
         if (loads.isLatest(request)) {
           this.loadError = describeCommercialEventsError(e);
           this.events = [];
         }
+        return false;
       } finally {
         if (loads.isLatest(request)) this.loading = false;
       }
@@ -62,10 +64,11 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
       this.$reset();
     },
 
-    /** After a write whose outcome is unknown: reloads the list and, when it shows that event, the detail page's event. */
-    async refresh(eventId?: string): Promise<void> {
+    /** After a write whose outcome is unknown: reloads the list and, when it shows that event, the detail page's event. Resolves to whether both loaded. */
+    async refresh(eventId?: string): Promise<boolean> {
       const detail = useCommercialEventDetailStore();
-      await Promise.all([this.load(), eventId !== undefined && detail.eventId === eventId ? detail.loadEvent() : Promise.resolve()]);
+      const results = await Promise.all([this.load(), eventId !== undefined && detail.eventId === eventId ? detail.loadEvent() : Promise.resolve(true)]);
+      return results.every(Boolean);
     },
 
     /** Takes the result of a write into the list. */

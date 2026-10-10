@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, useTemplateRef, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from "vue";
 import { mdiArrowLeft, mdiLock, mdiPauseCircleOutline, mdiPencil, mdiPlayCircleOutline, mdiRefresh, mdiSwapHorizontal } from "@mdi/js";
 import AuditLogTable from "@/components/admin/commercial-events/AuditLogTable.vue";
 import EventActionDialogs from "@/components/admin/commercial-events/EventActionDialogs.vue";
@@ -158,4 +158,6 @@ async function init(): Promise<void> {
 watch(hasPermission, init);
 watch(() => props.eventId, init);
 onMounted(init);
+// Leaving the page drops the event, so a later write elsewhere does not reload it (eventsStore.refresh).
+onBeforeUnmount(() => store.clear());
 </script>
