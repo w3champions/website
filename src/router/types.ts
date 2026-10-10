@@ -34,6 +34,7 @@ export enum EAdminRouteName {
   LAG_REPORT_DETAIL = "Admin - Lag Report Detail",
   JOBS = "Admin - Jobs",
   COMMERCIAL_EVENTS_TAGGED_ACCOUNTS = "Admin - Commercial Events - Tagged Accounts",
+  COMMERCIAL_EVENTS_ALLOCATIONS = "Admin - Commercial Events - Allocations",
 }
 
 export enum EStatisticsRouteName {

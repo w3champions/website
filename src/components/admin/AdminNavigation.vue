@@ -69,7 +69,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar,
+  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -214,6 +214,13 @@ export default defineComponent({
             permission: EPermission.CommercialLicense,
             component: "commercial-events/tagged-accounts",
             routeName: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS,
+          },
+          {
+            title: "Allocations",
+            icon: mdiTicketConfirmationOutline,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/allocations",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS,
           },
         ],
       },
