@@ -6,6 +6,7 @@ import { commercialEventsService } from "@/store/admin/commercialEvents/service"
 import { describeCommercialEventsError } from "@/store/admin/commercialEvents/errors";
 import { keyedRequestSequence, requestSequence } from "@/store/admin/commercialEvents/latest";
 import { roleHintsByBattleTag } from "@/store/admin/commercialEvents/roleHints";
+import { resetKeepingWrite } from "@/store/admin/commercialEvents/write";
 import { describeError } from "./errors";
 import type { CommercialLicenseState, CommercialLicenseTagRequest } from "./types";
 
@@ -54,6 +55,13 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
         if (loads.isLatest(request)) this.loading = false;
       }
       await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag), { full: true });
+    },
+
+    /** Drops the list, the hints and every pending load; a write in flight stays marked. */
+    clear(): void {
+      loads.invalidate();
+      hintLoads.clear();
+      resetKeepingWrite(this);
     },
 
     /**

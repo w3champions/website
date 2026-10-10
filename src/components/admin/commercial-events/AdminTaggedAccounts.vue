@@ -204,7 +204,7 @@ async function removeItem(tag: CommercialLicenseTaggedPlayer): Promise<void> {
 
 async function init(): Promise<void> {
   if (!hasPermission.value) {
-    store.$reset();
+    store.clear();
     dialog.value = false;
     return;
   }

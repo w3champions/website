@@ -9,9 +9,11 @@ const license = vi.hoisted(() => ({
 const events = vi.hoisted(() => ({ getRoleHints: vi.fn() }));
 
 vi.mock("@/config/env", () => ({ API_URL: "https://x/" }));
-vi.mock("@/services/admin/CommercialLicenseService", () => ({ CommercialLicenseService: vi.fn(function CommercialLicenseService() {
-  return license;
-}) }));
+vi.mock("@/services/admin/CommercialLicenseService", () => ({
+  CommercialLicenseService: vi.fn(function CommercialLicenseService() {
+    return license;
+  }),
+}));
 vi.mock("@/store/admin/commercialEvents/service", () => ({ commercialEventsService: () => events }));
 vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) }));
 
@@ -74,4 +76,21 @@ test("an older tagged-accounts load that answers last cannot overwrite a newer o
 
   expect(store.taggedPlayers).toEqual([{ battleTag: "New#1" }]);
   expect(store.loading).toBe(false);
+});
+
+test("clearing drops a pending load and keeps a write in flight marked", async () => {
+  const older = deferred<unknown[]>();
+  license.getTaggedPlayers.mockReturnValueOnce(older.promise);
+  const store = useCommercialLicenseStore();
+  store.saving = true;
+
+  const pending = store.load();
+  store.clear();
+  older.resolve([{ battleTag: "Old#1" }]);
+  await pending;
+
+  expect(store.taggedPlayers).toEqual([]);
+  expect(store.loading).toBe(false);
+  expect(store.saving).toBe(true);
+  expect(events.getRoleHints).not.toHaveBeenCalled();
 });

@@ -185,7 +185,7 @@ const memberToAdd = ref("");
 // Remounts the picker so a previous selection never lingers.
 const pickerKey = ref(0);
 
-const started = computed(() => props.allocation !== null && isAllocationStarted(props.allocation, openedAt.value));
+const started = computed(() => base.value !== null && isAllocationStarted(base.value, openedAt.value));
 const problem = computed(() => validateAllocationDraft(draft));
 const memberProblemText = computed(() => memberProblem(props.allocation?.members ?? [], memberToAdd.value));
 
