@@ -81,13 +81,13 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async create(request: AllocationCreateRequest): Promise<Allocation | null> {
-      const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request));
+      const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.load());
       if (created) this.allocations = [created, ...this.allocations];
       return created;
     },
 
     async update(allocationId: string, request: AllocationUpdateRequest): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request));
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request), () => this.load());
       if (updated) {
         this.replace(updated);
         // Period sizes follow gamesPerPeriod.
@@ -97,20 +97,20 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async addMember(allocationId: string, battleTag: string): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().addAllocationMember(token(), allocationId, battleTag));
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().addAllocationMember(token(), allocationId, battleTag), () => this.load());
       if (updated) this.replace(updated);
       return updated;
     },
 
     async removeMember(allocationId: string, battleTag: string): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().removeAllocationMember(token(), allocationId, battleTag));
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().removeAllocationMember(token(), allocationId, battleTag), () => this.load());
       if (updated) this.replace(updated);
       return updated;
     },
 
     /** End now: endsAt = now on the server. */
     async end(allocationId: string): Promise<Allocation | null> {
-      const ended = await runAdminWrite(this, "allocation", () => commercialEventsService().endAllocation(token(), allocationId));
+      const ended = await runAdminWrite(this, "allocation", () => commercialEventsService().endAllocation(token(), allocationId), () => this.load());
       if (ended) {
         this.replace(ended);
         if (this.details[allocationId]) void this.loadDetails(allocationId);

@@ -71,30 +71,30 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     },
 
     async create(request: EventCreateRequest): Promise<AdminEventDetail | null> {
-      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request));
+      const created = await runAdminWrite(this, "event", () => commercialEventsService().createEvent(token(), request), () => this.load());
       // Reload: the filters decide whether and where the new event is listed.
       if (created) void this.load();
       return created;
     },
 
     async update(eventId: string, request: EventUpdateRequest): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().updateEvent(token(), eventId, request)));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().updateEvent(token(), eventId, request), () => this.load()));
     },
 
     async move(eventId: string, allocationId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().moveEvent(token(), eventId, allocationId)));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().moveEvent(token(), eventId, allocationId), () => this.load()));
     },
 
     async close(eventId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().closeEvent(token(), eventId)));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().closeEvent(token(), eventId), () => this.load()));
     },
 
     async suspend(eventId: string, request: SuspendRequest): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "suspension", () => commercialEventsService().suspendEvent(token(), eventId, request)));
+      return this.applied(await runAdminWrite(this, "suspension", () => commercialEventsService().suspendEvent(token(), eventId, request), () => this.load()));
     },
 
     async unsuspend(eventId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().unsuspendEvent(token(), eventId)));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().unsuspendEvent(token(), eventId), () => this.load()));
     },
   },
 });
