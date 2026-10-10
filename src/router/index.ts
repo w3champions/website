@@ -65,7 +65,7 @@ import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName
 import AdminLauncherChat from "@/components/admin/AdminLauncherChat.vue";
 import AdminLagReports from "@/components/admin/AdminLagReports.vue";
 import AdminJobs from "@/components/admin/AdminJobs.vue";
-import AdminCommercialLicense from "@/components/admin/AdminCommercialLicense.vue";
+import AdminTaggedAccounts from "@/components/admin/commercial-events/AdminTaggedAccounts.vue";
 import AdminLagReportDetail from "@/components/admin/AdminLagReportDetail.vue";
 
 const routes: RouteRecordRaw[] = [
@@ -277,7 +277,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
-      { path: "admin-commercial-license", name: EAdminRouteName.COMMERCIAL_LICENSE, component: AdminCommercialLicense },
+      { path: "commercial-events/tagged-accounts", name: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS, component: AdminTaggedAccounts },
       { path: "admin-warnings", name: EAdminRouteName.PLAYER_WARNINGS, component: AdminWarnings },
       { path: "admin-warning-templates", name: EAdminRouteName.WARNING_TEMPLATES, component: AdminWarningTemplates },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },

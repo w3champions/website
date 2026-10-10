@@ -69,7 +69,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate,
+  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -188,13 +188,6 @@ export default defineComponent({
             routeName: EAdminRouteName.LOUNGE_MUTE,
           },
           {
-            title: "Commercial License",
-            icon: mdiCertificate,
-            permission: EPermission.CommercialLicense,
-            component: "admin-commercial-license",
-            routeName: EAdminRouteName.COMMERCIAL_LICENSE,
-          },
-          {
             title: "View Game Chat",
             icon: mdiFormatAlignLeft,
             permission: EPermission.Moderation,
@@ -207,6 +200,20 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-launcher-chat",
             routeName: EAdminRouteName.LAUNCHER_CHAT,
+          },
+        ],
+      },
+      {
+        title: "Commercial Events",
+        icon: mdiCalendarStar,
+        permission: EPermission.CommercialLicense,
+        items: [
+          {
+            title: "Tagged accounts",
+            icon: mdiCertificate,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/tagged-accounts",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS,
           },
         ],
       },

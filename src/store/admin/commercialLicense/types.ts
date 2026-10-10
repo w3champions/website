@@ -1,3 +1,5 @@
+import type { RoleHints } from "@/store/admin/commercialEvents/types";
+
 /** Which FloTV streams a tag blocks (contract C-R1). */
 export type FloTvRestriction = "none" | "custom" | "all";
 
@@ -42,4 +44,8 @@ export type CommercialLicenseState = {
   error: string;
   /** Last failed load; kept apart so closing the dialog cannot hide it. */
   loadError: string;
+  /** Commercial-event roles per exact battle tag (role hints column). */
+  roleHints: Record<string, RoleHints>;
+  /** Last failed role-hint lookup; the tag list stays usable without hints. */
+  roleHintsError: string;
 };
