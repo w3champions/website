@@ -128,3 +128,79 @@ test("a 504 on an event person write reloads the event", async () => {
   expect(store.error).toBe(MAYBE_SAVED_TEXT);
   await vi.waitFor(() => expect(service.getEvent).toHaveBeenCalledTimes(1));
 });
+
+/** A promise whose resolution the test controls. */
+function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+  let resolve: (value: T) => void = () => undefined;
+  const promise = new Promise<T>((r) => (resolve = r));
+  return { promise, resolve };
+}
+
+test("a list load in flight during an allocation delete cannot bring the deleted row back", async () => {
+  const old = deferred<unknown[]>();
+  service.getAllocations.mockReturnValueOnce(old.promise);
+  service.getAllocations.mockResolvedValueOnce([{ id: "a2" }]);
+  service.deleteAllocation.mockResolvedValue(undefined);
+  const store = useCommercialEventAllocationsStore();
+  store.allocations = [{ id: "a1" }, { id: "a2" }] as never;
+
+  const oldLoad = store.load();
+  expect(await store.remove("a1")).toBe(true);
+  old.resolve([{ id: "a1" }, { id: "a2" }]);
+  await oldLoad;
+
+  await vi.waitFor(() => expect(store.loading).toBe(false));
+  expect(store.allocations).toEqual([{ id: "a2" }]);
+});
+
+test("a list load in flight during an allocation update cannot restore the old row", async () => {
+  const old = deferred<unknown[]>();
+  service.getAllocations.mockReturnValueOnce(old.promise);
+  service.getAllocations.mockResolvedValueOnce([{ id: "a1", name: "new" }]);
+  service.updateAllocation.mockResolvedValue({ id: "a1", name: "new" });
+  const store = useCommercialEventAllocationsStore();
+  store.allocations = [{ id: "a1", name: "old" }] as never;
+
+  const oldLoad = store.load();
+  await store.update("a1", {});
+  old.resolve([{ id: "a1", name: "old" }]);
+  await oldLoad;
+
+  await vi.waitFor(() => expect(store.loading).toBe(false));
+  expect(store.allocations).toEqual([{ id: "a1", name: "new" }]);
+});
+
+test("an events list load in flight during an event write cannot restore the old row", async () => {
+  const old = deferred<unknown[]>();
+  service.getEvents.mockReturnValueOnce(old.promise);
+  service.getEvents.mockResolvedValueOnce([{ id: "e1", status: "closed" }]);
+  service.closeEvent.mockResolvedValue({ id: "e1", status: "closed" });
+  const store = useCommercialEventsStore();
+  store.events = [{ id: "e1", status: "open" }] as never;
+
+  const oldLoad = store.load();
+  await store.close("e1");
+  old.resolve([{ id: "e1", status: "open" }]);
+  await oldLoad;
+
+  await vi.waitFor(() => expect(store.loading).toBe(false));
+  expect(store.events).toEqual([{ id: "e1", status: "closed" }]);
+});
+
+test("an event load in flight during a person write cannot restore the old people", async () => {
+  const old = deferred<unknown>();
+  service.getEvent.mockReturnValueOnce(old.promise);
+  service.getEvent.mockResolvedValueOnce({ id: "e1", hosts: [{ battleTag: "Tag#1" }] });
+  service.addEventPerson.mockResolvedValue({ hosts: [{ battleTag: "Tag#1" }] });
+  const store = useCommercialEventDetailStore();
+  store.eventId = "e1";
+  store.event = { id: "e1", hosts: [] } as never;
+
+  const oldLoad = store.loadEvent();
+  expect(await store.addPerson("Tag#1", "host")).toBe(true);
+  old.resolve({ id: "e1", hosts: [] });
+  await oldLoad;
+
+  await vi.waitFor(() => expect(store.loading).toBe(false));
+  expect(store.event).toEqual({ id: "e1", hosts: [{ battleTag: "Tag#1" }] });
+});

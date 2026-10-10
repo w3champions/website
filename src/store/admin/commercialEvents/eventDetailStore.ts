@@ -158,20 +158,33 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
 
     /** Takes the result of an event write (EventActionDialogs `changed`). */
     applyEvent(event: AdminEventDetail): void {
-      if (event.id === this.eventId) this.event = event;
+      if (event.id !== this.eventId) return;
+      this.event = event;
+      this.supersedePendingLoad();
+    },
+
+    /** After a write applied locally: an event load already in flight may answer with the old state, so supersede it with a fresh one. */
+    supersedePendingLoad(): void {
+      if (this.loading) void this.loadEvent();
     },
 
     async addPerson(battleTag: string, role: ManagedRole): Promise<boolean> {
       const eventId = this.eventId;
       const people = await runAdminWrite(this, "other", () => commercialEventsService().addEventPerson(token(), eventId, battleTag, role), () => this.loadEvent());
-      if (people && this.event && eventId === this.eventId) this.event = { ...this.event, ...people };
+      if (people && this.event && eventId === this.eventId) {
+        this.event = { ...this.event, ...people };
+        this.supersedePendingLoad();
+      }
       return people !== null;
     },
 
     async removePerson(battleTag: string): Promise<boolean> {
       const eventId = this.eventId;
       const people = await runAdminWrite(this, "other", () => commercialEventsService().removeEventPerson(token(), eventId, battleTag), () => this.loadEvent());
-      if (people && this.event && eventId === this.eventId) this.event = { ...this.event, ...people };
+      if (people && this.event && eventId === this.eventId) {
+        this.event = { ...this.event, ...people };
+        this.supersedePendingLoad();
+      }
       return people !== null;
     },
   },

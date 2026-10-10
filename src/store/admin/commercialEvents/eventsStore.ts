@@ -72,8 +72,9 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     applied(event: AdminEventDetail | null): AdminEventDetail | null {
       if (!event) return null;
       this.events = this.events.map((e) => (e.id === event.id ? event : e));
-      // The write may take the event out of (or into) the filtered list.
-      if (Object.values(this.filters).some((value) => value !== "")) void this.load();
+      // The write may take the event out of (or into) the filtered list, and a list load
+      // already in flight may answer with the event's old state.
+      if (this.loading || Object.values(this.filters).some((value) => value !== "")) void this.load();
       return event;
     },
 
