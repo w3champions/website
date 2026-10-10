@@ -94,7 +94,7 @@
         </template>
 
         <template v-slot:[`item.name`]="{ item }">
-          {{ item.name }}
+          <router-link :to="eventDetailLink(item.id)">{{ item.name }}</router-link>
         </template>
 
         <template v-slot:[`item.kind`]="{ item }">
@@ -202,6 +202,7 @@ import { useCommercialLicensePermission } from "@/composables/useCommercialLicen
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
 import { formatUtc } from "@/store/admin/commercialEvents/dates";
 import { eventActions } from "@/store/admin/commercialEvents/eventDraft";
+import { eventDetailLink } from "@/store/admin/commercialEvents/links";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";
 import {
   allocationOptionLabel,

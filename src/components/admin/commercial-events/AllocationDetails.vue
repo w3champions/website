@@ -56,7 +56,9 @@
       <tbody>
         <tr v-for="event in details?.events ?? []" :key="event.id">
           <td>{{ event.id }}</td>
-          <td>{{ event.name }}</td>
+          <td>
+            <router-link :to="eventDetailLink(event.id)">{{ event.name }}</router-link>
+          </td>
           <td>
             <v-chip size="small" variant="flat" :color="eventStatusColor(event)">{{ eventStatusLabel(event) }}</v-chip>
           </td>
@@ -79,6 +81,7 @@ import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEven
 import type { AllocationRowDetails } from "@/store/admin/commercialEvents/allocationsStore";
 import { formatUtc } from "@/store/admin/commercialEvents/dates";
 import { eventStatusColor, eventStatusLabel, eventUsedLabel, periodRangeLabel } from "@/store/admin/commercialEvents/format";
+import { eventDetailLink } from "@/store/admin/commercialEvents/links";
 
 const props = defineProps<{ allocationId: string }>();
 

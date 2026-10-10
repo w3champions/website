@@ -46,6 +46,7 @@
             :to="{ name: subItem.routeName }"
             :title="subItem.title"
             :value="subItem.title"
+            :active="isSubItemActive(subItem.routeName)"
             color="primary"
           />
         </v-list-group>
@@ -138,6 +139,11 @@ export default defineComponent({
     }
 
     watch(permissions, init);
+
+    // The event detail page belongs to the Events item; `undefined` leaves the decision to the link.
+    function isSubItemActive(routeName: string | undefined): true | undefined {
+      return routeName === EAdminRouteName.COMMERCIAL_EVENTS_EVENTS && route.name === EAdminRouteName.COMMERCIAL_EVENTS_EVENT_DETAIL ? true : undefined;
+    }
 
     const navItems: Array<AdminNavigationItem> = [
       {
@@ -489,6 +495,7 @@ export default defineComponent({
       mdiAccountTie,
       filteredNavItems,
       isDrawerOpen,
+      isSubItemActive,
     };
   },
 });
