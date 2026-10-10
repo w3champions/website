@@ -84,8 +84,11 @@
         <template v-slot:top>
           <div class="d-flex align-center px-4">
             <v-spacer />
-            <v-btn variant="text" class="mb-2" :prepend-icon="mdiRefresh" :disabled="store.loading" @click="store.load()">
+            <v-btn variant="text" class="mb-2 mr-2" :prepend-icon="mdiRefresh" :disabled="store.loading" @click="store.load()">
               Refresh
+            </v-btn>
+            <v-btn class="mb-2 bg-primary text-w3-race-bg" @click="actionDialogs?.openCreate(store.filters.allocationId)">
+              Create event
             </v-btn>
           </div>
         </template>
@@ -117,19 +120,88 @@
         <template v-slot:[`item.status`]="{ item }">
           <v-chip size="small" variant="flat" :color="eventStatusColor(item)">{{ eventStatusLabel(item) }}</v-chip>
         </template>
+
+        <template v-slot:[`item.actions`]="{ item }">
+          <div class="d-flex justify-center">
+            <v-btn
+              v-if="eventActions(item).edit"
+              icon
+              variant="text"
+              size="small"
+              title="Edit"
+              :aria-label="`Edit ${item.name}`"
+              :disabled="store.saving"
+              @click="actionDialogs?.openEdit(item)"
+            >
+              <v-icon size="small">{{ mdiPencil }}</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="eventActions(item).move"
+              icon
+              variant="text"
+              size="small"
+              title="Move to another allocation"
+              :aria-label="`Move ${item.name}`"
+              :disabled="store.saving"
+              @click="actionDialogs?.openMove(item)"
+            >
+              <v-icon size="small">{{ mdiSwapHorizontal }}</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="eventActions(item).suspend"
+              icon
+              variant="text"
+              size="small"
+              title="Suspend"
+              :aria-label="`Suspend ${item.name}`"
+              :disabled="store.saving"
+              @click="actionDialogs?.openSuspend(item)"
+            >
+              <v-icon size="small">{{ mdiPauseCircleOutline }}</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="eventActions(item).lift"
+              icon
+              variant="text"
+              size="small"
+              title="Lift suspension"
+              :aria-label="`Lift the suspension of ${item.name}`"
+              :disabled="store.saving"
+              @click="actionDialogs?.lift(item)"
+            >
+              <v-icon size="small">{{ mdiPlayCircleOutline }}</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="eventActions(item).close"
+              icon
+              variant="text"
+              size="small"
+              title="Close now"
+              :aria-label="`Close ${item.name}`"
+              :disabled="store.saving"
+              @click="actionDialogs?.close(item)"
+            >
+              <v-icon size="small">{{ mdiLock }}</v-icon>
+            </v-btn>
+          </div>
+        </template>
       </v-data-table>
+
+      <event-action-dialogs ref="actionDialogsComponent" class="mt-4" />
     </v-container>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, watch } from "vue";
-import { mdiMagnify, mdiRefresh } from "@mdi/js";
+import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from "vue";
+import { mdiLock, mdiMagnify, mdiPauseCircleOutline, mdiPencil, mdiPlayCircleOutline, mdiRefresh, mdiSwapHorizontal } from "@mdi/js";
 import debounce from "debounce";
 import type { DataTableHeader } from "vuetify";
+import EventActionDialogs from "@/components/admin/commercial-events/EventActionDialogs.vue";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
 import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { eventActions } from "@/store/admin/commercialEvents/eventDraft";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";
 import {
   allocationOptionLabel,
@@ -147,6 +219,7 @@ const SEARCH_DELAY = 500;
 const store = useCommercialEventsStore();
 const allocationsStore = useCommercialEventAllocationsStore();
 const { hasPermission, permissionsKnown } = useCommercialLicensePermission();
+const actionDialogs = useTemplateRef<InstanceType<typeof EventActionDialogs>>("actionDialogsComponent");
 
 const headers: DataTableHeader[] = [
   { title: "Name", value: "name", sortable: true },
@@ -160,6 +233,7 @@ const headers: DataTableHeader[] = [
   { title: "In progress", value: "held", sortable: true },
   { title: "Not counted", value: "invalid", sortable: true },
   { title: "Status", value: "status", sortable: true },
+  { title: "Actions", value: "actions", sortable: false, align: "center" },
 ];
 
 /** Phase only narrows open events. */
