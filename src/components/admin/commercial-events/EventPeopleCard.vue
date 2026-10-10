@@ -26,7 +26,7 @@
                   size="small"
                   :title="`Remove ${group.singular}`"
                   :aria-label="`Remove ${entry.battleTag}`"
-                  :disabled="store.saving"
+                  :disabled="busy"
                   @click="remove(entry.battleTag, group.singular)"
                 >
                   <v-icon size="small">{{ mdiDelete }}</v-icon>
@@ -56,7 +56,7 @@
             hide-details
           />
           <battle-tag-picker v-model="battleTag" class="flex-grow-1" :reset-key="pickerKey" />
-          <v-btn variant="text" :disabled="store.saving || problem !== null" @click="add">Add</v-btn>
+          <v-btn variant="text" :disabled="busy || problem !== null" @click="add">Add</v-btn>
         </div>
         <div v-if="battleTag !== '' && problem" class="text-caption text-warning">{{ problem }}</div>
         <div class="text-caption text-medium-emphasis">
@@ -95,6 +95,8 @@ const battleTag = ref("");
 const pickerKey = ref(0);
 
 const canManage = computed(() => eventActions(props.event).managePeople);
+// While the event reloads, its status (and so whether people may change) is not known.
+const busy = computed(() => store.saving || store.loading);
 const problem = computed(() => personProblem(props.event, battleTag.value));
 const groups = computed(() => [
   { role: "delegate", title: "Delegates", singular: "delegate", entries: props.event.delegates },

@@ -1,6 +1,5 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { format } from "date-fns";
 import { formatUtc, isoToUtcInput, localTimeHint, utcDayStartInput, utcInputToIso, utcNextHourInput } from "./dates";
 
 test("isoToUtcInput gives the UTC minute value of a datetime-local input", () => {
@@ -44,7 +43,14 @@ test("default form values use UTC day starts and full UTC hours", () => {
 });
 
 test("localTimeHint shows the instant in the viewer's time zone, nothing for an invalid value", () => {
-  const expected = format(new Date("2026-10-09T14:05:00.000Z"), "yyyy-MM-dd HH:mm");
-  assert.equal(localTimeHint("2026-10-09T14:05"), `Your local time: ${expected}`);
-  assert.equal(localTimeHint(""), "");
+  // Node applies a TZ change at runtime; a fixed non-UTC zone keeps the expectation independent of the machine.
+  const previous = process.env.TZ;
+  process.env.TZ = "America/New_York";
+  try {
+    assert.equal(localTimeHint("2026-10-09T14:05"), "Your local time: 2026-10-09 10:05");
+    assert.equal(localTimeHint(""), "");
+  } finally {
+    if (previous === undefined) delete process.env.TZ;
+    else process.env.TZ = previous;
+  }
 });

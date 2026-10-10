@@ -1,4 +1,6 @@
 import { HttpError } from "@/services/http/AuthorizedClient";
+import { roleLabel } from "./format";
+import type { InvalidFieldRule } from "./types";
 
 /** Which form produced a field error; decides the length named for `too-long` on `name`. */
 export type ErrorContext = "event" | "allocation" | "suspension" | "other";
@@ -28,7 +30,7 @@ const FIELD_LABELS: Record<string, string> = {
   query: "Search audit log",
 };
 
-const ROLE_LABELS: Record<string, string> = { member: "Member", delegate: "Delegate", host: "Authorized host" };
+const ROLE_LABELS: Record<string, string> = { member: "Member", delegate: roleLabel("delegate"), host: roleLabel("host") };
 
 const OUT_OF_RANGE: Record<string, string> = {
   prizePoolUsd: "Enter an amount from 0 to 10,000,000.",
@@ -94,8 +96,8 @@ function tooLongLimit(field: string, context: ErrorContext): number | null {
   return null;
 }
 
-/** English text for an INVALID_FIELD rule, without the field label. */
-export function ruleText(field: string, rule: string, context: ErrorContext = "other"): string {
+/** English text for an INVALID_FIELD rule, without the field label; unknown rules are named as sent. */
+export function ruleText(field: string, rule: InvalidFieldRule | (string & {}), context: ErrorContext = "other"): string {
   switch (rule) {
     case "required":
       return field === "suspensionMessage" ? "Enter a message." : field === "name" ? "Enter a name." : "Enter a value.";

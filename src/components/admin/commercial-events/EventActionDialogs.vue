@@ -13,7 +13,7 @@
 
     <event-dialog
       v-model="eventDialogOpen"
-      :event="mode === 'edit' ? target : null"
+      :event="editTarget"
       :allocations="allocationsStore.allocations"
       :initial-allocation-id="createAllocationId"
       :saving="eventsStore.saving"
@@ -24,6 +24,7 @@
       v-model="moveDialogOpen"
       :event="target"
       :allocations="allocationsStore.allocations"
+      :allocations-loading="allocationsStore.loading"
       :saving="eventsStore.saving"
       :error="dialogError"
       @move="moveEvent"
@@ -32,19 +33,19 @@
       v-model="suspendDialogOpen"
       :event="target"
       :saving="eventsStore.saving"
-      :error="eventsStore.error"
+      :error="dialogError"
       @suspend="suspendEvent"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, type WritableComputedRef } from "vue";
+import { computed, onMounted, ref, type WritableComputedRef } from "vue";
 import EventDialog from "@/components/admin/commercial-events/EventDialog.vue";
 import EventMoveDialog from "@/components/admin/commercial-events/EventMoveDialog.vue";
 import EventSuspendDialog from "@/components/admin/commercial-events/EventSuspendDialog.vue";
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
-import { closesImmediately, toEventCreateRequest, toEventUpdateRequest, toSuspendRequest } from "@/store/admin/commercialEvents/eventDraft";
+import { closesOnSave, toEventCreateRequest, toEventUpdateRequest, toSuspendRequest } from "@/store/admin/commercialEvents/eventDraft";
 import type { EventDraft, SuspendDraft } from "@/store/admin/commercialEvents/eventDraft";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";
 import type { AdminEvent, AdminEventDetail } from "@/store/admin/commercialEvents/types";
@@ -60,9 +61,14 @@ const allocationsStore = useCommercialEventAllocationsStore();
 
 const mode = ref<Mode>("none");
 const target = ref<AdminEvent | null>(null);
+// Kept after closing, so the event dialog does not switch to its create title while it fades out.
+const editTarget = ref<AdminEvent | null>(null);
 const createAllocationId = ref("");
 
-const dialogError = computed(() => eventsStore.error || allocationsStore.loadError);
+// Only creating and moving need the allocation list.
+const dialogError = computed(() =>
+  eventsStore.error || (mode.value === "create" || mode.value === "move" ? allocationsStore.loadError : "")
+);
 
 function dialogModel(...modes: Mode[]): WritableComputedRef<boolean> {
   return computed({
@@ -87,6 +93,7 @@ function ensureAllocations(): void {
 function open(next: Mode, event: AdminEvent | null): void {
   eventsStore.error = "";
   target.value = event;
+  if (next === "create" || next === "edit") editTarget.value = event;
   mode.value = next;
 }
 
@@ -117,9 +124,8 @@ function openSuspend(event: AdminEvent): void {
 const closeNowText = "The end is not in the future, so this closes the event now. Closed events can't be edited or reopened. Continue?";
 
 async function saveEvent(draft: EventDraft): Promise<void> {
-  const endsNow = closesImmediately(draft, new Date());
   if (mode.value === "create") {
-    if (endsNow && !confirm(closeNowText)) return;
+    if (closesOnSave(draft, null, new Date()) && !confirm(closeNowText)) return;
     const created = await eventsStore.create(toEventCreateRequest(draft));
     if (created) finish(created);
     return;
@@ -131,7 +137,7 @@ async function saveEvent(draft: EventDraft): Promise<void> {
     mode.value = "none";
     return;
   }
-  if (request.endsAt !== undefined && endsNow && !confirm(closeNowText)) return;
+  if (closesOnSave(draft, original, new Date()) && !confirm(closeNowText)) return;
   const updated = await eventsStore.update(original.id, request);
   if (updated) finish(updated);
 }
@@ -161,6 +167,11 @@ async function lift(event: AdminEvent): Promise<void> {
   const lifted = await eventsStore.unsuspend(event.id);
   if (lifted) emit("changed", lifted);
 }
+
+// The error is shared by the list and the detail page: one page's failure must not show on the other.
+onMounted(() => {
+  eventsStore.error = "";
+});
 
 defineExpose({ openCreate, openEdit, openMove, openSuspend, close, lift });
 </script>

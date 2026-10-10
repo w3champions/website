@@ -192,10 +192,16 @@ watch(() => [props.modelValue, props.allocation?.id] as const, ([open, id], [was
   if (open && (!wasOpen || id !== previousId)) reset();
 });
 
+// Clear the picker once the added member is listed, so a failed add keeps the selection.
+watch(() => props.allocation?.members, (members) => {
+  if (memberToAdd.value !== "" && members?.some((member) => member.battleTag === memberToAdd.value)) {
+    memberToAdd.value = "";
+    pickerKey.value++;
+  }
+});
+
 function addMember(): void {
   emit("addMember", memberToAdd.value);
-  memberToAdd.value = "";
-  pickerKey.value++;
 }
 
 function removeMember(battleTag: string): void {

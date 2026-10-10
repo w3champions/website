@@ -16,10 +16,10 @@ npm run build         # Build without locale generation
 
 ### Code Quality
 ```bash
-npm run lint          # Run ESLint to check for code issues
-npm run lint:fix      # Auto-fix ESLint issues
-npm run dprint        # Check code formatting
-npm run dprint:fix    # Auto-format code with dprint
+npm run lint           # Run ESLint to check for code issues
+npm run lint:fix       # Auto-fix ESLint issues
+npm run dprint         # Check code formatting
+npm run dprint:fix     # Auto-format code with dprint
 npm run type-check-vue # Type-check .ts and .vue files (what CI runs)
 ```
 

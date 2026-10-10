@@ -7,7 +7,10 @@ import { format } from "date-fns";
  */
 const INPUT_PATTERN = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})(:\d{2})?$/;
 
-/** ISO instant → UTC form value; "" when missing or unparsable. */
+/**
+ * ISO instant → UTC form value; "" when missing or unparsable. The input must be a full
+ * ISO instant with a zone designator ("Z" or an offset): a string without one parses as local time.
+ */
 export function isoToUtcInput(iso: string | null | undefined): string {
   if (!iso) return "";
   const date = new Date(iso);

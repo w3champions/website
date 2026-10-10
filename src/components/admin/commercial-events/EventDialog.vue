@@ -120,7 +120,7 @@
 import { computed, reactive, ref, watch } from "vue";
 import { localTimeHint } from "@/store/admin/commercialEvents/dates";
 import {
-  closesImmediately,
+  closesOnSave,
   draftFromEvent,
   emptyEventDraft,
   EVENT_NAME_MAX_LENGTH,
@@ -152,7 +152,7 @@ const draft = reactive<EventDraft>(emptyEventDraft(openedAt.value));
 
 const used = computed(() => (props.event ? props.event.consumed + props.event.held : 0));
 const problem = computed(() => validateEventDraft(draft, used.value));
-const endsNow = computed(() => closesImmediately(draft, openedAt.value));
+const endsNow = computed(() => closesOnSave(draft, props.event, openedAt.value));
 const allocationItems = computed(() => props.allocations.map((a) => ({ title: allocationOptionLabel(a), value: a.id })));
 
 watch(() => props.modelValue, (open) => {

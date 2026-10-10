@@ -14,6 +14,8 @@
           :items="targets"
           item-title="title"
           item-value="value"
+          :loading="allocationsLoading"
+          :hide-no-data="allocationsLoading"
           no-data-text="No other allocation."
           variant="underlined"
           color="primary"
@@ -51,6 +53,7 @@ const props = defineProps<{
   modelValue: boolean;
   event: AdminEvent | null;
   allocations: Allocation[];
+  allocationsLoading: boolean;
   saving: boolean;
   error: string;
 }>();

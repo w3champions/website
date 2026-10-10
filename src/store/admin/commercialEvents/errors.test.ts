@@ -34,7 +34,7 @@ test("INVALID_REQUEST names the field, or the request when the field is null or 
   assert.equal(describeCommercialEventsError(http(400, { error: "startsAt: invalid", code: "INVALID_REQUEST", field: "startsAt" })), "Start: invalid value.");
   assert.equal(describeCommercialEventsError(http(400, { error: "body: invalid", code: "INVALID_REQUEST", field: null })), "Request: invalid value.");
   assert.equal(describeCommercialEventsError(http(400, { error: "body: invalid", code: "INVALID_REQUEST" })), "Request: invalid value.");
-  // website-backend's own path-segment guard uses the same shape (backend plan Task 5).
+  // website-backend's own path-segment guard uses the same shape.
   assert.equal(describeCommercialEventsError(http(400, { error: "matchId: invalid", code: "INVALID_REQUEST", field: "matchId" })), "Match: invalid value.");
 });
 
@@ -51,8 +51,7 @@ test("UNKNOWN_BATTLE_TAG repeats the exact battle tag", () => {
 
 test("ROLE_EXISTS names the existing role", () => {
   const e = http(409, { error: "ROLE_EXISTS", code: "ROLE_EXISTS", data: { battleTag: "Foo#1", role: "host" } });
-  // dprint prefers single quotes for strings containing double quotes; eslint wants double.
-  // eslint-disable-next-line @stylistic/quotes
+  // eslint-disable-next-line @stylistic/quotes -- dprint rewrites escaped double quotes to single quotes
   assert.equal(describeCommercialEventsError(e), 'Foo#1 already has the role "Authorized host" here. Remove it first to change it.');
 });
 

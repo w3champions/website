@@ -42,13 +42,16 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
       } finally {
         this.loading = false;
       }
-      await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag));
+      await this.loadRoleHints(this.taggedPlayers.map((p) => p.battleTag), { full: true });
     },
 
-    /** Merges the role hints of the given tags; a failure only sets roleHintsError. */
-    async loadRoleHints(battleTags: string[]): Promise<void> {
+    /**
+     * Merges the role hints of the given tags; a failure only sets roleHintsError.
+     * Only the `full` lookup of every listed tag clears that error.
+     */
+    async loadRoleHints(battleTags: string[], { full = false }: { full?: boolean } = {}): Promise<void> {
       if (battleTags.length === 0) return;
-      this.roleHintsError = "";
+      if (full) this.roleHintsError = "";
       try {
         const hints = await commercialEventsService().getRoleHints(useOauthStore().token, battleTags);
         this.roleHints = { ...this.roleHints, ...roleHintsByBattleTag(hints) };
@@ -83,6 +86,7 @@ export const useCommercialLicenseStore = defineStore("commercialLicense", {
         const oauthStore = useOauthStore();
         await getService().removeTaggedPlayer(oauthStore.token, battleTag);
         this.taggedPlayers = this.taggedPlayers.filter((p) => p.battleTag !== battleTag);
+        delete this.roleHints[battleTag];
         return true;
       } catch (e) {
         console.error("Commercial license request failed:", e);

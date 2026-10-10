@@ -181,11 +181,16 @@ function openEdit(allocation: Allocation): void {
 }
 
 async function save(draft: AllocationDraft): Promise<void> {
-  const original = editedAllocation.value;
-  if (original === null) {
+  if (editedId.value === null) {
     // Stay open on the new allocation so its members can be added.
     const created = await store.create(toAllocationCreateRequest(draft));
     if (created) editedId.value = created.id;
+    return;
+  }
+  const original = editedAllocation.value;
+  if (original === null) {
+    // The list was reloaded without it (failed load or deleted meanwhile): never create a duplicate.
+    store.error = "This allocation is no longer listed. Close the dialog and refresh.";
     return;
   }
   const request = toAllocationUpdateRequest(draft, original, new Date());
@@ -209,8 +214,8 @@ async function endNow(allocation: Allocation): Promise<void> {
 }
 
 async function removeItem(allocation: Allocation): Promise<void> {
-  if (confirm(`Delete "${allocation.name}"? This only works while it has never been used.`)) {
-    await store.remove(allocation.id);
+  if (confirm(`Delete "${allocation.name}"? This only works while it has never been used.`) && await store.remove(allocation.id)) {
+    expanded.value = expanded.value.filter((id) => id !== allocation.id);
   }
 }
 

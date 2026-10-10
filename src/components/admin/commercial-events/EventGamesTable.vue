@@ -66,7 +66,7 @@
           >
             Match page
           </v-btn>
-          <span v-else class="text-caption text-medium-emphasis">running</span>
+          <span v-else class="text-medium-emphasis">—</span>
         </template>
       </v-data-table>
 

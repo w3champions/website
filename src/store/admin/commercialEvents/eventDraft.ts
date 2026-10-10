@@ -99,8 +99,13 @@ export function toEventUpdateRequest(draft: EventDraft, original: AdminEvent): E
   return request;
 }
 
-/** C-E3: an admin endsAt at or before now closes the event at once. */
-export function closesImmediately(draft: Pick<EventDraft, "endsAt">, now: Date): boolean {
+/**
+ * C-E3: an admin endsAt at or before now closes the event at once. True when saving
+ * the draft does that: when creating (`original` null), or when the edit changes
+ * endsAt (minute precision, as the update request) to at or before `now`.
+ */
+export function closesOnSave(draft: Pick<EventDraft, "endsAt">, original: Pick<AdminEvent, "endsAt"> | null, now: Date): boolean {
+  if (original !== null && draft.endsAt === isoToUtcInput(original.endsAt)) return false;
   const end = utcInputToIso(draft.endsAt);
   return end !== null && new Date(end).getTime() <= now.getTime();
 }

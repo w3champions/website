@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { closesImmediately, draftFromEvent, emptyEventDraft, eventActions, moveTargets, personProblem, suspendDraftFor, toEventCreateRequest, toEventUpdateRequest, toSuspendRequest, validateEventDraft, validateSuspendDraft } from "./eventDraft";
+import { closesOnSave, draftFromEvent, emptyEventDraft, eventActions, moveTargets, personProblem, suspendDraftFor, toEventCreateRequest, toEventUpdateRequest, toSuspendRequest, validateEventDraft, validateSuspendDraft } from "./eventDraft";
 import type { EventDraft } from "./eventDraft";
 import type { AdminEvent } from "./types";
 
@@ -124,12 +124,24 @@ test("the update request holds only changed fields and never the allocation", ()
   );
 });
 
-test("an end at or before now closes the event at once", () => {
+test("a new event whose end is at or before now closes at once", () => {
   const now = new Date("2026-11-01T12:00:00.000Z");
-  assert.equal(closesImmediately({ endsAt: "2026-11-01T12:00" }, now), true);
-  assert.equal(closesImmediately({ endsAt: "2026-11-01T11:59" }, now), true);
-  assert.equal(closesImmediately({ endsAt: "2026-11-01T12:01" }, now), false);
-  assert.equal(closesImmediately({ endsAt: "" }, now), false);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T12:00" }, null, now), true);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T11:59" }, null, now), true);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T12:01" }, null, now), false);
+  assert.equal(closesOnSave({ endsAt: "" }, null, now), false);
+});
+
+test("an edit closes the event at once only when it changes the end to at or before now", () => {
+  const now = new Date("2026-11-01T12:00:00.000Z");
+  // Already past, compared at minute precision whatever the server's second and millisecond format.
+  const ended = { endsAt: "2026-11-01T10:00:30.000Z" };
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T10:00" }, ended, now), false);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T10:00" }, { endsAt: "2026-11-01T10:00:00Z" }, now), false);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T11:00" }, ended, now), true);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T12:00" }, event, now), true);
+  assert.equal(closesOnSave({ endsAt: "2026-11-01T12:01" }, event, now), false);
+  assert.equal(closesOnSave({ endsAt: "2026-11-02T18:00" }, event, now), false);
 });
 
 test("the suspension message is required, at most 500 characters after trimming", () => {
