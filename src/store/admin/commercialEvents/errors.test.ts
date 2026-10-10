@@ -81,6 +81,11 @@ test("ALLOCATION_INACTIVE names the start of an upcoming allocation", () => {
   assert.equal(describeCommercialEventsError(e), "Only an active allocation can be ended now. This allocation starts 2026-10-09 14:05 UTC.");
 });
 
+test("ALLOCATION_INACTIVE with an unreadable startsAt falls back to the ended text", () => {
+  const e = http(409, { code: "ALLOCATION_INACTIVE", data: { startsAt: "not a date" } });
+  assert.equal(describeCommercialEventsError(e), "Only an active allocation can be ended now. This allocation has already ended.");
+});
+
 test("a long EVENT_SUSPENDED body keeps its code and note", () => {
   const note = "x".repeat(900);
   const e = http(409, { code: "EVENT_SUSPENDED", data: { message: note } });

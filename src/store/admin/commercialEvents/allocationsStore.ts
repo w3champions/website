@@ -76,18 +76,23 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
       this.$reset();
     },
 
+    /** Reloads the list and the expanded rows' details, after a write whose outcome is unknown. */
+    async refresh(): Promise<void> {
+      await Promise.all([this.load(), ...Object.keys(this.details).map((id) => this.loadDetails(id))]);
+    },
+
     replace(allocation: Allocation): void {
       this.allocations = this.allocations.map((a) => (a.id === allocation.id ? allocation : a));
     },
 
     async create(request: AllocationCreateRequest): Promise<Allocation | null> {
-      const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.load());
+      const created = await runAdminWrite(this, "allocation", () => commercialEventsService().createAllocation(token(), request), () => this.refresh());
       if (created) this.allocations = [created, ...this.allocations];
       return created;
     },
 
     async update(allocationId: string, request: AllocationUpdateRequest): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request), () => this.load());
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().updateAllocation(token(), allocationId, request), () => this.refresh());
       if (updated) {
         this.replace(updated);
         // Period sizes follow gamesPerPeriod.
@@ -97,20 +102,20 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
     },
 
     async addMember(allocationId: string, battleTag: string): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().addAllocationMember(token(), allocationId, battleTag), () => this.load());
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().addAllocationMember(token(), allocationId, battleTag), () => this.refresh());
       if (updated) this.replace(updated);
       return updated;
     },
 
     async removeMember(allocationId: string, battleTag: string): Promise<Allocation | null> {
-      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().removeAllocationMember(token(), allocationId, battleTag), () => this.load());
+      const updated = await runAdminWrite(this, "allocation", () => commercialEventsService().removeAllocationMember(token(), allocationId, battleTag), () => this.refresh());
       if (updated) this.replace(updated);
       return updated;
     },
 
     /** End now: endsAt = now on the server. */
     async end(allocationId: string): Promise<Allocation | null> {
-      const ended = await runAdminWrite(this, "allocation", () => commercialEventsService().endAllocation(token(), allocationId), () => this.load());
+      const ended = await runAdminWrite(this, "allocation", () => commercialEventsService().endAllocation(token(), allocationId), () => this.refresh());
       if (ended) {
         this.replace(ended);
         if (this.details[allocationId]) void this.loadDetails(allocationId);
@@ -122,7 +127,7 @@ export const useCommercialEventAllocationsStore = defineStore("commercialEventAl
       const removed = await runAdminWrite(this, "allocation", async () => {
         await commercialEventsService().deleteAllocation(token(), allocationId);
         return true;
-      });
+      }, () => this.load());
       if (removed) {
         this.allocations = this.allocations.filter((a) => a.id !== allocationId);
         detailLoads.invalidate(allocationId);

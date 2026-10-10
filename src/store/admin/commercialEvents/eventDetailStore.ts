@@ -163,14 +163,14 @@ export const useCommercialEventDetailStore = defineStore("commercialEventDetail"
 
     async addPerson(battleTag: string, role: ManagedRole): Promise<boolean> {
       const eventId = this.eventId;
-      const people = await runAdminWrite(this, "other", () => commercialEventsService().addEventPerson(token(), eventId, battleTag, role));
+      const people = await runAdminWrite(this, "other", () => commercialEventsService().addEventPerson(token(), eventId, battleTag, role), () => this.loadEvent());
       if (people && this.event && eventId === this.eventId) this.event = { ...this.event, ...people };
       return people !== null;
     },
 
     async removePerson(battleTag: string): Promise<boolean> {
       const eventId = this.eventId;
-      const people = await runAdminWrite(this, "other", () => commercialEventsService().removeEventPerson(token(), eventId, battleTag));
+      const people = await runAdminWrite(this, "other", () => commercialEventsService().removeEventPerson(token(), eventId, battleTag), () => this.loadEvent());
       if (people && this.event && eventId === this.eventId) this.event = { ...this.event, ...people };
       return people !== null;
     },

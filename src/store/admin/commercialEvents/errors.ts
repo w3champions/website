@@ -163,10 +163,10 @@ function codeText(code: string, body: ErrorBody, context: ErrorContext): string 
       return note === undefined ? "This event is suspended." : `This event is suspended. Reason: ${note}`;
     }
     case "ALLOCATION_INACTIVE": {
-      const startsAt = text(data.startsAt);
-      return startsAt === undefined
+      const startsAt = formatUtc(text(data.startsAt));
+      return startsAt === "—"
         ? "Only an active allocation can be ended now. This allocation has already ended."
-        : `Only an active allocation can be ended now. This allocation starts ${formatUtc(startsAt)}.`;
+        : `Only an active allocation can be ended now. This allocation starts ${startsAt}.`;
     }
     case "TERMINATE_FAILED":
       return `The game couldn't be terminated: ${text(data.message) ?? "unknown error"}`;

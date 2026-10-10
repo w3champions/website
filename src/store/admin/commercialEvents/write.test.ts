@@ -1,4 +1,4 @@
-import { test, vi } from "vitest";
+import { expect, test, vi } from "vitest";
 import { strict as assert } from "node:assert";
 import { HttpError } from "@/services/http/AuthorizedClient";
 import { MAYBE_SAVED_TEXT } from "./errors";
@@ -56,7 +56,20 @@ test("a 4xx, a network error or a missing refresh does not reload", async () => 
   await runAdminWrite(target, "event", () => Promise.reject(new Error("offline")), refresh);
   assert.equal(refresh.mock.calls.length, 0);
 
-  await runAdminWrite(target, "event", () => Promise.reject(new HttpError(500, "POST", "https://x", "{}")));
+  await runAdminWrite(target, "event", () => Promise.reject(new HttpError(500, "POST", "https://x", JSON.stringify({ code: "INTERNAL" }))));
   consoleError.mockRestore();
-  assert.notEqual(target.error, MAYBE_SAVED_TEXT);
+  assert.equal(target.error, "Something went wrong in the matchmaking service. Please try again.");
+});
+
+test("a refresh that rejects is swallowed", async () => {
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  const target = { saving: false, error: "" };
+  const refresh = vi.fn(() => Promise.reject(new Error("reload failed")));
+
+  const result = await runAdminWrite(target, "event", () => Promise.reject(new HttpError(504, "POST", "https://x", "")), refresh);
+  await vi.waitFor(() => expect(consoleError).toHaveBeenCalledWith("Refresh after a failed write failed:", expect.any(Error)));
+
+  consoleError.mockRestore();
+  assert.equal(result, null);
+  assert.equal(target.error, MAYBE_SAVED_TEXT);
 });

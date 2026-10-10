@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
+import { useCommercialEventDetailStore } from "./eventDetailStore";
 import { requestSequence } from "./latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
@@ -61,6 +62,12 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
       this.$reset();
     },
 
+    /** After a write whose outcome is unknown: reloads the list and, when it shows that event, the detail page's event. */
+    async refresh(eventId?: string): Promise<void> {
+      const detail = useCommercialEventDetailStore();
+      await Promise.all([this.load(), eventId !== undefined && detail.eventId === eventId ? detail.loadEvent() : Promise.resolve()]);
+    },
+
     /** Takes the result of a write into the list. */
     applied(event: AdminEventDetail | null): AdminEventDetail | null {
       if (!event) return null;
@@ -78,23 +85,23 @@ export const useCommercialEventsStore = defineStore("commercialEvents", {
     },
 
     async update(eventId: string, request: EventUpdateRequest): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().updateEvent(token(), eventId, request), () => this.load()));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().updateEvent(token(), eventId, request), () => this.refresh(eventId)));
     },
 
     async move(eventId: string, allocationId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().moveEvent(token(), eventId, allocationId), () => this.load()));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().moveEvent(token(), eventId, allocationId), () => this.refresh(eventId)));
     },
 
     async close(eventId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().closeEvent(token(), eventId), () => this.load()));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().closeEvent(token(), eventId), () => this.refresh(eventId)));
     },
 
     async suspend(eventId: string, request: SuspendRequest): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "suspension", () => commercialEventsService().suspendEvent(token(), eventId, request), () => this.load()));
+      return this.applied(await runAdminWrite(this, "suspension", () => commercialEventsService().suspendEvent(token(), eventId, request), () => this.refresh(eventId)));
     },
 
     async unsuspend(eventId: string): Promise<AdminEventDetail | null> {
-      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().unsuspendEvent(token(), eventId), () => this.load()));
+      return this.applied(await runAdminWrite(this, "event", () => commercialEventsService().unsuspendEvent(token(), eventId), () => this.refresh(eventId)));
     },
   },
 });

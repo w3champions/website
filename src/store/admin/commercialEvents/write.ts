@@ -26,7 +26,8 @@ export async function runAdminWrite<T>(target: WriteTarget, context: ErrorContex
     console.error("Commercial events request failed:", e instanceof HttpError ? `${e.message}: ${e.bodyPreview}` : e);
     if (refresh && mayHaveBeenSaved(e)) {
       target.error = MAYBE_SAVED_TEXT;
-      void refresh();
+      // A failing reload must not become an unhandled rejection; the stores report their own load errors.
+      void Promise.resolve().then(refresh).catch((refreshError: unknown) => console.error("Refresh after a failed write failed:", refreshError));
     } else {
       target.error = describeCommercialEventsError(e, context);
     }
