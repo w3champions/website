@@ -11,7 +11,7 @@ The backend belonging to this repository lives in ../website-backend. Whenever y
 ```bash
 npm run dev           # Start development server at http://localhost:5173
 npm run build:prod    # Production build with locale generation
-npm run build:dev     # Development build without locale generation
+npm run build         # Build without locale generation
 ```
 
 ### Code Quality
@@ -20,13 +20,14 @@ npm run lint          # Run ESLint to check for code issues
 npm run lint:fix      # Auto-fix ESLint issues
 npm run dprint        # Check code formatting
 npm run dprint:fix    # Auto-format code with dprint
+npm run type-check-vue # Type-check .ts and .vue files (what CI runs)
 ```
 
 ## Architecture Overview
 
 ### Technology Stack
 - **Vue 3.4** for the frontend framework
-- **TypeScript 4.9** for type safety
+- **TypeScript 6.0** for type safety
 - **Vuetify 3.10** for Material Design components
 - **Pinia** for state management (stores in `/src/store/`)
 - **Vue Router 4** for routing
@@ -63,6 +64,13 @@ The admin section (`/src/components/admin/`) includes:
 - `AdminPatreonLinks.vue` - Patreon account linking management
 - `AdminDriftDetection.vue` - Sync discrepancy monitoring
 - `AdminProductMappings.vue` - Provider product to reward mapping
+
+#### Commercial Events
+The "Commercial Events" admin section (permission `CommercialLicense`) has four pages under `/admin/commercial-events/`: `tagged-accounts`, `allocations`, `events` (detail view at `events/<eventId>`) and `active-games`.
+- Client: `src/services/admin/CommercialEventsService.ts`; website-backend proxies `api/admin/commercial-events/...` to the matchmaking service.
+- Pure helpers with tests (drafts, validation, formatting, error messages by `code`): `src/store/admin/commercialEvents/`. Pages and dialogs: `src/components/admin/commercial-events/`.
+- Admin date fields are entered and shown in UTC. Battle tags are stored and compared exactly as written (never case-folded).
+- How events, allocations, periods and event games work: `docs/commercial-events.md` in the matchmaking-service repository.
 
 ### API Integration Patterns
 
