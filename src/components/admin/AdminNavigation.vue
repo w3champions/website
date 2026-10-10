@@ -222,6 +222,13 @@ export default defineComponent({
             component: "commercial-events/allocations",
             routeName: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS,
           },
+          {
+            title: "Events",
+            icon: mdiTrophy,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/events",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS,
+          },
         ],
       },
       {

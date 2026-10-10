@@ -67,6 +67,7 @@ import AdminLagReports from "@/components/admin/AdminLagReports.vue";
 import AdminJobs from "@/components/admin/AdminJobs.vue";
 import AdminTaggedAccounts from "@/components/admin/commercial-events/AdminTaggedAccounts.vue";
 import AdminAllocations from "@/components/admin/commercial-events/AdminAllocations.vue";
+import AdminEvents from "@/components/admin/commercial-events/AdminEvents.vue";
 import AdminLagReportDetail from "@/components/admin/AdminLagReportDetail.vue";
 
 const routes: RouteRecordRaw[] = [
@@ -280,6 +281,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
       { path: "commercial-events/tagged-accounts", name: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS, component: AdminTaggedAccounts },
       { path: "commercial-events/allocations", name: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS, component: AdminAllocations },
+      { path: "commercial-events/events", name: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS, component: AdminEvents },
       { path: "admin-warnings", name: EAdminRouteName.PLAYER_WARNINGS, component: AdminWarnings },
       { path: "admin-warning-templates", name: EAdminRouteName.WARNING_TEMPLATES, component: AdminWarningTemplates },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
