@@ -25,6 +25,7 @@
       variant="underlined"
       autocomplete="off"
       clearable
+      @update:model-value="onSelect"
       @click:clear="clearSearch"
       @click:append-inner="submitSearch"
       @keydown.enter.prevent="submitSearch"
@@ -33,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch, PropType } from "vue";
+import { computed, defineComponent, onBeforeUnmount, ref, watch, PropType } from "vue";
 import debounce from "debounce";
 import ProfileService from "@/services/ProfileService";
 
@@ -84,14 +85,30 @@ export default defineComponent({
     const searchedPlayers = ref<PlayerProfile[]>([]);
     const selected = ref<string>();
 
+    // Incremented per dispatched search and on every cancel, so a reply is only applied
+    // while it is still the latest request and the text is still long enough.
+    let latestSearchId = 0;
+
     async function dispatchSearch(val: string) {
-      const players = await ProfileService.searchPlayer(val.toLowerCase());
-      searchedPlayers.value = players;
-      isLoading.value = false;
+      const searchId = ++latestSearchId;
+      try {
+        const players = await ProfileService.searchPlayer(val.toLowerCase());
+        if (searchId !== latestSearchId) return;
+        searchedPlayers.value = players;
+      } finally {
+        if (searchId === latestSearchId) isLoading.value = false;
+      }
     }
 
-    watch(selected, onSelect);
+    function cancelPendingSearch(): void {
+      debouncedSearch.clear();
+      latestSearchId++;
+    }
 
+    onBeforeUnmount(cancelPendingSearch);
+
+    // Driven by the field's update:model-value rather than a watcher on `selected`, so
+    // re-picking the same player after the text was edited still emits.
     function onSelect(btag: string | undefined): void {
       if (!btag) return;
       context.emit("playerFound", btag);
@@ -112,7 +129,9 @@ export default defineComponent({
     function onInput(val: string): void {
       context.emit("searchTextChanged", val);
       if (!val || val.length < 3) {
+        cancelPendingSearch();
         searchedPlayers.value = [];
+        isLoading.value = false;
         return;
       }
       isLoading.value = true;
@@ -143,6 +162,7 @@ export default defineComponent({
       isLoading,
       searchedPlayers,
       clearSearch,
+      onSelect,
       submitSearch,
     };
   },
