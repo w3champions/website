@@ -12,16 +12,21 @@ function noRestrictions(): CommercialLicenseRestrictions {
   return { asPlayer: false, asObserver: false, floTv: "none" };
 }
 
-/** A tag as it arrives on the wire: `restrictions` may be null or missing (old matchmaking behind a new website-backend). */
-export type CommercialLicenseTaggedPlayerWire = Omit<CommercialLicenseTaggedPlayer, "restrictions"> & { restrictions?: CommercialLicenseRestrictions | null };
+/**
+ * A tag as it arrives on the wire: `restrictions` and `commercialEventNotice` may be
+ * null or missing (System.Text.Json emits null; older matchmaking omits them).
+ */
+export type CommercialLicenseTaggedPlayerWire = Omit<CommercialLicenseTaggedPlayer, "restrictions" | "commercialEventNotice"> & {
+  restrictions?: CommercialLicenseRestrictions | null;
+  commercialEventNotice?: boolean | null;
+};
 
 /**
- * Normalizes a tag DTO from the wire. A new website-backend in front of an old
- * matchmaking sends `restrictions: null` (Newtonsoft leaves the field null) or omits it;
- * downstream code (draftFromTag, restrictionSummary, the table) must never see that.
+ * Normalizes a tag DTO from the wire so that downstream code (draftFromTag,
+ * restrictionSummary, the table) never sees a null restrictions object or notice flag.
  */
 export function normalizeTag(raw: CommercialLicenseTaggedPlayerWire): CommercialLicenseTaggedPlayer {
-  return { ...raw, restrictions: raw.restrictions ?? noRestrictions() };
+  return { ...raw, restrictions: raw.restrictions ?? noRestrictions(), commercialEventNotice: raw.commercialEventNotice ?? false };
 }
 
 /** Compact labels for the table, one per active restriction; empty when the tag restricts nothing. */

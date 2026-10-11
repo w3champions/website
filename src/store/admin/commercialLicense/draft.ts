@@ -14,10 +14,11 @@ export interface CommercialLicenseDraft {
   asPlayer: boolean;
   asObserver: boolean;
   floTv: FloTvRestriction;
+  commercialEventNotice: boolean;
 }
 
 export function emptyDraft(): CommercialLicenseDraft {
-  return { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none" };
+  return { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none", commercialEventNotice: false };
 }
 
 export function draftFromTag(tag: CommercialLicenseTaggedPlayer): CommercialLicenseDraft {
@@ -28,15 +29,17 @@ export function draftFromTag(tag: CommercialLicenseTaggedPlayer): CommercialLice
     asPlayer: tag.restrictions.asPlayer,
     asObserver: tag.restrictions.asObserver,
     floTv: tag.restrictions.floTv,
+    commercialEventNotice: tag.commercialEventNotice,
   };
 }
 
-/** Always includes `restrictions`: omitting it would make the backend keep the stored value. */
+/** Always includes `restrictions` and `commercialEventNotice`: omitting either would make the backend keep the stored value. */
 export function toTagRequest(draft: CommercialLicenseDraft): CommercialLicenseTagRequest {
   return {
     note: draft.note,
     notify: draft.notify,
     restrictions: { asPlayer: draft.asPlayer, asObserver: draft.asObserver, floTv: draft.floTv },
+    commercialEventNotice: draft.commercialEventNotice,
   };
 }
 

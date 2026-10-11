@@ -23,7 +23,12 @@ test("normalizeTag fills restrictions when the field is missing", () => {
 
 test("normalizeTag keeps present restrictions and the other fields", () => {
   const restrictions = { asPlayer: true, asObserver: false, floTv: "all" as const };
-  assert.deepEqual(normalizeTag({ ...base, restrictions }), { ...base, restrictions });
+  assert.deepEqual(normalizeTag({ ...base, restrictions, commercialEventNotice: true }), { ...base, restrictions, commercialEventNotice: true });
+});
+
+test("normalizeTag reads a null or missing commercialEventNotice as false", () => {
+  assert.equal(normalizeTag({ ...base, commercialEventNotice: null }).commercialEventNotice, false);
+  assert.equal(normalizeTag(base).commercialEventNotice, false);
 });
 
 test("no restrictions yields an empty summary", () => {

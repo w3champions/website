@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card-title class="pt-3">
-      Commercial License
+      Tagged accounts
     </v-card-title>
     <v-container v-if="permissionsKnown && !hasPermission" class="w3-container-width">
       <v-alert type="warning" variant="tonal">
@@ -18,6 +18,9 @@
       <v-alert v-if="store.error && !dialog" type="error" variant="tonal" class="mb-4" closable @click:close="store.error = ''">
         {{ store.error }}
       </v-alert>
+      <v-alert v-if="store.roleHintsError" type="warning" variant="tonal" class="mb-4" closable @click:close="store.roleHintsError = ''">
+        Event roles couldn't be loaded: {{ store.roleHintsError }}
+      </v-alert>
 
       <v-data-table
         :headers="headers"
@@ -26,13 +29,13 @@
         :items-per-page="25"
         :sort-by="[{ key: 'battleTag', order: 'asc' }]"
         :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
-        no-data-text="No tagged players."
+        no-data-text="No tagged accounts."
       >
         <template v-slot:top>
           <div class="d-flex align-center px-4">
             <v-spacer />
             <v-btn class="mb-2 bg-primary text-w3-race-bg" :disabled="store.loading || !!store.loadError" @click="openAdd">
-              Tag player
+              Tag account
             </v-btn>
           </div>
         </template>
@@ -43,6 +46,10 @@
 
         <template v-slot:[`item.notify`]="{ item }">
           <v-icon size="small">{{ item.notify ? mdiCheck : mdiClose }}</v-icon>
+        </template>
+
+        <template v-slot:[`item.commercialEventNotice`]="{ item }">
+          <v-icon size="small">{{ item.commercialEventNotice ? mdiCheck : mdiClose }}</v-icon>
         </template>
 
         <template v-slot:[`item.restrictions`]="{ item }">
@@ -57,6 +64,13 @@
             >
               {{ label }}
             </v-chip>
+          </template>
+          <span v-else class="text-medium-emphasis">&mdash;</span>
+        </template>
+
+        <template v-slot:[`item.roles`]="{ item }">
+          <template v-if="roleLines[item.battleTag].length > 0">
+            <div v-for="line in roleLines[item.battleTag]" :key="line" class="text-caption">{{ line }}</div>
           </template>
           <span v-else class="text-medium-emphasis">&mdash;</span>
         </template>
@@ -117,15 +131,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { mdiAccountSearch, mdiCheck, mdiClose, mdiDelete, mdiPencil } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import CommercialLicenseTagDialog from "@/components/admin/commercial-license/CommercialLicenseTagDialog.vue";
+import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { useCommercialLicenseStore } from "@/store/admin/commercialLicense/store";
 import { toTagRequest } from "@/store/admin/commercialLicense/draft";
 import type { CommercialLicenseDraft } from "@/store/admin/commercialLicense/draft";
 import { restrictionSummary } from "@/store/admin/commercialLicense/restrictions";
 import type { CommercialLicenseTaggedPlayer } from "@/store/admin/commercialLicense/types";
+import { roleHintLines } from "@/store/admin/commercialEvents/roleHints";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { EAdminRouteName } from "@/router/types";
@@ -134,22 +150,23 @@ import { formatTimestampStringToDateTime } from "@/helpers/date-functions";
 
 const store = useCommercialLicenseStore();
 const oauthStore = useOauthStore();
+const { hasPermission, permissionsKnown } = useCommercialLicensePermission();
 
 const dialog = ref(false);
 const editedTag = ref<CommercialLicenseTaggedPlayer | null>(null);
 
-const hasPermission = computed(() => oauthStore.permissions.includes(EPermission[EPermission.CommercialLicense]));
-// Permissions arrive with the profile; empty means not loaded yet (as in AdminNavigation).
-const permissionsKnown = computed(() => oauthStore.permissions.length > 0);
 const canUseSmurfChecker = computed(() => oauthStore.permissions.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const existingBattleTags = computed(() => store.taggedPlayers.map((p) => p.battleTag));
 const summaries = computed(() => Object.fromEntries(store.taggedPlayers.map((p) => [p.battleTag, restrictionSummary(p.restrictions)])));
+const roleLines = computed(() => Object.fromEntries(store.taggedPlayers.map((p) => [p.battleTag, roleHintLines(store.roleHints[p.battleTag])])));
 
 const headers: DataTableHeader[] = [
   { title: "BattleTag", value: "battleTag", sortable: true },
   { title: "Note", value: "note", sortable: false },
   { title: "Notify", value: "notify", sortable: true },
+  { title: "Event notice", value: "commercialEventNotice", sortable: true },
   { title: "Restrictions", value: "restrictions", sortable: false },
+  { title: "Event roles", value: "roles", sortable: false },
   { title: "Created by", value: "createdBy", sortable: true },
   { title: "Created at", value: "createdAt", sortable: true },
   { title: "Updated by", value: "updatedBy", sortable: true },
@@ -180,14 +197,14 @@ async function save(draft: CommercialLicenseDraft): Promise<void> {
 }
 
 async function removeItem(tag: CommercialLicenseTaggedPlayer): Promise<void> {
-  if (confirm(`Remove ${tag.battleTag} from the commercial license list?`)) {
+  if (confirm(`Remove ${tag.battleTag} from the tagged accounts?`)) {
     await store.remove(tag.battleTag);
   }
 }
 
 async function init(): Promise<void> {
   if (!hasPermission.value) {
-    store.$reset();
+    store.clear();
     dialog.value = false;
     return;
   }
@@ -200,4 +217,6 @@ watch(dialog, (open) => {
   if (!open) store.error = "";
 });
 onMounted(init);
+// Writes still in flight no longer report into this page once it is left.
+onBeforeUnmount(() => store.endVisit());
 </script>

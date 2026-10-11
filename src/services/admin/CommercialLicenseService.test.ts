@@ -46,15 +46,15 @@ test("getTaggedPlayers surfaces a failure instead of returning an empty list", a
   await assert.rejects(() => service.getTaggedPlayers("tok"));
 });
 
-test("upsertTaggedPlayer PUTs note, notify and restrictions to the url-encoded battleTag", async () => {
+test("upsertTaggedPlayer PUTs note, notify, restrictions and commercialEventNotice to the url-encoded battleTag", async () => {
   const { service, calls } = serviceWith({ status: 200, body: { battleTag: "Foo#1234" } });
   const restrictions = { asPlayer: true, asObserver: false, floTv: "custom" as const };
 
-  await service.upsertTaggedPlayer("tok", "Foo#1234", { note: "n", notify: true, restrictions });
+  await service.upsertTaggedPlayer("tok", "Foo#1234", { note: "n", notify: true, restrictions, commercialEventNotice: true });
 
   assert.equal(calls[0].method, "PUT");
   assert.equal(calls[0].url, "https://api.example.com/api/admin/commercial-license/tagged-players/Foo%231234");
-  assert.deepEqual(calls[0].body, { note: "n", notify: true, restrictions });
+  assert.deepEqual(calls[0].body, { note: "n", notify: true, restrictions, commercialEventNotice: true });
 });
 
 test("removeTaggedPlayer DELETEs the url-encoded battleTag and accepts 204", async () => {
@@ -93,7 +93,12 @@ test("getTaggedPlayers normalizes null and missing restrictions", async () => {
 test("upsertTaggedPlayer normalizes a null restrictions in the result", async () => {
   const { service } = serviceWith({ status: 200, body: { battleTag: "A#1", restrictions: null } });
 
-  const saved = await service.upsertTaggedPlayer("tok", "A#1", { note: "", notify: true, restrictions: { asPlayer: false, asObserver: false, floTv: "none" } });
+  const saved = await service.upsertTaggedPlayer("tok", "A#1", {
+    note: "",
+    notify: true,
+    restrictions: { asPlayer: false, asObserver: false, floTv: "none" },
+    commercialEventNotice: false,
+  });
 
   assert.deepEqual(saved.restrictions, { asPlayer: false, asObserver: false, floTv: "none" });
 });

@@ -27,3 +27,8 @@ test("non-HTTP errors keep their message", () => {
   assert.equal(describeError(new Error("network down")), "network down");
   assert.equal(describeError("oops"), "oops");
 });
+
+test("maps the permission filter's 401 to the permission or session message", () => {
+  assert.equal(describeError(http(401, JSON.stringify({ error: "Permission missing." }))), "You don't have the CommercialLicense permission.");
+  assert.equal(describeError(http(401, JSON.stringify({ error: "AUTH_TOKEN_EXPIRED", message: "Token expired." }))), "Your session has expired. Log in again.");
+});

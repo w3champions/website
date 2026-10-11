@@ -2,7 +2,7 @@
   <v-dialog :model-value="modelValue" :persistent="saving" max-width="500px" @update:model-value="emit('update:modelValue', $event)">
     <v-card>
       <v-card-title class="pt-3">
-        {{ isEdit ? "Edit tagged player" : "Tag player" }}
+        {{ isEdit ? "Edit tagged account" : "Tag account" }}
       </v-card-title>
 
       <v-card-text>
@@ -40,6 +40,16 @@
           color="primary"
           hide-details
         />
+        <v-checkbox
+          v-model="draft.commercialEventNotice"
+          label="Show the commercial event notice when this account creates a custom game"
+          color="primary"
+          density="compact"
+          hide-details
+        />
+        <div class="text-caption text-medium-emphasis">
+          Also applies to direct smurfs of this account. The launcher shows the notice only when the account has no event game it can select.
+        </div>
         <div class="text-subtitle-2 mt-4">Restrictions</div>
         <v-checkbox
           v-model="draft.asPlayer"

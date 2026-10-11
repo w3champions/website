@@ -1,3 +1,5 @@
+const MAX_ERROR_BODY_CHARS = 500;
+
 /** Thrown when the backend answers with a non-OK status. */
 export class HttpError extends Error {
   readonly status: number;
@@ -14,6 +16,11 @@ export class HttpError extends Error {
     this.url = url;
     this.responseBody = responseBody;
   }
+
+  /** The body cut to a length that is safe to display or log. */
+  get bodyPreview(): string {
+    return this.responseBody.slice(0, MAX_ERROR_BODY_CHARS);
+  }
 }
 
 export interface AuthorizedClientDeps {
@@ -22,8 +29,6 @@ export interface AuthorizedClientDeps {
   /** Injectable for tests. Production callers omit it. */
   fetch?: typeof globalThis.fetch;
 }
-
-const MAX_ERROR_BODY_CHARS = 500;
 
 /**
  * Authenticated JSON client for the website backend.
@@ -105,7 +110,7 @@ export class AuthorizedClient {
 
 async function readErrorBody(response: Response): Promise<string> {
   try {
-    return (await response.text()).slice(0, MAX_ERROR_BODY_CHARS);
+    return await response.text();
   } catch {
     // A body that cannot be read must not mask the status we are reporting.
     return "";

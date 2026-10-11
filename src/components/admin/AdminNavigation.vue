@@ -46,6 +46,7 @@
             :to="{ name: subItem.routeName }"
             :title="subItem.title"
             :value="subItem.title"
+            :active="isSubItemActive(subItem.routeName)"
             color="primary"
           />
         </v-list-group>
@@ -69,7 +70,7 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate,
+  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline, mdiPlayCircleOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -139,6 +140,11 @@ export default defineComponent({
 
     watch(permissions, init);
 
+    // The event detail page belongs to the Events item; `undefined` leaves the decision to the link.
+    function isSubItemActive(routeName: string | undefined): true | undefined {
+      return routeName === EAdminRouteName.COMMERCIAL_EVENTS_EVENTS && route.name === EAdminRouteName.COMMERCIAL_EVENTS_EVENT_DETAIL ? true : undefined;
+    }
+
     const navItems: Array<AdminNavigationItem> = [
       {
         title: "Data Science",
@@ -188,13 +194,6 @@ export default defineComponent({
             routeName: EAdminRouteName.LOUNGE_MUTE,
           },
           {
-            title: "Commercial License",
-            icon: mdiCertificate,
-            permission: EPermission.CommercialLicense,
-            component: "admin-commercial-license",
-            routeName: EAdminRouteName.COMMERCIAL_LICENSE,
-          },
-          {
             title: "View Game Chat",
             icon: mdiFormatAlignLeft,
             permission: EPermission.Moderation,
@@ -207,6 +206,41 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-launcher-chat",
             routeName: EAdminRouteName.LAUNCHER_CHAT,
+          },
+        ],
+      },
+      {
+        title: "Commercial Events",
+        icon: mdiCalendarStar,
+        permission: EPermission.CommercialLicense,
+        items: [
+          {
+            title: "Tagged accounts",
+            icon: mdiCertificate,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/tagged-accounts",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS,
+          },
+          {
+            title: "Allocations",
+            icon: mdiTicketConfirmationOutline,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/allocations",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS,
+          },
+          {
+            title: "Events",
+            icon: mdiTrophy,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/events",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS,
+          },
+          {
+            title: "Active games",
+            icon: mdiPlayCircleOutline,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/active-games",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_ACTIVE_GAMES,
           },
         ],
       },
@@ -468,6 +502,7 @@ export default defineComponent({
       mdiAccountTie,
       filteredNavItems,
       isDrawerOpen,
+      isSubItemActive,
     };
   },
 });
