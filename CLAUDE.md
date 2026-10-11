@@ -126,7 +126,7 @@ Use Vuetify's loading components consistently:
 ```
 
 ### Testing Approach
-Vitest covers pure helpers only (`npm test`; tests live beside the code as `src/**/*.test.ts`, run in the `node` environment with `node:assert/strict`). There are no component tests. When making changes:
+Vitest covers pure helpers (`npm test`; tests live beside the code as `src/**/*.test.ts`, run in the `node` environment with `node:assert/strict`) and a few component tests that opt into jsdom with a `// @vitest-environment jsdom` docblock and mount via `@vue/test-utils` (see `src/components/common/PlayerSearch.test.ts`). When making changes:
 1. Run `npm test` for the helper tests (add one when you change a pure helper)
 2. Run `npm run lint` to catch TypeScript and linting errors
 3. Run `npm run dprint` to ensure consistent formatting
