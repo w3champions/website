@@ -63,6 +63,8 @@ export interface LagReportPlayerSummary {
   // one the field is absent from the payload, and a required number would let a read
   // silently compare undefined instead of forcing the caller to handle the gap.
   hostStallCount?: number;
+  // Optional for the same reason: older backends do not send it.
+  transportSwitchCount?: number;
 }
 
 export interface LagReportsResponse {
@@ -195,6 +197,24 @@ export interface PlayerDiagnostics {
   pingHistory: PingSample[];
   connectionEvents: ConnectionEventData[];
   hostStalls: HostStallData[];
+  // Optional: absent from older backends and from reports written before the field existed.
+  transportSwitches?: TransportSwitchData[];
+}
+
+/**
+ * The player's game stream changed transport: flo-client moved it between TCP and QUIC, or
+ * a reconnect came back over the other one. Measured by this player's client, so it is
+ * about this player's connection only.
+ */
+export interface TransportSwitchData {
+  timestamp: string;
+  gameTimeOffsetMs: number;
+  // Plain strings and not unions: a newer client may send a value this build has never
+  // heard of, and it has to render verbatim rather than fail the type.
+  from: string;
+  to: string;
+  /** "failover", "upgrade", "degraded" or "reconnect". */
+  reason: string;
 }
 
 export interface LagEvent {

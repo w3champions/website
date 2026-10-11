@@ -91,6 +91,7 @@ import { computed, defineComponent, PropType, ref } from "vue";
 import { EConnectionEventType, HopData, LagReportDetail, LagReportPlayer } from "@/store/admin/lagReports/types";
 import { mdiCircle } from "@mdi/js";
 import MtrHopTable from "@/components/admin/MtrHopTable.vue";
+import { playerTransportSwitches, transportSwitchColor, transportSwitchLabel } from "@/components/admin/lag-reports/transportSwitches";
 
 export default defineComponent({
   name: "LagReportInspector",
@@ -200,6 +201,15 @@ export default defineComponent({
             playerColor: pColor,
             timestamp: ce.timestamp,
             color: eventColor(ce.eventType),
+          });
+        });
+        playerTransportSwitches(player).forEach((ts) => {
+          events.push({
+            prefix: `${transportSwitchLabel(ts)} ${formatGameTime(ts.gameTimeOffsetMs)}`,
+            playerName: pName,
+            playerColor: pColor,
+            timestamp: ts.timestamp,
+            color: transportSwitchColor(ts),
           });
         });
       });

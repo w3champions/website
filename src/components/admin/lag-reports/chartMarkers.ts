@@ -1,5 +1,6 @@
-import { type ConnectionEventData, EConnectionEventType, type LagEvent } from "@/store/admin/lagReports/types";
+import { type ConnectionEventData, EConnectionEventType, type LagEvent, type TransportSwitchData } from "@/store/admin/lagReports/types";
 import { type LagAnnotationStyle, playerColorTonalStyle, type SemanticColors } from "@/helpers/lag-report-colors";
+import { playerTransportSwitches, transportSwitchLabel, transportSwitchReasonLabel, transportSwitchSemantic } from "./transportSwitches";
 
 export type EventMarkerInfo = {
   id: string;
@@ -12,7 +13,7 @@ export type EventMarkerInfo = {
 
 export interface MarkerPlayer {
   battleTag: string;
-  diagnostics: { lagEvents: LagEvent[]; connectionEvents: ConnectionEventData[] };
+  diagnostics: { lagEvents: LagEvent[]; connectionEvents: ConnectionEventData[]; transportSwitches?: TransportSwitchData[] | null };
 }
 
 export interface MarkerOptions {
@@ -20,6 +21,8 @@ export interface MarkerOptions {
   playerColors: string[];
   includeLagEvents: (playerIndex: number) => boolean;
   includeConnectionEvent: (playerIndex: number, event: ConnectionEventData) => boolean;
+  /** A switch is about the player's own connection, like a -lag; defaults to `includeLagEvents`. */
+  includeTransportSwitches?: (playerIndex: number) => boolean;
 }
 
 export const CONNECTION_EVENT_LABELS: Record<string, string> = {
@@ -56,7 +59,7 @@ function semanticKey(eventType: EConnectionEventType): keyof SemanticColors {
   return "error";
 }
 
-/** Vertical chart markers for lag reports and connection events, in player order. */
+/** Vertical chart markers for lag reports, connection events and transport switches, in player order. */
 export function buildEventMarkers(players: MarkerPlayer[], opts: MarkerOptions): EventMarkerInfo[] {
   const markers: EventMarkerInfo[] = [];
   let idx = 0;
@@ -105,7 +108,37 @@ export function buildEventMarkers(players: MarkerPlayer[], opts: MarkerOptions):
       });
       idx++;
     }
+
+    if ((opts.includeTransportSwitches ?? opts.includeLagEvents)(pi)) {
+      for (const ts of playerTransportSwitches(player)) {
+        const at = new Date(ts.timestamp).getTime();
+        markers.push({
+          id: `switch-${idx}`,
+          ts: at,
+          shortLabel: `${transportSwitchLabel(ts)} (${pName})`,
+          detailLines: [`Game ${formatGameTime(ts.gameTimeOffsetMs)}`, `At ${formatWallClock(at)}`, `Why: ${transportSwitchReasonLabel(ts.reason)}`],
+          style: opts.chipColors[transportSwitchSemantic(ts)],
+          dashed: true,
+        });
+        idx++;
+      }
+    }
   });
 
   return markers;
+}
+
+/**
+ * Tooltip lines for markers that sit on the same spot. A reconnect and the transport switch
+ * it caused share a timestamp, so hovering must show both; lines already shown (the shared
+ * game time and clock) are not repeated, and a marker with nothing new is left out.
+ */
+export function stackedMarkerLines(markers: Pick<EventMarkerInfo, "shortLabel" | "detailLines">[]): string[] {
+  const lines: string[] = [];
+  for (const m of markers) {
+    const fresh = m.detailLines.filter((l) => !lines.includes(l));
+    if (lines.includes(m.shortLabel) && !fresh.length) continue;
+    lines.push(m.shortLabel, ...fresh);
+  }
+  return lines;
 }

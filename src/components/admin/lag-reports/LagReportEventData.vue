@@ -92,6 +92,40 @@
           </v-table>
         </div>
       </template>
+
+      <!-- Transport switches (TCP <-> QUIC) -->
+      <template v-for="(player, pi) in players" :key="'ts-' + pi">
+        <div v-if="playerTransportSwitches(player).length" class="mb-4">
+          <div class="text-overline text-medium-emphasis mb-2">
+            Transport Switches — {{ playerName(player.battleTag) }}
+          </div>
+          <v-table density="compact">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Game Time</th>
+                <th>Switch</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(ts, ti) in playerTransportSwitches(player)" :key="'ts-' + ti">
+                <td class="text-caption">{{ formatDate(ts.timestamp) }}</td>
+                <td>{{ formatGameTime(ts.gameTimeOffsetMs) }}</td>
+                <td>
+                  <v-chip :color="transportSwitchColor(ts)" size="x-small" variant="tonal">
+                    {{ transportSwitchLabel(ts) }}
+                    <span class="ml-1" :style="{ color: playerColors[pi], fontWeight: 600 }">
+                      ({{ playerName(player.battleTag) }})
+                    </span>
+                  </v-chip>
+                </td>
+                <td>{{ transportSwitchReasonLabel(ts.reason) }}</td>
+              </tr>
+            </tbody>
+          </v-table>
+        </div>
+      </template>
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
@@ -101,6 +135,12 @@ import { defineComponent, PropType, reactive } from "vue";
 import { EConnectionEventType, HopData, LagReportPlayer } from "@/store/admin/lagReports/types";
 import { mdiChevronDown, mdiChevronRight } from "@mdi/js";
 import MtrHopTable from "@/components/admin/MtrHopTable.vue";
+import {
+  playerTransportSwitches,
+  transportSwitchColor,
+  transportSwitchLabel,
+  transportSwitchReasonLabel,
+} from "@/components/admin/lag-reports/transportSwitches";
 
 export default defineComponent({
   name: "LagReportEventData",
@@ -178,6 +218,10 @@ export default defineComponent({
       lastHopAvg,
       lastHopLoss,
       toggleBaseline,
+      playerTransportSwitches,
+      transportSwitchColor,
+      transportSwitchLabel,
+      transportSwitchReasonLabel,
       EConnectionEventType,
       mdiChevronDown,
       mdiChevronRight,
