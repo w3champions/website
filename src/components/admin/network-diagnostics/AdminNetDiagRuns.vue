@@ -74,6 +74,9 @@
       <template v-slot:[`item.status`]="{ item }">
         <v-chip size="small" variant="tonal" :color="RUN_STATUS_COLOR[runStatus(item, now)]">{{ runStatus(item, now) }}</v-chip>
       </template>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-btn size="small" variant="text" color="primary" :prepend-icon="mdiEye" :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: item.id } }">Detail</v-btn>
+      </template>
     </v-data-table-server>
   </div>
 </template>
@@ -82,7 +85,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import debounce from "debounce";
-import { mdiPlus } from "@mdi/js";
+import { mdiEye, mdiPlus } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { EAdminRouteName } from "@/router/types";
 import { formatUtc } from "@/helpers/utc-dates";
@@ -106,6 +109,7 @@ const headers: DataTableHeader[] = [
   { title: "Methods", value: "methods", sortable: false },
   { title: "Progress", value: "progress", sortable: false },
   { title: "Status", value: "status", sortable: false, width: "140px" },
+  { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
 
 const FILTER_KEYS = ["createdBy", "from", "to"] as const;
