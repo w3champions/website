@@ -13,3 +13,16 @@ export function isNavItemActive(itemRouteName: string | undefined, currentRouteN
   if (itemRouteName === undefined || typeof currentRouteName !== "string") return undefined;
   return DETAIL_ROUTES[itemRouteName]?.includes(currentRouteName) ? true : undefined;
 }
+
+interface NavGroup {
+  title: string;
+  items?: readonly { routeName?: string }[];
+}
+
+/**
+ * The title of the navigation group whose item owns the current detail page. Vuetify opens a group only for
+ * its link's own route, so after a direct load of a detail page the group has to be opened by name.
+ */
+export function navGroupOfDetailRoute(groups: readonly NavGroup[], currentRouteName: unknown): string | undefined {
+  return groups.find((group) => (group.items ?? []).some((item) => isNavItemActive(item.routeName, currentRouteName) === true))?.title;
+}

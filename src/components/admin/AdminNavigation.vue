@@ -15,7 +15,7 @@
       </v-list-item-title>
     </v-list-item>
 
-    <v-list density="compact" nav>
+    <v-list v-model:opened="openedGroups" density="compact" nav>
       <template v-for="(item, index) in filteredNavItems">
         <v-list-item
           v-if="!item.items || item.items.length === 0"
@@ -56,14 +56,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline, mdiFormatAlignCenter } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
-import { isNavItemActive } from "@/components/admin/adminNavActive";
+import { isNavItemActive, navGroupOfDetailRoute } from "@/components/admin/adminNavActive";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
@@ -535,11 +535,19 @@ export default defineComponent({
       },
     ];
 
+    // A detail page is not its item's own route, so Vuetify leaves the group closed after a direct load: open it.
+    const openedGroups = ref<string[]>([]);
+    watch([() => route.name, filteredNavItems] as const, ([routeName, items]) => {
+      const group = navGroupOfDetailRoute(items, routeName);
+      if (group !== undefined && !openedGroups.value.includes(group)) openedGroups.value = [...openedGroups.value, group];
+    }, { immediate: true });
+
     return {
       mdiAccountTie,
       filteredNavItems,
       isDrawerOpen,
       isSubItemActive,
+      openedGroups,
     };
   },
 });
