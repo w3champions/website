@@ -22,7 +22,7 @@
       glow
       color="primary"
       icon-color="primary"
-      variant="underlined"
+      :variant="variant"
       autocomplete="off"
       clearable
       @update:model-value="onSelect"
@@ -46,6 +46,10 @@ type SearchDensity = "default" | "comfortable" | "compact";
 export default defineComponent({
   name: "PlayerSearch",
   props: {
+    variant: {
+      type: String as PropType<"underlined" | "outlined">,
+      default: "underlined",
+    },
     classes: {
       type: String,
       required: false,

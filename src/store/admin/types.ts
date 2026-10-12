@@ -526,12 +526,18 @@ export type DriftDetectionResult = {
 
 // New types for enhanced reward management
 
+export interface PatreonSyncedTier {
+  tierId: string;
+  title: string;
+}
+
 export interface PatreonAccountLink {
   id: string;
   battleTag: string;
   patreonUserId: string;
   linkedAt: string;
   lastSyncAt: string | null;
+  syncedTiers?: PatreonSyncedTier[];
 }
 
 export interface PaginatedAssignments {
