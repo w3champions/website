@@ -231,7 +231,8 @@ test("snapshot rows: sorted by node, flo max shown as p95, loss rate as percent,
   assert.equal(rows[1].samples, "256 over 1 h 3 min");
   assert.equal(rows[1].route, "direct");
   assert.equal(rows[0].route, "A -> C");
-  assert.equal(rows[0].isHealthy, false);
+  assert.equal(rows[0].healthColor, "error");
+  assert.equal(rows[1].healthColor, "success");
   assert.equal(rows[0].samples, "—");
   assert.equal(rows[0].loss, "—");
 });
@@ -316,7 +317,7 @@ test("absent keys (omitted, not null) render dashes and empty results through ev
   assert.deepEqual(rttSeries(bare.targets[0], ["#111111"]), []);
   assert.equal(rawSamplesNotice(bare, true), NO_RAW_SAMPLES_NOTICE);
   const [snap] = snapshotRows([{ nodeId: 1, nodeName: "A" }]);
-  assert.deepEqual([snap.route, snap.transport, snap.health, snap.isHealthy, snap.current, snap.p95, snap.loss, snap.samples], ["direct", "—", "—", true, "—", "—", "—", "—"]);
+  assert.deepEqual([snap.route, snap.transport, snap.health, snap.healthColor, snap.current, snap.p95, snap.loss, snap.samples], ["direct", "—", "—", "grey", "—", "—", "—", "—"]);
   assert.equal(adapterLine({ name: "eth0", kind: "ethernet" }), "eth0 · ethernet");
   assert.equal(formatBitRate(undefined), "—");
   assert.equal(wifiLine({}), "—");

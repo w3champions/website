@@ -23,7 +23,7 @@
         <td class="text-caption">{{ row.route }}</td>
         <td>{{ row.transport }}</td>
         <td>
-          <v-chip size="x-small" variant="tonal" :color="row.isHealthy ? 'success' : 'error'">{{ row.health }}</v-chip>
+          <v-chip size="x-small" variant="tonal" :color="row.healthColor">{{ row.health }}</v-chip>
         </td>
         <td class="text-end">{{ row.current }}</td>
         <td class="text-end">{{ row.avg }}</td>

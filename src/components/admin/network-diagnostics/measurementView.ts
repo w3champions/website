@@ -132,7 +132,8 @@ export interface SnapshotRowView {
   route: string;
   transport: string;
   health: string;
-  isHealthy: boolean;
+  /** Vuetify theme colour for the health chip; neutral when the health is unknown. */
+  healthColor: "success" | "error" | "grey";
   current: string;
   avg: string;
   p50: string;
@@ -153,7 +154,7 @@ export function snapshotRows(rows: readonly FloSnapshotRow[]): SnapshotRowView[]
       route: row.routeLabel ?? "direct",
       transport: row.transport ?? DASH,
       health: row.health ?? DASH,
-      isHealthy: row.health == null || row.health === "ok",
+      healthColor: row.health == null ? "grey" : row.health === "ok" ? "success" : "error",
       current: formatMs(row.current),
       avg: formatMs(row.avg),
       p50: formatMs(row.p50),
