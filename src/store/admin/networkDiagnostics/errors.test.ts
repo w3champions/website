@@ -39,3 +39,25 @@ test("non-HTTP failures keep their message", () => {
   assert.equal(describeNetDiagError(new TypeError("Failed to fetch")), "Failed to fetch");
   assert.equal(describeNetDiagError("weird"), "weird");
 });
+
+test("a 401 with the permission body names the missing Proxies permission, not an expired session", () => {
+  assert.equal(describeNetDiagError(httpError(401, { error: "Permission missing." })), "You need the Proxies permission for network diagnostics.");
+});
+
+test("an expired token or any other 401 reads as an expired session", () => {
+  assert.equal(describeNetDiagError(httpError(401, { statusCode: 401, error: "AUTH_TOKEN_EXPIRED", message: "Token expired." })), "Your session has expired. Log in again.");
+  assert.equal(describeNetDiagError(httpError(401, { error: "Invalid token" })), "Your session has expired. Log in again.");
+  assert.equal(describeNetDiagError(httpError(401, "IDX12729: garbage")), "Your session has expired. Log in again.");
+});
+
+test("a 409 for an already cancelled run reads naturally; other codes stay visible", () => {
+  assert.equal(describeNetDiagError(httpError(409, { error: "already_cancelled" })), "This run is already cancelled.");
+  assert.equal(describeNetDiagError(httpError(409, { error: "something_else" })), "Conflict: something_else");
+});
+
+test("unknown targets and flo nodes are listed like unknown players", () => {
+  assert.equal(describeNetDiagError(httpError(400, { error: "unknown_targets", targetKeys: ["core:nope", "baseline:<b>x</b>"] })), "Unknown targets: core:nope, baseline:<b>x</b>");
+  assert.equal(describeNetDiagError(httpError(400, { error: "unknown_flo_nodes", floNodeIds: [7, 12] })), "Unknown flo nodes: 7, 12");
+  assert.equal(describeNetDiagError(httpError(400, { error: "unknown_targets", targetKeys: [] })), "Rejected: unknown_targets");
+  assert.equal(describeNetDiagError(httpError(400, { error: "unknown_flo_nodes" })), "Rejected: unknown_flo_nodes");
+});
