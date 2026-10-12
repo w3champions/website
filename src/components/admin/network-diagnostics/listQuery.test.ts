@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { buildListQuery, nextTablePage, positiveInt, queryText, readListQuery, sameListQuery } from "./listQuery";
+import { buildListQuery, cappedPageText, nextTablePage, positiveInt, queryText, readListQuery, sameListQuery } from "./listQuery";
 
 test("queryText reads a string value and treats anything else as empty", () => {
   assert.equal(queryText({ a: "x" }, "a"), "x");
@@ -55,4 +55,11 @@ test("sameListQuery compares every filter and the paging", () => {
   assert.equal(sameListQuery(base, { ...base, filters: { battleTag: "A#1", runId: "r" } }), false);
   assert.equal(sameListQuery(base, { ...base, page: 3 }), false);
   assert.equal(sameListQuery(base, { ...base, itemsPerPage: 50 }), false);
+});
+
+test("a total at the backend's counting cap is shown as a lower bound; a smaller one keeps the table's own text", () => {
+  assert.equal(cappedPageText(100_000, 100_000), "{0}-{1} of 100000+");
+  assert.equal(cappedPageText(99_999, 100_000), undefined);
+  assert.equal(cappedPageText(0, 100_000), undefined);
+  assert.equal(cappedPageText(100_061, 100_000), undefined, "the unfiltered list is estimated without a cap");
 });

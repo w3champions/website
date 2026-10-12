@@ -17,6 +17,8 @@
         </v-col>
       </v-row>
       <v-alert v-if="store.listError" type="error" variant="tonal" density="compact" class="mt-2">Failed to load measurements: {{ store.listError }}</v-alert>
+      <p v-if="store.listTruncated" class="text-caption text-warning mt-2 mb-0">{{ LIST_TRUNCATED_NOTICE }}</p>
+      <p v-if="totalCapped" class="text-caption text-medium-emphasis mt-2 mb-0">{{ TOTAL_CAPPED_HINT }}</p>
     </v-container>
 
     <v-data-table-server
@@ -26,6 +28,7 @@
       :items-length="store.total"
       :items-per-page="itemsPerPage"
       :items-per-page-options="[10, 25, 50, 100]"
+      :page-text="pageText"
       :page="page"
       :loading="store.listLoading"
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
@@ -61,21 +64,24 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import type { DataTableHeader } from "vuetify";
 import { mdiEye, mdiPlus } from "@mdi/js";
 import BattleTagPicker from "@/components/admin/commercial-events/BattleTagPicker.vue";
 import { EAdminRouteName } from "@/router/types";
 import { formatUtc } from "@/helpers/utc-dates";
+import { MAX_COUNTED_MEASUREMENTS, MAX_SCANNED_OBSERVATIONS } from "@/services/admin/NetworkDiagnosticsService";
 import { useNetDiagMeasurementsStore } from "@/store/admin/networkDiagnostics/measurementsStore";
 import type { MeasurementFilters } from "@/store/admin/networkDiagnostics/types";
 import { asnText, geoText, textOrDash } from "./format";
 import NetDiagCutText from "./NetDiagCutText.vue";
-import { buildListQuery, type ListPaging, nextTablePage, readListQuery, sameListQuery } from "./listQuery";
+import { buildListQuery, cappedPageText, type ListPaging, nextTablePage, readListQuery, sameListQuery } from "./listQuery";
 
 const DEFAULT_PAGE_SIZE = 25;
 const FILTER_KEYS = ["battleTag", "runId"] as const;
+const LIST_TRUNCATED_NOTICE = `This list covers the newest ${MAX_SCANNED_OBSERVATIONS.toLocaleString("en-US")} observations only; narrow the filter.`;
+const TOTAL_CAPPED_HINT = `The count stops at ${MAX_COUNTED_MEASUREMENTS.toLocaleString("en-US")}: more measurements match, and the pages cannot reach the older ones. Narrow the filter to see them.`;
 
 const store = useNetDiagMeasurementsStore();
 const route = useRoute();
@@ -95,6 +101,10 @@ const headers: DataTableHeader[] = [
   { title: "Restarts", value: "restarts", sortable: false, align: "end" },
   { title: "Actions", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
+
+// The backend stops counting a filtered list at its cap, so a total that reached it is a lower bound.
+const pageText = computed(() => cappedPageText(store.total, MAX_COUNTED_MEASUREMENTS));
+const totalCapped = computed(() => pageText.value !== undefined);
 
 const initial = readListQuery(route.query, FILTER_KEYS, DEFAULT_PAGE_SIZE);
 const battleTag = ref(initial.filters.battleTag);

@@ -56,3 +56,12 @@ export function nextTablePage(options: ListPaging, current: ListPaging, defaultP
     itemsPerPage: options.itemsPerPage > 0 ? options.itemsPerPage : defaultPageSize,
   };
 }
+
+/**
+ * `page-text` for a server-side table whose backend stops counting at `cap`: a total equal to the cap is a
+ * lower bound and reads "1-25 of 100000+". Undefined keeps the table's own text. `{0}` and `{1}` are filled by Vuetify.
+ * A larger total is an uncapped count (the unfiltered list is estimated, not counted) and stays as it is.
+ */
+export function cappedPageText(total: number, cap: number): string | undefined {
+  return total === cap ? `{0}-{1} of ${cap}+` : undefined;
+}
