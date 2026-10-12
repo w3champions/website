@@ -4,7 +4,8 @@
       <span>Remote Measurements</span>
       <v-spacer />
       <v-btn variant="outlined" color="primary" :prepend-icon="mdiClipboardListOutline" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS }">Measurements by player</v-btn>
-      <v-btn color="primary" :prepend-icon="mdiPlus" :to="{ name: EAdminRouteName.NETDIAG_NEW_RUN }">New measurement</v-btn>
+      <!-- The dark themes give card titles a text shadow, which smears the dark label of a filled button. -->
+      <v-btn color="primary" :prepend-icon="mdiPlus" :to="{ name: EAdminRouteName.NETDIAG_NEW_RUN }" style="text-shadow: none">New measurement</v-btn>
     </v-card-title>
 
     <v-container v-if="store.runsError" class="pb-0">
