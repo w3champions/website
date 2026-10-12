@@ -22,7 +22,7 @@ export function describeNetDiagError(e: unknown): string {
   const rawTags: unknown = body?.battleTags;
   if (code === "unknown_battletags" && Array.isArray(rawTags)) {
     const tags = rawTags.filter((tag): tag is string => typeof tag === "string");
-    return `Unknown players: ${tags.join(", ")}`;
+    if (tags.length > 0) return `Unknown players: ${tags.join(", ")}`;
   }
   switch (e.status) {
     case 400:

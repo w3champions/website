@@ -12,6 +12,11 @@ test("unknown BattleTags are listed exactly as the backend returned them", () =>
   assert.equal(message, "Unknown players: Ghost#1234, ghost#1234");
 });
 
+test("an unknown-players body without any tag falls back to the 400 text", () => {
+  assert.equal(describeNetDiagError(httpError(400, { error: "unknown_battletags", battleTags: [] })), "Rejected: unknown_battletags");
+  assert.equal(describeNetDiagError(httpError(400, { error: "unknown_battletags", battleTags: [1, null] })), "Rejected: unknown_battletags");
+});
+
 test("other 400s show the backend's error text", () => {
   assert.equal(describeNetDiagError(httpError(400, { error: "windowSeconds must be 30-300" })), "Rejected: windowSeconds must be 30-300");
 });
