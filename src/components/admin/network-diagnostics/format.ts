@@ -58,7 +58,7 @@ export function audienceSummary(audience: Audience): string {
     case "SampleCount":
       return `Sample of ${audience.count} online`;
     case "SamplePercent":
-      return `${audience.percent}% of online`;
+      return `${audience.percent.toLocaleString("en-US", { maximumFractionDigits: 20, useGrouping: false })}% of online`;
     case "All":
       return "All online";
   }

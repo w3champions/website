@@ -81,3 +81,8 @@ test("optional text cells render a dash when the server sent nothing", () => {
   assert.equal(textOrDash(undefined), DASH);
   assert.equal(textOrDash(""), DASH);
 });
+
+test("a tiny sample percent is written out, never in exponent notation", () => {
+  assert.equal(audienceSummary({ kind: "SamplePercent", percent: 1e-7 }), "0.0000001% of online");
+  assert.equal(audienceSummary({ kind: "SamplePercent", percent: 100 }), "100% of online");
+});
