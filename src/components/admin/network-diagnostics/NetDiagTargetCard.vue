@@ -8,7 +8,7 @@
       <net-diag-rtt-chart v-if="showSeries && series.length > 0" :series="series" :description="chartDescription" class="mb-4" />
       <p v-else-if="showSeries" class="text-caption text-medium-emphasis mb-4">No time-series for this target: only TCP ping, flo UDP ping and the final hop of ICMP/TCP MTR record one.</p>
       <v-row>
-        <v-col v-for="path in paths" :key="path.path" cols="12" :md="paths.length > 1 ? 6 : 12">
+        <v-col v-for="path in paths" :key="path.path" cols="12" :xl="paths.length > 1 ? 6 : 12">
           <h4 class="text-subtitle-2">
             {{ path.path === "direct" ? "Direct" : "Proxied" }}<span v-if="path.routeLabel" class="text-medium-emphasis"> — {{ path.routeLabel }}</span>
           </h4>
