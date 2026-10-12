@@ -62,7 +62,7 @@
       :loading="store.runsLoading"
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       item-value="id"
-      :no-data-text="store.runsError ? 'Could not load.' : 'No data available'"
+      :no-data-text="store.runsError ? 'Could not load.' : undefined"
       @update:options="onTableOptions"
     >
       <template v-slot:[`item.createdAt`]="{ item }">{{ formatUtc(item.createdAt) }}</template>
