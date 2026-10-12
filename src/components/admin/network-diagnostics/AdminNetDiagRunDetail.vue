@@ -9,7 +9,8 @@
       <v-chip v-if="status" size="small" variant="tonal" :color="RUN_STATUS_COLOR[status]">{{ status }}</v-chip>
       <v-spacer />
       <v-btn variant="outlined" color="primary" :prepend-icon="mdiRefresh" :loading="store.runLoading" @click="load">Refresh</v-btn>
-      <v-btn v-if="status === 'Running'" ref="cancelButton" variant="outlined" color="error" :prepend-icon="mdiCancel" @click="cancelOpen = true">Cancel run</v-btn>
+      <!-- v-show, not v-if: the dialog's activator must outlive the run turning Cancelled, or its leave transition loses its target. -->
+      <v-btn v-show="status === 'Running'" ref="cancelButton" variant="outlined" color="error" :prepend-icon="mdiCancel" @click="cancelOpen = true">Cancel run</v-btn>
     </v-card-title>
 
     <v-container>
