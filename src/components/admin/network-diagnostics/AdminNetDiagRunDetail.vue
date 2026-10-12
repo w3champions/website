@@ -106,15 +106,18 @@
 </template>
 
 <script lang="ts" setup>
-import { type ComponentPublicInstance, computed, ref, watch } from "vue";
+import { type ComponentPublicInstance, computed, onBeforeUnmount, ref, watch } from "vue";
 import type { DataTableHeader } from "vuetify";
 import { mdiArrowLeft, mdiCancel, mdiRefresh } from "@mdi/js";
+import { HttpError } from "@/services/http/AuthorizedClient";
 import { EAdminRouteName } from "@/router/types";
 import { formatUtc } from "@/helpers/utc-dates";
 import { describeNetDiagError } from "@/store/admin/networkDiagnostics/errors";
 import { useNetDiagRunsStore } from "@/store/admin/networkDiagnostics/runsStore";
 import { asnText, ASSIGNMENT_STATUS_COLOR, audienceSummary, counterTiles, formatDuration, geoText, RUN_STATUS_COLOR, type RunStatus, runStatus, targetsSummary } from "./format";
 import NetDiagFleetView from "./NetDiagFleetView.vue";
+
+const HTTP_CONFLICT = 409;
 
 const props = defineProps<{ runId: string }>();
 const store = useNetDiagRunsStore();
@@ -125,6 +128,11 @@ const cancelling = ref(false);
 const cancelError = ref("");
 // The dialog opens from code; naming the button lets Vuetify hand the focus back to it on close.
 const cancelButton = ref<ComponentPublicInstance | null>(null);
+// Cleared on unmount: a cancel that settles after the page was left must write no state and load nothing.
+let active = true;
+onBeforeUnmount(() => {
+  active = false;
+});
 
 // The store may still hold another run while this one loads; never show it.
 const detail = computed(() => (store.runDetail?.run.id === props.runId ? store.runDetail : null));
@@ -141,34 +149,41 @@ const assignmentHeaders: DataTableHeader[] = [
   { title: "Actions", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
 
-async function load(): Promise<void> {
+async function reloadRun(): Promise<void> {
   now.value = new Date();
+  await store.loadRun(props.runId);
+}
+
+async function load(): Promise<void> {
   cancelError.value = "";
   // Node names for the fleet view's target selector; a no-op once loaded, a retry after a failure.
   void store.loadTargets();
-  await store.loadRun(props.runId);
+  await reloadRun();
 }
 
 async function cancelRun(): Promise<void> {
   // Captured so a Back/Forward to another run mid-request cannot redirect or mis-attribute the outcome.
   const targetId = props.runId;
+  const isCurrent = (): boolean => active && props.runId === targetId;
   cancelling.value = true;
   cancelError.value = "";
-  let cancelled = false;
+  let refresh = false;
   try {
     await store.cancelRun(targetId);
-    cancelled = true;
+    refresh = true;
   } catch (e) {
     console.error("Failed to cancel network diagnostic run:", e);
-    if (props.runId === targetId) cancelError.value = describeNetDiagError(e);
+    if (isCurrent()) cancelError.value = describeNetDiagError(e);
+    // Already cancelled elsewhere: the page still reads Running until reloaded.
+    refresh = e instanceof HttpError && e.status === HTTP_CONFLICT;
   } finally {
-    if (props.runId === targetId) {
+    if (isCurrent()) {
       cancelling.value = false;
       cancelOpen.value = false;
     }
   }
-  // Show the expired assignments, but only while this run is still the one on screen.
-  if (cancelled && props.runId === targetId) await load();
+  // After the page was left (unmounted or moved to another run) the outcome must touch nothing.
+  if (refresh && isCurrent()) await reloadRun();
 }
 
 // The component instance is reused across runs: never carry a dialog or its state over to another run.
