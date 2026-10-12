@@ -56,17 +56,26 @@
           item-value="measurementId"
           no-data-text="No players assigned yet."
         >
+          <template v-slot:[`item.deliverAfter`]="{ item }">
+            <router-link
+              v-if="item.status === 'Submitted'"
+              class="text-no-wrap"
+              :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }"
+            >
+              {{ formatUtc(item.deliverAfter) }}
+            </router-link>
+            <span v-else class="text-no-wrap">{{ formatUtc(item.deliverAfter) }}</span>
+          </template>
           <template v-slot:[`item.battleTag`]="{ item }">
             <router-link :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS, query: { battleTag: item.battleTag } }">{{ item.battleTag }}</router-link>
           </template>
           <template v-slot:[`item.status`]="{ item }">
             <v-chip size="x-small" variant="tonal" :color="ASSIGNMENT_STATUS_COLOR[item.status]">{{ item.status }}</v-chip>
           </template>
-          <template v-slot:[`item.deliverAfter`]="{ item }">{{ formatUtc(item.deliverAfter) }}</template>
           <template v-slot:[`item.deliveredAt`]="{ item }">{{ formatUtc(item.deliveredAt) }}</template>
           <template v-slot:[`item.submittedAt`]="{ item }">{{ formatUtc(item.submittedAt) }}</template>
-          <template v-slot:[`item.location`]="{ item }">{{ geoText(item.clientGeo) }}</template>
-          <template v-slot:[`item.network`]="{ item }">{{ asnText(item.clientGeo?.asn, item.clientGeo?.asnOrg) }}</template>
+          <template v-slot:[`item.location`]="{ item }"><net-diag-cut-text :text="geoText(item.clientGeo)" /></template>
+          <template v-slot:[`item.network`]="{ item }"><net-diag-cut-text :text="asnText(item.clientGeo?.asn, item.clientGeo?.asnOrg)" /></template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-btn
               v-if="item.status === 'Submitted'"
@@ -115,6 +124,7 @@ import { formatUtc } from "@/helpers/utc-dates";
 import { describeNetDiagError } from "@/store/admin/networkDiagnostics/errors";
 import { useNetDiagRunsStore } from "@/store/admin/networkDiagnostics/runsStore";
 import { asnText, ASSIGNMENT_STATUS_COLOR, audienceSummary, counterTiles, formatDuration, geoText, RUN_STATUS_COLOR, type RunStatus, runStatus, targetsSummary } from "./format";
+import NetDiagCutText from "./NetDiagCutText.vue";
 import NetDiagFleetView from "./NetDiagFleetView.vue";
 
 const HTTP_CONFLICT = 409;
@@ -139,9 +149,9 @@ const detail = computed(() => (store.runDetail?.run.id === props.runId ? store.r
 const status = computed<RunStatus | null>(() => (detail.value ? runStatus(detail.value.run, now.value) : null));
 
 const assignmentHeaders: DataTableHeader[] = [
+  { title: "Slot", value: "deliverAfter", sortable: true },
   { title: "Player", value: "battleTag", sortable: true },
   { title: "Status", value: "status", sortable: true, width: "110px" },
-  { title: "Slot", value: "deliverAfter", sortable: true },
   { title: "Delivered", value: "deliveredAt", sortable: true },
   { title: "Submitted", value: "submittedAt", sortable: true },
   { title: "Location", value: "location", sortable: false },

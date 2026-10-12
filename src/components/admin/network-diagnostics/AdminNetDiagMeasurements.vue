@@ -32,13 +32,15 @@
       :no-data-text="store.listError ? 'Could not load.' : 'No measurements match.'"
       @update:options="onTableOptions"
     >
-      <template v-slot:[`item.submittedAt`]="{ item }">{{ formatUtc(item.submittedAt) }}</template>
+      <template v-slot:[`item.submittedAt`]="{ item }">
+        <router-link class="text-no-wrap" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }">{{ formatUtc(item.submittedAt) }}</router-link>
+      </template>
       <template v-slot:[`item.runId`]="{ item }">
         <router-link :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: item.runId } }">{{ item.runId.slice(0, 8) }}</router-link>
       </template>
       <template v-slot:[`item.clientIp`]="{ item }">{{ textOrDash(item.clientIp) }}</template>
-      <template v-slot:[`item.location`]="{ item }">{{ geoText(item.clientGeo) }}</template>
-      <template v-slot:[`item.network`]="{ item }">{{ asnText(item.clientGeo?.asn, item.clientGeo?.asnOrg) }}</template>
+      <template v-slot:[`item.location`]="{ item }"><net-diag-cut-text :text="geoText(item.clientGeo)" /></template>
+      <template v-slot:[`item.network`]="{ item }"><net-diag-cut-text :text="asnText(item.clientGeo?.asn, item.clientGeo?.asnOrg)" /></template>
       <template v-slot:[`item.os`]="{ item }">{{ textOrDash(item.os) }}</template>
       <template v-slot:[`item.primaryAdapterType`]="{ item }">{{ textOrDash(item.primaryAdapterType) }}</template>
       <template v-slot:[`item.vpnSuspected`]="{ item }">{{ item.vpnSuspected == null ? "—" : item.vpnSuspected ? "suspected" : "no" }}</template>
@@ -68,6 +70,7 @@ import { formatUtc } from "@/helpers/utc-dates";
 import { useNetDiagMeasurementsStore } from "@/store/admin/networkDiagnostics/measurementsStore";
 import type { MeasurementFilters } from "@/store/admin/networkDiagnostics/types";
 import { asnText, geoText, textOrDash } from "./format";
+import NetDiagCutText from "./NetDiagCutText.vue";
 import { buildListQuery, type ListPaging, nextTablePage, readListQuery, sameListQuery } from "./listQuery";
 
 const DEFAULT_PAGE_SIZE = 25;

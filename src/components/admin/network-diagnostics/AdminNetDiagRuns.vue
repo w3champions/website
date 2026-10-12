@@ -65,7 +65,9 @@
       :no-data-text="store.runsError ? 'Could not load.' : undefined"
       @update:options="onTableOptions"
     >
-      <template v-slot:[`item.createdAt`]="{ item }">{{ formatUtc(item.createdAt) }}</template>
+      <template v-slot:[`item.createdAt`]="{ item }">
+        <router-link class="text-no-wrap" :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: item.id } }">{{ formatUtc(item.createdAt) }}</router-link>
+      </template>
       <template v-slot:[`item.audience`]="{ item }">{{ audienceSummary(item.audience) }}</template>
       <template v-slot:[`item.targets`]="{ item }">{{ targetsSummary(item.targets) }}</template>
       <template v-slot:[`item.methods`]="{ item }">
