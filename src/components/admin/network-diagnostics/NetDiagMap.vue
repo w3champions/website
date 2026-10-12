@@ -10,6 +10,8 @@ import { type ColorBucket, type MapPoint, tooltipElement } from "./fleet";
 
 // `fitKey` names the data set the points belong to ("" while none is loaded). The view is fitted when the
 // first points of a new key arrive; a restyle (metric, theme) or a refresh of the same key keeps the admin's pan and zoom.
+// Every view change made here is unanimated: while a zoom animation runs, Leaflet silently drops the next setView,
+// so an animated reset followed by the fit of the next data set left every second selection unfitted.
 const props = defineProps<{ points: MapPoint[]; colors: Record<ColorBucket, string>; fitKey: string; description: string }>();
 
 // OSM tile usage policy: attribution is required; keep request volume low (admin-only page).
@@ -28,6 +30,23 @@ let leafletMap: LeafletMap | null = null;
 let dots: LayerGroup | null = null;
 let resizeObserver: ResizeObserver | null = null;
 let fittedKey: string | null = null;
+// A zoom the admin started (wheel, buttons, double click) animates for 250 ms; a fit that falls into it waits for its end.
+let zoomAnimating = false;
+let fitPending = false;
+
+function applyView(): void {
+  if (leafletMap === null) return;
+  if (zoomAnimating) {
+    fitPending = true;
+    return;
+  }
+  fitPending = false;
+  if (props.points.length === 0) {
+    leafletMap.setView(WORLD_CENTER, WORLD_ZOOM, { animate: false });
+    return;
+  }
+  leafletMap.fitBounds(props.points.map((point): [number, number] => [point.lat, point.lon]), { padding: [FIT_PADDING_PX, FIT_PADDING_PX], maxZoom: FIT_MAX_ZOOM, animate: false });
+}
 
 // circleMarker only: vector dots need none of Leaflet's marker images, so Vite has no assets to resolve.
 // The canvas renderer (preferCanvas) and tooltips built on first hover keep tens of thousands of dots cheap.
@@ -41,10 +60,10 @@ function draw(): void {
       .addTo(dots);
   }
   if (props.points.length === 0) {
-    if (fittedKey !== null) leafletMap.setView(WORLD_CENTER, WORLD_ZOOM);
+    if (fittedKey !== null) applyView();
     fittedKey = null;
   } else if (fittedKey !== props.fitKey) {
-    leafletMap.fitBounds(props.points.map((point): [number, number] => [point.lat, point.lon]), { padding: [FIT_PADDING_PX, FIT_PADDING_PX], maxZoom: FIT_MAX_ZOOM });
+    applyView();
     fittedKey = props.fitKey;
   }
 }
@@ -54,6 +73,13 @@ onMounted(() => {
   leafletMap = createMap(mapElement.value, { worldCopyJump: true, preferCanvas: true }).setView(WORLD_CENTER, WORLD_ZOOM);
   tileLayer(OSM_TILES, { maxZoom: OSM_MAX_ZOOM, attribution: OSM_ATTRIBUTION }).addTo(leafletMap);
   dots = layerGroup().addTo(leafletMap);
+  leafletMap.on("zoomanim", () => {
+    zoomAnimating = true;
+  });
+  leafletMap.on("zoomend", () => {
+    zoomAnimating = false;
+    if (fitPending) applyView();
+  });
   // Leaflet measures its container once; the drawer and breakpoints resize it later.
   resizeObserver = new ResizeObserver(() => leafletMap?.invalidateSize());
   resizeObserver.observe(mapElement.value);
@@ -69,6 +95,8 @@ onBeforeUnmount(() => {
   leafletMap = null;
   dots = null;
   fittedKey = null;
+  zoomAnimating = false;
+  fitPending = false;
 });
 </script>
 
