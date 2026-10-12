@@ -79,6 +79,13 @@ The "Replay Export" admin section (permission `Replays`) has two pages: `admin-r
 - A search returns the ids of all listed games (at most 5,000) and the games of the first page. The table loads the other pages with `POST matches`. Select all and Download work on the ids.
 - The ZIP downloads with a plain GET and a single-use ticket, so the browser streams it to disk.
 
+#### Replay store
+The page `/replays` (nav "Replays", `src/views/Replays.vue`) is the same page as the admin export in store mode: `src/components/replays/ReplayExportPage.vue` with `mode="store"` (the admin page uses `mode="admin"`). The Pinia store `src/store/admin/replayExport/store.ts` serves both; `setMode` selects the API (`replayStoreApi` in `src/services/ReplayStoreService.ts`, or the admin one).
+- Not open to all users yet: the nav item, the account-menu link, the purchase count and the page show only to admins with the Replays permission (`src/composables/useReplayStoreAccess.ts`; the backend checks the same).
+- Search needs sign-in; `options` (prices) does not. Buy calls `checkout` and goes to the Stripe payment page. The return (`?order=…&session_id=…` or `&canceled=1`) shows a banner; the page confirms the order with the backend, which asks Stripe.
+- "My purchases" is the history tab. The account menu links to it (`/replays?tab=purchases`) when `GET api/replay-store/purchases/count` is above 0 (`src/store/replayPurchases/store.ts`).
+- New nav texts are in `src/locales/en.ts` (`views_app.replays`, `views_app.replaypurchases`); other languages can add them in the localization sheet.
+
 ### API Integration Patterns
 
 #### Service Layer
