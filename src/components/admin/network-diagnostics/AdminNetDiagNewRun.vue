@@ -163,10 +163,10 @@
         </ul>
       </v-alert>
       <v-alert v-if="submitError" type="error" variant="tonal" density="compact" class="mb-4">{{ submitError }}</v-alert>
-      <v-btn color="primary" size="large" :loading="submitting" :disabled="submitting" @click="submit">Schedule measurement</v-btn>
+      <v-btn ref="submitButton" color="primary" size="large" :loading="submitting" :disabled="submitting" @click="submit">Schedule measurement</v-btn>
     </v-container>
 
-    <v-dialog v-model="confirmOpen" max-width="480" :persistent="submitting">
+    <v-dialog v-model="confirmOpen" :activator="submitButton ?? undefined" :open-on-click="false" max-width="480" :persistent="submitting">
       <v-card>
         <v-card-title>Measure all online players?</v-card-title>
         <v-card-text>
@@ -183,7 +183,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { type ComponentPublicInstance, computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { mdiArrowLeft } from "@mdi/js";
 import BattleTagPicker from "@/components/admin/commercial-events/BattleTagPicker.vue";
@@ -208,6 +208,8 @@ const confirmOpen = ref(false);
 const pendingRequest = ref<CreateRunRequest | null>(null);
 const customTargetErrors = ref<string[]>([]);
 const pickerKey = ref(0);
+// The dialog opens from code, not from a click on its activator; naming the button lets Vuetify hand the focus back to it on close.
+const submitButton = ref<ComponentPublicInstance | null>(null);
 
 const errors = computed(() => validateRunDraft(draft));
 const nodeItems = computed(() => nodeSelectItems(store.targets?.floNodes ?? []));

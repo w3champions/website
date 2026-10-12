@@ -9,7 +9,7 @@
       <v-chip v-if="status" size="small" variant="tonal" :color="RUN_STATUS_COLOR[status]">{{ status }}</v-chip>
       <v-spacer />
       <v-btn variant="outlined" color="primary" :prepend-icon="mdiRefresh" :loading="store.runLoading" @click="load">Refresh</v-btn>
-      <v-btn v-if="status === 'Running'" variant="outlined" color="error" :prepend-icon="mdiCancel" @click="cancelOpen = true">Cancel run</v-btn>
+      <v-btn v-if="status === 'Running'" ref="cancelButton" variant="outlined" color="error" :prepend-icon="mdiCancel" @click="cancelOpen = true">Cancel run</v-btn>
     </v-card-title>
 
     <v-container>
@@ -91,7 +91,7 @@
       </template>
     </v-container>
 
-    <v-dialog v-model="cancelOpen" max-width="480" :persistent="cancelling">
+    <v-dialog v-model="cancelOpen" :activator="cancelButton ?? undefined" :open-on-click="false" max-width="480" :persistent="cancelling">
       <v-card>
         <v-card-title>Cancel this run?</v-card-title>
         <v-card-text>Pending players are not measured. Results already submitted are kept.</v-card-text>
@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { type ComponentPublicInstance, computed, ref, watch } from "vue";
 import type { DataTableHeader } from "vuetify";
 import { mdiArrowLeft, mdiCancel, mdiRefresh } from "@mdi/js";
 import { EAdminRouteName } from "@/router/types";
@@ -123,6 +123,8 @@ const now = ref(new Date());
 const cancelOpen = ref(false);
 const cancelling = ref(false);
 const cancelError = ref("");
+// The dialog opens from code; naming the button lets Vuetify hand the focus back to it on close.
+const cancelButton = ref<ComponentPublicInstance | null>(null);
 
 // The store may still hold another run while this one loads; never show it.
 const detail = computed(() => (store.runDetail?.run.id === props.runId ? store.runDetail : null));
