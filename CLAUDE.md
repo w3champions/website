@@ -85,7 +85,8 @@ The "Network Diagnostics" admin group (permission `Proxies`) holds "Lag Reports"
 - Client: `src/services/admin/NetworkDiagnosticsService.ts` (website-backend `api/network-diagnostics/...`). Deploy website-backend first.
 - Types, error texts, the fleet selection and the three stores (runs, measurements, fleet): `src/store/admin/networkDiagnostics/`. Pages and their pure helpers with tests (`format.ts`, `runDraft.ts`, `listQuery.ts`, `measurementView.ts`, `fleet.ts`): `src/components/admin/network-diagnostics/`.
 - Helpers shared with the other admin sections: `src/store/admin/latest.ts` (the latest request wins) and `src/helpers/utc-dates.ts` (UTC input and display).
-- The fleet map is plain Leaflet on the canvas renderer (`NetDiagMap.vue`): `circleMarker` dots only, tooltips built with `textContent`, OpenStreetMap tiles with attribution. It draws at most 20,000 measurements and says so when more exist.
+- The fleet map is plain Leaflet on the canvas renderer (`NetDiagMap.vue`): `circleMarker` dots only, tooltips built with `textContent`, OpenStreetMap tiles with attribution. It draws at most 20,000 measurements and says so when more exist; measurements at identical coordinates share one dot.
+- The backend marks an answer that covers only its newest 200,000 observations with the `X-NetDiag-Truncated` header; the service returns it as `truncated` and the pages show a notice.
 - Times are shown in UTC. Battle tags are compared exactly as written (never case-folded).
 - The server's `reason` texts are shown as sent. A value the server did not send shows as a dash.
 
