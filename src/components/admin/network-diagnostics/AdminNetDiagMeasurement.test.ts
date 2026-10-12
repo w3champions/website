@@ -84,10 +84,8 @@ it("raw expired: loading the time-series shows the expiry notice and no chart", 
 });
 
 it("a payload without targets, snapshot or ipInfo renders before and after the raw load", async () => {
-  const { targets, floSnapshot, ipInfo, ...bare } = nullHeavy;
-  void targets;
-  void floSnapshot;
-  void ipInfo;
+  const { measurementId, runId, battleTag, submittedAt, windowStartedAt, windowEndedAt, attemptStartedAt, restarts, targetCount } = nullHeavy;
+  const bare = { measurementId, runId, battleTag, submittedAt, windowStartedAt, windowEndedAt, attemptStartedAt, restarts, targetCount };
   service.getMeasurement.mockResolvedValue({ ...bare, rawExpired: false });
   const wrapper = mountPage();
   await flushPromises();
