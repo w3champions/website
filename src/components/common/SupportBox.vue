@@ -4,48 +4,18 @@
       {{ $t("views_home.supportus") }}
     </v-card-text>
 
-    <!-- PATREON -->
     <v-card
+      v-for="link in SUPPORT_LINKS"
+      :key="link.name"
       class="support-subcard"
-      href="https://www.patreon.com/w3champions"
+      :href="link.url"
       target="_blank"
+      rel="noopener"
       tile
       border
       flat
     >
-      <v-img src="/assets/socials/Patreon_button.png" alt="Patreon" />
-    </v-card>
-
-    <!-- PAYPAL -->
-    <v-card
-      class="support-subcard"
-      href="https://www.paypal.com/ncp/payment/5JW946QYQ6MHJ"
-      target="_blank"
-      tile
-      border
-      flat
-    >
-      <v-img src="/assets/socials/PayPal_button.png" alt="Paypal" />
-    </v-card>
-
-    <!-- CRYPTOCURRENCIES -->
-    <v-card
-      v-for="(crypto) in cryptos"
-      :key="crypto.coin"
-      class="support-subcard"
-      tile
-      border
-      flat
-      @click.stop="crypto.dialog = true"
-    >
-      <v-img :src="`/assets/socials/${crypto.coin}_button.png`" :alt="crypto.name" />
-      <crypto-dialog
-        v-model="crypto.dialog"
-        :crypto="crypto.coin"
-        :cryptoName="crypto.name"
-        :cryptoAddress="crypto.address"
-        @hide="crypto.dialog = false"
-      />
+      <v-img :src="`/assets/socials/${link.image}_button.png`" :alt="link.name" />
     </v-card>
 
     <!-- Alternates -->
@@ -70,14 +40,15 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import CryptoDialog from "@/components/common/CryptoDialog.vue";
 import AlternatePaymentsDialog from "@/components/common/AlternatePaymentsDialog.vue";
 
-const cryptos = ref<{ coin: string; name: string; address: string; dialog: boolean }[]>([
-  { coin: "BTC", name: "Bitcoin", address: "bc1qcm77d3hur2n83utam3h6e479cg6qrnwy8dlv80", dialog: false },
-  { coin: "ETH", name: "Ethereum", address: "0x284a0e918e126dF38cFc0207c00D5564CAFbe658", dialog: false },
-  { coin: "LTC", name: "Litecoin", address: "ltc1q4aq488zph7327nczu3vl3930xu9jke0jr2svh0", dialog: false },
-]);
+const SUPPORT_LINKS: { name: string; image: string; url: string }[] = [
+  { name: "Patreon", image: "Patreon", url: "https://www.patreon.com/w3champions" },
+  { name: "Ko-fi", image: "KoFi", url: "https://ko-fi.com/w3champions" },
+  { name: "PayPal", image: "PayPal", url: "https://www.paypal.com/ncp/payment/5JW946QYQ6MHJ" },
+  // The button image carries a Russian flag: Boosty is the option that works for supporters in Russia
+  { name: "Boosty (Russia)", image: "Boosty", url: "https://boosty.to/w3champions" },
+];
 
 const alternates = ref<{ name: string; dialog: boolean }[]>([
   { name: "AliPay", dialog: false },
