@@ -14,6 +14,8 @@ defineProps<{ text: string }>();
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+  /* Roughly an ordinary ASN name on two lines; the table's other columns give way before this one does. */
+  min-width: 9rem;
   max-width: 14rem;
   overflow: hidden;
   overflow-wrap: anywhere;

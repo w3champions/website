@@ -60,7 +60,7 @@
           <template v-slot:[`item.deliverAfter`]="{ item }">
             <router-link
               v-if="item.status === 'Submitted'"
-              class="text-primary"
+              class="text-primary text-no-wrap"
               :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }"
             >
               {{ formatUtc(item.deliverAfter) }}
