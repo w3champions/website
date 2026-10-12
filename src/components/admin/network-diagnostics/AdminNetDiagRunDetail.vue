@@ -85,7 +85,14 @@
             </v-btn>
           </template>
         </v-data-table>
-        <!-- fleet view -->
+        <net-diag-fleet-view
+          v-if="detail.run.counters.submitted > 0"
+          :key="detail.run.id"
+          :run="detail.run"
+          :targets="store.targets"
+          class="mt-8"
+        />
+        <p v-else class="text-caption text-medium-emphasis mt-8">The fleet view appears once the first result is submitted.</p>
       </template>
     </v-container>
 
@@ -104,7 +111,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import type { DataTableHeader } from "vuetify";
 import { mdiArrowLeft, mdiCancel, mdiRefresh } from "@mdi/js";
 import { EAdminRouteName } from "@/router/types";
@@ -112,6 +119,7 @@ import { formatUtc } from "@/helpers/utc-dates";
 import { describeNetDiagError } from "@/store/admin/networkDiagnostics/errors";
 import { useNetDiagRunsStore } from "@/store/admin/networkDiagnostics/runsStore";
 import { asnText, ASSIGNMENT_STATUS_COLOR, audienceSummary, counterTiles, formatDuration, geoText, RUN_STATUS_COLOR, type RunStatus, runStatus, targetsSummary } from "./format";
+import NetDiagFleetView from "./NetDiagFleetView.vue";
 
 const props = defineProps<{ runId: string }>();
 const store = useNetDiagRunsStore();
@@ -168,4 +176,6 @@ watch(() => props.runId, () => {
   cancelError.value = "";
 });
 watch(() => props.runId, load, { immediate: true });
+// Node names for the fleet view's target selector.
+onMounted(() => store.loadTargets());
 </script>
