@@ -183,7 +183,7 @@
 </template>
 
 <script lang="ts" setup>
-import { type ComponentPublicInstance, computed, onMounted, reactive, ref } from "vue";
+import { type ComponentPublicInstance, computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { mdiArrowLeft } from "@mdi/js";
 import BattleTagPicker from "@/components/admin/commercial-events/BattleTagPicker.vue";
@@ -203,6 +203,11 @@ if (typeof route.query.battleTag === "string") draft.singleBattleTag = route.que
 
 const attempted = ref(false);
 const submitting = ref(false);
+// Cleared on unmount: a create that settles after the admin left must not pull them to the run page.
+let active = true;
+onBeforeUnmount(() => {
+  active = false;
+});
 const submitError = ref("");
 const confirmOpen = ref(false);
 const pendingRequest = ref<CreateRunRequest | null>(null);
@@ -236,6 +241,7 @@ async function send(request: CreateRunRequest): Promise<void> {
   try {
     const run = await store.createRun(request);
     confirmOpen.value = false;
+    if (!active) return;
     await router.push({ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: run.id } });
   } catch (e) {
     console.error("Failed to create network diagnostic run:", e);
