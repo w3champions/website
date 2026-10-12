@@ -9,7 +9,7 @@ The backend belonging to this repository lives in ../website-backend. Whenever y
 
 ### Development
 ```bash
-npm run dev           # Start development server at http://localhost:5173
+npm run dev           # Start development server at http://localhost:8080
 npm run build:prod    # Production build with locale generation
 npm run build         # Build without locale generation
 ```
@@ -33,6 +33,7 @@ npm run type-check-vue # Type-check .ts and .vue files (what CI runs)
 - **Vue Router 4** for routing
 - **Vite** as the build tool
 - **Chart.js** for data visualization
+- **Leaflet** for the map on the network diagnostics pages
 - **TipTap** for rich text editing
 
 ### Project Structure
@@ -78,6 +79,15 @@ The "Replay Export" admin section (permission `Replays`) has two pages: `admin-r
 - Pure helpers with tests (form to filter, summary chips, prices, error texts): `src/store/admin/replayExport/`. Pages: `src/components/admin/replays/`.
 - A search returns the ids of all listed games (at most 5,000) and the games of the first page. The table loads the other pages with `POST matches`. Select all and Download work on the ids.
 - The ZIP downloads with a plain GET and a single-use ticket, so the browser streams it to disk.
+
+#### Network Diagnostics
+The "Network Diagnostics" admin group (permission `Proxies`) holds "Lag Reports", "Remote Measurements" and "Measurements". The last two live under `/admin/admin-remote-measurements`: the runs list, `new` (start a measurement), `runs/<runId>` (counters, assignments, cancel, fleet view), `measurements` (history by player or by run) and `measurements/<measurementId>` (one result).
+- Client: `src/services/admin/NetworkDiagnosticsService.ts` (website-backend `api/network-diagnostics/...`). Deploy website-backend first.
+- Types, error texts, the fleet selection and the three stores (runs, measurements, fleet): `src/store/admin/networkDiagnostics/`. Pages and their pure helpers with tests (`format.ts`, `runDraft.ts`, `listQuery.ts`, `measurementView.ts`, `fleet.ts`): `src/components/admin/network-diagnostics/`.
+- Helpers shared with the other admin sections: `src/store/admin/latest.ts` (the latest request wins) and `src/helpers/utc-dates.ts` (UTC input and display).
+- The fleet map is plain Leaflet on the canvas renderer (`NetDiagMap.vue`): `circleMarker` dots only, tooltips built with `textContent`, OpenStreetMap tiles with attribution. It draws at most 20,000 measurements and says so when more exist.
+- Times are shown in UTC. Battle tags are compared exactly as written (never case-folded).
+- The server's `reason` texts are shown as sent. A value the server did not send shows as a dash.
 
 ### API Integration Patterns
 
