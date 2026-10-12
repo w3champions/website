@@ -4,6 +4,11 @@
       <tr>
         <th>#</th>
         <th>Host</th>
+        <template v-if="hasInfo">
+          <th>ASN</th>
+          <th>Network</th>
+          <th>Location</th>
+        </template>
         <th class="text-center">Avg</th>
         <th class="text-center">Min</th>
         <th class="text-center">Max</th>
@@ -20,6 +25,11 @@
       >
         <td>{{ hop.hopNumber }}</td>
         <td class="text-caption">{{ hop.host ?? '*' }}</td>
+        <template v-if="hasInfo">
+          <td class="text-caption">{{ asnLabel(i) }}</td>
+          <td class="text-caption">{{ hopInfo[i]?.asnOrg ?? '—' }}</td>
+          <td class="text-caption">{{ locationLabel(i) }}</td>
+        </template>
         <td class="text-center">{{ hop.avgRttMs != null ? Math.round(hop.avgRttMs) + 'ms' : '*' }}</td>
         <td class="text-center">{{ hop.minRttMs != null ? Math.round(hop.minRttMs) + 'ms' : '*' }}</td>
         <td class="text-center">{{ hop.maxRttMs != null ? Math.round(hop.maxRttMs) + 'ms' : '*' }}</td>
@@ -31,7 +41,7 @@
         </td>
       </tr>
       <tr v-if="!hops.length">
-        <td :colspan="baselineHops.length ? 7 : 6" class="text-center text-medium-emphasis">
+        <td :colspan="columnCount" class="text-center text-medium-emphasis">
           No hops data
         </td>
       </tr>
@@ -40,8 +50,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { HopData } from "@/store/admin/lagReports/types";
+import { computed, defineComponent, PropType } from "vue";
+import { HopData, HopEnrichment } from "@/store/admin/lagReports/types";
+
+const BASE_COLUMNS = 6;
+const INFO_COLUMNS = 3;
 
 export default defineComponent({
   name: "MtrHopTable",
@@ -54,8 +67,16 @@ export default defineComponent({
       type: Array as PropType<HopData[]>,
       default: () => [],
     },
+    /** GeoIP facts per hop, by index. Empty (the lag-report default) hides the ASN, network and location columns. */
+    hopInfo: {
+      type: Array as PropType<(HopEnrichment | null)[]>,
+      default: () => [],
+    },
   },
   setup(props) {
+    const hasInfo = computed(() => props.hopInfo.length > 0);
+    const columnCount = computed(() => BASE_COLUMNS + (hasInfo.value ? INFO_COLUMNS : 0) + (props.baselineHops.length ? 1 : 0));
+
     function getBaselineHop(index: number): HopData | null {
       return props.baselineHops[index] ?? null;
     }
@@ -86,10 +107,25 @@ export default defineComponent({
       return "text-medium-emphasis";
     }
 
+    function asnLabel(index: number): string {
+      const asn = props.hopInfo[index]?.asn;
+      return asn == null ? "—" : `AS${asn}`;
+    }
+
+    function locationLabel(index: number): string {
+      const info = props.hopInfo[index];
+      const parts = [info?.city, info?.country].filter((part): part is string => !!part);
+      return parts.length ? parts.join(", ") : "—";
+    }
+
     return {
+      hasInfo,
+      columnCount,
       isDegraded,
       deltaText,
       deltaClass,
+      asnLabel,
+      locationLabel,
     };
   },
 });
