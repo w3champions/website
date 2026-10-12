@@ -193,3 +193,37 @@ test("a truncated aggregate is flagged and another selection drops the flag at o
   await load;
   assert.equal(store.aggregateTruncated, false);
 });
+
+test("a superseded aggregate that resolves late and truncated cannot flag the current selection", async () => {
+  const first = deferred<unknown>();
+  const second = deferred<unknown>();
+  service.getAggregate.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+  const store = useNetDiagFleetStore();
+
+  const loadA = store.loadAggregate(selection("flo:12"), "country");
+  const loadB = store.loadAggregate(selection("flo:14"), "country");
+  second.resolve(loaded(emptyAggregate("B")));
+  await loadB;
+  first.resolve(loaded(emptyAggregate("A"), true));
+  await loadA;
+
+  assert.equal(store.aggregateTruncated, false);
+  assert.deepEqual(store.aggregate, emptyAggregate("B"));
+});
+
+test("superseded observations that resolve late and truncated cannot flag the current selection", async () => {
+  const first = deferred<ObservationsResult>();
+  const second = deferred<ObservationsResult>();
+  service.getObservationsUpTo.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+  const store = useNetDiagFleetStore();
+
+  const loadA = store.loadObservations(selection("flo:12"));
+  const loadB = store.loadObservations(selection("flo:14"));
+  second.resolve(rows("b"));
+  await loadB;
+  first.resolve({ ...rows("a"), truncated: true });
+  await loadA;
+
+  assert.equal(store.observationsTruncated, false);
+  assert.deepEqual(store.observations.map((o) => o.measurementId), ["b"]);
+});
