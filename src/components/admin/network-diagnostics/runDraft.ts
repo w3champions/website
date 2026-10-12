@@ -1,9 +1,12 @@
 import { type Audience, type CreateRunRequest, type CustomTarget, type FloNodeTarget, NETDIAG_METHODS, type NetDiagMethod } from "@/store/admin/networkDiagnostics/types";
 import { formatDuration } from "./format";
 
-/** C6 tag rule. Matched as written: never trimmed inside, never case-folded. */
-export const BATTLE_TAG_PATTERN = /^[^#\s]{2,12}#\d{3,6}$/;
+/** C6 tag rule. Matched as written: never trimmed inside, never case-folded. The server's .NET `\s` also covers U+0085, which JS `\s` does not. */
+export const BATTLE_TAG_PATTERN = /^[^#\s\u0085]{2,12}#\d{3,6}$/;
 export const MAX_BATTLE_TAGS = 500;
+/** The server reads the count as a 32-bit int; larger values fail as invalid JSON. */
+export const MAX_SAMPLE_COUNT = 2147483647;
+export const MAX_CUSTOM_TARGETS = 50;
 export const WINDOW_SECONDS_MIN = 30;
 export const WINDOW_SECONDS_MAX = 300;
 export const DEFAULT_WINDOW_SECONDS = 60;
@@ -151,7 +154,7 @@ function audienceErrors(d: RunDraft): string[] {
       return errors;
     }
     case "sampleCount":
-      return d.sampleCount !== null && Number.isInteger(d.sampleCount) && d.sampleCount >= 1 ? [] : ["Sample count: enter a whole number of at least 1."];
+      return d.sampleCount !== null && Number.isInteger(d.sampleCount) && d.sampleCount >= 1 && d.sampleCount <= MAX_SAMPLE_COUNT ? [] : [`Sample count: enter a whole number from 1 to ${MAX_SAMPLE_COUNT}.`];
     case "samplePercent":
       return d.samplePercent !== null && d.samplePercent > 0 && d.samplePercent <= 100 ? [] : ["Sample %: enter a number above 0 and at most 100."];
     case "all":
@@ -163,6 +166,7 @@ function audienceErrors(d: RunDraft): string[] {
 export function validateRunDraft(d: RunDraft): string[] {
   const errors = audienceErrors(d);
   if (!hasAnyTarget(d)) errors.push("Select at least one target.");
+  if (d.customTargets.length > MAX_CUSTOM_TARGETS) errors.push(`Add at most ${MAX_CUSTOM_TARGETS} custom targets (${d.customTargets.length} entered).`);
   if (d.methods.length === 0) errors.push("Select at least one method.");
   if (!isValidWindow(d.windowSeconds)) errors.push(`Window: enter whole seconds from ${WINDOW_SECONDS_MIN} to ${WINDOW_SECONDS_MAX}.`);
   return errors;

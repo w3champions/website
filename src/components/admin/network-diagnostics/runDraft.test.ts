@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { buildCreateRunRequest, emptyRunDraft, endpointLabel, expectedDurationSeconds, expectedDurationText, hasAnyTarget, isBattleTag, MAX_BATTLE_TAGS, nodeSelectItems, normalizeBattleTagList, numberOrNull, parseCustomTarget, parseCustomTargets, requiresAllConfirmation, type RunDraft, stringValues, validateRunDraft } from "./runDraft";
+import { buildCreateRunRequest, emptyRunDraft, endpointLabel, expectedDurationSeconds, expectedDurationText, hasAnyTarget, isBattleTag, MAX_BATTLE_TAGS, MAX_CUSTOM_TARGETS, MAX_SAMPLE_COUNT, nodeSelectItems, normalizeBattleTagList, numberOrNull, parseCustomTarget, parseCustomTargets, requiresAllConfirmation, type RunDraft, stringValues, validateRunDraft } from "./runDraft";
 
 function draft(overrides: Partial<RunDraft>): RunDraft {
   return { ...emptyRunDraft(), ...overrides };
@@ -39,8 +39,8 @@ test("single audience needs a picked player", () => {
 });
 
 test("sample count must be a whole number ≥ 1 and percent must be in (0, 100]", () => {
-  assert.deepEqual(validateRunDraft(draft({ audience: "sampleCount", sampleCount: 0 })), ["Sample count: enter a whole number of at least 1."]);
-  assert.deepEqual(validateRunDraft(draft({ audience: "sampleCount", sampleCount: 2.5 })), ["Sample count: enter a whole number of at least 1."]);
+  assert.deepEqual(validateRunDraft(draft({ audience: "sampleCount", sampleCount: 0 })), ["Sample count: enter a whole number from 1 to 2147483647."]);
+  assert.deepEqual(validateRunDraft(draft({ audience: "sampleCount", sampleCount: 2.5 })), ["Sample count: enter a whole number from 1 to 2147483647."]);
   assert.deepEqual(validateRunDraft(draft({ audience: "sampleCount", sampleCount: 50 })), []);
   assert.deepEqual(validateRunDraft(draft({ audience: "samplePercent", samplePercent: 0 })), ["Sample %: enter a number above 0 and at most 100."]);
   assert.deepEqual(validateRunDraft(draft({ audience: "samplePercent", samplePercent: 100 })), []);
@@ -142,4 +142,25 @@ test("only the All audience asks for confirmation", () => {
 test("select labels name nodes, flag disabled ones and show endpoints", () => {
   assert.deepEqual(nodeSelectItems([{ id: 12, name: "US East 4", location: "Ashburn", countryId: "US", isDisabled: true }]), [{ title: "US East 4 — Ashburn (disabled)", value: 12 }]);
   assert.equal(endpointLabel({ label: "Cloudflare 1.1.1.1", ip: "1.1.1.1", tcpPort: 443 }), "Cloudflare 1.1.1.1 (1.1.1.1:443)");
+});
+
+test("the sample count is capped at the server's int range", () => {
+  const sample = (sampleCount: number): string[] => validateRunDraft(draft({ audience: "sampleCount", sampleCount }));
+  assert.equal(MAX_SAMPLE_COUNT, 2147483647);
+  assert.deepEqual(sample(MAX_SAMPLE_COUNT), []);
+  assert.deepEqual(sample(MAX_SAMPLE_COUNT + 1), ["Sample count: enter a whole number from 1 to 2147483647."]);
+});
+
+test("at most 50 custom targets, like the server", () => {
+  const targets = (count: number): RunDraft["customTargets"] => Array.from({ length: count }, (_, i) => ({ ip: `10.0.${Math.floor(i / 250)}.${(i % 250) + 1}`, tcpPort: 443 }));
+  assert.equal(MAX_CUSTOM_TARGETS, 50);
+  assert.deepEqual(validateRunDraft(draft({ audience: "all", customTargets: targets(50) })), []);
+  assert.deepEqual(validateRunDraft(draft({ audience: "all", customTargets: targets(51) })), ["Add at most 50 custom targets (51 entered)."]);
+});
+
+test("a BattleTag containing U+0085 is rejected, as the server's .NET whitespace class does", () => {
+  assert.equal(isBattleTag("Ab\u0085cd#1234"), false);
+  assert.equal(isBattleTag("Abcd\u0085#1234"), false);
+  assert.equal(isBattleTag("Ab\u00a0cd#1234"), false, "no-break space was already rejected");
+  assert.equal(isBattleTag("Ab\u200bcd#1234"), true, "zero-width space is not whitespace to either engine");
 });
