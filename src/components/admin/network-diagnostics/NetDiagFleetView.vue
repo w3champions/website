@@ -25,6 +25,7 @@
     <v-alert v-if="errorText" type="error" variant="tonal" density="compact" class="my-2">{{ errorText }}</v-alert>
     <v-progress-linear v-if="busy" indeterminate color="primary" class="my-2" />
 
+    <p v-if="floNodesHint" class="text-caption text-warning mt-2">{{ floNodesHint }}</p>
     <p v-if="emptyStateText" class="text-body-2 text-medium-emphasis mt-4">{{ emptyStateText }}</p>
     <template v-else>
       <v-row class="mt-2">
@@ -52,7 +53,7 @@
         :loading="aggregateBusy"
         density="compact"
         class="mt-4"
-        :no-data-text="aggregateBusy ? 'Loading…' : 'No submitted results for this selection yet.'"
+        :no-data-text="tableNoDataText"
       />
     </template>
   </section>
@@ -66,7 +67,7 @@ import { readThemeColor, THEME_FALLBACK_COLOR } from "@/helpers/lag-report-color
 import { useNetDiagFleetStore } from "@/store/admin/networkDiagnostics/fleetStore";
 import { fleetAggregateKey, fleetSelectionKey } from "@/store/admin/networkDiagnostics/fleetSelection";
 import type { NetDiagMethod, NetDiagPath, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
-import { aggregateBars, aggregateTableRows, BUCKET_THEME_COLOR, bucketLegend, chartNotice, COLOR_BUCKETS, type ColorBucket, FLEET_GROUP_BY_ITEMS, fleetEmptyState, type FleetGroupBy, type FleetSelection, type MapMetric, mapNotice, mapPoints, methodItems, pathItems, runTargetItems } from "./fleet";
+import { aggregateBars, aggregateTableRows, BUCKET_THEME_COLOR, bucketLegend, chartNotice, COLOR_BUCKETS, type ColorBucket, FLEET_GROUP_BY_ITEMS, fleetEmptyState, fleetLoadPlan, floNodesMissing, type FleetGroupBy, type FleetLoadInputs, type FleetSelection, type MapMetric, mapNotice, mapPoints, methodItems, pathItems, runTargetItems } from "./fleet";
 import { METHOD_LABELS } from "./format";
 import NetDiagAggregateChart from "./NetDiagAggregateChart.vue";
 import NetDiagMap from "./NetDiagMap.vue";
@@ -99,11 +100,15 @@ const selection = computed<FleetSelection | null>(() => (targetKey.value === "" 
 const selectionKey = computed(() => (selection.value === null ? "" : fleetSelectionKey(selection.value)));
 
 // A refresh of the page hands over a new `run`: reload, but keep the held data and the map view while the same selection reloads.
-watch([selectionKey, groupBy, () => props.run], () => {
+let lastInputs: FleetLoadInputs | undefined;
+watch([selectionKey, groupBy, () => props.run] as const, ([key, group, run]) => {
   const current = selection.value;
   if (current === null) return;
-  void fleet.loadObservations(current);
-  void fleet.loadAggregate(current, groupBy.value);
+  const inputs: FleetLoadInputs = { selectionKey: key, groupBy: group, run };
+  const plan = fleetLoadPlan(inputs, lastInputs);
+  lastInputs = inputs;
+  if (plan.observations) void fleet.loadObservations(current);
+  if (plan.aggregate) void fleet.loadAggregate(current, group);
 }, { immediate: true });
 
 // The shared store outlives this view: drop its (up to 20 000) observations when the view goes.
@@ -126,6 +131,18 @@ const EMPTY_STATE_TEXT = {
   "targets-unavailable": "The target list is not available, so this run's flo nodes cannot be named. Press Refresh to try again.",
   "no-targets": "This run has no target to show.",
 } as const;
+const FLO_NODES_HINT_TEXT = {
+  loading: "Loading the flo node list…",
+  failed: "The flo node list could not be loaded, so this run's flo nodes are missing from the targets. Press Refresh to try again.",
+} as const;
+const floNodesHint = computed(() => {
+  if (emptyState.value !== null || !floNodesMissing(props.run, props.targets)) return "";
+  return props.targetsLoading ? FLO_NODES_HINT_TEXT.loading : FLO_NODES_HINT_TEXT.failed;
+});
+const tableNoDataText = computed(() => {
+  if (aggregateBusy.value) return "Loading…";
+  return aggregateCurrent.value && fleet.aggregateError ? "The aggregate could not be loaded." : "No submitted results for this selection yet.";
+});
 const emptyStateText = computed(() => (emptyState.value === null ? "" : EMPTY_STATE_TEXT[emptyState.value]));
 
 function themeColor(bucket: ColorBucket): string {

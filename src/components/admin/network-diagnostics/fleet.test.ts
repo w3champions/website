@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { AggregateResponseDto, AggregateRowDto, ObservationDto, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
-import { aggregateBars, aggregateKeyLabel, aggregateTableRows, bucketLegend, chartNotice, fleetEmptyState, lossBucket, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
+import { aggregateBars, aggregateKeyLabel, aggregateTableRows, bucketLegend, chartNotice, fleetEmptyState, fleetLoadPlan, floNodesMissing, lossBucket, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
 
 const catalogue: TargetsDto = {
   floNodes: [{ id: 12, name: "US East 4", location: "Ashburn", countryId: "US", isDisabled: false }, { id: 14, name: "EU 1", location: "Frankfurt", countryId: "DE", isDisabled: false }],
@@ -139,7 +139,7 @@ test("legend text names the thresholds", () => {
 
 test("the map notice counts drawn and unlocated measurements and never says first 0", () => {
   assert.equal(mapNotice({ shown: 5, withoutLocation: 0, truncated: false }), null);
-  assert.match(mapNotice({ shown: 19990, withoutLocation: 10, truncated: true }) ?? "", /19,990 of the first loaded.*there may be more.*10 loaded measurements have no location/);
+  assert.match(mapNotice({ shown: 19990, withoutLocation: 10, truncated: true }) ?? "", /Showing the first 19,990 measurements.*more may exist.*10 loaded measurements have no location/);
   const none = mapNotice({ shown: 0, withoutLocation: 0, truncated: true }) ?? "";
   assert.doesNotMatch(none, /first 0/);
   assert.match(none, /cut off/);
@@ -159,4 +159,19 @@ test("the fleet empty state tells loading, unavailable and empty targets apart",
   assert.equal(fleetEmptyState(some, null, false, 0), "no-targets");
   assert.equal(fleetEmptyState(some, null, false, 2), null);
   assert.equal(fleetEmptyState(all, {} as TargetsDto, false, 3), null);
+  assert.equal(fleetEmptyState(all, {} as TargetsDto, false, 0), "no-targets");
+  // Selectable non-flo targets keep the view usable without the catalogue.
+  assert.equal(fleetEmptyState(all, null, false, 1), null);
+  assert.equal(floNodesMissing(all, null), true);
+  assert.equal(floNodesMissing(all, {} as TargetsDto), false);
+  assert.equal(floNodesMissing(some, null), false);
+});
+
+test("a group-by change loads only the aggregate; a selection or run change loads both", () => {
+  const run = {};
+  const base = { selectionKey: "r1|flo:12|direct|TcpPing", groupBy: "country" as const, run };
+  assert.deepEqual(fleetLoadPlan(base, undefined), { observations: true, aggregate: true });
+  assert.deepEqual(fleetLoadPlan({ ...base, groupBy: "asn" }, base), { observations: false, aggregate: true });
+  assert.deepEqual(fleetLoadPlan({ ...base, selectionKey: "r1|flo:14|direct|TcpPing" }, base), { observations: true, aggregate: true });
+  assert.deepEqual(fleetLoadPlan({ ...base, run: {} }, base), { observations: true, aggregate: true });
 });

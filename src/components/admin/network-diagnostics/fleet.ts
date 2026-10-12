@@ -172,7 +172,7 @@ export interface MapSummary {
 export function mapNotice(summary: MapSummary): string | null {
   const parts: string[] = [];
   if (summary.truncated) {
-    parts.push(summary.shown > 0 ? `The map shows ${summary.shown.toLocaleString("en-US")} of the first loaded measurements; there may be more.` : "The measurement list was cut off before any located measurement; there may be more.");
+    parts.push(summary.shown > 0 ? `Showing the first ${summary.shown.toLocaleString("en-US")} measurements on the map; more may exist.` : "The measurement list was cut off before any located measurement; more may exist.");
   }
   if (summary.withoutLocation > 0) parts.push(`${summary.withoutLocation.toLocaleString("en-US")} loaded measurements have no location and are not drawn.`);
   return parts.length > 0 ? parts.join(" ") : null;
@@ -186,10 +186,31 @@ export function chartNotice(groupCount: number, max = MAX_CHART_GROUPS): string 
 export type FleetEmptyState = "targets-loading" | "targets-unavailable" | "no-targets";
 
 /**
- * Why the fleet view has no target to select, or null when it has one. A run on "all flo nodes"
- * only knows its nodes once the catalogue is loaded.
+ * Why the fleet view has no target to select at all, or null when it has one. A run on "all flo nodes"
+ * only knows its nodes once the catalogue is loaded; its other targets are selectable without it.
  */
 export function fleetEmptyState(run: Pick<RunDto, "targets">, catalogue: TargetsDto | null, catalogueLoading: boolean, itemCount: number): FleetEmptyState | null {
+  if (itemCount > 0) return null;
   if (run.targets.allFloNodes && catalogue === null) return catalogueLoading ? "targets-loading" : "targets-unavailable";
-  return itemCount === 0 ? "no-targets" : null;
+  return "no-targets";
+}
+
+/** True while the flo nodes of an "all flo nodes" run cannot be listed because the catalogue is missing. */
+export function floNodesMissing(run: Pick<RunDto, "targets">, catalogue: TargetsDto | null): boolean {
+  return run.targets.allFloNodes && catalogue === null;
+}
+
+export interface FleetLoadInputs {
+  selectionKey: string;
+  groupBy: FleetGroupBy;
+  run: unknown;
+}
+
+/**
+ * Which loads a change of the view's inputs needs. The aggregate loads on every change; the (paged, up to
+ * 20 000 rows) observations only when the selection or the run changed, never for another group key.
+ */
+export function fleetLoadPlan(next: FleetLoadInputs, previous: FleetLoadInputs | undefined): { observations: boolean; aggregate: boolean } {
+  const observations = previous === undefined || next.selectionKey !== previous.selectionKey || next.run !== previous.run;
+  return { observations, aggregate: true };
 }
