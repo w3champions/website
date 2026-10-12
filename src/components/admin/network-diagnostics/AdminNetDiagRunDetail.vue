@@ -25,16 +25,9 @@
             <div><span class="text-medium-emphasis">Audience:</span> <strong>{{ audienceSummary(detail.run.audience) }}</strong></div>
             <div><span class="text-medium-emphasis">Targets:</span> <strong>{{ targetsSummary(detail.run.targets) }}</strong></div>
             <div><span class="text-medium-emphasis">Methods:</span> <strong>{{ detail.run.methods.join(", ") }}</strong></div>
-            <div>
-              <span class="text-medium-emphasis">Window:</span>
-              <strong>{{ detail.run.windowSeconds }} s</strong>
-              <span class="text-medium-emphasis">(about {{ formatDuration(detail.run.expectedDurationSeconds) }} per player)</span>
-            </div>
+            <div><span class="text-medium-emphasis">Window:</span> <strong>{{ detail.run.windowSeconds }} s</strong> <span class="text-medium-emphasis">(about {{ formatDuration(detail.run.expectedDurationSeconds) }} per player)</span></div>
             <div><span class="text-medium-emphasis">During games:</span> <strong>{{ detail.run.allowDuringGame ? "allowed" : "not allowed" }}</strong></div>
-            <div v-if="detail.run.windowStart">
-              <span class="text-medium-emphasis">Fleet window:</span>
-              <strong>{{ formatUtc(detail.run.windowStart) }} – {{ formatUtc(detail.run.windowEnd) }}</strong>
-            </div>
+            <div v-if="detail.run.windowStart"><span class="text-medium-emphasis">Fleet window:</span> <strong>{{ formatUtc(detail.run.windowStart) }} – {{ formatUtc(detail.run.windowEnd) }}</strong></div>
             <div v-if="detail.run.cancelledAt"><span class="text-medium-emphasis">Cancelled:</span> <strong>{{ formatUtc(detail.run.cancelledAt) }}</strong></div>
           </v-card-text>
         </v-card>
