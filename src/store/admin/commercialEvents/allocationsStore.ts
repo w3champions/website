@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { allocationMaybeCreatedText, describeCommercialEventsError, MAYBE_SAVED_TEXT } from "./errors";
-import { keyedRequestSequence, loadLatest, requestSequence } from "./latest";
+import { keyedRequestSequence, loadLatest, requestSequence } from "@/store/admin/latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, Allocation, AllocationCreateRequest, AllocationUpdateRequest, PeriodUsage } from "./types";

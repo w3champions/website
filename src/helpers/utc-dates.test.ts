@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { formatUtc, isoToUtcInput, localTimeHint, utcDayStartInput, utcInputToIso, utcNextHourInput } from "./dates";
+import { formatUtc, isoToUtcInput, localTimeHint, utcDayStartInput, utcInputToIso, utcNextHourInput } from "./utc-dates";
 
 test("isoToUtcInput gives the UTC minute value of a datetime-local input", () => {
   assert.equal(isoToUtcInput("2026-10-09T14:05:59.999Z"), "2026-10-09T14:05");

@@ -1,4 +1,4 @@
-import { formatUtc } from "./dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import type { AdminEvent, Allocation, AllocationState, EventGame, EventGameTeam, EventKind, EventPhase, EventStatus, InvalidReason, ManagedRole, PeriodUsage, Recurrence, RoleEntry } from "./types";
 
 /** Admin terms follow spec §14 (English only). */

@@ -76,7 +76,7 @@
 import { computed, ref } from "vue";
 import { mdiDelete } from "@mdi/js";
 import BattleTagPicker from "@/components/admin/commercial-events/BattleTagPicker.vue";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { useCommercialEventDetailStore } from "@/store/admin/commercialEvents/eventDetailStore";
 import { eventActions, personProblem } from "@/store/admin/commercialEvents/eventDraft";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";

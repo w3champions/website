@@ -247,6 +247,17 @@ export interface HopData {
   lossPercent: number;
 }
 
+/** A hop row as MtrHopTable renders it: like HopData, but loss may be unmeasured (null). */
+export type MtrHopRow = Omit<HopData, "lossPercent"> & { lossPercent: number | null };
+
+/** GeoIP facts about a hop's IP; shown by MtrHopTable when given. */
+export interface HopEnrichment {
+  asn: number | null;
+  asnOrg: string | null;
+  city: string | null;
+  country: string | null;
+}
+
 export interface PingSample {
   timestamp: string;
   min: number | null;

@@ -1,4 +1,4 @@
-import { utcInputToIso } from "./dates";
+import { utcInputToIso } from "@/helpers/utc-dates";
 
 /** C-E3: adminNote (allocation and event) is 0–2000 characters. */
 export const ADMIN_NOTE_MAX_LENGTH = 2000;

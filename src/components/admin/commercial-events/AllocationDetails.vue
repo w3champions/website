@@ -79,7 +79,7 @@
 import { computed, onMounted } from "vue";
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
 import type { AllocationRowDetails } from "@/store/admin/commercialEvents/allocationsStore";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { eventStatusColor, eventStatusLabel, eventUsedLabel, periodRangeLabel } from "@/store/admin/commercialEvents/format";
 import { eventDetailLink } from "@/store/admin/commercialEvents/links";
 
