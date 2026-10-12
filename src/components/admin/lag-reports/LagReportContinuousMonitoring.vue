@@ -179,7 +179,7 @@ import BarChart from "@/components/overall-statistics/BarChart.vue";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { buildActionLatencyPoints } from "./actionLatencyPoints";
-import { buildEventMarkers, type EventMarkerInfo, formatWallClock, playerName } from "./chartMarkers";
+import { buildEventMarkers, type EventMarkerInfo, formatWallClock, playerName, stackedMarkerLines } from "./chartMarkers";
 import { buildServerPingPoints, collectGameClockPauses, computeGameStartMs } from "./gameTimeline";
 import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle } from "@/helpers/lag-report-colors";
 
@@ -806,12 +806,17 @@ export default defineComponent({
       }
 
       if (nearest && nearestDistance <= HOVER_THRESHOLD_PX) {
+        // Markers drawn on top of each other (a reconnect and its transport switch) share one tooltip.
+        const SAME_SPOT_PX = 1;
+        const xScale = chart.scales.x;
+        const nearestX = xScale.getPixelForValue(nearest.ts);
+        const stacked = hoverMarkers.value.filter((m) => Math.abs(xScale.getPixelForValue(m.ts) - nearestX) <= SAME_SPOT_PX);
         hoveredDatasetIndex.value = null;
         hoveredMarkerId.value = nearest.id;
         hoveredEventTooltip.value = {
           left: Math.min(mouseX + 14, Math.max(8, rect.width - 260)),
           top: Math.min(mouseY + 14, Math.max(8, rect.height - 100)),
-          lines: [nearest.shortLabel, ...nearest.detailLines],
+          lines: stackedMarkerLines(stacked),
           style: nearest.style,
         };
       } else {
