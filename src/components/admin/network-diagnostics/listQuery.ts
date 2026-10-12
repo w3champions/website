@@ -31,6 +31,12 @@ export function readListQuery<K extends string>(query: Record<string, unknown>, 
   };
 }
 
+/** True when both states hold the same filter texts (compared exactly, never case-folded) and paging. */
+export function sameListQuery<K extends string>(a: ListQueryState<K>, b: ListQueryState<K>): boolean {
+  if (a.page !== b.page || a.itemsPerPage !== b.itemsPerPage) return false;
+  return (Object.keys(a.filters) as K[]).every((key) => a.filters[key] === b.filters[key]);
+}
+
 /** The route query for the current state: empty filters and default paging are left out. */
 export function buildListQuery(filters: Readonly<Record<string, string | null | undefined>>, page: number, itemsPerPage: number, defaultPageSize: number): Record<string, string> {
   const query: Record<string, string> = {};

@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { buildListQuery, nextTablePage, positiveInt, queryText, readListQuery } from "./listQuery";
+import { buildListQuery, nextTablePage, positiveInt, queryText, readListQuery, sameListQuery } from "./listQuery";
 
 test("queryText reads a string value and treats anything else as empty", () => {
   assert.equal(queryText({ a: "x" }, "a"), "x");
@@ -46,4 +46,13 @@ test("nextTablePage returns the new paging when it changed", () => {
 
 test("nextTablePage repairs non-positive options", () => {
   assert.deepEqual(nextTablePage({ page: 0, itemsPerPage: -1 }, { page: 2, itemsPerPage: 50 }, 25), { page: 1, itemsPerPage: 25 });
+});
+
+test("sameListQuery compares every filter and the paging", () => {
+  const base = { filters: { battleTag: "A#1", runId: "" }, page: 2, itemsPerPage: 25 };
+  assert.equal(sameListQuery(base, { filters: { battleTag: "A#1", runId: "" }, page: 2, itemsPerPage: 25 }), true);
+  assert.equal(sameListQuery(base, { ...base, filters: { battleTag: "a#1", runId: "" } }), false, "BattleTags are compared exactly");
+  assert.equal(sameListQuery(base, { ...base, filters: { battleTag: "A#1", runId: "r" } }), false);
+  assert.equal(sameListQuery(base, { ...base, page: 3 }), false);
+  assert.equal(sameListQuery(base, { ...base, itemsPerPage: 50 }), false);
 });

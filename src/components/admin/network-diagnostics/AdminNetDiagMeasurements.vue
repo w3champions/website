@@ -29,7 +29,7 @@
       :loading="store.listLoading"
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
       item-value="measurementId"
-      no-data-text="No measurements match."
+      :no-data-text="store.listError ? 'Could not load.' : 'No measurements match.'"
       @update:options="onTableOptions"
     >
       <template v-slot:[`item.submittedAt`]="{ item }">{{ formatUtc(item.submittedAt) }}</template>
@@ -68,7 +68,7 @@ import { formatUtc } from "@/helpers/utc-dates";
 import { useNetDiagMeasurementsStore } from "@/store/admin/networkDiagnostics/measurementsStore";
 import type { MeasurementFilters } from "@/store/admin/networkDiagnostics/types";
 import { asnText, geoText, textOrDash } from "./format";
-import { buildListQuery, type ListPaging, nextTablePage, readListQuery } from "./listQuery";
+import { buildListQuery, type ListPaging, nextTablePage, readListQuery, sameListQuery } from "./listQuery";
 
 const DEFAULT_PAGE_SIZE = 25;
 const FILTER_KEYS = ["battleTag", "runId"] as const;
@@ -153,10 +153,8 @@ watch(picked, (tag) => {
 watch(() => route.query, (query) => {
   if (route.name !== EAdminRouteName.NETDIAG_MEASUREMENTS) return;
   const next = readListQuery(query, FILTER_KEYS, DEFAULT_PAGE_SIZE);
-  if (
-    next.filters.battleTag === battleTag.value && next.filters.runId === runId.value
-    && next.page === page.value && next.itemsPerPage === itemsPerPage.value
-  ) return;
+  const current = { filters: { battleTag: battleTag.value, runId: runId.value }, page: page.value, itemsPerPage: itemsPerPage.value };
+  if (sameListQuery(next, current)) return;
   battleTag.value = next.filters.battleTag;
   runId.value = next.filters.runId;
   page.value = next.page;
