@@ -136,7 +136,7 @@ const assignmentHeaders: DataTableHeader[] = [
   { title: "Submitted", value: "submittedAt", sortable: true },
   { title: "Location", value: "location", sortable: false },
   { title: "Network", value: "network", sortable: false },
-  { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
+  { title: "Actions", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
 
 async function load(): Promise<void> {

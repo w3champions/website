@@ -89,7 +89,7 @@ const headers: DataTableHeader[] = [
   { title: "VPN", value: "vpnSuspected", sortable: false },
   { title: "Targets", value: "targetCount", sortable: false, align: "end" },
   { title: "Restarts", value: "restarts", sortable: false, align: "end" },
-  { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
+  { title: "Actions", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
 
 const initial = readListQuery(route.query, FILTER_KEYS, DEFAULT_PAGE_SIZE);

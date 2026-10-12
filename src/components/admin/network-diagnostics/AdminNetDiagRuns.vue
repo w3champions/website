@@ -110,7 +110,7 @@ const headers: DataTableHeader[] = [
   { title: "Methods", value: "methods", sortable: false },
   { title: "Progress", value: "progress", sortable: false },
   { title: "Status", value: "status", sortable: false, width: "140px" },
-  { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
+  { title: "Actions", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
 
 const FILTER_KEYS = ["createdBy", "from", "to"] as const;
