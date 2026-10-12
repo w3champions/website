@@ -192,6 +192,8 @@ test("raw expired (samples keys omitted): no series and the expiry notice; other
   assert.equal(rawSamplesNotice(expired, false), null, "nothing to say before the raw series was requested");
   assert.equal(rawSamplesNotice({ ...expired, rawExpired: false }, true), NO_RAW_SAMPLES_NOTICE);
   assert.equal(rawSamplesNotice({ ...expired, rawExpired: false, targets: [target] }, true), null);
+  assert.equal(rawSamplesNotice({ rawExpired: false }, true), NO_RAW_SAMPLES_NOTICE, "a payload without targets must not throw");
+  assert.equal(rawSamplesNotice({ targets: [{ ...target, paths: undefined as never }] }, true), NO_RAW_SAMPLES_NOTICE);
 });
 
 test("endpoints line skips missing protocols", () => {
@@ -238,6 +240,12 @@ test("system lines", () => {
   assert.equal(adapterLine({ name: "Ethernet 2", kind: "ethernet", linkSpeedMbps: 1000, mtu: 1500, gateway: "192.168.1.1", dns: null, hasDefaultRoute: true, rxBps: null, txBps: null, upSince: null, upSinceReason: null }), "Ethernet 2 · ethernet · 1000 Mbps · MTU 1500 · gateway 192.168.1.1 · default route");
   // A8: rx/tx are bits per second.
   assert.equal(adapterLine({ name: "Wi-Fi", kind: "wifi", linkSpeedMbps: null, mtu: null, gateway: null, dns: null, hasDefaultRoute: null, rxBps: 12000, txBps: 3_500_000, upSince: null, upSinceReason: null }), "Wi-Fi · wifi · rx 12.0 kbit/s · tx 3.5 Mbit/s");
+  assert.equal(
+    adapterLine({ name: "eth0", kind: "ethernet", dns: ["192.168.1.1", "1.1.1.1"], upSince: "2026-10-09T14:05:00Z", upSinceReason: "ignored when the time is known" }),
+    "eth0 · ethernet · DNS 192.168.1.1, 1.1.1.1 · up since 2026-10-09 14:05 UTC",
+  );
+  assert.equal(adapterLine({ name: "eth0", kind: "ethernet", dns: [], upSince: null, upSinceReason: "<b>not_reported</b>" }), "eth0 · ethernet · up since unknown: <b>not_reported</b>", "reason verbatim; empty DNS adds nothing");
+  assert.equal(adapterLine({ name: "eth0", kind: "ethernet", upSince: null, upSinceReason: "" }), "eth0 · ethernet");
   assert.equal(formatBitRate(999), "999 bit/s");
   assert.equal(formatBitRate(1000), "1.0 kbit/s");
   assert.equal(formatBitRate(null), "—");

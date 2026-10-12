@@ -43,6 +43,20 @@ test("a slower load of the previous measurement cannot replace the one navigated
   assert.equal(store.detailLoading, false);
 });
 
+test("a slower raw load of the previous measurement cannot replace the one navigated to", async () => {
+  const rawA = deferred<MeasurementDetailDto>();
+  service.getMeasurement.mockReturnValueOnce(rawA.promise).mockResolvedValueOnce(measurement("b"));
+  const store = useNetDiagMeasurementsStore();
+
+  const loadA = store.loadMeasurement("a", true);
+  await store.loadMeasurement("b", false);
+  rawA.resolve(measurement("a"));
+  await loadA;
+
+  assert.equal(store.detail?.measurementId, "b");
+  assert.equal(store.detailRaw, false);
+});
+
 test("opening another measurement hides the previous one while it loads", async () => {
   service.getMeasurement.mockResolvedValueOnce(measurement("a"));
   const store = useNetDiagMeasurementsStore();

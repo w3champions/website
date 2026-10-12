@@ -120,10 +120,10 @@ export const RAW_EXPIRED_NOTICE = "Raw data expired (>90 days): the RTT time-ser
 export const NO_RAW_SAMPLES_NOTICE = "No raw samples were recorded: only TCP ping, flo UDP ping and the final hop of ICMP/TCP MTR record a time-series.";
 
 /** What to say about the raw series once it was requested. Tests `rawExpired`, never the (omitted) samples (A4). */
-export function rawSamplesNotice(detail: Pick<MeasurementDetailDto, "rawExpired" | "targets">, rawLoaded: boolean): string | null {
+export function rawSamplesNotice(detail: { rawExpired?: boolean; targets?: TargetResultDto[] | null }, rawLoaded: boolean): string | null {
   if (!rawLoaded) return null;
   if (detail.rawExpired === true) return RAW_EXPIRED_NOTICE;
-  const hasSeries = detail.targets.some((target) => target.paths.some((path) => seriesSources(path).length > 0));
+  const hasSeries = (detail.targets ?? []).some((target) => (target.paths ?? []).some((path) => seriesSources(path).length > 0));
   return hasSeries ? null : NO_RAW_SAMPLES_NOTICE;
 }
 
@@ -177,16 +177,25 @@ export function formatBitRate(bps: number | null | undefined): string {
   return `${Math.round(bps)} bit/s`;
 }
 
+/** The time the adapter came up, else the server's `upSinceReason` verbatim (A8); nothing when neither is known. */
+function upSinceText(adapter: AdapterDto): string | false {
+  if (adapter.upSince) return `up since ${formatUtc(adapter.upSince)}`;
+  return adapter.upSinceReason ? `up since unknown: ${adapter.upSinceReason}` : false;
+}
+
 export function adapterLine(adapter: AdapterDto): string {
+  const dns = adapter.dns ?? [];
   return joinParts([
     adapter.name,
     adapter.kind,
     adapter.linkSpeedMbps != null && `${adapter.linkSpeedMbps} Mbps`,
     adapter.mtu != null && `MTU ${adapter.mtu}`,
     adapter.gateway != null && `gateway ${adapter.gateway}`,
+    dns.length > 0 && `DNS ${dns.join(", ")}`,
     adapter.hasDefaultRoute === true && "default route",
     adapter.rxBps != null && `rx ${formatBitRate(adapter.rxBps)}`,
     adapter.txBps != null && `tx ${formatBitRate(adapter.txBps)}`,
+    upSinceText(adapter),
   ]);
 }
 
