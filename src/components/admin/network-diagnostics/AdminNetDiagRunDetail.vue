@@ -49,7 +49,11 @@
           </v-col>
         </v-row>
 
-        <h3 class="text-subtitle-1 font-weight-bold mb-2">Assignments</h3>
+        <div class="d-flex align-center flex-wrap ga-2 mb-2">
+          <h3 class="text-subtitle-1 font-weight-bold">Assignments</h3>
+          <v-spacer />
+          <v-btn size="small" variant="text" color="primary" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS, query: { runId } }">All results of this run</v-btn>
+        </div>
         <v-data-table
           :headers="assignmentHeaders"
           :items="detail.assignments"
@@ -58,6 +62,9 @@
           item-value="measurementId"
           no-data-text="No players assigned yet."
         >
+          <template v-slot:[`item.battleTag`]="{ item }">
+            <router-link :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS, query: { battleTag: item.battleTag } }">{{ item.battleTag }}</router-link>
+          </template>
           <template v-slot:[`item.status`]="{ item }">
             <v-chip size="x-small" variant="tonal" :color="ASSIGNMENT_STATUS_COLOR[item.status]">{{ item.status }}</v-chip>
           </template>

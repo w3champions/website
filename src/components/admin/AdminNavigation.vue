@@ -72,7 +72,7 @@ import {
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
   mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline, mdiPlayCircleOutline,
-  mdiFilmstrip, mdiFolderDownloadOutline, mdiHistory, mdiAccessPointNetwork,
+  mdiFilmstrip, mdiFolderDownloadOutline, mdiHistory, mdiAccessPointNetwork, mdiClipboardListOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -509,6 +509,13 @@ export default defineComponent({
             permission: EPermission.Proxies,
             component: "admin-remote-measurements",
             routeName: EAdminRouteName.NETDIAG_RUNS,
+          },
+          {
+            title: "Measurements",
+            icon: mdiClipboardListOutline,
+            permission: EPermission.Proxies,
+            component: "admin-remote-measurements/measurements",
+            routeName: EAdminRouteName.NETDIAG_MEASUREMENTS,
           },
         ],
       },

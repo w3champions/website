@@ -3,6 +3,7 @@
     <v-card-title class="pt-3 d-flex align-center flex-wrap ga-2">
       <span>Remote Measurements</span>
       <v-spacer />
+      <v-btn variant="outlined" color="primary" :prepend-icon="mdiClipboardListOutline" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS }">Measurements by player</v-btn>
       <v-btn color="primary" :prepend-icon="mdiPlus" :to="{ name: EAdminRouteName.NETDIAG_NEW_RUN }">New measurement</v-btn>
     </v-card-title>
 
@@ -85,7 +86,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import debounce from "debounce";
-import { mdiEye, mdiPlus } from "@mdi/js";
+import { mdiClipboardListOutline, mdiEye, mdiPlus } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { EAdminRouteName } from "@/router/types";
 import { formatUtc } from "@/helpers/utc-dates";

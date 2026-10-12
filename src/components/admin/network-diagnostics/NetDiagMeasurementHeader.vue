@@ -3,6 +3,7 @@
     <v-card-text>
       <div class="d-flex flex-wrap align-center ga-3 mb-3">
         <strong class="text-h6">{{ detail.battleTag }}</strong>
+        <router-link :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS, query: { battleTag: detail.battleTag } }" class="text-body-2">All measurements of this player</router-link>
         <router-link :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: detail.runId } }" class="text-body-2">Run {{ detail.runId }}</router-link>
       </div>
       <dl class="netdiag-facts">
