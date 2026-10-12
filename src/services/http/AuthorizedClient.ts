@@ -96,6 +96,13 @@ export class AuthorizedClient {
     return await this.requestJson<T>("GET", path, token);
   }
 
+  /** As {@link getJson}, for the caller that also needs a response header (only headers the backend exposes via CORS are readable). */
+  async getJsonWithHeaders<T>(path: string, token: string): Promise<{ body: T; headers: Headers }> {
+    const response = await this.request("GET", path, token);
+    await this.assertOk(response, "GET", path);
+    return { body: await response.json() as T, headers: response.headers };
+  }
+
   /**
    * As {@link getJson}, but maps 404 to null. Use only where "absent" is a normal
    * outcome rather than a failure — every other status still throws.

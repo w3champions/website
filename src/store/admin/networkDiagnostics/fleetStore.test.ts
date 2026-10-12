@@ -21,6 +21,8 @@ function deferred<T>() {
 }
 
 const selection = (targetKey: string): FleetSelection => ({ runId: "r1", targetKey, path: "direct", method: "TcpPing" });
+/** What the service answers: the body plus whether the server cut its scan short. */
+const loaded = <T>(data: T, truncated = false) => ({ data, truncated });
 const rows = (id: string): ObservationsResult => ({ items: [{ measurementId: id } as ObservationDto], truncated: false });
 
 beforeEach(() => {
@@ -61,7 +63,7 @@ test("a new selection clears the previous dots at once; the cap is passed to the
 });
 
 test("the aggregate is requested with the single group key", async () => {
-  service.getAggregate.mockResolvedValueOnce({ groupBy: ["asn"], rows: [] });
+  service.getAggregate.mockResolvedValueOnce(loaded({ groupBy: ["asn"], rows: [] }));
   const store = useNetDiagFleetStore();
 
   await store.loadAggregate(selection("flo:12"), "asn");
@@ -80,9 +82,9 @@ test("a slower aggregate for the previous selection cannot replace the current o
 
   const loadA = store.loadAggregate(selection("flo:12"), "country");
   const loadB = store.loadAggregate(selection("flo:14"), "country");
-  second.resolve(emptyAggregate("B"));
+  second.resolve(loaded(emptyAggregate("B")));
   await loadB;
-  first.resolve(emptyAggregate("A"));
+  first.resolve(loaded(emptyAggregate("A")));
   await loadA;
 
   assert.deepEqual(store.aggregate, emptyAggregate("B"));
@@ -91,7 +93,7 @@ test("a slower aggregate for the previous selection cannot replace the current o
 
 test("the held keys name the selection the data belongs to", async () => {
   service.getObservationsUpTo.mockResolvedValueOnce(rows("a"));
-  service.getAggregate.mockResolvedValueOnce(emptyAggregate("A"));
+  service.getAggregate.mockResolvedValueOnce(loaded(emptyAggregate("A")));
   const store = useNetDiagFleetStore();
 
   await store.loadObservations(selection("flo:12"));
@@ -102,7 +104,7 @@ test("the held keys name the selection the data belongs to", async () => {
 });
 
 test("another group key clears the aggregate before the fetch resolves", async () => {
-  service.getAggregate.mockResolvedValueOnce(emptyAggregate("A"));
+  service.getAggregate.mockResolvedValueOnce(loaded(emptyAggregate("A")));
   const store = useNetDiagFleetStore();
   await store.loadAggregate(selection("flo:12"), "country");
   const pending = deferred<unknown>();
@@ -112,13 +114,13 @@ test("another group key clears the aggregate before the fetch resolves", async (
 
   assert.equal(store.aggregate, null);
   assert.equal(store.aggregateLoading, true);
-  pending.resolve(emptyAggregate("B"));
+  pending.resolve(loaded(emptyAggregate("B")));
   await load;
 });
 
 test("a refresh of the same selection keeps the held data while loading", async () => {
   service.getObservationsUpTo.mockResolvedValueOnce(rows("a"));
-  service.getAggregate.mockResolvedValueOnce(emptyAggregate("A"));
+  service.getAggregate.mockResolvedValueOnce(loaded(emptyAggregate("A")));
   const store = useNetDiagFleetStore();
   await store.loadObservations(selection("flo:12"));
   await store.loadAggregate(selection("flo:12"), "country");
@@ -133,7 +135,7 @@ test("a refresh of the same selection keeps the held data while loading", async 
   assert.deepEqual(store.aggregate, emptyAggregate("A"));
   assert.equal(store.observationsLoading, true);
   pendingObservations.resolve(rows("a2"));
-  pendingAggregate.resolve(emptyAggregate("A2"));
+  pendingAggregate.resolve(loaded(emptyAggregate("A2")));
   await Promise.all(loads);
   assert.deepEqual(store.observations.map((o) => o.measurementId), ["a2"]);
 });
@@ -157,7 +159,7 @@ test("a failed load sets the error and another selection clears it", async () =>
   assert.equal(store.observationsError, "");
   assert.equal(store.aggregateError, "");
   pendingObservations.resolve(rows("b"));
-  pendingAggregate.resolve(emptyAggregate("B"));
+  pendingAggregate.resolve(loaded(emptyAggregate("B")));
   await Promise.all(loads);
 });
 
@@ -174,4 +176,20 @@ test("clear drops the held data and a load still in flight cannot bring it back"
   assert.deepEqual(store.observations, []);
   assert.equal(store.observationsKey, "");
   assert.equal(store.observationsLoading, false);
+});
+
+test("a truncated aggregate is flagged and another selection drops the flag at once", async () => {
+  service.getAggregate.mockResolvedValueOnce(loaded(emptyAggregate("A"), true));
+  const store = useNetDiagFleetStore();
+
+  await store.loadAggregate(selection("flo:12"), "country");
+
+  assert.equal(store.aggregateTruncated, true);
+  const pending = deferred<unknown>();
+  service.getAggregate.mockReturnValueOnce(pending.promise);
+  const load = store.loadAggregate(selection("flo:14"), "country");
+  assert.equal(store.aggregateTruncated, false);
+  pending.resolve(loaded(emptyAggregate("B")));
+  await load;
+  assert.equal(store.aggregateTruncated, false);
 });

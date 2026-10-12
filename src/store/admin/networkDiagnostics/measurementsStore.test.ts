@@ -86,17 +86,38 @@ test("loading raw samples keeps the current detail visible and records the raw f
 });
 
 test("a slower list response for old filters cannot replace the newer list", async () => {
-  const first = deferred<{ items: never[]; total: number }>();
-  const second = deferred<{ items: never[]; total: number }>();
+  const first = deferred<unknown>();
+  const second = deferred<unknown>();
   service.getMeasurements.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
   const store = useNetDiagMeasurementsStore();
 
   const loadOld = store.loadMeasurements({ battleTag: "Old#1234" }, 0, 25);
   const loadNew = store.loadMeasurements({ battleTag: "New#1234" }, 0, 25);
-  second.resolve({ items: [], total: 7 });
+  second.resolve({ data: { items: [], total: 7 }, truncated: false });
   await loadNew;
-  first.resolve({ items: [], total: 99 });
+  first.resolve({ data: { items: [], total: 99 }, truncated: false });
   await loadOld;
 
   assert.equal(store.total, 7);
+});
+
+test("a truncated list is flagged; the next complete list and a failure clear the flag", async () => {
+  service.getMeasurements.mockResolvedValueOnce({ data: { items: [], total: 3 }, truncated: true });
+  const store = useNetDiagMeasurementsStore();
+
+  await store.loadMeasurements({ targetKey: "flo:1" }, 0, 25);
+  assert.equal(store.listTruncated, true);
+  assert.equal(store.total, 3);
+
+  service.getMeasurements.mockResolvedValueOnce({ data: { items: [], total: 3 }, truncated: false });
+  await store.loadMeasurements({ targetKey: "flo:1" }, 0, 25);
+  assert.equal(store.listTruncated, false);
+
+  service.getMeasurements.mockResolvedValueOnce({ data: { items: [], total: 3 }, truncated: true });
+  await store.loadMeasurements({}, 0, 25);
+  service.getMeasurements.mockRejectedValueOnce(new Error("boom"));
+  const logged = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  await store.loadMeasurements({}, 0, 25);
+  logged.mockRestore();
+  assert.equal(store.listTruncated, false);
 });

@@ -12,6 +12,8 @@ const detailSequence = requestSequence();
 interface NetDiagMeasurementsState {
   measurements: MeasurementSummaryDto[];
   total: number;
+  /** True when the server read only its newest observations to build the list. */
+  listTruncated: boolean;
   listLoading: boolean;
   listError: string;
   detail: MeasurementDetailDto | null;
@@ -25,6 +27,7 @@ export const useNetDiagMeasurementsStore = defineStore("netDiagMeasurements", {
   state: (): NetDiagMeasurementsState => ({
     measurements: [],
     total: 0,
+    listTruncated: false,
     listLoading: false,
     listError: "",
     detail: null,
@@ -43,13 +46,15 @@ export const useNetDiagMeasurementsStore = defineStore("netDiagMeasurements", {
         },
         fetch: () => networkDiagnosticsService().getMeasurements(token, filters, page, pageSize),
         apply: (result) => {
-          this.measurements = result.items;
-          this.total = result.total;
+          this.measurements = result.data.items;
+          this.total = result.data.total;
+          this.listTruncated = result.truncated;
           this.listError = "";
         },
         fail: (e) => {
           this.measurements = [];
           this.total = 0;
+          this.listTruncated = false;
           this.listError = describeNetDiagError(e);
         },
       });

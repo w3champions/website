@@ -17,12 +17,14 @@ interface NetDiagFleetState {
   /** The selection the held aggregate belongs to; views compare it with theirs before showing it. */
   aggregateKey: string;
   aggregate: AggregateResponseDto | null;
+  /** True when the server read only its newest observations for the held aggregate. */
+  aggregateTruncated: boolean;
   aggregateLoading: boolean;
   aggregateError: string;
   /** The selection the held observations belong to. */
   observationsKey: string;
   observations: ObservationDto[];
-  /** True when the cap was hit or the server paged out early: only the first observations are held. */
+  /** True when the cap was hit, the server paged out early or cut its scan short: only the first observations are held. */
   observationsTruncated: boolean;
   observationsLoading: boolean;
   observationsError: string;
@@ -32,6 +34,7 @@ export const useNetDiagFleetStore = defineStore("netDiagFleet", {
   state: (): NetDiagFleetState => ({
     aggregateKey: "",
     aggregate: null,
+    aggregateTruncated: false,
     aggregateLoading: false,
     aggregateError: "",
     observationsKey: "",
@@ -55,6 +58,7 @@ export const useNetDiagFleetStore = defineStore("netDiagFleet", {
       if (this.aggregateKey !== key) {
         this.aggregateKey = key;
         this.aggregate = null;
+        this.aggregateTruncated = false;
         this.aggregateError = "";
       }
       const token = useOauthStore().token;
@@ -64,8 +68,9 @@ export const useNetDiagFleetStore = defineStore("netDiagFleet", {
           this.aggregateLoading = loading;
         },
         fetch: () => networkDiagnosticsService().getAggregate(token, [groupBy], fleetFilters(selection)),
-        apply: (aggregate) => {
-          this.aggregate = aggregate;
+        apply: (result) => {
+          this.aggregate = result.data;
+          this.aggregateTruncated = result.truncated;
           this.aggregateError = "";
         },
         fail: (e) => {

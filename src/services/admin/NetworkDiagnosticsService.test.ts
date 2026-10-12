@@ -17,7 +17,7 @@ function urlOf(input: RequestInfo | URL): string {
 }
 
 /** Answers the n-th request with responses[n] (the last one repeats). */
-function serviceWith(...responses: Array<{ status: number; body?: unknown }>) {
+function serviceWith(...responses: Array<{ status: number; body?: unknown; truncated?: boolean }>) {
   const calls: Call[] = [];
   const impl: typeof globalThis.fetch = (input, init) => {
     const response = responses[Math.min(calls.length, responses.length - 1)];
@@ -27,7 +27,9 @@ function serviceWith(...responses: Array<{ status: number; body?: unknown }>) {
       body: typeof init?.body === "string" ? JSON.parse(init.body) as unknown : undefined,
     });
     const body = response.body === undefined ? null : JSON.stringify(response.body);
-    return Promise.resolve(new Response(body, { status: response.status, headers: body === null ? undefined : { "Content-Type": "application/json" } }));
+    const headers: Record<string, string> = body === null ? {} : { "Content-Type": "application/json" };
+    if (response.truncated) headers["X-NetDiag-Truncated"] = "true";
+    return Promise.resolve(new Response(body, { status: response.status, headers }));
   };
   return { calls, service: new NetworkDiagnosticsService({ endpoint: "https://api.example.com", fetch: impl }) };
 }
@@ -191,4 +193,39 @@ test("getObservationsUpTo stops on an empty page that still carries a cursor, re
   assert.deepEqual(result.items.map((o) => o.measurementId), ["a"]);
   assert.equal(result.truncated, true);
   assert.equal(calls.length, 2, "no third request: the empty page ends the loop");
+});
+
+test("getAggregate reports the truncation header beside the body", async () => {
+  const body = { groupBy: ["country"], rows: [] };
+  const { service } = serviceWith({ status: 200, body, truncated: true }, { status: 200, body });
+
+  assert.deepEqual(await service.getAggregate("tok", ["country"], {}), { data: body, truncated: true });
+  assert.deepEqual(await service.getAggregate("tok", ["country"], {}), { data: body, truncated: false });
+});
+
+test("getMeasurements reports the truncation header beside the page", async () => {
+  const body = { items: [], total: 0 };
+  const { service } = serviceWith({ status: 200, body, truncated: true }, { status: 200, body });
+
+  assert.deepEqual(await service.getMeasurements("tok", {}, 0, 25), { data: body, truncated: true });
+  assert.deepEqual(await service.getMeasurements("tok", {}, 0, 25), { data: body, truncated: false });
+});
+
+test("getObservations reports the truncation header beside the page", async () => {
+  const body = { items: [], nextCursor: null };
+  const { service } = serviceWith({ status: 200, body, truncated: true });
+
+  assert.deepEqual(await service.getObservations("tok", {}, null, 10), { data: body, truncated: true });
+});
+
+test("getObservationsUpTo is truncated when any page carries the truncation header, even after the cursor ran out", async () => {
+  const { service } = serviceWith(
+    { status: 200, body: { items: [observation("a")], nextCursor: "c1" }, truncated: true },
+    { status: 200, body: { items: [observation("b")], nextCursor: null } },
+  );
+
+  const result = await service.getObservationsUpTo("tok", {}, 10);
+
+  assert.deepEqual(result.items.map((o) => o.measurementId), ["a", "b"]);
+  assert.equal(result.truncated, true);
 });

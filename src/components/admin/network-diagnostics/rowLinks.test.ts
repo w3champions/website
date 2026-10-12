@@ -45,20 +45,23 @@ function linkTo(wrapper: VueWrapper, text: string): unknown {
 
 it("measurements: the date cell opens the measurement and a long network name is cut with its full text in a title", async () => {
   service.getMeasurements.mockResolvedValue({
-    total: 1,
-    items: [{
-      measurementId: "m1",
-      runId: "r1abcdefgh",
-      battleTag: "Testuser#1234",
-      submittedAt: "2026-10-12T19:30:46.736Z",
-      clientIp: "8.8.8.8",
-      clientGeo: { country: "DE", city: "Falkenstein", lat: null, lon: null, asn: 24940, asnOrg: LONG_ASN_ORG, geoDbBuild: null },
-      os: "windows",
-      primaryAdapterType: "ethernet",
-      vpnSuspected: null,
-      targetCount: 5,
-      restarts: 0,
-    }],
+    truncated: false,
+    data: {
+      total: 1,
+      items: [{
+        measurementId: "m1",
+        runId: "r1abcdefgh",
+        battleTag: "Testuser#1234",
+        submittedAt: "2026-10-12T19:30:46.736Z",
+        clientIp: "8.8.8.8",
+        clientGeo: { country: "DE", city: "Falkenstein", lat: null, lon: null, asn: 24940, asnOrg: LONG_ASN_ORG, geoDbBuild: null },
+        os: "windows",
+        primaryAdapterType: "ethernet",
+        vpnSuspected: null,
+        targetCount: 5,
+        restarts: 0,
+      }],
+    },
   });
   const wrapper = mountPage(AdminNetDiagMeasurements);
   await flushPromises();

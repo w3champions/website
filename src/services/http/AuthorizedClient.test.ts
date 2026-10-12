@@ -13,7 +13,7 @@ function urlOf(input: RequestInfo | URL): string {
   return input.url;
 }
 
-function recordingFetch(responses: Array<{ status: number; body?: unknown }>) {
+function recordingFetch(responses: Array<{ status: number; body?: unknown; headers?: Record<string, string> }>) {
   const calls: Recorded[] = [];
   const queue = [...responses];
   const impl: typeof globalThis.fetch = (input, init) => {
@@ -23,14 +23,14 @@ function recordingFetch(responses: Array<{ status: number; body?: unknown }>) {
     return Promise.resolve(
       new Response(body, {
         status: next.status,
-        headers: body === null ? undefined : { "Content-Type": "application/json" },
+        headers: body === null ? next.headers : { "Content-Type": "application/json", ...next.headers },
       }),
     );
   };
   return { calls, impl };
 }
 
-function clientWith(responses: Array<{ status: number; body?: unknown }>) {
+function clientWith(responses: Array<{ status: number; body?: unknown; headers?: Record<string, string> }>) {
   const { calls, impl } = recordingFetch(responses);
   return { calls, client: new AuthorizedClient({ endpoint: "https://api.example.com/", fetch: impl }) };
 }
@@ -156,4 +156,23 @@ test("keeps the full error body and truncates only the preview", async () => {
   assert.ok(error instanceof HttpError);
   assert.deepEqual(JSON.parse(error.responseBody), body);
   assert.equal(error.bodyPreview.length, 500);
+});
+
+test("getJsonWithHeaders returns the parsed body together with the response headers", async () => {
+  const { client, calls } = clientWith([{ status: 200, body: { rows: 1 }, headers: { "X-NetDiag-Truncated": "true" } }]);
+
+  const result = await client.getJsonWithHeaders<{ rows: number }>("api/thing", "tok");
+
+  assert.deepEqual(result.body, { rows: 1 });
+  assert.equal(result.headers.get("x-netdiag-truncated"), "true");
+  assert.equal(calls[0].init.method, "GET");
+});
+
+test("getJsonWithHeaders throws HttpError on a non-OK status", async () => {
+  const { client } = clientWith([{ status: 503, body: { error: "query_timeout" } }]);
+
+  const error = await client.getJsonWithHeaders("api/thing", "tok").then(() => null, (e: unknown) => e);
+
+  assert.ok(error instanceof HttpError);
+  assert.equal(error.status, 503);
 });
