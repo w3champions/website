@@ -61,3 +61,9 @@ test("unknown targets and flo nodes are listed like unknown players", () => {
   assert.equal(describeNetDiagError(httpError(400, { error: "unknown_targets", targetKeys: [] })), "Rejected: unknown_targets");
   assert.equal(describeNetDiagError(httpError(400, { error: "unknown_flo_nodes" })), "Rejected: unknown_flo_nodes");
 });
+
+test("a 503 query timeout asks for narrower filters; any other 503 keeps the generic text", () => {
+  // Real body of website-backend 96a5422b when a query exceeds its time limit.
+  assert.equal(describeNetDiagError(httpError(503, { error: "query_timeout" })), "The query took too long. Narrow the filters or the time range and try again.");
+  assert.equal(describeNetDiagError(httpError(503, "")), "Request failed (HTTP 503).");
+});

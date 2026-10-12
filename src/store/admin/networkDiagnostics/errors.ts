@@ -19,6 +19,8 @@ function parseBody(text: string): ErrorBody | null {
 const PERMISSION_MISSING = "Permission missing.";
 const PROXIES_MISSING = "You need the Proxies permission for network diagnostics.";
 const ALREADY_CANCELLED = "already_cancelled";
+/** 503 body of a read that ran into the backend's query time limit. */
+const QUERY_TIMEOUT = "query_timeout";
 
 /** The 400 bodies that name the rejected values: shown as plain text, the way the backend returned them. */
 const UNKNOWN_LISTS: ReadonlyArray<{ code: string; field: "battleTags" | "targetKeys" | "floNodeIds"; label: string; numeric: boolean }> = [
@@ -33,6 +35,10 @@ function unknownListMessage(code: string, body: ErrorBody | null): string | null
   if (entry === undefined || !Array.isArray(raw)) return null;
   const values = raw.filter((value): value is string | number => (entry.numeric ? typeof value === "number" : typeof value === "string"));
   return values.length > 0 ? `${entry.label}: ${values.join(", ")}` : null;
+}
+
+function genericMessage(status: number): string {
+  return `Request failed (HTTP ${status}).`;
 }
 
 /** Admin-facing text for a failed network diagnostics call (C6 errors are `{ "error": "…" }`). */
@@ -56,7 +62,9 @@ export function describeNetDiagError(e: unknown): string {
       return code !== "" && code !== ALREADY_CANCELLED ? `Conflict: ${code}` : "This run is already cancelled.";
     case 502:
       return "The matchmaking service could not be reached. Try again.";
+    case 503:
+      return code === QUERY_TIMEOUT ? "The query took too long. Narrow the filters or the time range and try again." : genericMessage(e.status);
     default:
-      return `Request failed (HTTP ${e.status}).`;
+      return genericMessage(e.status);
   }
 }
