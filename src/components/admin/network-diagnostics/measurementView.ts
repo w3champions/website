@@ -150,7 +150,7 @@ function seriesSources(path: PathResultDto): SeriesSource[] {
  */
 export function rttSeries(target: TargetResultDto, palette: readonly string[]): RttSeries[] {
   return orderedPaths(target).flatMap(seriesSources).map((source, index) => ({
-    label: `${source.path.path || DASH}${source.path.routeLabel ? ` (${source.path.routeLabel})` : ""} · ${source.label}`,
+    label: `${pathLabel(source.path.path)}${source.path.routeLabel ? ` (${source.path.routeLabel})` : ""} · ${source.label}`,
     color: palette[index % palette.length],
     dash: source.path.path === "proxied" ? [...PROXIED_DASH] : [],
     points: source.samples.map(([offsetMs, rttMs]) => ({ x: offsetMs / MS_PER_SECOND, y: rttMs })),

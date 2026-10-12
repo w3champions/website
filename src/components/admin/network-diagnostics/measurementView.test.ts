@@ -155,7 +155,7 @@ test("direct comes before proxied", () => {
 
 test("RTT series overlay, per path, the MTR final hop and the ping samples; lost samples are gaps; proxied is dashed", () => {
   const series = rttSeries(target, ["#111111", "#222222", "#333333"]);
-  assert.deepEqual(series.map((s) => s.label), ["direct · ICMP MTR (final hop 1.2.3.4)", "direct · TCP ping", "proxied (US East 4 -> US East 3) · Flo UDP ping (flo nodes only)"]);
+  assert.deepEqual(series.map((s) => s.label), ["Direct · ICMP MTR (final hop 1.2.3.4)", "Direct · TCP ping", "Proxied (US East 4 -> US East 3) · Flo UDP ping (flo nodes only)"]);
   assert.deepEqual(series[0].points, [{ x: 0, y: 14.8 }, { x: 6, y: null }]);
   assert.deepEqual(series[1].points, [{ x: 0, y: 15.2 }, { x: 1, y: 16 }]);
   assert.deepEqual(series[2].points, [{ x: 0, y: 20.5 }, { x: 1, y: null }]);
@@ -393,6 +393,8 @@ test("a null path sorts last, reads as a dash in the chart legend and is not dra
   const target: TargetResultDto = { targetKey: "gateway", label: null, paths: [{ path: null, probes: [sample] }, { path: "direct", probes: [sample] }] };
   assert.deepEqual(orderedPaths(target).map((p) => p.path), ["direct", null]);
   const series = rttSeries(target, ["#111111", "#222222"]);
-  assert.deepEqual(series.map((s) => s.label), ["direct · TCP ping", "— · TCP ping"]);
+  assert.deepEqual(series.map((s) => s.label), ["Direct · TCP ping", "— · TCP ping"]);
   assert.deepEqual(series[1].dash, []);
+  const unknown = rttSeries({ ...target, paths: [{ path: "relay", probes: [sample] }] }, ["#111111"]);
+  assert.deepEqual(unknown.map((s) => s.label), ["relay · TCP ping"]);
 });
