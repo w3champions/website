@@ -41,6 +41,13 @@ test("hop info adds ASN, network and location columns, with dashes for unknown h
   assert.deepEqual(cellTexts(wrapper, 1).slice(1, 5), ["*", "—", "—", "—"]);
 });
 
+test("a hop without measured loss shows a dash and is never flagged degraded", () => {
+  const wrapper = render({ hops: [{ hopNumber: 1, host: "10.0.0.1", avgRttMs: null, minRttMs: null, maxRttMs: null, stddevMs: null, lossPercent: null }] });
+  assert.equal(cellTexts(wrapper, 0)[5], "—");
+  assert.equal(wrapper.find("tbody tr").classes().includes("text-error"), false);
+  assert.equal(wrapper.find("tbody td:nth-child(6)").classes().includes("text-warning"), false);
+});
+
 test("the empty message spans every column", () => {
   const plain = render({ hops: [] });
   assert.equal(plain.find("tbody td").attributes("colspan"), "6");

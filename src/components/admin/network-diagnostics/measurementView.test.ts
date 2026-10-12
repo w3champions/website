@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import type { FloSnapshotRow, HopDto, MeasurementDetailDto, ProbeDto, StatsDto, TargetResultDto, VpnDto } from "@/store/admin/networkDiagnostics/types";
+import type { FloSnapshotRow, HopDto, MeasurementDetailDto, ProbeDto, StatsDto, TargetResultDto } from "@/store/admin/networkDiagnostics/types";
 import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hopEnrichment, hopRows, measurementFacts, memoryLine, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, vpnLine, wifiLine } from "./measurementView";
 
 const stats = (overrides: Partial<StatsDto> = {}): StatsDto => ({
@@ -244,14 +244,25 @@ test("system lines", () => {
   assert.equal(wifiLine({ rssiDbm: -55, noiseDbm: -90, channel: 36, band: "5GHz", txRateMbps: 573, reason: null }), "RSSI -55 dBm · noise -90 dBm · channel 36 (5GHz) · 573 Mbps");
   assert.equal(wifiLine({ rssiDbm: null, noiseDbm: null, channel: null, band: null, txRateMbps: null, reason: "not_on_wifi" }), "unavailable: not_on_wifi");
   assert.equal(wifiLine(null), "—");
+  assert.equal(wifiLine({ rssiDbm: -80, channel: 6, reason: "stale_scan" }), "RSSI -80 dBm · channel 6 (reason: stale_scan)", "values and reason are not exclusive");
+  assert.equal(antivirusLine({ thirdParty: ["Kaspersky"], reason: "partial" }), "Kaspersky (reason: partial)");
   assert.equal(vpnLine({ suspected: false, evidence: [] }), "not detected");
   assert.equal(antivirusLine({ thirdParty: [], reason: null }), "none detected");
   assert.equal(antivirusLine({ thirdParty: [], reason: "wmi_denied" }), "unknown: wmi_denied");
 });
 
+/** Walks returned values: no string may mention undefined/NaN, no number may be NaN, no member may be undefined. */
+function assertNoUndefinedOrNaN(value: unknown, path = "$"): void {
+  assert.notEqual(value, undefined, path);
+  if (typeof value === "number") assert.ok(!Number.isNaN(value), `${path} is NaN`);
+  else if (typeof value === "string") assert.ok(!/undefined|NaN/.test(value), `${path}: ${value}`);
+  else if (Array.isArray(value)) value.forEach((item, i) => assertNoUndefinedOrNaN(item, `${path}[${i}]`));
+  else if (value !== null && typeof value === "object") Object.entries(value).forEach(([key, item]) => assertNoUndefinedOrNaN(item, `${path}.${key}`));
+}
+
 test("absent keys (omitted, not null) render dashes and empty results through every function", () => {
   // The backend may omit null members; none of these objects carries the optional keys.
-  const hop = { ttl: 1 } as HopDto;
+  const hop = { ttl: 1 };
   const probe = { method: "IcmpMtr", outcome: "ok", hops: [hop] } as ProbeDto;
   const bare: MeasurementDetailDto = {
     measurementId: "m-2",
@@ -272,7 +283,7 @@ test("absent keys (omitted, not null) render dashes and empty results through ev
     ipInfo: {},
     targets: [{ targetKey: "gateway", label: "Default gateway", paths: [{ path: "direct", endpoints: {}, probes: [probe, { method: "TcpPing", outcome: "ok" }] }] }],
   };
-  const everything = JSON.stringify([
+  const everything = [
     measurementFacts(bare),
     hopRows([hop]),
     hopEnrichment([hop, { ttl: 2, ip: "1.1.1.1" }], { "1.1.1.1": {} }),
@@ -283,13 +294,13 @@ test("absent keys (omitted, not null) render dashes and empty results through ev
     wifiLine({}),
     cpuLine({}),
     memoryLine({}),
-    vpnLine({ suspected: true } as VpnDto),
+    vpnLine({ suspected: true }),
     antivirusLine({ thirdParty: [] }),
-  ].flat());
-  assert.ok(!/undefined|NaN/.test(everything), everything);
+  ];
+  assertNoUndefinedOrNaN(everything);
   for (const fact of measurementFacts(bare)) assert.ok(!/undefined|null|NaN/.test(fact.value), `${fact.label}: ${fact.value}`);
   assert.equal(new Map(measurementFacts(bare).map((f) => [f.label, f.value])).get("OS"), "—");
-  assert.deepEqual(hopRows([hop]), [{ hopNumber: 1, host: null, avgRttMs: null, minRttMs: null, maxRttMs: null, stddevMs: null, lossPercent: 0 }]);
+  assert.deepEqual(hopRows([hop]), [{ hopNumber: 1, host: null, avgRttMs: null, minRttMs: null, maxRttMs: null, stddevMs: null, lossPercent: null }]);
   assert.deepEqual(hopEnrichment([hop, { ttl: 2, ip: "1.1.1.1" }], { "1.1.1.1": {} }), [null, { asn: null, asnOrg: null, city: null, country: null }]);
   assert.equal(probeStatsLine(probe), "—");
   assert.equal(endpointsLine({}), "—");
@@ -303,6 +314,6 @@ test("absent keys (omitted, not null) render dashes and empty results through ev
   assert.equal(wifiLine({}), "—");
   assert.equal(cpuLine({}), "—");
   assert.equal(memoryLine({}), "—");
-  assert.equal(vpnLine({ suspected: true } as VpnDto), "suspected: no detail");
+  assert.equal(vpnLine({ suspected: true }), "suspected: no detail");
   assert.equal(antivirusLine({ thirdParty: [] }), "none detected");
 });

@@ -1,6 +1,6 @@
 import type { ChartPoint } from "@/components/admin/lag-reports/relaySeries";
 import { formatUtc } from "@/helpers/utc-dates";
-import type { HopData, HopEnrichment } from "@/store/admin/lagReports/types";
+import type { HopEnrichment, MtrHopRow } from "@/store/admin/lagReports/types";
 import type { AdapterDto, AntivirusDto, CpuDto, FloSnapshotRow, HopDto, IpInfoDto, MeasurementDetailDto, MemoryDto, NetDiagMethod, NetDiagPath, OsInfoDto, PathEndpoints, PathResultDto, ProbeDto, ProbeOutcome, SamplePoint, TargetResultDto, VpnDto, WifiDto } from "@/store/admin/networkDiagnostics/types";
 import { asnText, DASH, formatDuration, formatMs, formatPercent, formatShare, geoText, METHOD_LABELS } from "./format";
 
@@ -22,7 +22,7 @@ function joinParts(parts: Array<string | null | undefined | false>): string {
 }
 
 /** C6 hops → the shape MtrHopTable already renders for lag reports. */
-export function hopRows(hops: readonly HopDto[]): HopData[] {
+export function hopRows(hops: readonly HopDto[]): MtrHopRow[] {
   return hops.map((hop) => ({
     hopNumber: hop.ttl,
     host: hop.ip ?? null,
@@ -30,8 +30,7 @@ export function hopRows(hops: readonly HopDto[]): HopData[] {
     minRttMs: hop.stats?.minMs ?? null,
     maxRttMs: hop.stats?.maxMs ?? null,
     stddevMs: hop.stats?.stddevMs ?? null,
-    // HopData needs a number; a hop without stats has no measured loss to show.
-    lossPercent: hop.stats?.lossPct ?? 0,
+    lossPercent: hop.stats?.lossPct ?? null,
   }));
 }
 
@@ -199,15 +198,21 @@ export function osText(detail: { os?: string | null; osInfo?: OsInfoDto | null }
   return family ? family : DASH;
 }
 
+/** Measured values and the server's `reason` sibling are not exclusive: show both, the reason verbatim. */
+function withReason(values: string, reason: string | null | undefined, noValuesPrefix: string): string {
+  if (!reason) return values;
+  return values === DASH ? `${noValuesPrefix}: ${reason}` : `${values} (reason: ${reason})`;
+}
+
 export function wifiLine(wifi: WifiDto | null | undefined): string {
   if (wifi == null) return DASH;
-  if (wifi.reason) return `unavailable: ${wifi.reason}`;
-  return joinParts([
+  const values = joinParts([
     wifi.rssiDbm != null && `RSSI ${wifi.rssiDbm} dBm`,
     wifi.noiseDbm != null && `noise ${wifi.noiseDbm} dBm`,
     wifi.channel != null && `channel ${wifi.channel}${wifi.band ? ` (${wifi.band})` : ""}`,
     wifi.txRateMbps != null && `${wifi.txRateMbps} Mbps`,
   ]);
+  return withReason(values, wifi.reason, "unavailable");
 }
 
 export function cpuLine(cpu: CpuDto | null | undefined): string {
@@ -227,9 +232,9 @@ export function vpnLine(vpn: VpnDto | null | undefined): string {
 
 export function antivirusLine(antivirus: AntivirusDto | null | undefined): string {
   if (antivirus == null) return DASH;
-  if (antivirus.reason) return `unknown: ${antivirus.reason}`;
   const apps = antivirus.thirdParty ?? [];
-  return apps.length > 0 ? apps.join(", ") : "none detected";
+  if (apps.length === 0 && antivirus.reason) return `unknown: ${antivirus.reason}`;
+  return withReason(apps.length > 0 ? apps.join(", ") : "none detected", antivirus.reason, "reason");
 }
 
 export interface Fact {

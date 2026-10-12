@@ -285,11 +285,11 @@ export interface MemoryDto {
 
 export interface VpnDto {
   suspected: boolean;
-  evidence: string[];
+  evidence?: string[] | null;
 }
 
 export interface AntivirusDto {
-  thirdParty: string[];
+  thirdParty?: string[] | null;
   reason?: string | null;
 }
 
