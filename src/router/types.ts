@@ -64,6 +64,7 @@ export enum EMainRouteName {
   OVERALL_STATISTICS = "OverallStatistics",
   ADMIN = "Admin",
   REWARDS = "Rewards",
+  REPLAYS = "Replays",
   PATREON_CALLBACK = "PatreonCallback",
   TOURNAMENTS = "Tournaments",
   TOURNAMENT = "Tournament",

@@ -88,6 +88,20 @@
             </template>
             <v-list-item-title>{{ $t("views_app.viewprofile") }}</v-list-item-title>
           </v-list-item>
+          <!-- Not shown as active on the Replays page: it opens one tab of it. -->
+          <v-list-item
+            v-if="replayPurchases.count > 0"
+            :to="{ name: EMainRouteName.REPLAYS, query: { tab: 'purchases' } }"
+            :active="false"
+          >
+            <template v-slot:prepend>
+              <v-icon>{{ mdiFilmstripBoxMultiple }}</v-icon>
+            </template>
+            <v-list-item-title>{{ $t("views_app.replaypurchases") }}</v-list-item-title>
+            <template v-slot:append>
+              <v-chip size="x-small" variant="tonal" class="ml-3">{{ replayPurchases.count }}</v-chip>
+            </template>
+          </v-list-item>
           <v-list-item @click="logout">
             <template v-slot:prepend>
               <v-icon>{{ mdiLogout }}</v-icon>
@@ -157,12 +171,14 @@
 </template>
 
 <script lang="ts">
-import { onBeforeMount, onBeforeUnmount, onMounted, defineComponent, computed, ref } from "vue";
+import { onBeforeMount, onBeforeUnmount, onMounted, defineComponent, computed, ref, watch } from "vue";
 import { getProfileUrl } from "./helpers/url-functions";
 import SignInDialog from "@/components/common/SignInDialog.vue";
 import BrandLogo from "@/components/common/BrandLogo.vue";
 import GlobalSearch from "@/components/common/GlobalSearch.vue";
 import { useOauthStore } from "@/store/oauth/store";
+import { useReplayPurchasesStore } from "@/store/replayPurchases/store";
+import { useReplayStoreAccess } from "@/composables/useReplayStoreAccess";
 import { useRootStateStore } from "@/store/rootState/store";
 import { useRoute, useRouter } from "vue-router";
 import { getActiveLanguages, useSiteLocale } from "@/composables/useSiteLocale";
@@ -182,6 +198,7 @@ import {
   mdiClose,
   mdiCog,
   mdiControllerClassic,
+  mdiFilmstripBoxMultiple,
   mdiHelpCircleOutline,
   mdiInvertColors,
   mdiLogout,
@@ -242,6 +259,11 @@ export default defineComponent({
         to: EMainRouteName.OVERALL_STATISTICS,
       },
       {
+        title: "replays",
+        icon: mdiFilmstripBoxMultiple,
+        to: EMainRouteName.REPLAYS,
+      },
+      {
         title: "admin",
         icon: mdiAccountTie,
         to: EMainRouteName.ADMIN,
@@ -253,6 +275,11 @@ export default defineComponent({
         class: "d-none d-md-flex",
       },
     ];
+
+    // The account menu links to the replay purchases when the user has some.
+    const replayPurchases = useReplayPurchasesStore();
+    const { hasAccess: replayStoreOpen } = useReplayStoreAccess();
+    watch([authCode, replayStoreOpen], ([token, open]) => replayPurchases.load(open ? token : ""), { immediate: true });
 
     function loginOrGoToProfile(): void {
       if (authCode.value) {
@@ -331,6 +358,9 @@ export default defineComponent({
       if (item.title == "admin" && !isAdmin.get()) {
         return false;
       }
+      if (item.title == "replays" && !replayStoreOpen.value) {
+        return false;
+      }
       return true;
     }
 
@@ -391,7 +421,9 @@ export default defineComponent({
       mdiInvertColors,
       mdiLogout,
       mdiTreasureChest,
+      mdiFilmstripBoxMultiple,
       oauthStore,
+      replayPurchases,
       savedLanguage,
       setNavigationDrawerOpen,
       navigationDrawerOpen,

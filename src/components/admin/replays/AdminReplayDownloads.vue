@@ -21,10 +21,12 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import ReplayPastDownloads from "@/components/admin/replays/ReplayPastDownloads.vue";
+import ReplayPastDownloads from "@/components/replays/ReplayPastDownloads.vue";
 import { useReplayExportStore } from "@/store/admin/replayExport/store";
 
 const store = useReplayExportStore();
+// Before the list loads: the admin endpoints, also after a visit to the replay store.
+store.setMode("admin");
 
 // The store is shared with the Replay Export page: an error from there does not belong here.
 onMounted(() => (store.error = ""));

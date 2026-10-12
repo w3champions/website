@@ -3,25 +3,50 @@ import { AuthorizedClient } from "@/services/http/AuthorizedClient";
 import { EGameMode } from "@/store/types";
 import { ReplayExportFilter, ReplayExportMatch, ReplayExportOptions, ReplayExportPreview, ReplayExportSummary, ReplayExportTicket } from "@/store/admin/replayExport/types";
 
-const BASE = "api/admin/replay-export";
-
 /** Errors are HttpError; replayExportError (store/admin/replayExport/errors.ts) gives their text. */
 const client = new AuthorizedClient({ endpoint: API_URL });
 
-export default class ReplayExportService {
-  public static async getOptions(token: string, gameMode: EGameMode): Promise<ReplayExportOptions> {
-    return await client.getJson(`${BASE}/options?gameMode=${gameMode}`, token);
+/**
+ * The search, the history and the download. The admin export (`api/admin/replay-export`, history
+ * `exports`) and the replay store (`api/replay-store`, history `purchases`) have the same endpoints for them.
+ */
+export class ReplayExportApi {
+  constructor(readonly base: string, private readonly historyPath: string) {}
+
+  /** The store answers also without sign-in: then `token` is empty. */
+  async getOptions(token: string, gameMode: EGameMode): Promise<ReplayExportOptions> {
+    return await client.getJson(`${this.base}/options?gameMode=${gameMode}`, token);
   }
 
-  public static async preview(token: string, filter: ReplayExportFilter): Promise<ReplayExportPreview> {
-    return await client.requestJson("POST", `${BASE}/preview`, token, filter);
+  async preview(token: string, filter: ReplayExportFilter): Promise<ReplayExportPreview> {
+    return await client.requestJson("POST", `${this.base}/preview`, token, filter);
   }
 
   /** The games of one table page, in the order of `matchIds` (at most 250). */
-  public static async matches(token: string, matchIds: string[]): Promise<ReplayExportMatch[]> {
-    return await client.requestJson("POST", `${BASE}/matches`, token, { matchIds });
+  async matches(token: string, matchIds: string[]): Promise<ReplayExportMatch[]> {
+    return await client.requestJson("POST", `${this.base}/matches`, token, { matchIds });
   }
 
+  /** The past downloads (admin) or the purchases (store) of the signed-in user. */
+  async getHistory(token: string): Promise<ReplayExportSummary[]> {
+    return await client.getJson(`${this.base}/${this.historyPath}`, token);
+  }
+
+  /** A download of an entry of the history: the server builds the same ZIP again, at no cost. */
+  async createHistoryTicket(token: string, exportId: string): Promise<ReplayExportTicket> {
+    return await client.requestJson("POST", `${this.base}/${this.historyPath}/${encodeURIComponent(exportId)}/tickets`, token);
+  }
+
+  /** A plain GET, so the browser streams the ZIP to disk. The single-use ticket authorizes it. */
+  downloadUrl(ticket: string): string {
+    return `${API_URL}${this.base}/download/${encodeURIComponent(ticket)}`;
+  }
+}
+
+export const adminReplayExportApi = new ReplayExportApi("api/admin/replay-export", "exports");
+
+/** Admin only: free downloads, and the downloads of all users. */
+export default class ReplayExportService {
   public static async createTicket(
     token: string,
     matchIds: string[],
@@ -29,31 +54,16 @@ export default class ReplayExportService {
     label: string,
     description: string,
   ): Promise<ReplayExportTicket> {
-    return await client.requestJson("POST", `${BASE}/tickets`, token, { matchIds, filter, label, description });
+    return await client.requestJson("POST", `${adminReplayExportApi.base}/tickets`, token, { matchIds, filter, label, description });
   }
 
-  /** A repeat download of a past download: the server builds the same ZIP again. */
-  public static async createRepeatTicket(token: string, exportId: string): Promise<ReplayExportTicket> {
-    return await client.requestJson("POST", `${BASE}/exports/${encodeURIComponent(exportId)}/tickets`, token);
-  }
-
-  /** The past downloads of the signed-in user. */
-  public static async getExports(token: string): Promise<ReplayExportSummary[]> {
-    return await client.getJson(`${BASE}/exports`, token);
-  }
-
-  /** For admins: the downloads of all users. */
+  /** The downloads of all users. */
   public static async getAllExports(token: string): Promise<ReplayExportSummary[]> {
-    return await client.getJson(`${BASE}/all-exports`, token);
+    return await client.getJson(`${adminReplayExportApi.base}/all-exports`, token);
   }
 
-  /** For admins: a repeat download of any user's download. */
+  /** A repeat download of any user's download. */
   public static async createAdminRepeatTicket(token: string, exportId: string): Promise<ReplayExportTicket> {
-    return await client.requestJson("POST", `${BASE}/all-exports/${encodeURIComponent(exportId)}/tickets`, token);
-  }
-
-  /** A plain GET, so the browser streams the ZIP to disk. The single-use ticket authorizes it. */
-  public static downloadUrl(ticket: string): string {
-    return `${API_URL}${BASE}/download/${encodeURIComponent(ticket)}`;
+    return await client.requestJson("POST", `${adminReplayExportApi.base}/all-exports/${encodeURIComponent(exportId)}/tickets`, token);
   }
 }

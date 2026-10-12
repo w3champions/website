@@ -2,7 +2,7 @@ import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import { formatPrice, quoteDetail, quoteReplays } from "./pricing";
 
-const prices = { currency: "USD", pricePerReplay: 0.02, minimumPrice: 5, free: true };
+const prices = { currency: "USD", pricePerReplay: 0.02, minimumPrice: 5, free: true, available: true };
 
 test("a replay costs $0.02, and a download costs at least $5.00", () => {
   assert.deepEqual(quoteReplays(200, prices), { replays: 200, subtotal: 4, total: 5, minimumApplies: true });

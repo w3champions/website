@@ -186,6 +186,13 @@ test("past downloads: all of them, or the selected ones; ignored when the switch
   assert.deepEqual(activeFilters(form, raceName).map((f) => f.text), ["Seasons 21, 23", "Not in 2 past downloads"]);
   assert.deepEqual(toReplayExportFilter(form).excludeExportIds, ["a", "b"]);
 
+  assert.deepEqual(activeFilters(form, raceName, "store").map((f) => f.text), ["Seasons 21, 23", "Not in 2 past purchases"]);
+  form.excludeExportIds = ["a"];
+  assert.deepEqual(activeFilters(form, raceName, "store").map((f) => f.text), ["Seasons 21, 23", "Not in 1 past purchase"]);
+  form.excludeExportIds = [];
+  assert.deepEqual(activeFilters(form, raceName, "store").map((f) => f.text), ["Seasons 21, 23", "Not in past purchases"]);
+  form.excludeExportIds = ["a", "b"];
+
   form.excludePastDownloads = false;
   assert.deepEqual(toReplayExportFilter(form).excludeExportIds, []);
   assert.equal(toReplayExportFilter(form).excludePastDownloads, false);

@@ -23,6 +23,7 @@ import PlayerMatchesTab from "@/components/player/tabs/PlayerMatchesTab.vue";
 import PlayerProfileTab from "@/components/player/tabs/PlayerProfileTab.vue";
 import TournamentDetail from "@/views/TournamentDetail.vue";
 import Rewards from "@/views/Rewards.vue";
+import Replays from "@/views/Replays.vue";
 import PatreonCallback from "@/views/PatreonCallback.vue";
 import SsoContinue from "@/views/SsoContinue.vue";
 import PlayerStatisticTab from "@/components/player/tabs/PlayerStatisticTab.vue";
@@ -317,6 +318,11 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-lag-reports/:id", name: EAdminRouteName.LAG_REPORT_DETAIL, component: AdminLagReportDetail, props: true },
       { path: "admin-jobs", name: EAdminRouteName.JOBS, component: AdminJobs },
     ],
+  },
+  {
+    path: "/replays",
+    name: EMainRouteName.REPLAYS,
+    component: Replays,
   },
   {
     path: "/rewards",

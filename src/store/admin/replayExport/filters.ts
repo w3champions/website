@@ -1,6 +1,6 @@
 import { EGameMode, ERaceEnum } from "@/store/types";
 import { Gateways } from "@/store/ranking/types";
-import { EReplayExportMmrMode, EReplayExportOrder, ReplayExportFilter, ReplayExportForm, ReplayExportPatchOption, ReplayExportPlayer, ReplayExportSummary } from "./types";
+import { EReplayExportMmrMode, EReplayExportOrder, ReplayExportFilter, ReplayExportForm, ReplayExportMode, ReplayExportPatchOption, ReplayExportPlayer, ReplayExportSummary } from "./types";
 
 /** The slider ends here; a max at the end means "no upper limit". */
 export const MMR_SLIDER_MAX = 3000;
@@ -129,7 +129,12 @@ function hasValue(value: number | string | null): boolean {
 }
 
 /** One short text per filter that limits the games, for the summary chips. */
-export function activeFilters(form: ReplayExportForm, raceName: (race: ERaceEnum) => string): ReplayExportActiveFilter[] {
+/** `mode`: the history of the admin page has downloads, the one of the store has purchases. */
+export function activeFilters(
+  form: ReplayExportForm,
+  raceName: (race: ERaceEnum) => string,
+  mode: ReplayExportMode = "admin",
+): ReplayExportActiveFilter[] {
   const filters: ReplayExportActiveFilter[] = [];
   const add = (key: ReplayExportFilterKey, text: string) => filters.push({ key, text });
 
@@ -166,7 +171,8 @@ export function activeFilters(form: ReplayExportForm, raceName: (race: ERaceEnum
 
   if (form.excludePastDownloads) {
     const count = form.excludeExportIds.length;
-    add("pastDownloads", count === 0 ? "Not in past downloads" : `Not in ${count} past ${count === 1 ? "download" : "downloads"}`);
+    const [one, many] = mode === "store" ? ["purchase", "purchases"] : ["download", "downloads"];
+    add("pastDownloads", count === 0 ? `Not in past ${many}` : `Not in ${count} past ${count === 1 ? one : many}`);
   }
 
   if (hasValue(form.maxGames)) add("maxGames", `At most ${Number(form.maxGames).toLocaleString("en-US")} games`);

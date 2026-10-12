@@ -566,6 +566,12 @@ const en = {
     error_generic: "Something went wrong while signing you in. Please try again.",
     error_cta: "Back to Home",
   },
+
+  // New keys of the replay store. Other languages can add them in the localization sheet; until then, English.
+  views_app: {
+    replays: "Replays",
+    replaypurchases: "Replay purchases",
+  },
 };
 
 export default en;

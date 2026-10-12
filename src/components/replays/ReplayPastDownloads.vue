@@ -3,13 +3,17 @@
     <v-sheet class="history" border rounded="lg">
       <div class="history-header">
         <div>
-          <div class="text-subtitle-1 font-weight-medium">{{ allUsers ? "Downloads of all users" : "Your past downloads" }}</div>
+          <div class="text-subtitle-1 font-weight-medium">{{ title }}</div>
           <div class="text-body-2 text-medium-emphasis">
             <template v-if="allUsers && items.length > 0">
               {{ items.length.toLocaleString("en-US") }} downloads · {{ totalReplays.toLocaleString("en-US") }} replays ·
-              {{ users.length }} {{ users.length === 1 ? "user" : "users" }} · {{ listValue }} at list price.
+              {{ users.length }} {{ users.length === 1 ? "user" : "users" }} · {{ listValue }} at list price{{ paidText }}.
             </template>
-            The server keeps no ZIP files. Download ZIP builds the ZIP again from the same games, at no cost.
+            <template v-if="isStore">
+              Download a purchase as often as you want, at no extra cost. The server keeps no ZIP files: it builds the ZIP
+              again from the same games.
+            </template>
+            <template v-else>The server keeps no ZIP files. Download ZIP builds the ZIP again from the same games, at no cost.</template>
           </div>
         </div>
         <div class="history-tools">
@@ -72,7 +76,7 @@
                 · {{ item.count.toLocaleString("en-US") }} replays<template v-if="item.failed > 0">
                   ({{ item.failed.toLocaleString("en-US") }} missing)
                 </template>
-                · downloaded {{ item.downloadCount }}×
+                · {{ item.downloadCount === 0 ? "not downloaded yet" : `downloaded ${item.downloadCount}×` }}
               </div>
               <v-btn
                 class="mt-2"
@@ -114,7 +118,8 @@
           <span v-else class="text-medium-emphasis">—</span>
         </template>
         <template v-slot:[`item.downloadCount`]="{ item }">
-          <div class="text-no-wrap">{{ item.downloadCount }}×</div>
+          <div v-if="item.downloadCount === 0" class="text-no-wrap text-medium-emphasis">Not yet</div>
+          <div v-else class="text-no-wrap">{{ item.downloadCount }}×</div>
           <div v-if="item.downloadCount > 1" class="text-caption text-medium-emphasis text-no-wrap">
             last {{ formatDay(item.lastDownloadedAt) }}<template v-if="allUsers && lastBy(item)"> by {{ lastBy(item) }}</template>
           </div>
@@ -135,18 +140,16 @@
         <template v-slot:no-data>
           <div class="empty py-8">
             <v-icon :icon="mdiHistory" size="36" class="mb-2" />
-            <div class="text-subtitle-1">No downloads yet.</div>
-            <div class="text-body-2 text-medium-emphasis">
-              {{ user ? `${user} has no downloads.` : "A download shows here when its ZIP is complete." }}
-            </div>
+            <div class="text-subtitle-1">{{ emptyTitle }}</div>
+            <div class="text-body-2 text-medium-emphasis">{{ emptyText }}</div>
           </div>
         </template>
       </v-data-table>
     </v-sheet>
 
     <v-snackbar v-model="started" color="success" :timeout="8000">
-      Download started: {{ startedCount.toLocaleString("en-US") }} replays, at no cost. The ZIP is built again while it
-      streams.
+      Download started: {{ startedCount.toLocaleString("en-US") }} replays, at no cost. The ZIP is built
+      {{ isStore ? "" : "again " }}while it streams.
     </v-snackbar>
   </div>
 </template>
@@ -155,6 +158,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useDisplay } from "vuetify";
 import { mdiAccountOutline, mdiDownload, mdiHistory, mdiMagnify, mdiRefresh } from "@mdi/js";
+import { useOauthStore } from "@/store/oauth/store";
 import { useReplayExportStore } from "@/store/admin/replayExport/store";
 import { exportTitle, formatDay, formatUtcMinute } from "@/store/admin/replayExport/filters";
 import { formatPrice } from "@/store/admin/replayExport/pricing";
@@ -164,7 +168,11 @@ import type { ReplayExportSummary } from "@/store/admin/replayExport/types";
 const props = defineProps<{ allUsers?: boolean }>();
 
 const store = useReplayExportStore();
+const oauthStore = useOauthStore();
 const display = useDisplay();
+
+/** The replay store: the history is the user's purchases. */
+const isStore = computed(() => store.mode === "store");
 
 const search = ref<string | null>("");
 const user = ref<string | null>(null);
@@ -179,14 +187,33 @@ const shownItems = computed(() => (user.value ? items.value.filter((e) => e.requ
 const totalReplays = computed(() => items.value.reduce((sum, e) => sum + e.count, 0));
 /** What the downloads cost at list price; admins did not pay it. */
 const listValue = computed(() => formatPrice(items.value.reduce((sum, e) => sum + e.price, 0), items.value[0]?.currency ?? "USD"));
+/** The purchases from the replay store, and what the buyers paid. */
+const paidText = computed(() => {
+  const paid = items.value.filter((e) => e.charged);
+  if (paid.length === 0) return "";
+  const value = formatPrice(paid.reduce((sum, e) => sum + e.price, 0), paid[0].currency);
+  return ` · ${paid.length.toLocaleString("en-US")} ${paid.length === 1 ? "purchase" : "purchases"}, ${value} paid`;
+});
+
+const title = computed(() => (props.allUsers ? "Downloads of all users" : isStore.value ? "Your purchases" : "Your past downloads"));
+
+const emptyTitle = computed(() => {
+  if (isStore.value) return oauthStore.token ? "No purchases yet." : "Sign in to see your purchases.";
+  return "No downloads yet.";
+});
+
+const emptyText = computed(() => {
+  if (isStore.value) return oauthStore.token ? "A purchase shows here when its payment is complete." : "";
+  return user.value ? `${user.value} has no downloads.` : "A download shows here when its ZIP is complete.";
+});
 
 const headers = computed(() => [
-  { title: "Downloaded (UTC)", key: "createdAt", sortable: false, nowrap: true },
+  { title: isStore.value ? "Bought (UTC)" : "Downloaded (UTC)", key: "createdAt", sortable: false, nowrap: true },
   ...(props.allUsers ? [{ title: "User", key: "requestedBy", sortable: false }] : []),
-  { title: "Download", key: "title", sortable: false },
+  { title: isStore.value ? "Purchase" : "Download", key: "title", sortable: false },
   { title: "Replays", key: "count", align: "end" as const, nowrap: true },
   { title: "Price", key: "price", align: "end" as const, nowrap: true },
-  { title: "Times", key: "downloadCount", align: "end" as const, nowrap: true },
+  { title: isStore.value ? "Downloads" : "Times", key: "downloadCount", align: "end" as const, nowrap: true },
   { title: "", key: "actions", sortable: false, align: "end" as const },
 ]);
 

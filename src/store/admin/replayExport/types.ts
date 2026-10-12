@@ -12,7 +12,7 @@ export enum EReplayExportMmrMode {
   AnyPlayer = 1,
 }
 
-/** Request body of `api/admin/replay-export/preview`; mirrors website-backend `ReplayExportFilter`. */
+/** Request body of the search (`preview`) of both modes; mirrors website-backend `ReplayExportFilter`. */
 export interface ReplayExportFilter {
   gameMode: EGameMode;
   seasons: number[];
@@ -53,8 +53,10 @@ export interface ReplayExportPrices {
   currency: string;
   pricePerReplay: number;
   minimumPrice: number;
-  /** True when the user does not pay. Today that is every user: the page is for admins, and admins download for free. */
+  /** True when the user does not pay: the admin page. */
   free: boolean;
+  /** False when the replay store cannot take payments now. */
+  available: boolean;
 }
 
 export interface ReplayExportOptions {
@@ -163,7 +165,42 @@ export interface ReplayExportForm {
   excludeExportIds: string[];
 }
 
+/** Mirrors website-backend `ReplayOrderStatus`. */
+export enum EReplayOrderStatus {
+  /** On the payment page, or a delayed payment method has not paid yet. */
+  Pending = 0,
+  Paid = 1,
+  /** The payment page closed without a payment. */
+  Expired = 2,
+  /** A delayed payment method did not pay. */
+  Failed = 3,
+}
+
+/** A purchase in the replay store; mirrors website-backend `ReplayOrderView`. When paid, `id` is also its history id. */
+export interface ReplayOrder {
+  id: string;
+  status: EReplayOrderStatus;
+  count: number;
+  amount: number;
+  currency: string;
+  createdAt: string;
+  paidAt: string | null;
+}
+
+/** The answer to a checkout: the order, and the Stripe payment page for it. */
+export interface ReplayCheckout {
+  orderId: string;
+  url: string;
+  count: number;
+  amount: number;
+  currency: string;
+}
+
+/** `admin`: the admin export, free. `store`: the public replay store, paid. */
+export type ReplayExportMode = "admin" | "store";
+
 export type ReplayExportState = {
+  mode: ReplayExportMode;
   options: ReplayExportOptions | null;
   preview: ReplayExportPreview | null;
   previewFilter: ReplayExportFilter | null;
@@ -178,6 +215,8 @@ export type ReplayExportState = {
   /** For admins: the downloads of all users. */
   allExports: ReplayExportSummary[];
   allExportsLoading: boolean;
+  /** Store: the order that the buyer came back with from the payment page. */
+  order: ReplayOrder | null;
   loading: boolean;
   error: string;
 };
