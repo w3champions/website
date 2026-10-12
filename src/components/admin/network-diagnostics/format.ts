@@ -132,6 +132,11 @@ export function utcDateRangeToIso(from: string, to: string): { from?: string; to
   return { from: utcDayStartIso(from, 0), to: utcDayStartIso(to, 1) };
 }
 
+/** A table cell for optional server text (client IP, OS, adapter type): the text, or a dash when it is missing. */
+export function textOrDash(value: string | null | undefined): string {
+  return value ? value : DASH;
+}
+
 export function geoText(geo: Pick<ClientGeo, "city" | "country"> | null | undefined): string {
   const parts = [geo?.city, geo?.country].filter((part): part is string => typeof part === "string" && part !== "");
   return parts.length === 0 ? DASH : parts.join(", ");

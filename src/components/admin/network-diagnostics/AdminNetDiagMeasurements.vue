@@ -36,8 +36,11 @@
       <template v-slot:[`item.runId`]="{ item }">
         <router-link :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: item.runId } }">{{ item.runId.slice(0, 8) }}</router-link>
       </template>
+      <template v-slot:[`item.clientIp`]="{ item }">{{ textOrDash(item.clientIp) }}</template>
       <template v-slot:[`item.location`]="{ item }">{{ geoText(item.clientGeo) }}</template>
       <template v-slot:[`item.network`]="{ item }">{{ asnText(item.clientGeo?.asn, item.clientGeo?.asnOrg) }}</template>
+      <template v-slot:[`item.os`]="{ item }">{{ textOrDash(item.os) }}</template>
+      <template v-slot:[`item.primaryAdapterType`]="{ item }">{{ textOrDash(item.primaryAdapterType) }}</template>
       <template v-slot:[`item.vpnSuspected`]="{ item }">{{ item.vpnSuspected == null ? "—" : item.vpnSuspected ? "suspected" : "no" }}</template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-btn
@@ -64,7 +67,7 @@ import { EAdminRouteName } from "@/router/types";
 import { formatUtc } from "@/helpers/utc-dates";
 import { useNetDiagMeasurementsStore } from "@/store/admin/networkDiagnostics/measurementsStore";
 import type { MeasurementFilters } from "@/store/admin/networkDiagnostics/types";
-import { asnText, geoText } from "./format";
+import { asnText, geoText, textOrDash } from "./format";
 import { buildListQuery, type ListPaging, nextTablePage, readListQuery } from "./listQuery";
 
 const DEFAULT_PAGE_SIZE = 25;

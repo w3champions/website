@@ -1,6 +1,6 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { asnText, audienceSummary, counterTiles, DASH, formatDuration, formatMs, formatPercent, formatShare, geoText, progressText, runStatus, targetsSummary, utcDateRangeToIso } from "./format";
+import { asnText, audienceSummary, counterTiles, DASH, formatDuration, formatMs, formatPercent, formatShare, geoText, progressText, runStatus, targetsSummary, textOrDash, utcDateRangeToIso } from "./format";
 import type { RunDto, RunTargets } from "@/store/admin/networkDiagnostics/types";
 
 const noTargets: RunTargets = { floNodeIds: [], allFloNodes: false, coreServers: [], baselines: [], customTargets: [], includeDefaultGateway: false };
@@ -70,4 +70,11 @@ test("geo and ASN text tolerate missing parts", () => {
   assert.equal(asnText(3320, "Deutsche Telekom AG"), "AS3320 Deutsche Telekom AG");
   assert.equal(asnText(3320, null), "AS3320");
   assert.equal(asnText(null), DASH);
+});
+
+test("optional text cells render a dash when the server sent nothing", () => {
+  assert.equal(textOrDash("203.0.113.7"), "203.0.113.7");
+  assert.equal(textOrDash(null), DASH);
+  assert.equal(textOrDash(undefined), DASH);
+  assert.equal(textOrDash(""), DASH);
 });
