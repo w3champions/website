@@ -9,11 +9,6 @@ export interface TimelinePlayer {
   };
 }
 
-export interface GameClockPause {
-  gameTimeSec: number;
-  durationMs: number;
-}
-
 export interface PauseInterval {
   startMs: number;
   endMs: number;
@@ -22,8 +17,6 @@ export interface PauseInterval {
 
 // Each client stamps pause and resume events with its own clock.
 const PAUSE_MATCH_TOLERANCE_MS = 1_000;
-
-const CLOCK_FREEZING_EVENTS = [EConnectionEventType.Reconnect, EConnectionEventType.GameResumed, EConnectionEventType.StopLag];
 
 export function computeGameStartMs(players: TimelinePlayer[], fallbackIso: string): number {
   let earliest = Infinity;
@@ -36,52 +29,13 @@ export function computeGameStartMs(players: TimelinePlayer[], fallbackIso: strin
   return earliest === Infinity ? new Date(fallbackIso).getTime() : earliest;
 }
 
-/** Periods in which game time stood still while wall clock ran, once per game time. */
-export function collectGameClockPauses(players: TimelinePlayer[]): GameClockPause[] {
-  const pauses: GameClockPause[] = [];
-  for (const player of players) {
-    for (const ce of player.diagnostics.connectionEvents) {
-      if (CLOCK_FREEZING_EVENTS.includes(ce.eventType) && ce.durationMs) {
-        pauses.push({ gameTimeSec: ce.gameTimeOffsetMs / 1000, durationMs: ce.durationMs });
-      }
-    }
-  }
-  // Every client reports the same freeze, stamped with its own clock; summing each copy would
-  // shift later points by the pause length once per extra reporter.
-  const sorted = [...pauses].sort((a, b) => a.gameTimeSec - b.gameTimeSec);
-  return sorted.filter((p, i) => i === 0 || (p.gameTimeSec - sorted[i - 1].gameTimeSec) * 1000 > PAUSE_MATCH_TOLERANCE_MS);
-}
-
-export function gameTimeToWallClockMs(gameTimeSec: number, pauses: GameClockPause[], gameStartMs: number): number {
-  let extraMs = 0;
-  for (const pause of pauses) {
-    if (pause.gameTimeSec < gameTimeSec) {
-      extraMs += pause.durationMs;
-    } else {
-      break;
-    }
-  }
-  return gameStartMs + gameTimeSec * 1000 + extraMs;
-}
-
-/** ServerSidePing samples are stamped in game time; a null point breaks the line at each pause. */
-export function buildServerPingPoints(
-  samples: { time: number; avg: number | null }[],
-  pauses: GameClockPause[],
-  gameStartMs: number,
-): ChartPoint[] {
-  const points: ChartPoint[] = [];
-  let prevTime = -1;
-  for (const s of samples) {
-    for (const pause of pauses) {
-      if (pause.gameTimeSec > prevTime && pause.gameTimeSec <= s.time) {
-        points.push({ x: gameTimeToWallClockMs(pause.gameTimeSec, pauses, gameStartMs), y: null });
-      }
-    }
-    points.push({ x: gameTimeToWallClockMs(s.time, pauses, gameStartMs), y: s.avg });
-    prevTime = s.time;
-  }
-  return points;
+/**
+ * ServerSidePing `time` is milliseconds of wall clock since the node started the game (flo
+ * node's RTT stats timer, one sample every 15 s), not game time: pauses do not stop it, so
+ * no pause shift applies.
+ */
+export function buildServerPingPoints(samples: { time: number; avg: number | null }[], gameStartMs: number): ChartPoint[] {
+  return samples.map((s) => ({ x: gameStartMs + s.time, y: s.avg }));
 }
 
 /**

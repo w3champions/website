@@ -23,7 +23,7 @@
         <div class="d-flex align-center justify-space-between mb-2">
           <div class="text-overline text-medium-emphasis">End-to-End Ping (client + server overlaid)</div>
           <div class="d-flex align-center ga-2">
-            <span class="text-caption text-medium-emphasis font-italic">Server ping realigned via reconnect events; game pauses may cause slight skew</span>
+            <span class="text-caption text-medium-emphasis font-italic">Server ping: node average every 15 s</span>
             <span class="text-caption text-medium-emphasis">|</span>
             <span class="text-caption text-medium-emphasis font-italic">Shift+click to place markers, scroll to zoom, drag to pan</span>
             <v-btn size="x-small" variant="text" @click="resetPingChartZoom">Reset zoom</v-btn>
@@ -180,7 +180,7 @@ import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { buildActionLatencyPoints } from "./actionLatencyPoints";
 import { buildEventMarkers, type EventMarkerInfo, formatWallClock, playerName, stackedMarkerLines } from "./chartMarkers";
-import { buildServerPingPoints, collectGameClockPauses, computeGameStartMs } from "./gameTimeline";
+import { buildServerPingPoints, computeGameStartMs } from "./gameTimeline";
 import { readLagChipColors, playerColorTonalStyle, type LagAnnotationStyle } from "@/helpers/lag-report-colors";
 
 const PLAYER_COLORS = ["#ef5350", "#42a5f5", "#66bb6a", "#ffb74d", "#ab47bc", "#26c6da", "#ec407a", "#8d6e63"];
@@ -287,8 +287,10 @@ export default defineComponent({
     }
 
     // ── Game clock alignment ─────────────────────────────────────────
-    const gameStartMs = computed(() => computeGameStartMs(props.report.players, props.report.createdAt));
-    const gameClockPauses = computed(() => collectGameClockPauses(props.report.players));
+    // ServerSidePing counts from the node's game start, which matchWallStart (game time zero)
+    // matches; the first ping sample can precede it by the loading time, so it is only the
+    // fallback for games without telemetry.
+    const gameStartMs = computed(() => props.telemetry?.matchWallStart.getTime() ?? computeGameStartMs(props.report.players, props.report.createdAt));
 
     // ── Ping + Loss combined chart ──────────────────────────────────
     const pingChartData = computed<ChartData<PingChartType>>(() => {
@@ -352,7 +354,7 @@ export default defineComponent({
           if (pi >= 0 && !visiblePlayers[pi]) return;
           const color = pi >= 0 ? PLAYER_COLORS[pi % PLAYER_COLORS.length] : PLAYER_COLORS[si % PLAYER_COLORS.length];
           if (sp.samples.length) {
-            const points = buildServerPingPoints(sp.samples, gameClockPauses.value, gameStartMs.value);
+            const points = buildServerPingPoints(sp.samples, gameStartMs.value);
             datasets.push({
               type: "line",
               label: `${sp.playerName.split("#")[0]} server`,
@@ -405,10 +407,10 @@ export default defineComponent({
       const out: PingDataset[] = [];
       // Action-latency buckets are anchored to telemetry.matchWallStart (the
       // wall-clock at game-time = 0, set by flo-client at game start). This
-      // is a distinct reference frame from the lag report's gameStartMs, which
-      // is derived from the first ping-history sample and may precede the
-      // actual game start by seconds. Using matchWallStart keeps the buckets
-      // aligned with the wall-clock x-axis the lag-event markers also use.
+      // is a distinct reference frame from the first ping-history sample,
+      // which may precede the actual game start by seconds. Using
+      // matchWallStart keeps the buckets aligned with the wall-clock x-axis
+      // the lag-event markers also use.
       //
       // Bucket x is wall clock (matchWallStart + i * 1s), not gameTimeOffsetsMs: game time
       // freezes during a pause, so a pause shows as a gap that lines up with the GamePaused
