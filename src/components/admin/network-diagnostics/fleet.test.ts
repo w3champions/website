@@ -77,6 +77,12 @@ test("all flo nodes expands to the catalogue; without a catalogue keys stay usab
   assert.deepEqual(runTargetItems(runTargets({ baselines: ["cloudflare"] }), null), [{ title: "cloudflare", value: "baseline:cloudflare" }]);
 });
 
+test("disabled flo nodes are labelled in the target list", () => {
+  const withDisabled: TargetsDto = { ...catalogue, floNodes: [...catalogue.floNodes, { id: 15, name: "Old", location: "Nowhere", countryId: "XX", isDisabled: true }] };
+  assert.deepEqual(runTargetItems(runTargets({ allFloNodes: true }), withDisabled).map((i) => i.title), ["US East 4", "EU 1", "Old (disabled)"]);
+  assert.deepEqual(runTargetItems(runTargets({ floNodeIds: [15] }), withDisabled), [{ title: "Old (disabled)", value: "flo:15" }]);
+});
+
 test("only flo nodes have a proxied path", () => {
   assert.deepEqual(pathItems("flo:12"), ["direct", "proxied"]);
   assert.deepEqual(pathItems("baseline:cloudflare"), ["direct"]);
@@ -144,6 +150,7 @@ test("the map notice counts drawn and unlocated measurements and never says firs
   assert.doesNotMatch(none, /first 0/);
   assert.match(none, /cut off/);
   assert.match(mapNotice({ shown: 3, withoutLocation: 2, truncated: false }) ?? "", /^2 loaded measurements have no location/);
+  assert.equal(mapNotice({ shown: 3, withoutLocation: 1, truncated: false }), "1 loaded measurement has no location and is not drawn.");
 });
 
 test("the chart notice appears only when groups were cut", () => {

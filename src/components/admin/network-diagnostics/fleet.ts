@@ -19,7 +19,7 @@ export const FLEET_GROUP_BY_ITEMS: SelectItem<FleetGroupBy>[] = [
 /** The run's targets as C4 keys, named from the catalogue when it is loaded. */
 export function runTargetItems(run: Pick<RunDto, "targets">, catalogue: TargetsDto | null): SelectItem<string>[] {
   const t = run.targets;
-  const nodeNames = new Map((catalogue?.floNodes ?? []).map((node) => [node.id, node.name] as const));
+  const nodeNames = new Map((catalogue?.floNodes ?? []).map((node) => [node.id, node.isDisabled ? `${node.name} (disabled)` : node.name] as const));
   const coreLabels = new Map((catalogue?.coreServers ?? []).map((server) => [server.key, server.label] as const));
   const baselineLabels = new Map((catalogue?.baselines ?? []).map((baseline) => [baseline.key, baseline.label] as const));
   const nodeIds = t.allFloNodes ? (catalogue?.floNodes ?? []).map((node) => node.id) : t.floNodeIds;
@@ -174,7 +174,10 @@ export function mapNotice(summary: MapSummary): string | null {
   if (summary.truncated) {
     parts.push(summary.shown > 0 ? `Showing the first ${summary.shown.toLocaleString("en-US")} measurements on the map; more may exist.` : "The measurement list was cut off before any located measurement; more may exist.");
   }
-  if (summary.withoutLocation > 0) parts.push(`${summary.withoutLocation.toLocaleString("en-US")} loaded measurements have no location and are not drawn.`);
+  if (summary.withoutLocation > 0) {
+    const one = summary.withoutLocation === 1;
+    parts.push(`${summary.withoutLocation.toLocaleString("en-US")} loaded ${one ? "measurement has" : "measurements have"} no location and ${one ? "is" : "are"} not drawn.`);
+  }
   return parts.length > 0 ? parts.join(" ") : null;
 }
 
