@@ -71,6 +71,8 @@ import AdminEvents from "@/components/admin/commercial-events/AdminEvents.vue";
 import AdminEventDetail from "@/components/admin/commercial-events/AdminEventDetail.vue";
 import AdminActiveGames from "@/components/admin/commercial-events/AdminActiveGames.vue";
 import AdminLagReportDetail from "@/components/admin/AdminLagReportDetail.vue";
+import AdminReplayExport from "@/components/admin/replays/AdminReplayExport.vue";
+import AdminReplayDownloads from "@/components/admin/replays/AdminReplayDownloads.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -289,6 +291,8 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-warnings", name: EAdminRouteName.PLAYER_WARNINGS, component: AdminWarnings },
       { path: "admin-warning-templates", name: EAdminRouteName.WARNING_TEMPLATES, component: AdminWarningTemplates },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
+      { path: "admin-replay-export", name: EAdminRouteName.REPLAY_EXPORT, component: AdminReplayExport },
+      { path: "admin-replay-downloads", name: EAdminRouteName.REPLAY_DOWNLOADS, component: AdminReplayDownloads },
       { path: "admin-launcher-chat", name: EAdminRouteName.LAUNCHER_CHAT, component: AdminLauncherChat },
       { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: AdminProxies },
       { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: AdminNewsForLauncher },

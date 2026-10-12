@@ -72,6 +72,13 @@ The "Commercial Events" admin section (permission `CommercialLicense`) has four 
 - Admin date fields are entered and shown in UTC. Battle tags are stored and compared exactly as written (never case-folded).
 - How events, allocations, periods and event games work: `docs/commercial-events.md` in the matchmaking-service repository.
 
+#### Replay Export
+The "Replay Export" admin section (permission `Replays`) has two pages: `admin-replay-export` (search, list, ZIP download, own past downloads) and `admin-replay-downloads` (the downloads of all users).
+- Client: `src/services/admin/ReplayExportService.ts`; the backend is `Admin/ReplayExport/` in website-backend.
+- Pure helpers with tests (form to filter, summary chips, prices, error texts): `src/store/admin/replayExport/`. Pages: `src/components/admin/replays/`.
+- A search returns the ids of all listed games (at most 5,000) and the games of the first page. The table loads the other pages with `POST matches`. Select all and Download work on the ids.
+- The ZIP downloads with a plain GET and a single-use ticket, so the browser streams it to disk.
+
 ### API Integration Patterns
 
 #### Service Layer

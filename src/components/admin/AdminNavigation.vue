@@ -71,6 +71,7 @@ import {
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
   mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline, mdiPlayCircleOutline,
+  mdiFilmstrip, mdiFolderDownloadOutline, mdiHistory,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -157,6 +158,27 @@ export default defineComponent({
             permission: EPermission.Queue,
             component: "admin-queue-data",
             routeName: EAdminRouteName.LIVE_QUEUE_DATA,
+          },
+        ],
+      },
+      {
+        title: "Replays",
+        icon: mdiFilmstrip,
+        permission: EPermission.Replays,
+        items: [
+          {
+            title: "Replay Export",
+            icon: mdiFolderDownloadOutline,
+            permission: EPermission.Replays,
+            component: "admin-replay-export",
+            routeName: EAdminRouteName.REPLAY_EXPORT,
+          },
+          {
+            title: "Replay Downloads",
+            icon: mdiHistory,
+            permission: EPermission.Replays,
+            component: "admin-replay-downloads",
+            routeName: EAdminRouteName.REPLAY_DOWNLOADS,
           },
         ],
       },
