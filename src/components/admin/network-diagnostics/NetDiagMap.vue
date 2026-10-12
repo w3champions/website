@@ -56,7 +56,7 @@ function draw(): void {
   for (const point of props.points) {
     const color = props.colors[point.bucket];
     circleMarker([point.lat, point.lon], { radius: DOT_RADIUS_PX, color, weight: 1, fillColor: color, fillOpacity: DOT_FILL_OPACITY })
-      .bindTooltip(() => tooltipElement(document, point.label))
+      .bindTooltip(() => tooltipElement(document, point.labels))
       .addTo(dots);
   }
   if (props.points.length === 0) {

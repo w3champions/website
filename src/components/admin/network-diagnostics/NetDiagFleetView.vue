@@ -2,19 +2,19 @@
   <section aria-labelledby="netdiag-fleet">
     <h3 id="netdiag-fleet" class="text-subtitle-1 font-weight-bold mb-2">Fleet view</h3>
     <v-row dense align="center">
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="4" lg="3">
         <v-select v-model="targetKey" :items="targetItems" label="Target" variant="underlined" color="primary" hide-details />
       </v-col>
       <v-col cols="6" md="2">
         <v-select v-model="path" :items="paths" label="Path" variant="underlined" color="primary" hide-details />
       </v-col>
-      <v-col cols="6" md="2">
+      <v-col cols="6" md="4" lg="3">
         <v-select v-model="method" :items="methods" label="Method" variant="underlined" color="primary" hide-details />
       </v-col>
       <v-col cols="6" md="2">
         <v-select v-model="groupBy" :items="FLEET_GROUP_BY_ITEMS" label="Group by" variant="underlined" color="primary" hide-details />
       </v-col>
-      <v-col cols="6" md="2">
+      <v-col cols="6" md="12" lg="2">
         <v-btn-toggle v-model="metric" mandatory density="compact" color="primary" variant="outlined" aria-label="Colour dots by">
           <v-btn value="p50">p50</v-btn>
           <v-btn value="loss">Loss</v-btn>
@@ -22,7 +22,8 @@
       </v-col>
     </v-row>
 
-    <v-alert v-if="errorText" type="error" variant="tonal" density="compact" class="my-2">{{ errorText }}</v-alert>
+    <v-alert v-if="mapErrorText" type="error" variant="tonal" density="compact" class="my-2">Map: {{ mapErrorText }}</v-alert>
+    <v-alert v-if="tableErrorText" type="error" variant="tonal" density="compact" class="my-2">Table: {{ tableErrorText }}</v-alert>
     <v-progress-linear v-if="busy" indeterminate color="primary" class="my-2" />
 
     <p v-if="floNodesHint" class="text-caption text-warning mt-2">{{ floNodesHint }}</p>
@@ -38,6 +39,7 @@
             </span>
           </div>
           <p v-if="mapNoticeText" class="text-caption text-warning mt-1">{{ mapNoticeText }}</p>
+          <p v-if="mapLagText" class="text-caption text-info mt-1">{{ mapLagText }}</p>
         </v-col>
         <v-col cols="12" lg="6">
           <net-diag-aggregate-chart v-if="bars && bars.labels.length > 0" :bars="bars" :description="chartDescription" />
@@ -46,13 +48,14 @@
         </v-col>
       </v-row>
 
+      <p v-if="aggregateTruncated" class="text-caption text-warning mt-4 mb-0">{{ AGGREGATE_TRUNCATED_NOTICE }}</p>
       <v-data-table
         :headers="aggregateHeaders"
         :items="tableRows"
         :items-per-page="25"
         :loading="aggregateBusy"
         density="compact"
-        class="mt-4"
+        :class="aggregateTruncated ? 'mt-1' : 'mt-4'"
         :no-data-text="tableNoDataText"
       />
     </template>
@@ -67,7 +70,7 @@ import { readThemeColor, THEME_FALLBACK_COLOR } from "@/helpers/lag-report-color
 import { useNetDiagFleetStore } from "@/store/admin/networkDiagnostics/fleetStore";
 import { fleetAggregateKey, fleetSelectionKey } from "@/store/admin/networkDiagnostics/fleetSelection";
 import type { NetDiagMethod, NetDiagPath, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
-import { aggregateBars, aggregateTableRows, BUCKET_THEME_COLOR, bucketLegend, chartNotice, COLOR_BUCKETS, type ColorBucket, FLEET_GROUP_BY_ITEMS, fleetEmptyState, fleetLoadPlan, floNodesMissing, type FleetGroupBy, type FleetLoadInputs, type FleetSelection, type MapMetric, mapNotice, mapPoints, methodItems, pathItems, runTargetItems } from "./fleet";
+import { AGGREGATE_TRUNCATED_NOTICE, aggregateBars, aggregateMeasurementCount, aggregateTableRows, BUCKET_THEME_COLOR, bucketLegend, chartNotice, COLOR_BUCKETS, type ColorBucket, FLEET_GROUP_BY_ITEMS, fleetEmptyState, fleetLoadPlan, floNodesMissing, type FleetGroupBy, type FleetLoadInputs, type FleetSelection, locatedCount, mapLagNotice, type MapMetric, mapNotice, mapPoints, methodItems, pathItems, runTargetItems } from "./fleet";
 import { METHOD_LABELS } from "./format";
 import NetDiagAggregateChart from "./NetDiagAggregateChart.vue";
 import NetDiagMap from "./NetDiagMap.vue";
@@ -119,9 +122,13 @@ const observationsCurrent = computed(() => selection.value !== null && fleet.obs
 const aggregateCurrent = computed(() => selection.value !== null && fleet.aggregateKey === fleetAggregateKey(selection.value, groupBy.value));
 const shownObservations = computed(() => (observationsCurrent.value ? fleet.observations : []));
 const shownAggregate = computed(() => (aggregateCurrent.value ? fleet.aggregate : null));
-const errorText = computed(() => (aggregateCurrent.value ? fleet.aggregateError : "") || (observationsCurrent.value ? fleet.observationsError : ""));
+// The two loads fail independently: each names its part, so a filled table beside an empty map explains itself.
+const mapErrorText = computed(() => (observationsCurrent.value ? fleet.observationsError : ""));
+const tableErrorText = computed(() => (aggregateCurrent.value ? fleet.aggregateError : ""));
 const aggregateBusy = computed(() => aggregateCurrent.value && fleet.aggregateLoading);
-const busy = computed(() => aggregateBusy.value || (observationsCurrent.value && fleet.observationsLoading));
+const observationsBusy = computed(() => observationsCurrent.value && fleet.observationsLoading);
+const busy = computed(() => aggregateBusy.value || observationsBusy.value);
+const aggregateTruncated = computed(() => aggregateCurrent.value && fleet.aggregateTruncated);
 const aggregateEmpty = computed(() => shownAggregate.value !== null && shownAggregate.value.rows.length === 0);
 const mapFitKey = computed(() => (observationsCurrent.value ? selectionKey.value : ""));
 
@@ -156,11 +163,22 @@ const bucketColors = computed<Record<ColorBucket, string>>(() => {
 });
 
 const points = computed(() => mapPoints(shownObservations.value, metric.value));
+// A dot can stand for several measurements at the same coordinates: the texts count measurements, not dots.
+const drawnCount = computed(() => locatedCount(points.value));
+const observationsTruncated = computed(() => observationsCurrent.value && fleet.observationsTruncated);
 const mapNoticeText = computed(() =>
   mapNotice({
-    shown: points.value.length,
-    withoutLocation: shownObservations.value.length - points.value.length,
-    truncated: observationsCurrent.value && fleet.observationsTruncated,
+    shown: drawnCount.value,
+    withoutLocation: shownObservations.value.length - drawnCount.value,
+    truncated: observationsTruncated.value,
+  })
+);
+const mapLagText = computed(() =>
+  mapLagNotice({
+    aggregateCount: shownAggregate.value === null ? null : aggregateMeasurementCount(shownAggregate.value),
+    loadedObservations: shownObservations.value.length,
+    observationsTruncated: observationsTruncated.value,
+    settled: observationsCurrent.value && aggregateCurrent.value && !busy.value && mapErrorText.value === "" && tableErrorText.value === "",
   })
 );
 const chartNoticeText = computed(() => (shownAggregate.value ? chartNotice(shownAggregate.value.rows.length) : null));
@@ -180,7 +198,7 @@ const aggregateHeaders = computed<DataTableHeader[]>(() => [
   { title: "Unreachable", value: "unreachable", sortable: false, align: "end" },
 ]);
 
-const mapDescription = computed(() => `Map of ${points.value.length} measurements of ${METHOD_LABELS[method.value]} to ${targetTitle.value} (${path.value}), coloured by ${metric.value === "p50" ? "median round-trip time" : "loss"}.`);
+const mapDescription = computed(() => `Map of ${drawnCount.value} measurements of ${METHOD_LABELS[method.value]} to ${targetTitle.value} (${path.value}), coloured by ${metric.value === "p50" ? "median round-trip time" : "loss"}.`);
 const chartDescription = computed(() => `Median p50 and p90 of p50 per ${groupTitle.value.toLowerCase()} for ${targetTitle.value}.`);
 </script>
 

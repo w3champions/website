@@ -1,6 +1,7 @@
 import type { FleetGroupBy } from "@/store/admin/networkDiagnostics/fleetSelection";
 import type { AggregateGroupKey, AggregateResponseDto, AggregateRowDto, NetDiagMethod, NetDiagPath, ObservationDto, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
 import { asnText, formatMs, formatPercent, formatShare, geoText, METHOD_LABELS } from "./format";
+import { MAX_SCANNED_OBSERVATIONS } from "@/services/admin/NetworkDiagnosticsService";
 import { customTargetKey, customTargetText } from "./runDraft";
 
 export type { FleetGroupBy, FleetSelection } from "@/store/admin/networkDiagnostics/fleetSelection";
@@ -70,7 +71,9 @@ export function aggregateTableRows(response: AggregateResponseDto): AggregateTab
     p50Median: formatMs(row.p50MsMedian),
     p50P90: formatMs(row.p50MsP90),
     lossMedian: formatPercent(row.lossPctMedian),
-    lossOver1: formatShare(row.shareLossOver1Pct),
+    // The share counts only measurements with samples; the backend answers 0 (never null) for a group without any.
+    // Such a group has no median loss either, which is what tells it from a real 0 %.
+    lossOver1: row.lossPctMedian === null || row.lossPctMedian === undefined ? formatShare(null) : formatShare(row.shareLossOver1Pct),
     unreachable: formatShare(row.shareUnreachable),
   }));
 }
@@ -78,8 +81,20 @@ export function aggregateTableRows(response: AggregateResponseDto): AggregateTab
 /** More bars than this stop being readable; the table keeps every group. */
 export const MAX_CHART_GROUPS = 20;
 
+/** Longer group names are cut on the axis: the chart gives its labels at most half its width and clips them at the start. */
+export const MAX_CHART_NAME_CHARS = 22;
+
+/** Axis label of one bar: the start of the group name (it carries the AS number) and the count. */
+export function chartTickLabel(name: string, count: number, maxNameChars = MAX_CHART_NAME_CHARS): string {
+  const shown = name.length > maxNameChars ? `${name.slice(0, maxNameChars).trimEnd()}…` : name;
+  return `${shown} (${count})`;
+}
+
 export interface AggregateBars {
+  /** Full names, shown in the chart tooltip. */
   labels: string[];
+  /** What the axis shows: {@link chartTickLabel}. */
+  tickLabels: string[];
   p50Median: (number | null)[];
   p50P90: (number | null)[];
 }
@@ -89,6 +104,7 @@ export function aggregateBars(response: AggregateResponseDto, max = MAX_CHART_GR
   const rows = response.rows.slice(0, max);
   return {
     labels: rows.map((row) => `${aggregateKeyLabel(row, response.groupBy)} (${row.count})`),
+    tickLabels: rows.map((row) => chartTickLabel(aggregateKeyLabel(row, response.groupBy), row.count)),
     p50Median: rows.map((row) => row.p50MsMedian ?? null),
     p50P90: rows.map((row) => row.p50MsP90 ?? null),
   };
@@ -115,10 +131,24 @@ export function lossBucket(pct: number | null | undefined): ColorBucket {
   return pct <= LOSS_BAD_PCT ? "fair" : "bad";
 }
 
+/**
+ * An unreachable target is bad on either metric (its figures are those of the last answering hop). Otherwise the
+ * figures decide, whatever the outcome: a ping that timed out carries 100 % loss and no round-trip time, which
+ * is the worst case for both metrics and not "no data". Unknown is left for a probe that measured nothing.
+ */
 export function observationBucket(observation: Pick<ObservationDto, "outcome" | "p50Ms" | "lossPct">, metric: MapMetric): ColorBucket {
   if (observation.outcome === "unreachable") return "bad";
-  if (observation.outcome !== "ok") return "unknown";
-  return metric === "p50" ? p50Bucket(observation.p50Ms) : lossBucket(observation.lossPct);
+  const hasLoss = typeof observation.lossPct === "number";
+  if (metric === "loss") return hasLoss ? lossBucket(observation.lossPct) : "unknown";
+  if (typeof observation.p50Ms === "number") return p50Bucket(observation.p50Ms);
+  return hasLoss ? "bad" : "unknown";
+}
+
+/** Worst first, for the dot that several measurements share; a measurement without data never hides one with data. */
+const BUCKET_SEVERITY: Record<ColorBucket, number> = { bad: 3, fair: 2, good: 1, unknown: 0 };
+
+function worseBucket(a: ColorBucket, b: ColorBucket): ColorBucket {
+  return BUCKET_SEVERITY[b] > BUCKET_SEVERITY[a] ? b : a;
 }
 
 /** Vuetify theme colour name per bucket, resolved at draw time with readThemeColor. */
@@ -131,36 +161,62 @@ export const BUCKET_THEME_COLOR: Record<ColorBucket, string> = {
 
 export function bucketLegend(metric: MapMetric): Record<ColorBucket, string> {
   return metric === "p50"
-    ? { good: `p50 < ${P50_FAIR_MS} ms`, fair: `${P50_FAIR_MS}–${P50_BAD_MS} ms`, bad: `≥ ${P50_BAD_MS} ms or unreachable`, unknown: "no data" }
+    ? { good: `p50 < ${P50_FAIR_MS} ms`, fair: `${P50_FAIR_MS}–${P50_BAD_MS} ms`, bad: `≥ ${P50_BAD_MS} ms, unreachable or no answer`, unknown: "no data" }
     : { good: `loss ≤ ${LOSS_FAIR_PCT}%`, fair: `≤ ${LOSS_BAD_PCT}%`, bad: `> ${LOSS_BAD_PCT}% or unreachable`, unknown: "no data" };
 }
 
 export interface MapPoint {
   lat: number;
   lon: number;
+  /** The worst bucket among the measurements at this point. */
   bucket: ColorBucket;
-  /** Plain text; render with {@link tooltipElement}, never as HTML. */
-  label: string;
+  /** One plain-text line per measurement at this point; render with {@link tooltipElement}, never as HTML. */
+  labels: string[];
 }
 
-/** One dot per measurement (observations are one row per measurement for a target × path × method). */
+/**
+ * One dot per coordinate (observations are one row per measurement for a target × path × method). GeoIP gives
+ * every client it cannot place more exactly the same point (all "US, no city" clients share one), so measurements
+ * with identical coordinates share a dot instead of hiding each other.
+ */
 export function mapPoints(observations: readonly ObservationDto[], metric: MapMetric): MapPoint[] {
-  return observations.flatMap((o) => {
-    if (o.lat === null || o.lat === undefined || o.lon === null || o.lon === undefined) return [];
+  const byCoordinate = new Map<string, MapPoint>();
+  for (const o of observations) {
+    if (o.lat === null || o.lat === undefined || o.lon === null || o.lon === undefined) continue;
     const label = [o.battleTag, geoText(o), asnText(o.asn, o.asnOrg), `p50 ${formatMs(o.p50Ms)}`, `loss ${formatPercent(o.lossPct)}`, o.outcome].join(" · ");
-    return [{ lat: o.lat, lon: o.lon, bucket: observationBucket(o, metric), label }];
-  });
+    const bucket = observationBucket(o, metric);
+    const key = `${o.lat},${o.lon}`;
+    const point = byCoordinate.get(key);
+    byCoordinate.set(key, point === undefined ? { lat: o.lat, lon: o.lon, bucket, labels: [label] } : { ...point, bucket: worseBucket(point.bucket, bucket), labels: [...point.labels, label] });
+  }
+  return [...byCoordinate.values()];
 }
 
-/** Leaflet tooltips take HTML strings; labels carry BattleTags and GeoIP names, so they go in as a text node. */
-export function tooltipElement(doc: Document, label: string): HTMLElement {
-  const element = doc.createElement("span");
-  element.textContent = label;
+/** Measurements drawn: every dot counts each measurement it stands for. */
+export function locatedCount(points: readonly MapPoint[]): number {
+  return points.reduce((sum, point) => sum + point.labels.length, 0);
+}
+
+/** Measurements a tooltip lists by name; the rest of a crowded dot is counted. */
+export const MAX_TOOLTIP_MEMBERS = 5;
+
+/**
+ * Leaflet tooltips take HTML strings; labels carry BattleTags and GeoIP names, so every line goes in as a text node.
+ * One line per measurement at the dot, at most {@link MAX_TOOLTIP_MEMBERS}, then "and N more".
+ */
+export function tooltipElement(doc: Document, labels: readonly string[]): HTMLElement {
+  const element = doc.createElement("div");
+  const hidden = labels.length - MAX_TOOLTIP_MEMBERS;
+  for (const text of hidden > 0 ? [...labels.slice(0, MAX_TOOLTIP_MEMBERS), `and ${hidden.toLocaleString("en-US")} more`] : labels) {
+    const line = doc.createElement("div");
+    line.textContent = text;
+    element.appendChild(line);
+  }
   return element;
 }
 
 export interface MapSummary {
-  /** Dots drawn. */
+  /** Measurements drawn (a dot can stand for several). */
   shown: number;
   /** Held measurements without a location. */
   withoutLocation: number;
@@ -172,7 +228,7 @@ export interface MapSummary {
 export function mapNotice(summary: MapSummary): string | null {
   const parts: string[] = [];
   if (summary.truncated) {
-    parts.push(summary.shown > 0 ? `Showing the first ${summary.shown.toLocaleString("en-US")} measurements on the map; more may exist.` : "The measurement list was cut off before any located measurement; more may exist.");
+    parts.push(summary.shown > 0 ? `Showing the first ${summary.shown.toLocaleString("en-US")} loaded measurements on the map; more may exist.` : "The measurement list was cut off before any located measurement; more may exist.");
   }
   if (summary.withoutLocation > 0) {
     const one = summary.withoutLocation === 1;
@@ -180,6 +236,32 @@ export function mapNotice(summary: MapSummary): string | null {
   }
   return parts.length > 0 ? parts.join(" ") : null;
 }
+
+export function aggregateMeasurementCount(response: AggregateResponseDto): number {
+  return response.rows.reduce((sum, row) => sum + row.count, 0);
+}
+
+export interface MapLagInputs {
+  /** Measurements the aggregate counts; null while none is held. */
+  aggregateCount: number | null;
+  /** Observations the map holds, with or without a location. */
+  loadedObservations: number;
+  observationsTruncated: boolean;
+  /** Both loads finished without an error for the selection shown. */
+  settled: boolean;
+}
+
+/**
+ * `GET observations` leaves out rows younger than 30 s (so its cursor never skips a late write), `GET aggregate`
+ * does not: right after a submit the table is ahead of the map. Null when the map's own cap explains the gap.
+ */
+export function mapLagNotice(inputs: MapLagInputs): string | null {
+  if (!inputs.settled || inputs.aggregateCount === null || inputs.observationsTruncated) return null;
+  return inputs.aggregateCount > inputs.loadedObservations ? "Results appear on the map about 30 seconds after they arrive. Refresh to update." : null;
+}
+
+/** Shown when the aggregate carried the truncation header: the server read only its newest observations. */
+export const AGGREGATE_TRUNCATED_NOTICE = `Aggregates cover the newest ${MAX_SCANNED_OBSERVATIONS.toLocaleString("en-US")} observations only; narrow the selection.`;
 
 /** The chart keeps the largest groups only; the table lists them all. */
 export function chartNotice(groupCount: number, max = MAX_CHART_GROUPS): string | null {

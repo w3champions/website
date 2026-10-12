@@ -1,7 +1,8 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { AggregateResponseDto, AggregateRowDto, ObservationDto, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
-import { aggregateBars, aggregateKeyLabel, aggregateTableRows, bucketLegend, chartNotice, fleetEmptyState, fleetLoadPlan, floNodesMissing, lossBucket, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
+import { aggregateBars, aggregateKeyLabel, aggregateMeasurementCount, aggregateTableRows, bucketLegend, chartNotice, chartTickLabel, fleetEmptyState, fleetLoadPlan, floNodesMissing, locatedCount, lossBucket, mapLagNotice, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
+import { REAL_AGGREGATE_BY_COUNTRY, REAL_TIMEOUT_OBSERVATION, REAL_UNREACHABLE_OBSERVATION, REAL_UNSUPPORTED_OBSERVATION } from "./fixtures/realFleet";
 
 const catalogue: TargetsDto = {
   floNodes: [{ id: 12, name: "US East 4", location: "Ashburn", countryId: "US", isDisabled: false }, { id: 14, name: "EU 1", location: "Frankfurt", countryId: "DE", isDisabled: false }],
@@ -101,9 +102,42 @@ test("aggregate table formats ms, percent and shares", () => {
   assert.deepEqual(aggregateTableRows(response), [{ label: "DE", count: 10, p50Median: "22.1 ms", p50P90: "—", lossMedian: "1.2%", lossOver1: "5.0%", unreachable: "50.0%" }]);
 });
 
+test("a group in which nothing was sent shows a dash for the loss share, not 0 %", () => {
+  const rows = aggregateTableRows(REAL_AGGREGATE_BY_COUNTRY);
+
+  assert.deepEqual(rows.find((entry) => entry.label === "JP"), { label: "JP", count: 1, p50Median: "—", p50P90: "—", lossMedian: "—", lossOver1: "—", unreachable: "0.0%" });
+  assert.equal(rows.find((entry) => entry.label === "DE")?.lossOver1, "33.3%");
+  assert.equal(rows.find((entry) => entry.label === "Unknown")?.lossOver1, "0.0%", "a real 0 % stays a number");
+});
+
+test("chart tick labels keep the start of a long name and its count", () => {
+  assert.equal(chartTickLabel("DE", 3), "DE (3)");
+  assert.equal(chartTickLabel("AS3320 Deutsche Telekom AG", 3, 19), "AS3320 Deutsche Tel… (3)");
+  assert.equal(chartTickLabel("AS22548 Nucleo de Inf. e Coord. do Ponto BR - NIC.BR", 1), "AS22548 Nucleo de Inf.… (1)");
+  const response: AggregateResponseDto = { groupBy: ["asn"], rows: [row({ asn: 22548 }, { count: 1, asnOrg: "Nucleo de Inf. e Coord. do Ponto BR - NIC.BR" })] };
+  const bars = aggregateBars(response);
+  assert.deepEqual(bars.labels, ["AS22548 Nucleo de Inf. e Coord. do Ponto BR - NIC.BR (1)"], "the full name stays for the chart tooltip");
+  assert.deepEqual(bars.tickLabels, ["AS22548 Nucleo de Inf.… (1)"]);
+});
+
+test("the aggregate's measurement count is the sum of its groups", () => {
+  assert.equal(aggregateMeasurementCount(REAL_AGGREGATE_BY_COUNTRY), 8);
+  assert.equal(aggregateMeasurementCount({ groupBy: ["country"], rows: [] }), 0);
+});
+
+test("the lag hint appears only when the settled aggregate counts more than the complete map load", () => {
+  const hint = "Results appear on the map about 30 seconds after they arrive. Refresh to update.";
+  assert.equal(mapLagNotice({ aggregateCount: 11, loadedObservations: 0, observationsTruncated: false, settled: true }), hint);
+  assert.equal(mapLagNotice({ aggregateCount: 11, loadedObservations: 10, observationsTruncated: false, settled: true }), hint);
+  assert.equal(mapLagNotice({ aggregateCount: 11, loadedObservations: 11, observationsTruncated: false, settled: true }), null);
+  assert.equal(mapLagNotice({ aggregateCount: 200_000, loadedObservations: 20_000, observationsTruncated: true, settled: true }), null, "the map's own cap explains the gap");
+  assert.equal(mapLagNotice({ aggregateCount: 11, loadedObservations: 0, observationsTruncated: false, settled: false }), null, "not while either part is loading or failed");
+  assert.equal(mapLagNotice({ aggregateCount: null, loadedObservations: 0, observationsTruncated: false, settled: true }), null);
+});
+
 test("aggregate bars keep the largest groups and show counts in labels", () => {
   const response: AggregateResponseDto = { groupBy: ["country"], rows: [row({ country: "DE" }, { count: 40 }), row({ country: "FR" }, { count: 30, p50MsMedian: null }), row({ country: "PL" }, { count: 1 })] };
-  assert.deepEqual(aggregateBars(response, 2), { labels: ["DE (40)", "FR (30)"], p50Median: [22.1, null], p50P90: [41, 41] });
+  assert.deepEqual(aggregateBars(response, 2), { labels: ["DE (40)", "FR (30)"], tickLabels: ["DE (40)", "FR (30)"], p50Median: [22.1, null], p50P90: [41, 41] });
 });
 
 test("p50 buckets: < 80 good, < 150 fair, otherwise bad; null unknown", () => {
@@ -123,29 +157,60 @@ test("loss buckets: ≤ 0.5 % good, ≤ 2 % fair, more is bad", () => {
   assert.equal(lossBucket(null), "unknown");
 });
 
-test("unreachable is bad on either metric; unsupported, timeout and error are unknown", () => {
+test("unreachable is bad on either metric; a probe without any figure is unknown", () => {
   assert.equal(observationBucket(observation({ outcome: "unreachable", p50Ms: null, lossPct: 100 }), "p50"), "bad");
-  assert.equal(observationBucket(observation({ outcome: "unsupported", p50Ms: null }), "loss"), "unknown");
+  assert.equal(observationBucket(REAL_UNREACHABLE_OBSERVATION, "p50"), "bad");
+  assert.equal(observationBucket(REAL_UNREACHABLE_OBSERVATION, "loss"), "bad");
+  assert.equal(observationBucket(observation({ outcome: "unreachable", lossPct: 0 }), "loss"), "bad", "the target did not answer, whatever the last hop lost");
+  assert.equal(observationBucket(REAL_UNSUPPORTED_OBSERVATION, "loss"), "unknown");
+  assert.equal(observationBucket(REAL_UNSUPPORTED_OBSERVATION, "p50"), "unknown");
   assert.equal(observationBucket(observation({ p50Ms: 200 }), "p50"), "bad");
   assert.equal(observationBucket(observation({ p50Ms: 200, lossPct: 0 }), "loss"), "good");
 });
 
+test("a ping that timed out completely is coloured by its loss, not drawn as no data", () => {
+  assert.equal(observationBucket(REAL_TIMEOUT_OBSERVATION, "loss"), "bad");
+  assert.equal(observationBucket(REAL_TIMEOUT_OBSERVATION, "p50"), "bad", "no RTT but a loss figure: worst bucket");
+  assert.equal(observationBucket(observation({ outcome: "timeout", p50Ms: null, lossPct: 1.2 }), "loss"), "fair");
+  assert.equal(observationBucket(observation({ outcome: "error", p50Ms: 30, lossPct: 0 }), "loss"), "good");
+  assert.equal(observationBucket(observation({ outcome: "error", p50Ms: 30, lossPct: 0 }), "p50"), "good");
+  assert.match(mapPoints([REAL_TIMEOUT_OBSERVATION], "p50")[0].labels[0], /p50 — · loss 100\.0% · timeout$/, "the tooltip text is unchanged");
+});
+
 test("map points skip measurements without coordinates and keep labels as plain text", () => {
   const points = mapPoints([observation({ city: "<b>Berlin</b>" }), observation({ lat: null })], "p50");
-  assert.equal(points.length, 1);
-  const { label, ...position } = points[0];
-  assert.deepEqual(position, { lat: 52.5, lon: 13.4, bucket: "good" });
-  assert.equal(label, "Name#1234 · <b>Berlin</b>, DE · AS3320 DTAG · p50 22.0 ms · loss 0.0% · ok");
+  assert.deepEqual(points, [{ lat: 52.5, lon: 13.4, bucket: "good", labels: ["Name#1234 · <b>Berlin</b>, DE · AS3320 DTAG · p50 22.0 ms · loss 0.0% · ok"] }]);
+});
+
+test("measurements at identical coordinates share one dot, coloured by the worst of them for the metric", () => {
+  // GeoLite puts every "US, no city" client on the same point.
+  const us = { country: "US", city: null, lat: 37.751, lon: -97.822 };
+  const observations = [
+    observation({ ...us, battleTag: "Fast#1", p50Ms: 30, lossPct: 3 }),
+    observation({ battleTag: "Berlin#2" }),
+    observation({ ...us, battleTag: "Slow#3", p50Ms: 160, lossPct: 0 }),
+    observation({ ...us, battleTag: "Unknown#4", outcome: "unsupported", p50Ms: null, lossPct: null }),
+  ];
+
+  const byP50 = mapPoints(observations, "p50");
+  const byLoss = mapPoints(observations, "loss");
+
+  assert.deepEqual(byP50.map((point) => [point.lat, point.lon, point.bucket, point.labels.length]), [[37.751, -97.822, "bad", 3], [52.5, 13.4, "good", 1]]);
+  assert.deepEqual(byP50[0].labels.map((label) => label.split(" · ")[0]), ["Fast#1", "Slow#3", "Unknown#4"], "members keep their order");
+  assert.equal(byLoss[0].bucket, "bad");
+  assert.equal(mapPoints([observations[0], observations[3]], "p50")[0].bucket, "good", "a member without data never outranks one with data");
+  assert.equal(mapPoints([observations[3]], "p50")[0].bucket, "unknown");
+  assert.equal(locatedCount(byP50), 4);
 });
 
 test("legend text names the thresholds", () => {
-  assert.deepEqual(bucketLegend("p50"), { good: "p50 < 80 ms", fair: "80–150 ms", bad: "≥ 150 ms or unreachable", unknown: "no data" });
+  assert.deepEqual(bucketLegend("p50"), { good: "p50 < 80 ms", fair: "80–150 ms", bad: "≥ 150 ms, unreachable or no answer", unknown: "no data" });
   assert.deepEqual(bucketLegend("loss"), { good: "loss ≤ 0.5%", fair: "≤ 2%", bad: "> 2% or unreachable", unknown: "no data" });
 });
 
 test("the map notice counts drawn and unlocated measurements and never says first 0", () => {
   assert.equal(mapNotice({ shown: 5, withoutLocation: 0, truncated: false }), null);
-  assert.match(mapNotice({ shown: 19990, withoutLocation: 10, truncated: true }) ?? "", /Showing the first 19,990 measurements.*more may exist.*10 loaded measurements have no location/);
+  assert.match(mapNotice({ shown: 19990, withoutLocation: 10, truncated: true }) ?? "", /Showing the first 19,990 loaded measurements on the map; more may exist\. 10 loaded measurements have no location/);
   const none = mapNotice({ shown: 0, withoutLocation: 0, truncated: true }) ?? "";
   assert.doesNotMatch(none, /first 0/);
   assert.match(none, /cut off/);
