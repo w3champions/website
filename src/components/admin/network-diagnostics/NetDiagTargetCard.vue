@@ -1,7 +1,7 @@
 <template>
   <v-card variant="outlined">
     <v-card-title class="text-subtitle-1 d-flex flex-wrap align-center ga-2">
-      <span>{{ target.label }}</span>
+      <span>{{ title }}</span>
       <code class="text-caption">{{ target.targetKey }}</code>
     </v-card-title>
     <v-card-text>
@@ -13,13 +13,13 @@
             {{ path.path === "direct" ? "Direct" : "Proxied" }}<span v-if="path.routeLabel" class="text-medium-emphasis"> — {{ path.routeLabel }}</span>
           </h4>
           <div class="text-caption text-medium-emphasis mb-2">{{ endpointsLine(path.endpoints) }}</div>
-          <div v-for="probe in path.probes" :key="probe.method" class="mb-4">
+          <div v-for="probe in path.probes ?? []" :key="probe.method" class="mb-4">
             <div class="d-flex align-center flex-wrap ga-2 mb-1">
               <strong class="text-body-2">{{ METHOD_LABELS[probe.method] }}</strong>
               <v-chip size="x-small" variant="tonal" :color="OUTCOME_COLOR[probe.outcome]">{{ probe.outcome }}</v-chip>
               <span v-if="probe.reason" class="text-caption text-medium-emphasis">{{ probe.reason }}</span>
             </div>
-            <div v-if="probe.stats" class="text-caption mb-1">{{ probeStatsLine(probe) }}</div>
+            <div v-if="hasProbeStats(probe)" class="text-caption mb-1">{{ probeStatsLine(probe) }}</div>
             <mtr-hop-table v-if="probe.hops && probe.hops.length > 0" :hops="hopRows(probe.hops)" :hop-info="hopEnrichment(probe.hops, ipInfo)" />
           </div>
         </v-col>
@@ -34,12 +34,13 @@ import MtrHopTable from "@/components/admin/MtrHopTable.vue";
 import { OKABE_ITO_COLORS } from "@/helpers/lag-report-colors";
 import type { IpInfoDto, TargetResultDto } from "@/store/admin/networkDiagnostics/types";
 import { METHOD_LABELS } from "./format";
-import { endpointsLine, hopEnrichment, hopRows, orderedPaths, OUTCOME_COLOR, probeStatsLine, rttSeries } from "./measurementView";
+import { endpointsLine, hasProbeStats, hopEnrichment, hopRows, orderedPaths, OUTCOME_COLOR, probeStatsLine, rttSeries } from "./measurementView";
 import NetDiagRttChart from "./NetDiagRttChart.vue";
 
-const props = defineProps<{ target: TargetResultDto; ipInfo: Record<string, IpInfoDto>; showSeries: boolean }>();
+const props = defineProps<{ target: TargetResultDto; ipInfo: Record<string, IpInfoDto | null>; showSeries: boolean }>();
 
+const title = computed(() => props.target.label || props.target.targetKey);
 const paths = computed(() => orderedPaths(props.target));
 const series = computed(() => rttSeries(props.target, OKABE_ITO_COLORS));
-const chartDescription = computed(() => `Round-trip time over the measurement window for ${props.target.label}, one line per path and method (MTR lines are the final hop).`);
+const chartDescription = computed(() => `Round-trip time over the measurement window for ${title.value}, one line per path and method (MTR lines are the final hop).`);
 </script>

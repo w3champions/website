@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { FloSnapshotRow, HopDto, MeasurementDetailDto, ProbeDto, StatsDto, TargetResultDto } from "@/store/admin/networkDiagnostics/types";
-import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hopEnrichment, hopRows, measurementFacts, memoryLine, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, vpnLine, wifiLine } from "./measurementView";
+import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hasProbeStats, hopEnrichment, hopRows, measurementFacts, memoryLine, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, vpnLine, wifiLine } from "./measurementView";
 
 const stats = (overrides: Partial<StatsDto> = {}): StatsDto => ({
   sent: 60,
@@ -185,15 +185,16 @@ test("final hop is the highest TTL; an MTR without final-hop samples or without 
 
 test("raw expired (samples keys omitted): no series and the expiry notice; other raw states", () => {
   const expired = nullHeavy();
-  assert.equal("samples" in expired.targets[0].paths[0].probes[0], false);
-  assert.deepEqual(rttSeries(expired.targets[0], ["#111111"]), []);
+  const expiredTarget = expired.targets![0];
+  assert.equal("samples" in expiredTarget.paths![0].probes![0], false);
+  assert.deepEqual(rttSeries(expiredTarget, ["#111111"]), []);
   assert.equal(rawSamplesNotice(expired, true), RAW_EXPIRED_NOTICE);
   assert.equal(RAW_EXPIRED_NOTICE.startsWith("Raw data expired (>90 days)"), true);
   assert.equal(rawSamplesNotice(expired, false), null, "nothing to say before the raw series was requested");
   assert.equal(rawSamplesNotice({ ...expired, rawExpired: false }, true), NO_RAW_SAMPLES_NOTICE);
   assert.equal(rawSamplesNotice({ ...expired, rawExpired: false, targets: [target] }, true), null);
   assert.equal(rawSamplesNotice({ rawExpired: false }, true), NO_RAW_SAMPLES_NOTICE, "a payload without targets must not throw");
-  assert.equal(rawSamplesNotice({ targets: [{ ...target, paths: undefined as never }] }, true), NO_RAW_SAMPLES_NOTICE);
+  assert.equal(rawSamplesNotice({ targets: [{ ...target, paths: undefined }] }, true), NO_RAW_SAMPLES_NOTICE);
 });
 
 test("endpoints line skips missing protocols", () => {
@@ -314,7 +315,7 @@ test("absent keys (omitted, not null) render dashes and empty results through ev
   assert.equal(probeStatsLine(probe), "—");
   assert.equal(endpointsLine({}), "—");
   assert.equal(finalHop([hop])?.ttl, 1);
-  assert.deepEqual(rttSeries(bare.targets[0], ["#111111"]), []);
+  assert.deepEqual(rttSeries(bare.targets![0], ["#111111"]), []);
   assert.equal(rawSamplesNotice(bare, true), NO_RAW_SAMPLES_NOTICE);
   const [snap] = snapshotRows([{ nodeId: 1, nodeName: "A" }]);
   assert.deepEqual([snap.route, snap.transport, snap.health, snap.healthColor, snap.current, snap.p95, snap.loss, snap.samples], ["direct", "—", "—", "grey", "—", "—", "—", "—"]);
@@ -325,4 +326,44 @@ test("absent keys (omitted, not null) render dashes and empty results through ev
   assert.equal(memoryLine({}), "—");
   assert.equal(vpnLine({ suspected: true }), "suspected: no detail");
   assert.equal(antivirusLine({ thirdParty: [] }), "none detected");
+});
+
+test("a path without endpoints reads as a dash (real backend: endpoints null)", () => {
+  assert.equal(endpointsLine(null), "—");
+  assert.equal(endpointsLine(undefined), "—");
+});
+
+test("snapshot rows without a node name show the node id and still sort (real backend: nodeName null)", () => {
+  const row = (nodeId: number, nodeName: string | null): FloSnapshotRow => ({ nodeId, nodeName });
+  const rows = snapshotRows([row(9, null), row(1, "PTR EU"), row(3, null)]);
+  assert.deepEqual(rows.map((r) => r.node), ["Node 3", "Node 9", "PTR EU"]);
+});
+
+test("pacing with null members shows only what is known, never 'null ms'", () => {
+  const pacing = (p: MeasurementDetailDto["pacing"]): string => measurementFacts({ ...nullHeavy(), pacing: p }).find((f) => f.label === "Pacing")!.value;
+  assert.equal(pacing({ mtrRoundMs: 6000, pingIntervalMs: null, streams: null }), "MTR round 6000 ms");
+  assert.equal(pacing({ mtrRoundMs: null, pingIntervalMs: 1000, streams: 12 }), "ping every 1000 ms · 12 streams");
+  assert.equal(pacing({ mtrRoundMs: null, pingIntervalMs: null, streams: null }), "—");
+  assert.equal(pacing({}), "—");
+});
+
+test("a VPN object without a verdict is a dash, not 'not detected'", () => {
+  assert.equal(vpnLine({ suspected: null }), "—");
+  assert.equal(vpnLine({ suspected: false }), "not detected");
+});
+
+test("a null ipInfo entry or a null ipInfo map adds no GeoIP facts", () => {
+  const hops: HopDto[] = [{ ttl: 1, ip: "10.0.0.1" }];
+  assert.deepEqual(hopEnrichment(hops, { "10.0.0.1": null }), [null]);
+  assert.deepEqual(hopEnrichment(hops, null), [null]);
+});
+
+test("stats line only for probes that sent something (unsupported and error probes carry zeros)", () => {
+  const probe = (outcome: ProbeDto["outcome"], s: StatsDto | null): ProbeDto => ({ method: "TcpPing", outcome, stats: s });
+  assert.equal(hasProbeStats(probe("ok", stats())), true);
+  assert.equal(hasProbeStats(probe("timeout", stats({ received: 0, lossPct: 100 }))), true);
+  assert.equal(hasProbeStats(probe("unsupported", stats({ sent: 0, received: 0, lossPct: null }))), false);
+  assert.equal(hasProbeStats(probe("error", noReplies)), false);
+  assert.equal(hasProbeStats(probe("ok", null)), false);
+  assert.equal(probeStatsLine(probe("unsupported", stats({ sent: 0, received: 0, lossPct: null, p50Ms: null }))).includes("null"), false);
 });

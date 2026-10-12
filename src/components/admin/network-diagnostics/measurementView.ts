@@ -1,7 +1,7 @@
 import type { ChartPoint } from "@/components/admin/lag-reports/relaySeries";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { HopEnrichment, MtrHopRow } from "@/store/admin/lagReports/types";
-import type { AdapterDto, AntivirusDto, CpuDto, FloSnapshotRow, HopDto, IpInfoDto, MeasurementDetailDto, MemoryDto, NetDiagMethod, NetDiagPath, OsInfoDto, PathEndpoints, PathResultDto, ProbeDto, ProbeOutcome, SamplePoint, TargetResultDto, VpnDto, WifiDto } from "@/store/admin/networkDiagnostics/types";
+import type { AdapterDto, AntivirusDto, CpuDto, FloSnapshotRow, HopDto, IpInfoDto, MeasurementDetailDto, MemoryDto, NetDiagMethod, NetDiagPath, OsInfoDto, PacingDto, PathEndpoints, PathResultDto, ProbeDto, ProbeOutcome, SamplePoint, TargetResultDto, VpnDto, WifiDto } from "@/store/admin/networkDiagnostics/types";
 import { asnText, DASH, formatDuration, formatMs, formatPercent, formatShare, geoText, METHOD_LABELS } from "./format";
 
 const MS_PER_SECOND = 1000;
@@ -35,15 +35,20 @@ export function hopRows(hops: readonly HopDto[]): MtrHopRow[] {
 }
 
 /** GeoIP facts per hop (by index) from the measurement's `ipInfo`; null for silent hops and unknown IPs. */
-export function hopEnrichment(hops: readonly HopDto[], ipInfo: Readonly<Record<string, IpInfoDto>>): (HopEnrichment | null)[] {
+export function hopEnrichment(hops: readonly HopDto[], ipInfo: Readonly<Record<string, IpInfoDto | null>> | null | undefined): (HopEnrichment | null)[] {
   return hops.map((hop) => {
-    const info: IpInfoDto | undefined = hop.ip == null ? undefined : ipInfo[hop.ip];
-    return info === undefined ? null : { asn: info.asn ?? null, asnOrg: info.asnOrg ?? null, city: info.city ?? null, country: info.country ?? null };
+    const info: IpInfoDto | null | undefined = hop.ip == null ? undefined : ipInfo?.[hop.ip];
+    return info == null ? null : { asn: info.asn ?? null, asnOrg: info.asnOrg ?? null, city: info.city ?? null, country: info.country ?? null };
   });
 }
 
 export function orderedPaths(target: TargetResultDto): PathResultDto[] {
-  return [...target.paths].sort((a, b) => PATH_ORDER[a.path] - PATH_ORDER[b.path]);
+  return [...(target.paths ?? [])].sort((a, b) => PATH_ORDER[a.path] - PATH_ORDER[b.path]);
+}
+
+/** Whether the probe has numbers worth a stats line: unsupported and error probes carry a stats object of zeros. */
+export function hasProbeStats(probe: ProbeDto): boolean {
+  return probe.stats != null && probe.stats.sent > 0;
 }
 
 export function probeStatsLine(probe: ProbeDto): string {
@@ -60,8 +65,8 @@ export function probeStatsLine(probe: ProbeDto): string {
   ].join(" · ");
 }
 
-export function endpointsLine(endpoints: PathEndpoints): string {
-  return joinParts([endpoints.icmp && `ICMP ${endpoints.icmp}`, endpoints.tcp && `TCP ${endpoints.tcp}`, endpoints.udp && `UDP ${endpoints.udp}`]);
+export function endpointsLine(endpoints: PathEndpoints | null | undefined): string {
+  return joinParts([endpoints?.icmp && `ICMP ${endpoints.icmp}`, endpoints?.tcp && `TCP ${endpoints.tcp}`, endpoints?.udp && `UDP ${endpoints.udp}`]);
 }
 
 export interface RttSeries {
@@ -92,7 +97,7 @@ function hasSamples(samples: SamplePoint[] | null | undefined): samples is Sampl
 
 /** Raw series of one path: ping probes' own samples and the final hop of each MTR (A4). Absent `samples` keys draw nothing. */
 function seriesSources(path: PathResultDto): SeriesSource[] {
-  return path.probes.flatMap((probe): SeriesSource[] => {
+  return (path.probes ?? []).flatMap((probe): SeriesSource[] => {
     if (PING_METHODS.has(probe.method)) {
       return hasSamples(probe.samples) ? [{ path, label: METHOD_LABELS[probe.method], samples: probe.samples }] : [];
     }
@@ -146,11 +151,16 @@ export interface SnapshotRowView {
   samples: string;
 }
 
+/** The launcher may send no `node_name`: fall back to the node id. */
+function snapshotNodeName(row: FloSnapshotRow): string {
+  return row.nodeName || `Node ${row.nodeId}`;
+}
+
 export function snapshotRows(rows: readonly FloSnapshotRow[]): SnapshotRowView[] {
   return [...rows]
-    .sort((a, b) => a.nodeName.localeCompare(b.nodeName))
+    .sort((a, b) => snapshotNodeName(a).localeCompare(snapshotNodeName(b)))
     .map((row) => ({
-      node: row.nodeName,
+      node: snapshotNodeName(row),
       route: row.routeLabel ?? "direct",
       transport: row.transport ?? DASH,
       health: row.health ?? DASH,
@@ -237,6 +247,7 @@ export function memoryLine(memory: MemoryDto | null | undefined): string {
 
 export function vpnLine(vpn: VpnDto | null | undefined): string {
   if (vpn == null) return DASH;
+  if (vpn.suspected == null) return DASH;
   return vpn.suspected ? `suspected: ${(vpn.evidence ?? []).join("; ") || "no detail"}` : "not detected";
 }
 
@@ -250,6 +261,14 @@ export function antivirusLine(antivirus: AntivirusDto | null | undefined): strin
 export interface Fact {
   label: string;
   value: string;
+}
+
+function pacingText(pacing: PacingDto | null | undefined): string {
+  return joinParts([
+    pacing?.mtrRoundMs != null && `MTR round ${pacing.mtrRoundMs} ms`,
+    pacing?.pingIntervalMs != null && `ping every ${pacing.pingIntervalMs} ms`,
+    pacing?.streams != null && `${pacing.streams} streams`,
+  ]);
 }
 
 /** Header facts of a measurement; every value is display text (a dash when unknown). */
@@ -278,6 +297,6 @@ export function measurementFacts(detail: MeasurementDetailDto): Fact[] {
     { label: "Uptime", value: uptime === null ? DASH : formatDuration(uptime) },
     { label: "Clock skew", value: skew === null ? DASH : `${skew} ms` },
     { label: "Launcher proxy", value: proxy === null ? DASH : proxy ? "configured" : "none" },
-    { label: "Pacing", value: pacing == null ? DASH : `MTR round ${pacing.mtrRoundMs} ms · ping every ${pacing.pingIntervalMs} ms · ${pacing.streams} streams` },
+    { label: "Pacing", value: pacingText(pacing) },
   ];
 }

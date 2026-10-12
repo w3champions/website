@@ -166,7 +166,8 @@ export interface MeasurementSummaryDto {
 export interface StatsDto {
   sent: number;
   received: number;
-  lossPct: number;
+  /** Null when nothing was sent (unsupported and error probes). */
+  lossPct?: number | null;
   lastMs?: number | null;
   minMs?: number | null;
   avgMs?: number | null;
@@ -211,20 +212,23 @@ export interface PathEndpoints {
 export interface PathResultDto {
   path: NetDiagPath;
   routeLabel?: string | null;
-  endpoints: PathEndpoints;
-  probes: ProbeDto[];
+  /** Null or omitted when the launcher sent no endpoints object (A12). */
+  endpoints?: PathEndpoints | null;
+  probes?: ProbeDto[] | null;
 }
 
 export interface TargetResultDto {
   targetKey: string;
-  label: string;
-  paths: PathResultDto[];
+  /** Null or omitted when the launcher sent no label. */
+  label?: string | null;
+  paths?: PathResultDto[] | null;
 }
 
 /** C5 `flo_snapshot` row, camelCased. `max` is flo's p95 by design; `maxTrue` is the real maximum. `lossRate` is 0..1. */
 export interface FloSnapshotRow {
   nodeId: number;
-  nodeName: string;
+  /** Null or omitted when the launcher sent no `node_name`. */
+  nodeName?: string | null;
   routeLabel?: string | null;
   transport?: string | null;
   health?: string | null;
@@ -244,14 +248,14 @@ export interface FloSnapshotRow {
 }
 
 export interface PacingDto {
-  mtrRoundMs: number;
-  pingIntervalMs: number;
-  streams: number;
+  mtrRoundMs?: number | null;
+  pingIntervalMs?: number | null;
+  streams?: number | null;
 }
 
 export interface AdapterDto {
-  name: string;
-  kind: string;
+  name?: string | null;
+  kind?: string | null;
   linkSpeedMbps?: number | null;
   mtu?: number | null;
   gateway?: string | null;
@@ -284,7 +288,7 @@ export interface MemoryDto {
 }
 
 export interface VpnDto {
-  suspected: boolean;
+  suspected?: boolean | null;
   evidence?: string[] | null;
 }
 
@@ -318,7 +322,7 @@ export interface IpInfoDto {
 
 /** A4. `family` repeats the summary `os`; name/version are typed nullable defensively. */
 export interface OsInfoDto {
-  family: string;
+  family?: string | null;
   name?: string | null;
   version?: string | null;
 }
@@ -327,15 +331,15 @@ export interface MeasurementDetailDto extends MeasurementSummaryDto {
   /** Null or omitted when the submission carried no OS (A12). */
   osInfo?: OsInfoDto | null;
   launcherVersion?: string | null;
-  attemptStartedAt: string;
-  windowStartedAt: string;
-  windowEndedAt: string;
+  attemptStartedAt?: string | null;
+  windowStartedAt?: string | null;
+  windowEndedAt?: string | null;
   pacing?: PacingDto | null;
   system?: SystemDto | null;
-  floSnapshot: FloSnapshotRow[];
+  floSnapshot?: FloSnapshotRow[] | null;
   defaultGateway?: string | null;
-  ipInfo: Record<string, IpInfoDto>;
-  targets: TargetResultDto[];
+  ipInfo?: Record<string, IpInfoDto | null> | null;
+  targets?: TargetResultDto[] | null;
   /** True when `raw=true` was asked after the 90-day raw retention; every `samples` key is then omitted (A4). Test this flag, not the samples. */
   rawExpired?: boolean;
 }
@@ -357,7 +361,7 @@ export interface ObservationDto {
   primaryAdapterType: string | null;
   vpnSuspected: boolean | null;
   targetKey: string;
-  targetLabel: string;
+  targetLabel: string | null;
   targetIp: string | null;
   path: NetDiagPath;
   routeLabel: string | null;
