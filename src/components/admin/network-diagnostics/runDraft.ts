@@ -1,5 +1,5 @@
 import { type Audience, type CreateRunRequest, type CustomTarget, type FloNodeTarget, NETDIAG_METHODS, type NetDiagMethod } from "@/store/admin/networkDiagnostics/types";
-import { formatDuration } from "./format";
+import { DASH, formatDuration } from "./format";
 
 /** C6 tag rule. Matched as written: never trimmed inside, never case-folded. The server's .NET `\s` also covers U+0085, which JS `\s` does not. */
 export const BATTLE_TAG_PATTERN = /^[^#\s\u0085]{2,12}#\d{3,6}$/;
@@ -229,7 +229,7 @@ export function requiresAllConfirmation(d: Pick<RunDraft, "audience">): boolean 
 }
 
 export function nodeSelectItems(nodes: readonly FloNodeTarget[]): { title: string; value: number }[] {
-  return nodes.map((node) => ({ title: `${node.name} — ${node.location}${node.isDisabled ? " (disabled)" : ""}`, value: node.id }));
+  return nodes.map((node) => ({ title: `${[node.name, node.location].map((part) => part || DASH).join(" — ")}${node.isDisabled ? " (disabled)" : ""}`, value: node.id }));
 }
 
 export function endpointLabel(target: { label: string; ip: string; tcpPort: number }): string {

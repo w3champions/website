@@ -8,13 +8,44 @@ const MS_PER_SECOND = 1000;
 const PROXIED_DASH = [6, 3];
 const PATH_ORDER: Record<NetDiagPath, number> = { direct: 0, proxied: 1 };
 
-export const OUTCOME_COLOR: Record<ProbeOutcome, string> = {
+const OUTCOME_COLOR: Record<ProbeOutcome, string> = {
   ok: "success",
   unsupported: "grey",
   unreachable: "error",
   timeout: "warning",
   error: "error",
 };
+
+function isKnown<K extends string>(table: Readonly<Record<K, unknown>>, value: string | null | undefined): value is K {
+  return typeof value === "string" && Object.hasOwn(table, value);
+}
+
+/** Chip colour of an outcome; neutral for a null or unknown one. */
+export function outcomeColor(outcome: string | null | undefined): string {
+  return isKnown(OUTCOME_COLOR, outcome) ? OUTCOME_COLOR[outcome] : "grey";
+}
+
+/** Client-supplied enums: an unknown string is shown as sent, a missing one as a dash. */
+export function outcomeText(outcome: string | null | undefined): string {
+  return outcome ? outcome : DASH;
+}
+
+export function methodLabel(method: string | null | undefined): string {
+  if (isKnown(METHOD_LABELS, method)) return METHOD_LABELS[method];
+  return method ? method : DASH;
+}
+
+const PATH_LABELS: Record<NetDiagPath, string> = { direct: "Direct", proxied: "Proxied" };
+
+export function pathLabel(path: string | null | undefined): string {
+  if (isKnown(PATH_LABELS, path)) return PATH_LABELS[path];
+  return path ? path : DASH;
+}
+
+/** The target's card title: its label, else its key, else a dash. */
+export function targetTitle(target: { label?: string | null; targetKey?: string | null }): string {
+  return target.label || target.targetKey || DASH;
+}
 
 function joinParts(parts: Array<string | null | undefined | false>): string {
   const present = parts.filter((part): part is string => typeof part === "string" && part !== "");
@@ -42,8 +73,12 @@ export function hopEnrichment(hops: readonly HopDto[], ipInfo: Readonly<Record<s
   });
 }
 
+function pathRank(path: string | null | undefined): number {
+  return isKnown(PATH_ORDER, path) ? PATH_ORDER[path] : Object.keys(PATH_ORDER).length;
+}
+
 export function orderedPaths(target: TargetResultDto): PathResultDto[] {
-  return [...(target.paths ?? [])].sort((a, b) => PATH_ORDER[a.path] - PATH_ORDER[b.path]);
+  return [...(target.paths ?? [])].sort((a, b) => pathRank(a.path) - pathRank(b.path));
 }
 
 /** Whether the probe has numbers worth a stats line: unsupported and error probes carry a stats object of zeros. */
@@ -76,8 +111,8 @@ export interface RttSeries {
   points: ChartPoint[];
 }
 
-const PING_METHODS: ReadonlySet<NetDiagMethod> = new Set<NetDiagMethod>(["TcpPing", "FloUdpPing"]);
-const MTR_METHODS: ReadonlySet<NetDiagMethod> = new Set<NetDiagMethod>(["IcmpMtr", "TcpMtr"]);
+const PING_METHODS: ReadonlySet<string> = new Set<NetDiagMethod>(["TcpPing", "FloUdpPing"]);
+const MTR_METHODS: ReadonlySet<string> = new Set<NetDiagMethod>(["IcmpMtr", "TcpMtr"]);
 
 /** The hop with the highest TTL: the target itself, or the furthest hop the MTR reached. */
 export function finalHop(hops: readonly HopDto[] | null | undefined): HopDto | null {
@@ -98,13 +133,14 @@ function hasSamples(samples: SamplePoint[] | null | undefined): samples is Sampl
 /** Raw series of one path: ping probes' own samples and the final hop of each MTR (A4). Absent `samples` keys draw nothing. */
 function seriesSources(path: PathResultDto): SeriesSource[] {
   return (path.probes ?? []).flatMap((probe): SeriesSource[] => {
-    if (PING_METHODS.has(probe.method)) {
-      return hasSamples(probe.samples) ? [{ path, label: METHOD_LABELS[probe.method], samples: probe.samples }] : [];
+    const method = probe.method ?? "";
+    if (PING_METHODS.has(method)) {
+      return hasSamples(probe.samples) ? [{ path, label: methodLabel(method), samples: probe.samples }] : [];
     }
-    if (!MTR_METHODS.has(probe.method)) return [];
+    if (!MTR_METHODS.has(method)) return [];
     const hop = finalHop(probe.hops);
     if (hop === null || !hasSamples(hop.samples)) return [];
-    return [{ path, label: `${METHOD_LABELS[probe.method]} (final hop ${hop.ip ?? "?"})`, samples: hop.samples }];
+    return [{ path, label: `${methodLabel(method)} (final hop ${hop.ip ?? "?"})`, samples: hop.samples }];
   });
 }
 
@@ -114,7 +150,7 @@ function seriesSources(path: PathResultDto): SeriesSource[] {
  */
 export function rttSeries(target: TargetResultDto, palette: readonly string[]): RttSeries[] {
   return orderedPaths(target).flatMap(seriesSources).map((source, index) => ({
-    label: `${source.path.path}${source.path.routeLabel ? ` (${source.path.routeLabel})` : ""} · ${source.label}`,
+    label: `${source.path.path || DASH}${source.path.routeLabel ? ` (${source.path.routeLabel})` : ""} · ${source.label}`,
     color: palette[index % palette.length],
     dash: source.path.path === "proxied" ? [...PROXIED_DASH] : [],
     points: source.samples.map(([offsetMs, rttMs]) => ({ x: offsetMs / MS_PER_SECOND, y: rttMs })),

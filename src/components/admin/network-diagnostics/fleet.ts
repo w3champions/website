@@ -19,7 +19,7 @@ export const FLEET_GROUP_BY_ITEMS: SelectItem<FleetGroupBy>[] = [
 /** The run's targets as C4 keys, named from the catalogue when it is loaded. */
 export function runTargetItems(run: Pick<RunDto, "targets">, catalogue: TargetsDto | null): SelectItem<string>[] {
   const t = run.targets;
-  const nodeNames = new Map((catalogue?.floNodes ?? []).map((node) => [node.id, node.isDisabled ? `${node.name} (disabled)` : node.name] as const));
+  const nodeNames = new Map((catalogue?.floNodes ?? []).map((node) => [node.id, node.isDisabled ? `${node.name || `Node ${node.id}`} (disabled)` : node.name || `Node ${node.id}`] as const));
   const coreLabels = new Map((catalogue?.coreServers ?? []).map((server) => [server.key, server.label] as const));
   const baselineLabels = new Map((catalogue?.baselines ?? []).map((baseline) => [baseline.key, baseline.label] as const));
   const nodeIds = t.allFloNodes ? (catalogue?.floNodes ?? []).map((node) => node.id) : t.floNodeIds;

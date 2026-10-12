@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { FloSnapshotRow, HopDto, MeasurementDetailDto, ProbeDto, StatsDto, TargetResultDto } from "@/store/admin/networkDiagnostics/types";
-import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hasProbeStats, hopEnrichment, hopRows, measurementFacts, memoryLine, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, vpnLine, wifiLine } from "./measurementView";
+import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hasProbeStats, hopEnrichment, hopRows, measurementFacts, memoryLine, methodLabel, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, outcomeColor, outcomeText, pathLabel, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, targetTitle, vpnLine, wifiLine } from "./measurementView";
 
 const stats = (overrides: Partial<StatsDto> = {}): StatsDto => ({
   sent: 60,
@@ -366,4 +366,33 @@ test("stats line only for probes that sent something (unsupported and error prob
   assert.equal(hasProbeStats(probe("error", noReplies)), false);
   assert.equal(hasProbeStats(probe("ok", null)), false);
   assert.equal(probeStatsLine(probe("unsupported", stats({ sent: 0, received: 0, lossPct: null, p50Ms: null }))).includes("null"), false);
+});
+
+test("client-supplied path, method, outcome and key: unknown strings as sent, null as a dash, never a wrong label", () => {
+  assert.equal(pathLabel("direct"), "Direct");
+  assert.equal(pathLabel("proxied"), "Proxied");
+  assert.equal(pathLabel("relay"), "relay");
+  assert.equal(pathLabel(null), "—");
+  assert.equal(pathLabel(undefined), "—");
+  assert.equal(methodLabel("TcpPing"), "TCP ping");
+  assert.equal(methodLabel("QuicPing"), "QuicPing");
+  assert.equal(methodLabel(null), "—");
+  assert.equal(methodLabel("constructor"), "constructor");
+  assert.equal(outcomeText("ok"), "ok");
+  assert.equal(outcomeText("weird"), "weird");
+  assert.equal(outcomeText(null), "—");
+  assert.equal(outcomeColor("ok"), "success");
+  assert.equal(outcomeColor("weird"), "grey");
+  assert.equal(outcomeColor(null), "grey");
+  assert.equal(targetTitle({ label: null, targetKey: "flo:1" }), "flo:1");
+  assert.equal(targetTitle({ label: null, targetKey: null }), "—");
+});
+
+test("a null path sorts last, reads as a dash in the chart legend and is not drawn dashed", () => {
+  const sample: ProbeDto = { method: "TcpPing", outcome: "ok", samples: [[0, 10]] };
+  const target: TargetResultDto = { targetKey: "gateway", label: null, paths: [{ path: null, probes: [sample] }, { path: "direct", probes: [sample] }] };
+  assert.deepEqual(orderedPaths(target).map((p) => p.path), ["direct", null]);
+  const series = rttSeries(target, ["#111111", "#222222"]);
+  assert.deepEqual(series.map((s) => s.label), ["direct · TCP ping", "— · TCP ping"]);
+  assert.deepEqual(series[1].dash, []);
 });

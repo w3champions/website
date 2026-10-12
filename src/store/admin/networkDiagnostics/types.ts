@@ -91,9 +91,9 @@ export interface RunDetailDto {
 
 export interface FloNodeTarget {
   id: number;
-  name: string;
-  location: string;
-  countryId: string;
+  name?: string | null;
+  location?: string | null;
+  countryId?: string | null;
   isDisabled: boolean;
 }
 
@@ -192,8 +192,9 @@ export interface HopDto {
 }
 
 export interface ProbeDto {
-  method: NetDiagMethod;
-  outcome: ProbeOutcome;
+  /** Passed through from the client unvalidated: null, or a string this build does not know. */
+  method?: string | null;
+  outcome?: string | null;
   reason?: string | null;
   /** Null or omitted for traceroute-only methods. */
   stats?: StatsDto | null;
@@ -210,7 +211,8 @@ export interface PathEndpoints {
 }
 
 export interface PathResultDto {
-  path: NetDiagPath;
+  /** Client-supplied: `direct`, `proxied`, null or something else. */
+  path?: string | null;
   routeLabel?: string | null;
   /** Null or omitted when the launcher sent no endpoints object (A12). */
   endpoints?: PathEndpoints | null;
@@ -218,7 +220,8 @@ export interface PathResultDto {
 }
 
 export interface TargetResultDto {
-  targetKey: string;
+  /** Client-supplied, like the label. */
+  targetKey?: string | null;
   /** Null or omitted when the launcher sent no label. */
   label?: string | null;
   paths?: PathResultDto[] | null;

@@ -21,7 +21,7 @@ type Path = ReadonlyArray<string | number>;
 type Mode = "null" | "delete";
 
 /** Identifiers, enums and counters the backend always sends; every other member may arrive null or absent. */
-const ALWAYS_SENT = new Set(["measurementId", "runId", "battleTag", "submittedAt", "targetCount", "restarts", "targetKey", "path", "method", "outcome", "ttl", "sent", "received", "nodeId"]);
+const ALWAYS_SENT = new Set(["measurementId", "runId", "battleTag", "submittedAt", "targetCount", "restarts", "ttl", "sent", "received", "nodeId"]);
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -86,10 +86,18 @@ beforeEach(() => {
   };
 });
 
+/** Every rendered text node on its own, so a bare `null` cannot hide next to its label ("Restartsnull"). */
+function textNodes(root: Element): string[] {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const texts: string[] = [];
+  for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) texts.push(node.textContent ?? "");
+  return texts;
+}
+
 const renderErrors: unknown[] = [];
 
 /** One mounted page; each payload is swapped into the store, as a navigation between measurements would. */
-async function mountPage(first: MeasurementDetailDto): Promise<{ show: (detail: MeasurementDetailDto) => Promise<string> }> {
+async function mountPage(first: MeasurementDetailDto): Promise<{ show: (detail: MeasurementDetailDto) => Promise<string[]> }> {
   service.getMeasurement.mockResolvedValue(first);
   const wrapper = mount(AdminNetDiagMeasurement, {
     props: { measurementId: first.measurementId },
@@ -106,7 +114,7 @@ async function mountPage(first: MeasurementDetailDto): Promise<{ show: (detail: 
       store.detail = detail;
       store.detailRaw = true;
       await nextTick();
-      return wrapper.text();
+      return textNodes(wrapper.element);
     },
   };
 }
@@ -115,10 +123,10 @@ it("the unmodified real payload renders clean text everywhere", async () => {
   const detail = realMeasurement();
   expect(viewTexts(detail).filter((text) => BAD_TEXT.test(text))).toEqual([]);
   const page = await mountPage(detail);
-  const text = await page.show(detail);
+  const texts = await page.show(detail);
   expect(renderErrors).toEqual([]);
-  expect(text).toContain("Testuser#1234");
-  expect(text).not.toMatch(BAD_TEXT);
+  expect(texts.join(" ")).toContain("Testuser#1234");
+  expect(texts.filter((text) => BAD_TEXT.test(text))).toEqual([]);
 });
 
 it("every member of the real payload may be null or absent: no view function throws, no undefined/NaN/null text", async () => {
@@ -135,10 +143,11 @@ it("every member of the real payload may be null or absent: no view function thr
         const bad = viewTexts(broken).filter((text) => BAD_TEXT.test(text));
         if (bad.length > 0) failures.push(`${label}: view text ${JSON.stringify(bad[0])}`);
         renderErrors.length = 0;
-        const text = await page.show(broken);
+        const texts = await page.show(broken);
         if (renderErrors.length > 0) failures.push(`${label}: render error ${String(renderErrors[0])}`);
-        if (BAD_TEXT.test(text)) failures.push(`${label}: page text ${BAD_TEXT.exec(text)?.[0]}`);
-        if (!text.includes("Testuser#1234")) failures.push(`${label}: page lost its header`);
+        const badText = texts.find((text) => BAD_TEXT.test(text));
+        if (badText !== undefined) failures.push(`${label}: page text ${JSON.stringify(badText)}`);
+        if (!texts.join(" ").includes("Testuser#1234")) failures.push(`${label}: page lost its header`);
       } catch (e) {
         failures.push(`${label}: threw ${e instanceof Error ? e.message : String(e)}`);
       }

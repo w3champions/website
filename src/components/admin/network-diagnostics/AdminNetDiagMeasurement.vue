@@ -32,8 +32,8 @@
 
         <h3 class="text-subtitle-1 font-weight-bold mb-2">Targets</h3>
         <net-diag-target-card
-          v-for="target in detail.targets ?? []"
-          :key="target.targetKey"
+          v-for="(target, index) in detail.targets ?? []"
+          :key="index"
           :target="target"
           :ip-info="detail.ipInfo ?? {}"
           :show-series="showSeries"

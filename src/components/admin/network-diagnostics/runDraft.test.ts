@@ -164,3 +164,8 @@ test("a BattleTag containing U+0085 is rejected, as the server's .NET whitespace
   assert.equal(isBattleTag("Ab\u00a0cd#1234"), false, "no-break space was already rejected");
   assert.equal(isBattleTag("Ab\u200bcd#1234"), true, "zero-width space is not whitespace to either engine");
 });
+
+test("a flo node without name or location reads as dashes, never 'null'", () => {
+  const items = nodeSelectItems([{ id: 1, name: "US East 4", location: null, countryId: null, isDisabled: false }, { id: 2, name: null, location: null, countryId: null, isDisabled: true }]);
+  assert.deepEqual(items.map((i) => i.title), ["US East 4 — —", "— — — (disabled)"]);
+});

@@ -182,3 +182,8 @@ test("a group-by change loads only the aggregate; a selection or run change load
   assert.deepEqual(fleetLoadPlan({ ...base, selectionKey: "r1|flo:14|direct|TcpPing" }, base), { observations: true, aggregate: true });
   assert.deepEqual(fleetLoadPlan({ ...base, run: {} }, base), { observations: true, aggregate: true });
 });
+
+test("a flo node without a name is listed by its id", () => {
+  const unnamed: TargetsDto = { ...catalogue, floNodes: [{ id: 21, name: null, location: null, countryId: null, isDisabled: false }] };
+  assert.deepEqual(runTargetItems(runTargets({ floNodeIds: [21] }), unnamed), [{ title: "Node 21", value: "flo:21" }]);
+});
