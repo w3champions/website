@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ConnectionEventData, EConnectionEventType } from "@/store/admin/lagReports/types";
-import { buildServerPingPoints, collectGameClockPauses, collectPauseIntervals, computeGameStartMs, gameTimeToWallClockMs, isWithinPause, type TimelinePlayer } from "./gameTimeline";
+import { buildServerPingPoints, collectPauseIntervals, computeGameStartMs, isWithinPause, type TimelinePlayer } from "./gameTimeline";
 
 const START = Date.UTC(2026, 9, 8, 20, 45, 0);
 
@@ -27,57 +27,20 @@ describe("computeGameStartMs", () => {
   });
 });
 
-describe("collectGameClockPauses", () => {
-  it("counts a pause once when clients stamp it at slightly different game times", () => {
-    const players = [
-      player("a#1", [event(EConnectionEventType.GameResumed, START + 100_000, 60_000, 30_000)]),
-      player("b#2", [event(EConnectionEventType.GameResumed, START + 100_040, 60_040, 30_020)]),
-    ];
-
-    expect(collectGameClockPauses(players)).toEqual([{ gameTimeSec: 60, durationMs: 30_000 }]);
-  });
-
-  it("collects the durations that froze game time, once per game time, in order", () => {
-    const players = [
-      player("a#1", [event(EConnectionEventType.GameResumed, START + 100_000, 60_000, 30_000)]),
-      player("b#2", [
-        event(EConnectionEventType.GameResumed, START + 100_000, 60_000, 30_000),
-        event(EConnectionEventType.Reconnect, START + 20_000, 15_000, 5_000),
-        event(EConnectionEventType.GamePaused, START + 70_000, 60_000, null),
-      ]),
-    ];
-
-    expect(collectGameClockPauses(players)).toEqual([
-      { gameTimeSec: 15, durationMs: 5_000 },
-      { gameTimeSec: 60, durationMs: 30_000 },
-    ]);
-  });
-});
-
-describe("gameTimeToWallClockMs", () => {
-  it("adds every pause that happened before the game time", () => {
-    const pauses = [{ gameTimeSec: 15, durationMs: 5_000 }, { gameTimeSec: 60, durationMs: 30_000 }];
-
-    expect(gameTimeToWallClockMs(10, pauses, START)).toBe(START + 10_000);
-    expect(gameTimeToWallClockMs(20, pauses, START)).toBe(START + 25_000);
-    expect(gameTimeToWallClockMs(61, pauses, START)).toBe(START + 96_000);
-  });
-});
-
 describe("buildServerPingPoints", () => {
-  it("breaks the line at each pause and shifts later samples by the pause length", () => {
-    const pauses = [{ gameTimeSec: 15, durationMs: 5_000 }];
-    const samples = [{ time: 10, avg: 50 }, { time: 20, avg: 60 }];
+  it("places samples by their millisecond offset from the game start", () => {
+    // flo-stats sends one sample every 15 s, starting 5 s in: time 5000, 20000, ...
+    const samples = [{ time: 5_000, avg: 50 }, { time: 20_000, avg: 60 }, { time: 1_415_000, avg: 70 }];
 
-    expect(buildServerPingPoints(samples, pauses, START)).toEqual([
-      { x: START + 10_000, y: 50 },
-      { x: START + 15_000, y: null },
-      { x: START + 25_000, y: 60 },
+    expect(buildServerPingPoints(samples, START)).toEqual([
+      { x: START + 5_000, y: 50 },
+      { x: START + 20_000, y: 60 },
+      { x: START + 1_415_000, y: 70 },
     ]);
   });
 
   it("keeps a sample without an average as a gap, not a drop to zero", () => {
-    const points = buildServerPingPoints([{ time: 10, avg: 50 }, { time: 20, avg: null }], [], START);
+    const points = buildServerPingPoints([{ time: 5_000, avg: 50 }, { time: 20_000, avg: null }], START);
 
     expect(points[1]).toEqual({ x: START + 20_000, y: null });
   });

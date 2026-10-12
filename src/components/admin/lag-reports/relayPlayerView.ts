@@ -1,7 +1,7 @@
 import type { LagReportDetail } from "@/store/admin/lagReports/types";
 import type { IPlayerMatchTelemetry } from "@/store/admin/playerMatchTelemetry/types";
 import { buildActionLatencyPoints } from "./actionLatencyPoints";
-import { buildServerPingPoints, collectGameClockPauses, computeGameStartMs } from "./gameTimeline";
+import { buildServerPingPoints, computeGameStartMs } from "./gameTimeline";
 import { buildRelayChartSeries, type LegendGroup, type RelayChartSeries } from "./relayChartSeries";
 import { legChainLabel, type LegSummary, relayConnections, selectWorstLeg, summarizeLegs, withClientEnd } from "./relayLegs";
 import { clientTransportSeries } from "./relaySeries";
@@ -43,7 +43,7 @@ export function buildPlayerRelayView(
   const serverPing = ssp
     // matchWallStart is game time zero; the report's own estimate (first ping sample, else its
     // creation time) is only a fallback for games without telemetry.
-    ? buildServerPingPoints(ssp.samples, collectGameClockPauses(report.players), matchStartMs ?? computeGameStartMs(report.players, report.createdAt))
+    ? buildServerPingPoints(ssp.samples, matchStartMs ?? computeGameStartMs(report.players, report.createdAt))
     : [];
 
   const { series, groups } = buildRelayChartSeries({ connections, echoRtt, serverPing });

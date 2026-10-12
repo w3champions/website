@@ -159,7 +159,7 @@ export const starbuckReport: LagReportDetail = {
     {
       playerId: 1,
       playerName: "StarBuck#1234",
-      samples: Array.from({ length: 120 }, (_, i) => ({ time: i * 10, min: 200, max: 240, avg: 215 + (i % 5) })),
+      samples: Array.from({ length: 120 }, (_, i) => ({ time: i * 10_000, min: 200, max: 240, avg: 215 + (i % 5) })),
     },
   ],
   players: [
