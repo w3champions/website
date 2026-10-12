@@ -315,6 +315,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
       { path: "admin-lag-reports", name: EAdminRouteName.LAG_REPORTS, component: AdminLagReports },
       { path: "admin-lag-reports/:id", name: EAdminRouteName.LAG_REPORT_DETAIL, component: AdminLagReportDetail, props: true },
+      { path: "admin-remote-measurements", name: EAdminRouteName.NETDIAG_RUNS, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagRuns.vue") },
       { path: "admin-jobs", name: EAdminRouteName.JOBS, component: AdminJobs },
     ],
   },

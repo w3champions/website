@@ -63,6 +63,7 @@ import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
+import { isNavItemActive } from "@/components/admin/adminNavActive";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
@@ -71,7 +72,7 @@ import {
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
   mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline, mdiPlayCircleOutline,
-  mdiFilmstrip, mdiFolderDownloadOutline, mdiHistory,
+  mdiFilmstrip, mdiFolderDownloadOutline, mdiHistory, mdiAccessPointNetwork,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -141,9 +142,9 @@ export default defineComponent({
 
     watch(permissions, init);
 
-    // The event detail page belongs to the Events item; `undefined` leaves the decision to the link.
+    // Detail pages (event detail, run detail, …) keep their list item highlighted; `undefined` leaves the decision to the link.
     function isSubItemActive(routeName: string | undefined): true | undefined {
-      return routeName === EAdminRouteName.COMMERCIAL_EVENTS_EVENTS && route.name === EAdminRouteName.COMMERCIAL_EVENTS_EVENT_DETAIL ? true : undefined;
+      return isNavItemActive(routeName, route.name);
     }
 
     const navItems: Array<AdminNavigationItem> = [
@@ -501,6 +502,13 @@ export default defineComponent({
             permission: EPermission.Proxies,
             component: "admin-lag-reports",
             routeName: EAdminRouteName.LAG_REPORTS,
+          },
+          {
+            title: "Remote Measurements",
+            icon: mdiAccessPointNetwork,
+            permission: EPermission.Proxies,
+            component: "admin-remote-measurements",
+            routeName: EAdminRouteName.NETDIAG_RUNS,
           },
         ],
       },
