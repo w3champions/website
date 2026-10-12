@@ -10,7 +10,7 @@ import { useTheme } from "vuetify";
 import type { ChartData, ChartOptions } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
 import { readChartInkColors, readThemeColor, THEME_FALLBACK_COLOR } from "@/helpers/lag-report-colors";
-import type { AggregateBars } from "./fleet";
+import { type AggregateBars, chartTickLabelAt } from "./fleet";
 import { formatMs } from "./format";
 
 const props = defineProps<{ bars: AggregateBars; description: string }>();
@@ -50,7 +50,7 @@ const chartOptions = computed<ChartOptions<"bar">>(() => {
     scales: {
       x: { beginAtZero: true, ticks: { color: ink.text }, grid: { color: ink.grid }, title: { display: true, text: "ms", color: ink.text } },
       // The axis shows the cut label; the full name stays in `labels` for the tooltip.
-      y: { ticks: { color: ink.text, callback: (_value, index) => props.bars.tickLabels[index] ?? "" }, grid: { color: ink.grid } },
+      y: { ticks: { color: ink.text, callback: (value) => chartTickLabelAt(props.bars.tickLabels, value) }, grid: { color: ink.grid } },
     },
   };
 });

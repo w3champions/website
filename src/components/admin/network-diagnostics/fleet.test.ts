@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { AggregateResponseDto, AggregateRowDto, ObservationDto, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
-import { aggregateBars, aggregateKeyLabel, aggregateMeasurementCount, aggregateTableRows, bucketLegend, chartNotice, chartTickLabel, fleetEmptyState, fleetLoadPlan, floNodesMissing, locatedCount, lossBucket, mapLagNotice, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
+import { aggregateBars, aggregateKeyLabel, aggregateMeasurementCount, aggregateTableRows, bucketLegend, chartNotice, chartTickLabel, chartTickLabelAt, fleetEmptyState, fleetLoadPlan, floNodesMissing, locatedCount, lossBucket, mapLagNotice, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
 import { REAL_AGGREGATE_BY_COUNTRY, REAL_TIMEOUT_OBSERVATION, REAL_UNREACHABLE_OBSERVATION, REAL_UNSUPPORTED_OBSERVATION } from "./fixtures/realFleet";
 
 const catalogue: TargetsDto = {
@@ -251,4 +251,33 @@ test("a group-by change loads only the aggregate; a selection or run change load
 test("a flo node without a name is listed by its id", () => {
   const unnamed: TargetsDto = { ...catalogue, floNodes: [{ id: 21, name: null, location: null, countryId: null, isDisabled: false }] };
   assert.deepEqual(runTargetItems(runTargets({ floNodeIds: [21] }), unnamed), [{ title: "Node 21", value: "flo:21" }]);
+});
+
+test("a crowd at one coordinate is one point that counts every member and takes the worst bucket", () => {
+  const crowd = Array.from({ length: 20_000 }, (_, index) => observation({ measurementId: `m-${index}`, battleTag: `Player#${index}`, p50Ms: index === 12_345 ? 400 : 20 }));
+
+  const points = mapPoints(crowd, "p50");
+
+  assert.equal(points.length, 1);
+  assert.equal(points[0].labels.length, 20_000);
+  assert.equal(points[0].bucket, "bad");
+  assert.match(points[0].labels[19_999], /^Player#19999 · /);
+  assert.equal(locatedCount(points), 20_000);
+});
+
+test("grouping returns fresh points: a second call is not affected by changing the first result", () => {
+  const observations = [observation({ battleTag: "A#1" }), observation({ battleTag: "B#2" })];
+  const first = mapPoints(observations, "p50");
+  first[0].labels.push("tampered");
+
+  assert.equal(mapPoints(observations, "p50")[0].labels.length, 2);
+});
+
+test("an axis tick takes the label of its category index and is empty for anything else", () => {
+  const tickLabels = ["DE (3)", "US (2)"];
+  assert.equal(chartTickLabelAt(tickLabels, 1), "US (2)");
+  assert.equal(chartTickLabelAt(tickLabels, 0.5), "");
+  assert.equal(chartTickLabelAt(tickLabels, 2), "");
+  assert.equal(chartTickLabelAt(tickLabels, -1), "");
+  assert.equal(chartTickLabelAt(tickLabels, "1"), "");
 });

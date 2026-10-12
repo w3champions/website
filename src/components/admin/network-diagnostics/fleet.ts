@@ -90,6 +90,11 @@ export function chartTickLabel(name: string, count: number, maxNameChars = MAX_C
   return `${shown} (${count})`;
 }
 
+/** The axis label of a tick: on a category axis the tick value is the index of its label. Empty for any other value. */
+export function chartTickLabelAt(tickLabels: readonly string[], value: unknown): string {
+  return typeof value === "number" && Number.isInteger(value) ? tickLabels[value] ?? "" : "";
+}
+
 export interface AggregateBars {
   /** Full names, shown in the chart tooltip. */
   labels: string[];
@@ -186,8 +191,15 @@ export function mapPoints(observations: readonly ObservationDto[], metric: MapMe
     const label = [o.battleTag, geoText(o), asnText(o.asn, o.asnOrg), `p50 ${formatMs(o.p50Ms)}`, `loss ${formatPercent(o.lossPct)}`, o.outcome].join(" · ");
     const bucket = observationBucket(o, metric);
     const key = `${o.lat},${o.lon}`;
+    // The groups are local to this call and filled in place: copying a group per member is quadratic,
+    // and one coordinate can hold thousands of measurements. Callers only ever see the finished points.
     const point = byCoordinate.get(key);
-    byCoordinate.set(key, point === undefined ? { lat: o.lat, lon: o.lon, bucket, labels: [label] } : { ...point, bucket: worseBucket(point.bucket, bucket), labels: [...point.labels, label] });
+    if (point === undefined) {
+      byCoordinate.set(key, { lat: o.lat, lon: o.lon, bucket, labels: [label] });
+    } else {
+      point.bucket = worseBucket(point.bucket, bucket);
+      point.labels.push(label);
+    }
   }
   return [...byCoordinate.values()];
 }
