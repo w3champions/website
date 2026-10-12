@@ -154,9 +154,10 @@ async function cancelRun(): Promise<void> {
   const targetId = props.runId;
   cancelling.value = true;
   cancelError.value = "";
+  let cancelled = false;
   try {
     await store.cancelRun(targetId);
-    if (props.runId === targetId) now.value = new Date();
+    cancelled = true;
   } catch (e) {
     console.error("Failed to cancel network diagnostic run:", e);
     if (props.runId === targetId) cancelError.value = describeNetDiagError(e);
@@ -166,6 +167,8 @@ async function cancelRun(): Promise<void> {
       cancelOpen.value = false;
     }
   }
+  // Show the expired assignments, but only while this run is still the one on screen.
+  if (cancelled && props.runId === targetId) await load();
 }
 
 // The component instance is reused across runs: never carry a dialog or its state over to another run.

@@ -101,10 +101,12 @@ export const useNetDiagRunsStore = defineStore("netDiagRuns", {
       });
     },
 
-    /** Throws on failure (409 when already cancelled); reloads the run so the expired assignments show. */
-    async cancelRun(runId: string): Promise<void> {
-      await networkDiagnosticsService().cancelRun(useOauthStore().token, runId);
-      await this.loadRun(runId);
+    /**
+     * Throws on failure (409 when already cancelled). Does not reload: the admin may have moved to
+     * another run while the request ran, so the page reloads only if it still shows this run.
+     */
+    async cancelRun(runId: string): Promise<RunDto> {
+      return await networkDiagnosticsService().cancelRun(useOauthStore().token, runId);
     },
   },
 });
