@@ -143,6 +143,13 @@ it("a 409 on an already cancelled run keeps the message and reloads the run", as
   expect(requestedRunIds()).toEqual(["a", "a"]);
 });
 
+// jsdom measures no transition durations, so Vue ends the leave transition on the next animation frame.
+const TRANSITION_FRAMES = 4;
+
+async function animationFrames(count: number): Promise<void> {
+  for (let i = 0; i < count; i++) await new Promise((resolve) => requestAnimationFrame(resolve));
+}
+
 /** Opens the real dialog from its activator, confirms, and lets the leave transition finish. Returns everything that was logged. */
 async function cancelThroughDialog(): Promise<string[]> {
   const logged: string[] = [];
@@ -161,7 +168,7 @@ async function cancelThroughDialog(): Promise<string[]> {
   expect(confirm).toBeDefined();
   confirm!.click();
   await flushPromises();
-  await new Promise((resolve) => setTimeout(resolve, 600));
+  await animationFrames(TRANSITION_FRAMES);
   await flushPromises();
   window.removeEventListener("error", onError);
   vi.unstubAllGlobals();
