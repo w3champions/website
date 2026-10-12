@@ -38,6 +38,8 @@ export enum EAdminRouteName {
   COMMERCIAL_EVENTS_EVENTS = "Admin - Commercial Events - Events",
   COMMERCIAL_EVENTS_EVENT_DETAIL = "Admin - Commercial Events - Event Detail",
   COMMERCIAL_EVENTS_ACTIVE_GAMES = "Admin - Commercial Events - Active Games",
+  REPLAY_EXPORT = "Admin - Replay Export",
+  REPLAY_DOWNLOADS = "Admin - Replay Downloads",
 }
 
 export enum EStatisticsRouteName {
