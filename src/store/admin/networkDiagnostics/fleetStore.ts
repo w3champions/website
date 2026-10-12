@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { describeNetDiagError } from "./errors";
-import { fleetFilters, type FleetGroupBy, type FleetSelection, fleetSelectionKey } from "./fleetSelection";
+import { fleetAggregateKey, fleetFilters, type FleetGroupBy, type FleetSelection, fleetSelectionKey } from "./fleetSelection";
 import { networkDiagnosticsService } from "./service";
 import type { AggregateResponseDto, ObservationDto } from "./types";
 
@@ -42,9 +42,16 @@ export const useNetDiagFleetStore = defineStore("netDiagFleet", {
   }),
 
   actions: {
+    /** Drops everything held and supersedes loads in flight, so a later visit starts empty. */
+    clear(): void {
+      aggregateSequence.invalidate();
+      observationsSequence.invalidate();
+      this.$reset();
+    },
+
     async loadAggregate(selection: FleetSelection, groupBy: FleetGroupBy): Promise<boolean> {
       // A refresh of the same view keeps the table; another view must not show the old one.
-      const key = `${fleetSelectionKey(selection)}|${groupBy}`;
+      const key = fleetAggregateKey(selection, groupBy);
       if (this.aggregateKey !== key) {
         this.aggregateKey = key;
         this.aggregate = null;

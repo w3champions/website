@@ -1,5 +1,5 @@
 <template>
-  <div ref="mapElement" class="netdiag-map" role="img" :aria-label="description"></div>
+  <div ref="mapElement" class="netdiag-map" role="region" :aria-label="description"></div>
 </template>
 
 <script lang="ts" setup>
@@ -8,7 +8,9 @@ import { circleMarker, layerGroup, type LayerGroup, map as createMap, type Map a
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { type ColorBucket, type MapPoint, tooltipElement } from "./fleet";
 
-const props = defineProps<{ points: MapPoint[]; colors: Record<ColorBucket, string>; description: string }>();
+// `fitKey` names the data set the points belong to ("" while none is loaded). The view is fitted when the
+// first points of a new key arrive; a restyle (metric, theme) or a refresh of the same key keeps the admin's pan and zoom.
+const props = defineProps<{ points: MapPoint[]; colors: Record<ColorBucket, string>; fitKey: string; description: string }>();
 
 // OSM tile usage policy: attribution is required; keep request volume low (admin-only page).
 const OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -25,27 +27,31 @@ const mapElement = ref<HTMLElement | null>(null);
 let leafletMap: LeafletMap | null = null;
 let dots: LayerGroup | null = null;
 let resizeObserver: ResizeObserver | null = null;
+let fittedKey: string | null = null;
 
 // circleMarker only: vector dots need none of Leaflet's marker images, so Vite has no assets to resolve.
+// The canvas renderer (preferCanvas) and tooltips built on first hover keep tens of thousands of dots cheap.
 function draw(): void {
   if (leafletMap === null || dots === null) return;
   dots.clearLayers();
   for (const point of props.points) {
     const color = props.colors[point.bucket];
     circleMarker([point.lat, point.lon], { radius: DOT_RADIUS_PX, color, weight: 1, fillColor: color, fillOpacity: DOT_FILL_OPACITY })
-      .bindTooltip(tooltipElement(document, point.label))
+      .bindTooltip(() => tooltipElement(document, point.label))
       .addTo(dots);
   }
-  if (props.points.length > 0) {
+  if (props.points.length === 0) {
+    if (fittedKey !== null) leafletMap.setView(WORLD_CENTER, WORLD_ZOOM);
+    fittedKey = null;
+  } else if (fittedKey !== props.fitKey) {
     leafletMap.fitBounds(props.points.map((point): [number, number] => [point.lat, point.lon]), { padding: [FIT_PADDING_PX, FIT_PADDING_PX], maxZoom: FIT_MAX_ZOOM });
-  } else {
-    leafletMap.setView(WORLD_CENTER, WORLD_ZOOM);
+    fittedKey = props.fitKey;
   }
 }
 
 onMounted(() => {
   if (mapElement.value === null) return;
-  leafletMap = createMap(mapElement.value, { worldCopyJump: true }).setView(WORLD_CENTER, WORLD_ZOOM);
+  leafletMap = createMap(mapElement.value, { worldCopyJump: true, preferCanvas: true }).setView(WORLD_CENTER, WORLD_ZOOM);
   tileLayer(OSM_TILES, { maxZoom: OSM_MAX_ZOOM, attribution: OSM_ATTRIBUTION }).addTo(leafletMap);
   dots = layerGroup().addTo(leafletMap);
   // Leaflet measures its container once; the drawer and breakpoints resize it later.
@@ -62,6 +68,7 @@ onBeforeUnmount(() => {
   leafletMap?.remove();
   leafletMap = null;
   dots = null;
+  fittedKey = null;
 });
 </script>
 

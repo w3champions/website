@@ -14,6 +14,7 @@
 
     <v-container>
       <v-alert v-if="store.runError" type="error" variant="tonal" density="compact" class="mb-4">{{ store.runError }}</v-alert>
+      <v-alert v-if="store.targetsError" type="error" variant="tonal" density="compact" class="mb-4">{{ store.targetsError }}</v-alert>
       <v-alert v-if="cancelError" type="error" variant="tonal" density="compact" class="mb-4">{{ cancelError }}</v-alert>
       <v-skeleton-loader v-if="!detail && store.runLoading" type="article, table" />
 
@@ -90,6 +91,7 @@
           :key="detail.run.id"
           :run="detail.run"
           :targets="store.targets"
+          :targets-loading="store.targetsLoading"
           class="mt-8"
         />
         <p v-else class="text-caption text-medium-emphasis mt-8">The fleet view appears once the first result is submitted.</p>
@@ -111,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import type { DataTableHeader } from "vuetify";
 import { mdiArrowLeft, mdiCancel, mdiRefresh } from "@mdi/js";
 import { EAdminRouteName } from "@/router/types";
@@ -147,6 +149,8 @@ const assignmentHeaders: DataTableHeader[] = [
 async function load(): Promise<void> {
   now.value = new Date();
   cancelError.value = "";
+  // Node names for the fleet view's target selector; a no-op once loaded, a retry after a failure.
+  void store.loadTargets();
   await store.loadRun(props.runId);
 }
 
@@ -176,6 +180,4 @@ watch(() => props.runId, () => {
   cancelError.value = "";
 });
 watch(() => props.runId, load, { immediate: true });
-// Node names for the fleet view's target selector.
-onMounted(() => store.loadTargets());
 </script>

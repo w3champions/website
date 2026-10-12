@@ -158,3 +158,38 @@ export function tooltipElement(doc: Document, label: string): HTMLElement {
   element.textContent = label;
   return element;
 }
+
+export interface MapSummary {
+  /** Dots drawn. */
+  shown: number;
+  /** Held measurements without a location. */
+  withoutLocation: number;
+  /** True when the server may hold more measurements than were loaded. */
+  truncated: boolean;
+}
+
+/** One sentence under the map; null when there is nothing to add to the dots. */
+export function mapNotice(summary: MapSummary): string | null {
+  const parts: string[] = [];
+  if (summary.truncated) {
+    parts.push(summary.shown > 0 ? `The map shows ${summary.shown.toLocaleString("en-US")} of the first loaded measurements; there may be more.` : "The measurement list was cut off before any located measurement; there may be more.");
+  }
+  if (summary.withoutLocation > 0) parts.push(`${summary.withoutLocation.toLocaleString("en-US")} loaded measurements have no location and are not drawn.`);
+  return parts.length > 0 ? parts.join(" ") : null;
+}
+
+/** The chart keeps the largest groups only; the table lists them all. */
+export function chartNotice(groupCount: number, max = MAX_CHART_GROUPS): string | null {
+  return groupCount > max ? `The chart shows the ${max} largest of ${groupCount} groups; the table lists all.` : null;
+}
+
+export type FleetEmptyState = "targets-loading" | "targets-unavailable" | "no-targets";
+
+/**
+ * Why the fleet view has no target to select, or null when it has one. A run on "all flo nodes"
+ * only knows its nodes once the catalogue is loaded.
+ */
+export function fleetEmptyState(run: Pick<RunDto, "targets">, catalogue: TargetsDto | null, catalogueLoading: boolean, itemCount: number): FleetEmptyState | null {
+  if (run.targets.allFloNodes && catalogue === null) return catalogueLoading ? "targets-loading" : "targets-unavailable";
+  return itemCount === 0 ? "no-targets" : null;
+}

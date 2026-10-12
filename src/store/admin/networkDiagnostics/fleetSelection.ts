@@ -16,3 +16,8 @@ export function fleetSelectionKey(selection: FleetSelection): string {
 export function fleetFilters(selection: FleetSelection): MeasurementFilters {
   return { runIds: [selection.runId], targetKey: selection.targetKey, path: selection.path, method: selection.method };
 }
+
+/** Identifies one aggregate view: the selection plus the single group key. */
+export function fleetAggregateKey(selection: FleetSelection, groupBy: FleetGroupBy): string {
+  return `${fleetSelectionKey(selection)}|${groupBy}`;
+}

@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { AggregateResponseDto, AggregateRowDto, ObservationDto, RunDto, TargetsDto } from "@/store/admin/networkDiagnostics/types";
-import { aggregateBars, aggregateKeyLabel, aggregateTableRows, bucketLegend, lossBucket, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
+import { aggregateBars, aggregateKeyLabel, aggregateTableRows, bucketLegend, chartNotice, fleetEmptyState, lossBucket, mapNotice, mapPoints, observationBucket, p50Bucket, pathItems, runTargetItems } from "./fleet";
 
 const catalogue: TargetsDto = {
   floNodes: [{ id: 12, name: "US East 4", location: "Ashburn", countryId: "US", isDisabled: false }, { id: 14, name: "EU 1", location: "Frankfurt", countryId: "DE", isDisabled: false }],
@@ -135,4 +135,28 @@ test("map points skip measurements without coordinates and keep labels as plain 
 test("legend text names the thresholds", () => {
   assert.deepEqual(bucketLegend("p50"), { good: "p50 < 80 ms", fair: "80–150 ms", bad: "≥ 150 ms or unreachable", unknown: "no data" });
   assert.deepEqual(bucketLegend("loss"), { good: "loss ≤ 0.5%", fair: "≤ 2%", bad: "> 2% or unreachable", unknown: "no data" });
+});
+
+test("the map notice counts drawn and unlocated measurements and never says first 0", () => {
+  assert.equal(mapNotice({ shown: 5, withoutLocation: 0, truncated: false }), null);
+  assert.match(mapNotice({ shown: 19990, withoutLocation: 10, truncated: true }) ?? "", /19,990 of the first loaded.*there may be more.*10 loaded measurements have no location/);
+  const none = mapNotice({ shown: 0, withoutLocation: 0, truncated: true }) ?? "";
+  assert.doesNotMatch(none, /first 0/);
+  assert.match(none, /cut off/);
+  assert.match(mapNotice({ shown: 3, withoutLocation: 2, truncated: false }) ?? "", /^2 loaded measurements have no location/);
+});
+
+test("the chart notice appears only when groups were cut", () => {
+  assert.equal(chartNotice(20), null);
+  assert.equal(chartNotice(25), "The chart shows the 20 largest of 25 groups; the table lists all.");
+});
+
+test("the fleet empty state tells loading, unavailable and empty targets apart", () => {
+  const all = { targets: { allFloNodes: true } } as RunDto;
+  const some = { targets: { allFloNodes: false } } as RunDto;
+  assert.equal(fleetEmptyState(all, null, true, 0), "targets-loading");
+  assert.equal(fleetEmptyState(all, null, false, 0), "targets-unavailable");
+  assert.equal(fleetEmptyState(some, null, false, 0), "no-targets");
+  assert.equal(fleetEmptyState(some, null, false, 2), null);
+  assert.equal(fleetEmptyState(all, {} as TargetsDto, false, 3), null);
 });
