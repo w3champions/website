@@ -1,12 +1,11 @@
+import { OKABE_ITO_COLORS } from "@/helpers/lag-report-colors";
 import type { RelayConnection, RelayLeg, RelaySeries } from "@/store/admin/lagReports/types";
 import { isMeasurableStatus, legLabel, legStatusText, showsEnd } from "./relayLegs";
 import { type ChartPoint, seriesHighlight, seriesSrttPoints } from "./relaySeries";
 
 export const FELT_GROUP = "Felt by the player";
 
-// Okabe–Ito hues: distinguishable under the common colour-vision deficiencies and readable on
-// both themes. Yellow is left out because it vanishes on the light theme.
-const LEG_COLORS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00"];
+const LEG_COLORS = OKABE_ITO_COLORS;
 // Neutral so the felt lines never read as one of the legs.
 const FELT_COLOR = "#8a8a8a";
 const FAR_DASH = [6, 3];

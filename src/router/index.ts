@@ -318,6 +318,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-remote-measurements", name: EAdminRouteName.NETDIAG_RUNS, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagRuns.vue") },
       { path: "admin-remote-measurements/new", name: EAdminRouteName.NETDIAG_NEW_RUN, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagNewRun.vue") },
       { path: "admin-remote-measurements/runs/:runId", name: EAdminRouteName.NETDIAG_RUN_DETAIL, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagRunDetail.vue"), props: true },
+      { path: "admin-remote-measurements/measurements/:measurementId", name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagMeasurement.vue"), props: true },
       { path: "admin-jobs", name: EAdminRouteName.JOBS, component: AdminJobs },
     ],
   },

@@ -66,6 +66,17 @@
           <template v-slot:[`item.submittedAt`]="{ item }">{{ formatUtc(item.submittedAt) }}</template>
           <template v-slot:[`item.location`]="{ item }">{{ geoText(item.clientGeo) }}</template>
           <template v-slot:[`item.network`]="{ item }">{{ asnText(item.clientGeo?.asn, item.clientGeo?.asnOrg) }}</template>
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-btn
+              v-if="item.status === 'Submitted'"
+              size="small"
+              variant="text"
+              color="primary"
+              :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }"
+            >
+              Result
+            </v-btn>
+          </template>
         </v-data-table>
         <!-- fleet view -->
       </template>
@@ -115,6 +126,7 @@ const assignmentHeaders: DataTableHeader[] = [
   { title: "Submitted", value: "submittedAt", sortable: true },
   { title: "Location", value: "location", sortable: false },
   { title: "Network", value: "network", sortable: false },
+  { title: "", value: "actions", sortable: false, width: "100px", align: "center" },
 ];
 
 async function load(): Promise<void> {
