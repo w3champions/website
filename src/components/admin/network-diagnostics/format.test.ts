@@ -54,6 +54,9 @@ test("run status: cancelled wins, an open fleet window is running, settled runs 
   assert.equal(runStatus(run({ cancelledAt: "2026-10-12T11:00:00Z" }), now), "Cancelled");
   assert.equal(runStatus(run({ windowEnd: "2026-10-12T12:10:00Z", counters: { assigned: 0, delivered: 0, submitted: 0, expired: 0 } }), now), "Running");
   assert.equal(runStatus(run({ windowEnd: "2026-10-12T11:30:00Z", counters: { assigned: 0, delivered: 0, submitted: 0, expired: 0 } }), now), "No participants");
+  const noParticipants = { assigned: 0, delivered: 0, submitted: 0, expired: 0 };
+  assert.equal(runStatus(run({ windowEnd: undefined, counters: noParticipants }), now), "Running", "an omitted windowEnd is no fleet window");
+  assert.equal(runStatus(run({ windowEnd: null, counters: noParticipants }), now), "Running");
   assert.equal(runStatus(run({}), now), "Running", "one of two still pending");
   assert.equal(runStatus(run({ counters: { assigned: 2, delivered: 2, submitted: 1, expired: 1 } }), now), "Complete");
 });

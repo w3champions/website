@@ -116,8 +116,8 @@ export const ASSIGNMENT_STATUS_COLOR: Record<AssignmentStatus, string> = {
 export function runStatus(run: Pick<RunDto, "cancelledAt" | "windowEnd" | "counters">, now: Date): RunStatus {
   if (run.cancelledAt != null) return "Cancelled";
   const { assigned, submitted, expired } = run.counters;
-  if (run.windowEnd !== null && now.getTime() < new Date(run.windowEnd).getTime()) return "Running";
-  if (assigned === 0) return run.windowEnd !== null ? "No participants" : "Running";
+  if (run.windowEnd != null && now.getTime() < new Date(run.windowEnd).getTime()) return "Running";
+  if (assigned === 0) return run.windowEnd != null ? "No participants" : "Running";
   return submitted + expired < assigned ? "Running" : "Complete";
 }
 
