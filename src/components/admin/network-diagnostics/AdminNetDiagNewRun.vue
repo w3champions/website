@@ -238,6 +238,7 @@ async function send(request: CreateRunRequest): Promise<void> {
   } catch (e) {
     console.error("Failed to create network diagnostic run:", e);
     submitError.value = describeNetDiagError(e);
+    confirmOpen.value = false;
   } finally {
     submitting.value = false;
   }
