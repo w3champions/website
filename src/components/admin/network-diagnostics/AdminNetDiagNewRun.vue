@@ -166,15 +166,15 @@
       <v-btn color="primary" size="large" :loading="submitting" :disabled="submitting" @click="submit">Schedule measurement</v-btn>
     </v-container>
 
-    <v-dialog v-model="confirmOpen" max-width="480">
+    <v-dialog v-model="confirmOpen" max-width="480" :persistent="submitting">
       <v-card>
         <v-card-title>Measure all online players?</v-card-title>
         <v-card-text>
-          Every player who is online during the next {{ FLEET_WINDOW_MINUTES }} minutes runs this measurement once: {{ draft.methods.length }} methods against the selected targets for {{ draft.windowSeconds }} s each.
+          Every player who is online during the next {{ FLEET_WINDOW_MINUTES }} minutes runs this measurement once: {{ draft.methods.length }} {{ draft.methods.length === 1 ? "method" : "methods" }} against the selected targets for {{ draft.windowSeconds }} s each.
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="confirmOpen = false">Cancel</v-btn>
+          <v-btn variant="text" :disabled="submitting" @click="confirmOpen = false">Cancel</v-btn>
           <v-btn color="error" variant="flat" :loading="submitting" @click="confirmAll">Measure all online</v-btn>
         </v-card-actions>
       </v-card>
