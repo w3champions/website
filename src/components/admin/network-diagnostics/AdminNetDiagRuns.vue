@@ -3,6 +3,7 @@
     <v-card-title class="pt-3 d-flex align-center flex-wrap ga-2">
       <span>Remote Measurements</span>
       <v-spacer />
+      <v-btn color="primary" :prepend-icon="mdiPlus" :to="{ name: EAdminRouteName.NETDIAG_NEW_RUN }">New measurement</v-btn>
     </v-card-title>
 
     <v-container v-if="store.runsError" class="pb-0">
@@ -81,6 +82,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import debounce from "debounce";
+import { mdiPlus } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { EAdminRouteName } from "@/router/types";
 import { formatUtc } from "@/helpers/utc-dates";
