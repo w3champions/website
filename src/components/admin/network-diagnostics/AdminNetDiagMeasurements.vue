@@ -33,10 +33,10 @@
       @update:options="onTableOptions"
     >
       <template v-slot:[`item.submittedAt`]="{ item }">
-        <router-link class="text-no-wrap" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }">{{ formatUtc(item.submittedAt) }}</router-link>
+        <router-link class="text-primary" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }">{{ formatUtc(item.submittedAt) }}</router-link>
       </template>
       <template v-slot:[`item.runId`]="{ item }">
-        <router-link :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: item.runId } }">{{ item.runId.slice(0, 8) }}</router-link>
+        <router-link class="text-primary" :to="{ name: EAdminRouteName.NETDIAG_RUN_DETAIL, params: { runId: item.runId } }">{{ item.runId.slice(0, 8) }}</router-link>
       </template>
       <template v-slot:[`item.clientIp`]="{ item }">{{ textOrDash(item.clientIp) }}</template>
       <template v-slot:[`item.location`]="{ item }"><net-diag-cut-text :text="geoText(item.clientGeo)" /></template>

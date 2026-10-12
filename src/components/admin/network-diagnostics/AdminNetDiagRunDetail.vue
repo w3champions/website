@@ -60,7 +60,7 @@
           <template v-slot:[`item.deliverAfter`]="{ item }">
             <router-link
               v-if="item.status === 'Submitted'"
-              class="text-no-wrap"
+              class="text-primary"
               :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, params: { measurementId: item.measurementId } }"
             >
               {{ formatUtc(item.deliverAfter) }}
@@ -68,7 +68,7 @@
             <span v-else class="text-no-wrap">{{ formatUtc(item.deliverAfter) }}</span>
           </template>
           <template v-slot:[`item.battleTag`]="{ item }">
-            <router-link :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS, query: { battleTag: item.battleTag } }">{{ item.battleTag }}</router-link>
+            <router-link class="text-primary" :to="{ name: EAdminRouteName.NETDIAG_MEASUREMENTS, query: { battleTag: item.battleTag } }">{{ item.battleTag }}</router-link>
           </template>
           <template v-slot:[`item.status`]="{ item }">
             <v-chip size="x-small" variant="tonal" :color="ASSIGNMENT_STATUS_COLOR[item.status]">{{ item.status }}</v-chip>
