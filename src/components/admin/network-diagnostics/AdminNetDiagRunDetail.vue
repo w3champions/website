@@ -124,19 +124,29 @@ async function load(): Promise<void> {
 }
 
 async function cancelRun(): Promise<void> {
+  // Captured so a Back/Forward to another run mid-request cannot redirect or mis-attribute the outcome.
+  const targetId = props.runId;
   cancelling.value = true;
   cancelError.value = "";
   try {
-    await store.cancelRun(props.runId);
-    now.value = new Date();
+    await store.cancelRun(targetId);
+    if (props.runId === targetId) now.value = new Date();
   } catch (e) {
     console.error("Failed to cancel network diagnostic run:", e);
-    cancelError.value = describeNetDiagError(e);
+    if (props.runId === targetId) cancelError.value = describeNetDiagError(e);
   } finally {
-    cancelling.value = false;
-    cancelOpen.value = false;
+    if (props.runId === targetId) {
+      cancelling.value = false;
+      cancelOpen.value = false;
+    }
   }
 }
 
+// The component instance is reused across runs: never carry a dialog or its state over to another run.
+watch(() => props.runId, () => {
+  cancelOpen.value = false;
+  cancelling.value = false;
+  cancelError.value = "";
+});
 watch(() => props.runId, load, { immediate: true });
 </script>
