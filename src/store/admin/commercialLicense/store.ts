@@ -4,7 +4,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { CommercialLicenseService } from "@/services/admin/CommercialLicenseService";
 import { commercialEventsService } from "@/store/admin/commercialEvents/service";
 import { describeCommercialEventsError } from "@/store/admin/commercialEvents/errors";
-import { keyedRequestSequence, loadLatest, requestSequence } from "@/store/admin/commercialEvents/latest";
+import { keyedRequestSequence, loadLatest, requestSequence } from "@/store/admin/latest";
 import { roleHintsByBattleTag } from "@/store/admin/commercialEvents/roleHints";
 import { resetKeepingWrite, runAdminWrite } from "@/store/admin/commercialEvents/write";
 import { describeError } from "./errors";

@@ -1,5 +1,5 @@
 import { computed, type ComputedRef } from "vue";
-import { isoToUtcInput, utcDayStartInput } from "./dates";
+import { isoToUtcInput, utcDayStartInput } from "@/helpers/utc-dates";
 import type { Allocation, AllocationCreateRequest, AllocationUpdateRequest, Recurrence, RoleEntry } from "./types";
 import { adminNoteProblem, dateRangeProblem, nameProblem, requireIso, requireWholeNumber, wholeNumberProblem } from "./validation";
 

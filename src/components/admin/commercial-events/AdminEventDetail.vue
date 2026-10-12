@@ -87,7 +87,7 @@ import EventGamesTable from "@/components/admin/commercial-events/EventGamesTabl
 import EventPeopleCard from "@/components/admin/commercial-events/EventPeopleCard.vue";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { EAdminRouteName } from "@/router/types";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { useCommercialEventDetailStore } from "@/store/admin/commercialEvents/eventDetailStore";
 import { eventActions } from "@/store/admin/commercialEvents/eventDraft";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";

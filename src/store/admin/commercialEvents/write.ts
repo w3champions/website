@@ -1,5 +1,5 @@
 import { HttpError } from "@/services/http/AuthorizedClient";
-import type { RequestSequence } from "./latest";
+import type { RequestSequence } from "@/store/admin/latest";
 import { describeCommercialEventsError, type ErrorContext, isStateConflict, MAYBE_SAVED_RELOAD_FAILED_TEXT, MAYBE_SAVED_TEXT, mayHaveBeenSaved } from "./errors";
 
 /** The part of a store state that a write reports into. */

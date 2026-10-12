@@ -83,7 +83,7 @@ import { useRouter } from "vue-router";
 import type { DataTableHeader } from "vuetify";
 import { formatSecondsToDuration } from "@/helpers/date-functions";
 import { EMainRouteName } from "@/router/types";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { useCommercialEventDetailStore } from "@/store/admin/commercialEvents/eventDetailStore";
 import { formatWatchTime, outcomeLabel, teamLines } from "@/store/admin/commercialEvents/format";
 import type { EventGame } from "@/store/admin/commercialEvents/types";

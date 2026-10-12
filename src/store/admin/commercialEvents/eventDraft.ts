@@ -1,4 +1,4 @@
-import { isoToUtcInput, utcInputToIso, utcNextHourInput } from "./dates";
+import { isoToUtcInput, utcInputToIso, utcNextHourInput } from "@/helpers/utc-dates";
 import type { AdminEvent, EventCreateRequest, EventKind, EventPeople, EventUpdateRequest, SuspendRequest } from "./types";
 import { adminNoteProblem, dateRangeProblem, nameProblem, requireIso, requireWholeNumber, wholeNumberProblem } from "./validation";
 

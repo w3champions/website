@@ -73,7 +73,7 @@ import { mdiRefresh, mdiStopCircleOutline } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { useCommercialEventActiveGamesStore } from "@/store/admin/commercialEvents/activeGamesStore";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { eventDetailLink } from "@/store/admin/commercialEvents/links";
 import type { ActiveEventGame } from "@/store/admin/commercialEvents/types";
 

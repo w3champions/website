@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 import { mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { useCommercialEventDetailStore } from "@/store/admin/commercialEvents/eventDetailStore";
 import { auditActionLabel, auditDetailsSummary } from "@/store/admin/commercialEvents/format";
 

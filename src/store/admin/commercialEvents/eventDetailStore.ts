@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
-import { loadLatest, requestSequence } from "./latest";
+import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { commercialEventsService } from "./service";
 import type { AdminEventDetail, AuditEntry, EventGame, EventPeople, ManagedRole } from "./types";
 import { type RefreshReason, resetKeepingWrite, runAdminWrite } from "./write";

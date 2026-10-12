@@ -155,7 +155,7 @@ import {
   validateAllocationDraft,
 } from "@/store/admin/commercialEvents/allocationDraft";
 import type { AllocationDraft } from "@/store/admin/commercialEvents/allocationDraft";
-import { formatUtc, localTimeHint } from "@/store/admin/commercialEvents/dates";
+import { formatUtc, localTimeHint } from "@/helpers/utc-dates";
 import { RECURRENCE_OPTIONS } from "@/store/admin/commercialEvents/format";
 import type { Allocation } from "@/store/admin/commercialEvents/types";
 import { ADMIN_NOTE_MAX_LENGTH } from "@/store/admin/commercialEvents/validation";

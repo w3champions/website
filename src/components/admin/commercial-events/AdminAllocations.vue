@@ -142,7 +142,7 @@ import { useCommercialLicensePermission } from "@/composables/useCommercialLicen
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
 import { editedAllocationView, hasRecordedUsage, toAllocationCreateRequest, toAllocationUpdateRequest } from "@/store/admin/commercialEvents/allocationDraft";
 import type { AllocationDraft } from "@/store/admin/commercialEvents/allocationDraft";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { allocationStateLabel, memberSummary, periodUsageLabel, recurrenceLabel } from "@/store/admin/commercialEvents/format";
 import type { Allocation } from "@/store/admin/commercialEvents/types";
 

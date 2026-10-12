@@ -3,7 +3,7 @@ import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError, mayHaveBeenSaved } from "./errors";
 import { useCommercialEventAllocationsStore } from "./allocationsStore";
 import { useCommercialEventDetailStore } from "./eventDetailStore";
-import { loadLatest, requestSequence } from "./latest";
+import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { commercialEventsService } from "./service";
 import { emptyEventFilters } from "./types";
 import type { AdminEvent, AdminEventDetail, EventCreateRequest, EventFilters, EventUpdateRequest, SuspendRequest } from "./types";

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { describeCommercialEventsError } from "./errors";
-import { loadLatest, requestSequence } from "./latest";
+import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { useCommercialEventDetailStore } from "./eventDetailStore";
 import { commercialEventsService } from "./service";
 import type { ActiveEventGame } from "./types";

@@ -118,7 +118,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from "vue";
-import { localTimeHint } from "@/store/admin/commercialEvents/dates";
+import { localTimeHint } from "@/helpers/utc-dates";
 import {
   closesOnSave,
   draftFromEvent,

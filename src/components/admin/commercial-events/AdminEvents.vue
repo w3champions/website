@@ -203,7 +203,7 @@ import type { DataTableHeader } from "vuetify";
 import EventActionDialogs from "@/components/admin/commercial-events/EventActionDialogs.vue";
 import { useCommercialLicensePermission } from "@/composables/useCommercialLicensePermission";
 import { useCommercialEventAllocationsStore } from "@/store/admin/commercialEvents/allocationsStore";
-import { formatUtc } from "@/store/admin/commercialEvents/dates";
+import { formatUtc } from "@/helpers/utc-dates";
 import { eventActions } from "@/store/admin/commercialEvents/eventDraft";
 import { eventDetailLink } from "@/store/admin/commercialEvents/links";
 import { useCommercialEventsStore } from "@/store/admin/commercialEvents/eventsStore";
