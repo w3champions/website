@@ -36,6 +36,24 @@ export function readThemeColor(name: string, alpha = 1): string | null {
   return alpha >= 1 ? `rgb(${comps})` : `rgba(${comps},${alpha})`;
 }
 
+const CHART_TEXT_ALPHA = 0.75;
+const CHART_GRID_ALPHA = 0.12;
+
+export interface ChartInkColors {
+  /** Ticks, axis titles and legend labels. */
+  text: string;
+  /** Grid lines. */
+  grid: string;
+}
+
+/** The theme's colours for a chart's text and grid; Chart.js's own defaults are dark greys that are hard to read on the dark themes. */
+export function readChartInkColors(): ChartInkColors {
+  return {
+    text: readThemeColor("on-surface", CHART_TEXT_ALPHA) ?? THEME_FALLBACK_COLOR,
+    grid: readThemeColor("on-surface", CHART_GRID_ALPHA) ?? THEME_FALLBACK_COLOR,
+  };
+}
+
 /**
  * Read semantic annotation styles from the active Vuetify theme.
  * Uses tonal semantics: line/text in semantic colour and a translucent fill.

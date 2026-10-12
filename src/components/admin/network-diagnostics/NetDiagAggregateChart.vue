@@ -1,6 +1,6 @@
 <template>
-  <div role="img" :aria-label="description" :style="{ height: `${heightPx}px` }">
-    <bar-chart :chart-data="chartData" :chart-options="chartOptions" />
+  <div :style="{ height: `${heightPx}px` }">
+    <bar-chart :chart-data="chartData" :chart-options="chartOptions" :aria-label="description" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import { computed } from "vue";
 import { useTheme } from "vuetify";
 import type { ChartData, ChartOptions } from "chart.js";
 import BarChart from "@/components/overall-statistics/BarChart.vue";
-import { readThemeColor, THEME_FALLBACK_COLOR } from "@/helpers/lag-report-colors";
+import { readChartInkColors, readThemeColor, THEME_FALLBACK_COLOR } from "@/helpers/lag-report-colors";
 import type { AggregateBars } from "./fleet";
 import { formatMs } from "./format";
 
@@ -35,14 +35,22 @@ const chartData = computed<ChartData<"bar">>(() => {
   };
 });
 
-const chartOptions: ChartOptions<"bar"> = {
-  indexAxis: "y",
-  animation: false,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: true, position: "bottom" },
-    tooltip: { callbacks: { label: (item) => `${item.dataset.label ?? ""}: ${formatMs(item.parsed.x)}` } },
-  },
-  scales: { x: { beginAtZero: true, title: { display: true, text: "ms" } } },
-};
+const chartOptions = computed<ChartOptions<"bar">>(() => {
+  void theme.global.name.value;
+  const ink = readChartInkColors();
+  return {
+    indexAxis: "y",
+    animation: false,
+    maintainAspectRatio: false,
+    color: ink.text,
+    plugins: {
+      legend: { display: true, position: "bottom" },
+      tooltip: { callbacks: { label: (item) => `${item.dataset.label ?? ""}: ${formatMs(item.parsed.x)}` } },
+    },
+    scales: {
+      x: { beginAtZero: true, ticks: { color: ink.text }, grid: { color: ink.grid }, title: { display: true, text: "ms", color: ink.text } },
+      y: { ticks: { color: ink.text }, grid: { color: ink.grid } },
+    },
+  };
+});
 </script>
