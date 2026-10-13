@@ -28,10 +28,29 @@
         <img v-if="includeFrame" :src="frameUrl" alt="" class="portrait-frame" />
       </template>
     </div>
-    <p class="text-caption my-2">Drag to position. Use the slider or scroll to zoom. The 256 × 256 {{ keepAnimation ? 'animated WebP' : 'still WebP' }} is generated on submit.</p>
-    <v-slider v-model="zoom" label="Zoom" :min="minimumZoom" :max="4" :step="0.003125" :disabled="disabled || loading" hide-details thumb-label class="portrait-zoom my-3">
-      <template v-slot:thumb-label="{ modelValue }">{{ (modelValue * 100).toFixed(1) }}%</template>
-    </v-slider>
+    <p class="text-caption my-2">Drag to position. Use the slider or scroll to zoom. <template v-if="includeFrame">Zoom below 100% to fit the image inside the frame. </template>The 256 × 256 {{ keepAnimation ? 'animated WebP' : 'still WebP' }} is generated on submit.</p>
+    <div class="portrait-zoom-controls my-3">
+      <v-slider
+        v-model="sliderPosition"
+        label="Zoom"
+        :aria-valuetext="`${zoomPercentage}%`"
+        :min="0"
+        :max="100"
+        :step="0.1"
+        :disabled="disabled || loading"
+        hide-details
+        thumb-label
+        class="portrait-zoom"
+        title="Double-click to reset zoom to 100%"
+        @dblclick="resetZoom"
+      >
+        <template v-slot:thumb-label="{ modelValue }">{{ (portraitZoomFromSlider(modelValue, minimumZoom) * 100).toFixed(1) }}%</template>
+      </v-slider>
+      <label class="portrait-zoom-number">
+        <input type="number" aria-label="Zoom percentage" :value="zoomPercentage" :min="minimumZoom * 100" max="400" step="0.125" :disabled="disabled || loading" @change="commitZoom" @keydown.enter="commitZoom" />
+        <span aria-hidden="true">%</span>
+      </label>
+    </div>
     <v-checkbox v-if="animationFormat" v-model="keepAnimation" label="Keep animation" :disabled="disabled || loading" hide-details density="compact" />
     <p v-if="encodingStatus" role="status" class="text-caption">{{ encodingStatus }}</p>
     <v-btn
@@ -49,17 +68,23 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import { drawPortrait, portraitCrop, PORTRAIT_SIZE, PORTRAIT_MIN_ZOOM } from "@/helpers/portraitCrop";
+import { portraitZoomFromSlider, portraitZoomToSlider } from "@/helpers/portraitZoom";
 import { portraitAnimationFormat, type PortraitAnimationFormat } from "@/helpers/portraitAnimation";
 
 const frameUrl = new URL("../../../assets/portraits/standard-frame.png", import.meta.url).href;
-const props = defineProps<{ file: File; disabled: boolean }>();
+const props = withDefaults(defineProps<{ file: File; disabled: boolean; initialFrame?: boolean }>(), { initialFrame: true });
 const emit = defineEmits<{ prepared: [prepare: (() => Promise<File>) | null] }>();
 const canvas = ref<HTMLCanvasElement | null>(null);
 const source = shallowRef<HTMLImageElement | null>(null);
 const frame = shallowRef<HTMLImageElement | null>(null);
-const includeFrame = ref(true);
+const includeFrame = ref(props.initialFrame ?? true);
 const zoom = ref(1);
+const zoomPercentage = computed(() => Number((zoom.value * 100).toFixed(3)));
 const minimumZoom = computed(() => includeFrame.value ? PORTRAIT_MIN_ZOOM : 1);
+const sliderPosition = computed({
+  get: () => portraitZoomToSlider(zoom.value, minimumZoom.value),
+  set: (position) => { zoom.value = portraitZoomFromSlider(position, minimumZoom.value); },
+});
 watch(minimumZoom, (minimum) => { zoom.value = Math.max(minimum, zoom.value); });
 const x = ref(50);
 const y = ref(50);
@@ -141,6 +166,17 @@ async function exportPortrait(): Promise<File> {
   return await exportStillPortrait(canvas.value);
 }
 
+function resetZoom(): void {
+  if (!props.disabled && !loading.value) zoom.value = 1;
+}
+
+function commitZoom(event: Event): void {
+  if (props.disabled || loading.value) return;
+  const input = event.target as HTMLInputElement;
+  if (Number.isFinite(input.valueAsNumber)) zoom.value = Math.max(minimumZoom.value, Math.min(4, input.valueAsNumber / 100));
+  input.value = String(zoomPercentage.value);
+}
+
 function scrollZoom(event: WheelEvent): void {
   if (props.disabled || loading.value) return;
   event.preventDefault();
@@ -201,10 +237,30 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.portrait-zoom {
+.portrait-zoom-controls {
   width: 100%;
   max-width: 380px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+.portrait-zoom { flex: 1; min-width: 0; }
+.portrait-zoom :deep(.v-slider-thumb__label) {
+  background: rgb(var(--v-theme-surface-variant));
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+.portrait-zoom-number {
+  display: flex;
+  align-items: center;
+  width: 88px;
+  flex-shrink: 0;
+  padding: 6px 8px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.4);
+  border-radius: 4px;
+  background: rgb(var(--v-theme-surface));
+}
+.portrait-zoom-number input { width: 100%; min-width: 0; color: inherit; }
+.portrait-zoom-number:focus-within { outline: 2px solid rgb(var(--v-theme-primary)); }
 .portrait-viewport {
   width: 256px;
   max-width: 100%;
