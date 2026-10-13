@@ -1,11 +1,14 @@
 <template>
   <v-combobox
     v-model="chips"
+    :disabled="disabled"
     :items="items"
     clearable
-    label="Assign Groups (optional) - Select existing or enter a new group"
+    :label="label"
     multiple
-    variant="underlined"
+    :variant="variant"
+    :density="density"
+    hide-details="auto"
   >
     <template v-slot:selection="{ item }">
       <v-chip
@@ -23,11 +26,28 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
+import type { PropType } from "vue";
 
 export default defineComponent({
   name: "PortraitGroupCombobox",
   components: {},
   props: {
+    label: {
+      type: String,
+      default: "Assign Groups (optional) - Select existing or enter a new group",
+    },
+    variant: {
+      type: String as PropType<"underlined" | "outlined">,
+      default: "underlined",
+    },
+    density: {
+      type: String as PropType<"default" | "comfortable" | "compact">,
+      default: "default",
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     portraitId: {
       type: Number,
       required: true,

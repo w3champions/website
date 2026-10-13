@@ -6,7 +6,9 @@ export type CloudStorageState = {
 export type CloudFile = {
   name: string;
   size: number;
+  sizeBytes?: number | null;
   lastModified: Date;
+  previewPath?: string | null;
 };
 
 export type CloudValidationMessage = {

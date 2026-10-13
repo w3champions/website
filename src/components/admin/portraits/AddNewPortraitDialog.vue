@@ -1,157 +1,63 @@
 <template>
-  <v-dialog v-model="dialogOpen" max-width="800">
+  <v-dialog v-model="dialogOpen" max-width="850" :persistent="uploading" scrollable>
     <template v-slot:activator="{ props }">
-      <v-row class="justify-center ma-0 pa-0">
-        <v-btn class="bg-primary text-w3-race-bg" v-bind="props">Add New Portrait</v-btn>
-      </v-row>
+      <v-btn color="primary" variant="flat" v-bind="props">Add new portrait</v-btn>
     </template>
-
-    <v-card>
-      <v-container>
-        <v-row>
-          <v-col>
-            <v-card-title class="justify-center">Add New Portrait</v-card-title>
-          </v-col>
-          <v-btn icon @click="close">
-            <v-icon>{{ mdiClose }}</v-icon>
-          </v-btn>
-        </v-row>
-
-        <v-alert v-if="error" type="error" closable @update:model-value="error = ''">
-          {{ error }}
-        </v-alert>
-
-        <v-alert v-if="success" type="success" closable @update:model-value="success = ''">
-          {{ success }}
-        </v-alert>
-
-        <!-- Portrait ID Section -->
-        <v-row>
-          <v-col cols="9">
-            <v-text-field
-              v-model="portraitId"
-              label="Portrait ID (Auto-calculated)"
-              readonly
-              variant="underlined"
-              color="primary"
-              :disabled="uploading"
-            />
-          </v-col>
-          <v-col cols="3">
-            <v-btn
-              class="bg-primary"
-              :disabled="uploading"
-              @click="calculateNextPortraitId"
-            >
-              <v-icon start>{{ mdiRefresh }}</v-icon>
-              Refresh
-            </v-btn>
-          </v-col>
-        </v-row>
-
-        <!-- Portrait Groups Section -->
-        <v-row>
-          <v-col>
-            <portrait-group-combobox
-              :portraitId="portraitId"
-              @groups-changed="updateGroups"
-            />
-          </v-col>
-        </v-row>
-
-        <!-- File Upload Section -->
-        <v-row>
-          <v-col>
-            <v-alert type="info" variant="outlined" density="compact">
-              <div class="text-subtitle-2 mb-1">Instructions:</div>
-              <ul class="ml-4">
-                <li>Select one or multiple JPG files to upload</li>
-                <li>Starting ID: {{ portraitId }} (each file gets a unique sequential ID)</li>
-                <li>Example: 3 files → SPECIAL_{{ portraitId }}.jpg, SPECIAL_{{ portraitId + 1 }}.jpg, SPECIAL_{{ portraitId + 2 }}.jpg</li>
-                <li>Each file creates a portrait definition and uploads to both S3 and Alibaba</li>
-              </ul>
-            </v-alert>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-file-input
-              v-model="files"
-              label="Select JPG files"
-              multiple
-              accept=".jpg,.jpeg"
-              truncate-length="50"
-              :disabled="uploading"
-              chips
-              show-size
-              counter
-              variant="underlined"
-              :prepend-icon="mdiImagePlus"
-            />
-          </v-col>
-        </v-row>
-
-        <!-- Upload Progress -->
-        <v-divider v-if="uploadProgress.length > 0" class="my-4" />
-
-        <div v-if="uploadProgress.length > 0">
-          <div class="text-h6 mb-3">Upload Progress</div>
-          <v-table density="compact">
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th>Step</th>
-                  <th>Status</th>
-                  <th>Message</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(progress, index) in uploadProgress" :key="index">
-                  <td>{{ progress.step }}</td>
-                  <td>
-                    <v-chip :color="getStatusColor(progress.status)" size="small">
-                      {{ progress.status }}
-                    </v-chip>
-                  </td>
-                  <td>{{ progress.message }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-table>
+    <portrait-dialog-card title="Add portrait" subtitle="Crop and upload a new profile picture." :busy="uploading" :close-label="success ? 'Close' : 'Cancel'" @close="close">
+      <v-alert v-if="error" type="error" density="compact" class="mb-4">{{ error }}</v-alert>
+      <v-alert v-if="success" type="success" density="compact" class="mb-4">{{ success }}</v-alert>
+      <section class="portrait-form-section">
+        <h2 class="portrait-form-title">Portrait details</h2>
+        <div class="portrait-id-row">
+          <v-text-field v-model="portraitId" label="Portrait ID" readonly variant="outlined" density="comfortable" hide-details :disabled="uploading" />
+          <v-btn variant="outlined" :disabled="uploading || loadingId" :loading="loadingId" @click="calculateNextPortraitId">Refresh ID</v-btn>
         </div>
-      </v-container>
-
-      <v-card-actions>
-        <v-spacer />
-        <v-btn variant="text" :disabled="uploading" @click="close">
-          Close
-        </v-btn>
-        <v-btn
-          class="bg-primary text-w3-race-bg"
-          :disabled="!canUpload || uploading"
-          :loading="uploading"
-          @click="startUploadProcess"
-        >
-          Upload Portrait
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+        <portrait-group-combobox :portraitId="portraitId" :disabled="uploading" label="Groups (optional)" variant="outlined" density="comfortable" @groups-changed="updateGroups" />
+      </section>
+      <section class="portrait-form-section">
+        <h2 class="portrait-form-title">Image</h2>
+        <file-drop-zone v-model="files" accept=".jpg,.jpeg,.png,.webp,.gif,.apng" label="Drag & drop a portrait image here" :disabled="uploading" />
+        <p class="text-caption text-medium-emphasis mt-2">This image will be uploaded as SPECIAL_{{ portraitId }}.jpg. Leave groups empty for a personal portrait.</p>
+        <portrait-crop-editor v-for="(file, index) in files" :key="`${selectionVersion}-${index}`" :file="file" :disabled="uploading" @prepared="portraitPreparers[index] = $event" />
+      </section>
+      <section v-if="uploadProgress.length" class="portrait-form-section">
+        <h2 class="portrait-form-title">Upload progress</h2>
+        <v-table density="compact">
+          <thead><tr><th>Step</th><th>Status</th><th>Message</th></tr></thead>
+          <tbody>
+            <tr v-for="(progress, index) in uploadProgress" :key="index">
+              <td>{{ progress.step }}</td>
+              <td><v-chip :color="getStatusColor(progress.status)" size="small">{{ progress.status }}</v-chip></td>
+              <td>{{ progress.message }}</td>
+            </tr>
+          </tbody>
+        </v-table>
+      </section>
+      <template v-slot:actions>
+        <v-btn color="primary" variant="flat" :disabled="!canUpload || uploading" :loading="uploading" @click="startUploadProcess">Upload portrait</v-btn>
+      </template>
+    </portrait-dialog-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { useCloudStorageStore } from "@/store/admin/cloudStorage/store";
+import CloudStorageService from "@/services/admin/CloudStorageService";
+import { useOauthStore } from "@/store/oauth/store";
+import { nextPortraitId } from "@/helpers/storedPortraits";
 import { CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 import type { PortraitDefinition, PortraitDefinitionDTO } from "@/store/admin/types";
 import PortraitGroupCombobox from "./PortraitGroupCombobox.vue";
+import PortraitCropEditor from "./PortraitCropEditor.vue";
+import FileDropZone from "@/components/common/FileDropZone.vue";
+import PortraitDialogCard from "./PortraitDialogCard.vue";
 import { mdiClose, mdiRefresh, mdiImagePlus } from "@mdi/js";
 
 interface UploadProgress {
   step: string;
-  status: "pending" | "uploading" | "success" | "error";
+  status: "pending" | "uploading" | "success" | "error" | "warning";
   message?: string;
 }
 
@@ -159,6 +65,9 @@ export default defineComponent({
   name: "AddNewPortraitDialog",
   components: {
     PortraitGroupCombobox,
+    PortraitCropEditor,
+    PortraitDialogCard,
+    FileDropZone,
   },
   setup() {
     const playerManagement = usePlayerManagementStore();
@@ -168,7 +77,15 @@ export default defineComponent({
     const portraitId = ref<number>(0);
     const groups = ref<string[]>([]);
     const files = ref<File[]>([]);
+    const portraitPreparers = ref<((() => Promise<File>) | null)[]>([]);
+    const selectionVersion = ref(0);
+    watch(files, () => {
+      portraitPreparers.value = files.value.map(() => null);
+      selectionVersion.value++;
+    }, { flush: "sync" });
     const uploading = ref<boolean>(false);
+    const loadingId = ref(false);
+    const oauth = useOauthStore();
     const uploadProgress = ref<UploadProgress[]>([]);
     const error = ref<string>("");
     const success = ref<string>("");
@@ -176,14 +93,22 @@ export default defineComponent({
     const allSpecialPortraits = computed<PortraitDefinition[]>(() => playerManagement.allSpecialPortraits);
 
     const canUpload = computed(() => {
-      return portraitId.value > 0 && files.value && files.value.length > 0;
+      return !loadingId.value && portraitId.value > 0 && files.value.length === 1 &&
+        portraitPreparers.value.length === files.value.length && portraitPreparers.value.every((file) => file !== null);
     });
 
-    function calculateNextPortraitId(): void {
-      const existingIds = allSpecialPortraits.value.map((p) => parseInt(p.id, 10));
-      const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 0;
-      portraitId.value = maxId + 1;
+    async function calculateNextPortraitId(): Promise<void> {
+      loadingId.value = true;
+      error.value = "";
+      try {
+        const [storedFiles] = await Promise.all([CloudStorageService.fetchFiles(oauth.token, CloudStorageProvider.S3), playerManagement.loadAllSpecialPortraits()]);
+        portraitId.value = nextPortraitId(allSpecialPortraits.value, storedFiles);
+      } catch (err) {
+        portraitId.value = 0;
+        error.value = err instanceof Error ? err.message : "Could not find an unused portrait ID.";
+      } finally { loadingId.value = false; }
     }
+    watch(dialogOpen, (open) => { if (open) calculateNextPortraitId(); });
 
     function updateGroups(newGroups: string[]): void {
       groups.value = newGroups;
@@ -193,6 +118,7 @@ export default defineComponent({
       switch (status) {
         case "success": return "success";
         case "error": return "error";
+        case "warning": return "warning";
         case "uploading": return "info";
         default: return "default";
       }
@@ -200,14 +126,7 @@ export default defineComponent({
 
     async function startUploadProcess(): Promise<void> {
       if (!canUpload.value) {
-        error.value = "Please select at least one file and ensure Portrait ID is set.";
-        return;
-      }
-
-      // Validate files are JPG
-      const invalidFiles = files.value.filter((f) => !f.name.toLowerCase().match(/\.(jpg|jpeg)$/));
-      if (invalidFiles.length > 0) {
-        error.value = `Invalid file types. Only JPG files are allowed. Found: ${invalidFiles.map((f) => f.name).join(", ")}`;
+        error.value = "Select one image and ensure the portrait ID is set.";
         return;
       }
 
@@ -217,20 +136,25 @@ export default defineComponent({
       uploadProgress.value = [];
 
       try {
+        const [storedFiles] = await Promise.all([CloudStorageService.fetchFiles(oauth.token, CloudStorageProvider.S3), playerManagement.loadAllSpecialPortraits()]);
+        if (storedFiles.some((file) => file.name === `SPECIAL_${portraitId.value}.jpg`) || allSpecialPortraits.value.some((portrait) => portrait.id === String(portraitId.value)))
+        {throw new Error("This portrait ID is already in use. Refresh ID and try again.");}
+        // Encode only on submission, before creating any catalogue entries or uploading.
+        const uploadFiles = await Promise.all(portraitPreparers.value.map((prepare) => prepare!()));
         // Process each file with its own unique portrait ID
         const currentPortraitId = portraitId.value;
 
-        for (let i = 0; i < files.value.length; i++) {
-          const file = files.value[i];
+        for (let i = 0; i < uploadFiles.length; i++) {
+          const file = uploadFiles[i];
           const filePortraitId = currentPortraitId + i;
           const fileName = `SPECIAL_${filePortraitId}.jpg`;
 
           // Step 1: Create Portrait Definition for this file
           const definitionStepIndex = uploadProgress.value.length;
           uploadProgress.value.push({
-            step: `Create Portrait Definition (ID: ${filePortraitId})`,
+            step: `Create Portrait (ID: ${filePortraitId})`,
             status: "uploading",
-            message: "Creating portrait definition...",
+            message: "Creating portrait...",
           });
 
           try {
@@ -242,13 +166,13 @@ export default defineComponent({
             await playerManagement.addNewPortraitDefinition(portraitDefinition);
 
             uploadProgress.value[definitionStepIndex].status = "success";
-            uploadProgress.value[definitionStepIndex].message = "Portrait definition created successfully";
+            uploadProgress.value[definitionStepIndex].message = "Portrait created successfully";
           } catch (err: unknown) {
             const ex = err instanceof Error ? err : new Error(String(err));
             const errorMessage = ex.message ?? "Creation failed";
             uploadProgress.value[definitionStepIndex].status = "error";
             uploadProgress.value[definitionStepIndex].message = errorMessage;
-            throw new Error(`Portrait definition creation failed for ID ${filePortraitId}: ${errorMessage}`);
+            throw new Error(`Portrait creation failed for ID ${filePortraitId}: ${errorMessage}`);
           }
 
           // Create a new File object with the correct name
@@ -264,6 +188,7 @@ export default defineComponent({
 
           try {
             await cloudStorageStore.uploadFile(renamedFile, CloudStorageProvider.S3);
+            if (!cloudStorageStore.validationMessage.isSuccess) throw new Error(cloudStorageStore.validationMessage.message);
             uploadProgress.value[s3StepIndex].status = "success";
             uploadProgress.value[s3StepIndex].message = "Uploaded successfully";
           } catch (err: unknown) {
@@ -284,26 +209,25 @@ export default defineComponent({
 
           try {
             await cloudStorageStore.uploadFile(renamedFile, CloudStorageProvider.ALIBABA);
+            if (!cloudStorageStore.validationMessage.isSuccess) throw new Error(cloudStorageStore.validationMessage.message);
             uploadProgress.value[alibabaStepIndex].status = "success";
             uploadProgress.value[alibabaStepIndex].message = "Uploaded successfully";
           } catch (err: unknown) {
             const ex = err instanceof Error ? err : new Error(String(err));
             const errorMessage = ex.message ?? "Upload failed";
-            uploadProgress.value[alibabaStepIndex].status = "error";
-            uploadProgress.value[alibabaStepIndex].message = errorMessage;
-            throw new Error(`Alibaba upload failed for ${fileName}: ${errorMessage}`);
+            uploadProgress.value[alibabaStepIndex].status = "warning";
+            uploadProgress.value[alibabaStepIndex].message = `Alibaba upload failed; continuing with S3. ${errorMessage}`;
           }
         }
 
         // Refresh portrait list
         await playerManagement.loadAllSpecialPortraits();
 
-        const portraitIds = Array.from({ length: files.value.length }, (_, i) => currentPortraitId + i).join(", ");
-        success.value = `Successfully created ${files.value.length} portrait(s) (IDs: ${portraitIds}) and uploaded to both storage providers!`;
+        success.value = `Portrait #${currentPortraitId} created. Select it in Manage Portraits to assign it to a player.`;
 
         // Reset form (keep uploadProgress visible for review)
         files.value = [];
-        calculateNextPortraitId();
+        await calculateNextPortraitId();
 
       } catch (err: unknown) {
         error.value = err instanceof Error ? err.message : "Upload process failed";
@@ -321,10 +245,7 @@ export default defineComponent({
       }
     }
 
-    onMounted(async (): Promise<void> => {
-      await playerManagement.loadAllSpecialPortraits();
-      calculateNextPortraitId();
-    });
+
 
     return {
       mdiClose,
@@ -333,7 +254,10 @@ export default defineComponent({
       dialogOpen,
       portraitId,
       files,
+      portraitPreparers,
+      selectionVersion,
       uploading,
+      loadingId,
       uploadProgress,
       error,
       success,
@@ -347,3 +271,7 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.portrait-id-row { display: flex; align-items: center; gap: 12px; max-width: 380px; margin-bottom: 16px; }
+</style>

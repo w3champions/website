@@ -3,14 +3,14 @@
     <v-card-title class="justify-center">Special Portraits</v-card-title>
     <v-row no-gutters :justify="'start'">
       <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
-        <assign-portrait :portraitId="portraitId" class="pa-1" :selectable="selectable" @portrait-selected="portraitSelected" />
+        <assign-portrait :portraitId="portraitId" :imageVersion="imageVersion" class="pa-1" :selectable="selectable" @portrait-selected="portraitSelected" />
       </v-col>
     </v-row>
   </v-col>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, watch } from "vue";
 import AssignPortrait from "./AssignPortrait.vue";
 import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
 import { useOauthStore } from "@/store/oauth/store";
@@ -21,6 +21,7 @@ export default defineComponent({
     AssignPortrait,
   },
   props: {
+    imageVersion: { type: Number, default: 0 },
     selectable: {
       type: Boolean,
       required: false,
@@ -30,7 +31,8 @@ export default defineComponent({
   setup(_props, context) {
     const oauthStore = useOauthStore();
     const playerManagement = usePlayerManagementStore();
-    const allSpecialPortraits = ref<number[]>([]);
+    const allSpecialPortraits = computed<number[]>(() => playerManagement.allSpecialPortraits
+      .map((portrait) => Number(portrait.id)).sort((a, b) => b - a));
 
     const isAdmin = computed<boolean>(() => oauthStore.isAdmin);
 
@@ -40,10 +42,6 @@ export default defineComponent({
       if (!isAdmin.value) return;
 
       await playerManagement.loadAllSpecialPortraits();
-      allSpecialPortraits.value = Object.create(playerManagement.allSpecialPortraits
-        .map((x) => parseInt(x.id))
-        .sort((a, b) => b - a)
-      );
     }
 
     function portraitSelected(portraitId: number): void {

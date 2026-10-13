@@ -45,7 +45,7 @@
       </template>
 
       <template v-slot:item.moduleId="{ item }">
-        <v-chip class="bg-primary" size="small">
+        <v-chip color="primary" variant="flat" size="small">
           {{ getModuleName(item.moduleId) }}
         </v-chip>
       </template>
@@ -61,7 +61,7 @@
       </template>
 
       <template v-slot:item.isActive="{ item }">
-        <v-chip size="small" :class="item.isActive ? 'bg-success' : 'bg-error'">
+        <v-chip size="small" :color="item.isActive ? 'success' : 'error'" variant="tonal">
           {{ item.isActive ? 'Active' : 'Inactive' }}
         </v-chip>
       </template>
@@ -74,43 +74,47 @@
       </template>
 
       <template v-slot:item.assignmentStats="{ item }">
-        <div class="text-center">
-          <v-chip-group class="d-flex flex-column">
-            <v-chip size="x-small" class="ma-1 bg-success">
-              A: {{ item.assignmentStats?.activeCount || 0 }}
-            </v-chip>
-            <v-chip size="x-small" class="ma-1 bg-warning">
-              E: {{ item.assignmentStats?.expiredCount || 0 }}
-            </v-chip>
-            <v-chip size="x-small" class="ma-1 bg-error">
-              R: {{ item.assignmentStats?.revokedCount || 0 }}
-            </v-chip>
-          </v-chip-group>
+        <div class="reward-user-counts">
+          <v-chip size="x-small" color="success" variant="tonal" title="Active assignments">
+            A: {{ item.assignmentStats?.activeCount || 0 }}
+          </v-chip>
+          <v-chip size="x-small" color="warning" variant="tonal" title="Expired assignments">
+            E: {{ item.assignmentStats?.expiredCount || 0 }}
+          </v-chip>
+          <v-chip size="x-small" color="error" variant="tonal" title="Revoked assignments">
+            R: {{ item.assignmentStats?.revokedCount || 0 }}
+          </v-chip>
         </div>
       </template>
 
+      <template v-slot:item.createdAt="{ item }">
+        <v-tooltip location="top" :text="preciseStorageDate(item.createdAt)">
+          <template v-slot:activator="{ props }">
+            <time v-bind="props" :datetime="storageDateTimestamp(item.createdAt)" class="reward-created text-caption text-medium-emphasis" tabindex="0">
+              {{ compactStorageDate(item.createdAt) }}
+            </time>
+          </template>
+        </v-tooltip>
+      </template>
+
       <template v-slot:item.actions="{ item }">
-        <v-icon
-          size="small"
-          color="info"
-          class="mr-2"
-          @click="viewUsers(item)"
-        >
-          {{ mdiAccountGroup }}
-        </v-icon>
-        <v-icon
-          size="small"
-          class="mr-2"
-          @click="editReward(item)"
-        >
-          {{ mdiPencil }}
-        </v-icon>
-        <v-icon
-          size="small"
-          @click="deleteReward(item)"
-        >
-          {{ mdiDelete }}
-        </v-icon>
+        <div class="reward-actions">
+          <v-tooltip text="View assigned users" location="top">
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" :icon="mdiAccountGroup" size="x-small" variant="text" color="info" aria-label="View assigned users" @click="viewUsers(item)" />
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Edit reward" location="top">
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" :icon="mdiPencil" size="x-small" variant="text" aria-label="Edit reward" @click="editReward(item)" />
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Delete reward" location="top">
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" :icon="mdiDelete" size="x-small" variant="text" aria-label="Delete reward" @click="deleteReward(item)" />
+            </template>
+          </v-tooltip>
+        </div>
       </template>
     </v-data-table>
 
@@ -139,6 +143,7 @@ import { Reward, DurationType, CreateRewardRequest, UpdateRewardRequest, RewardA
 import AdminRewardEdit from "./AdminRewardEdit.vue";
 import RewardUsersDialog from "./RewardUsersDialog.vue";
 import { mdiMagnify, mdiPencil, mdiDelete, mdiAccountGroup } from "@mdi/js";
+import { compactStorageDate, preciseStorageDate, storageDateTimestamp } from "@/helpers/storageFileFormatting";
 import { formatTimestampString } from "@/helpers/date-functions";
 import { DataTableHeader } from "vuetify";
 
@@ -179,7 +184,7 @@ export default defineComponent({
       { title: "Status", value: "isActive", sortable: true },
       { title: "Users", value: "assignmentStats", sortable: false },
       { title: "Created", value: "createdAt", sortable: true },
-      { title: "Actions", value: "actions", sortable: false },
+      { title: "Actions", value: "actions", sortable: false, align: "end", headerProps: { class: "pr-7" } },
     ];
 
     // const usersHeaders = [
@@ -448,6 +453,9 @@ export default defineComponent({
       getRewardDescription,
       hasTranslation,
       formatDuration,
+      compactStorageDate,
+      preciseStorageDate,
+      storageDateTimestamp,
       formatDate,
       formatTime,
       toggleRewardUsersDialog,
@@ -464,3 +472,24 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.reward-user-counts {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.reward-created {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.reward-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+}
+</style>
