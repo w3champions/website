@@ -293,7 +293,9 @@ export function memoryLine(memory: MemoryDto | null | undefined): string {
 export function vpnLine(vpn: VpnDto | null | undefined): string {
   if (vpn == null) return DASH;
   if (vpn.suspected == null) return DASH;
-  return vpn.suspected ? `suspected: ${(vpn.evidence ?? []).join("; ") || "no detail"}` : "not detected";
+  const evidence = (vpn.evidence ?? []).join("; ");
+  if (vpn.suspected) return `suspected: ${evidence || "no detail"}`;
+  return evidence ? `not detected — ${evidence}` : "not detected";
 }
 
 export function antivirusLine(antivirus: AntivirusDto | null | undefined): string {

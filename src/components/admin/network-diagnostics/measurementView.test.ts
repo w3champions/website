@@ -347,6 +347,17 @@ test("pacing with null members shows only what is known, never 'null ms'", () =>
   assert.equal(pacing({}), "—");
 });
 
+test("route facts and VPN client evidence are shown whether or not a VPN is suspected", () => {
+  assert.equal(
+    vpnLine({ suspected: false, evidence: ["routes to 1.1.1.1 and 9 more: en0 (wifi)", "VPN client running: Tailscale"] }),
+    "not detected — routes to 1.1.1.1 and 9 more: en0 (wifi); VPN client running: Tailscale",
+  );
+  assert.equal(vpnLine({ suspected: true, evidence: ["route to 100.64.0.7: utun4 (vpn)"] }), "suspected: route to 100.64.0.7: utun4 (vpn)");
+  assert.equal(vpnLine({ suspected: false, evidence: null }), "not detected");
+  assert.equal(vpnLine({ suspected: null, evidence: ["default route: en0 (wifi)"] }), "—", "no verdict stays a dash");
+  assert.equal(vpnLine(null), "—");
+});
+
 test("a VPN object without a verdict is a dash, not 'not detected'", () => {
   assert.equal(vpnLine({ suspected: null }), "—");
   assert.equal(vpnLine({ suspected: false }), "not detected");
