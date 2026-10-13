@@ -26,7 +26,10 @@
             <h2 id="portrait-image-heading" class="portrait-editor__section-title">Portrait image</h2>
             <p class="portrait-editor__description">{{ !registered ? 'Stored portrait image.' : imageUnavailable ? 'Upload an image for this existing entry, keeping its ID.' : 'Replace this image and update everyone who has it assigned.' }}</p>
             <upload-portrait-image-dialog :key="editPortraitId" :portraitId="editPortraitId" :showButton="imageUnavailable && registered" @uploaded="refreshPortraitImage" />
-            <replace-portrait-dialog v-if="!imageUnavailable && registered && !loadingCatalogue" :key="editPortraitId" :portraitId="editPortraitId" @replaced="ownersVersion++" />
+            <div class="d-flex flex-wrap ga-2">
+              <replace-portrait-dialog v-if="!imageUnavailable && registered && !loadingCatalogue" :key="editPortraitId" :portraitId="editPortraitId" @replaced="refreshAfterReplacement" />
+              <replace-portrait-dialog v-if="!imageUnavailable && registered && !loadingCatalogue" :key="`optimize-${editPortraitId}`" :portraitId="editPortraitId" optimize @replaced="refreshAfterReplacement" />
+            </div>
           </div>
         </section>
         <v-divider v-if="registered && !loadingCatalogue" class="portrait-editor__divider" />
@@ -129,6 +132,11 @@ watch([() => props.modelValue, () => props.portraitId], async ([open]) => {
   } finally { if (request === version) loadingCatalogue.value = false; }
 }, { immediate: true });
 
+function refreshAfterReplacement(): void {
+  ownersVersion.value++;
+  imageVersion.value = Date.now();
+  emit("imageUploaded");
+}
 function refreshPortraitImage(): void {
   imageVersion.value = Date.now();
   imageUnavailable.value = false;

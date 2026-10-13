@@ -28,7 +28,10 @@
         <img v-if="includeFrame" :src="frameUrl" alt="" class="portrait-frame" />
       </template>
     </div>
-    <p class="text-caption my-2">Drag to position, scroll to zoom. The 256 × 256 {{ keepAnimation ? 'animated WebP' : 'still WebP' }} is generated on submit.</p>
+    <p class="text-caption my-2">Drag to position. Use the slider or scroll to zoom. The 256 × 256 {{ keepAnimation ? 'animated WebP' : 'still WebP' }} is generated on submit.</p>
+    <v-slider v-model="zoom" label="Zoom" :min="minimumZoom" :max="4" :step="0.003125" :disabled="disabled || loading" hide-details thumb-label class="portrait-zoom my-3">
+      <template v-slot:thumb-label="{ modelValue }">{{ (modelValue * 100).toFixed(1) }}%</template>
+    </v-slider>
     <v-checkbox v-if="animationFormat" v-model="keepAnimation" label="Keep animation" :disabled="disabled || loading" hide-details density="compact" />
     <p v-if="encodingStatus" role="status" class="text-caption">{{ encodingStatus }}</p>
     <v-btn
@@ -45,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from "vue";
-import { drawPortrait, portraitCrop, PORTRAIT_SIZE } from "@/helpers/portraitCrop";
+import { drawPortrait, portraitCrop, PORTRAIT_SIZE, PORTRAIT_MIN_ZOOM } from "@/helpers/portraitCrop";
 import { portraitAnimationFormat, type PortraitAnimationFormat } from "@/helpers/portraitAnimation";
 
 const frameUrl = new URL("../../../assets/portraits/standard-frame.png", import.meta.url).href;
@@ -56,6 +59,8 @@ const source = shallowRef<HTMLImageElement | null>(null);
 const frame = shallowRef<HTMLImageElement | null>(null);
 const includeFrame = ref(true);
 const zoom = ref(1);
+const minimumZoom = computed(() => includeFrame.value ? PORTRAIT_MIN_ZOOM : 1);
+watch(minimumZoom, (minimum) => { zoom.value = Math.max(minimum, zoom.value); });
 const x = ref(50);
 const y = ref(50);
 const loading = ref(true);
@@ -140,7 +145,7 @@ function scrollZoom(event: WheelEvent): void {
   if (props.disabled || loading.value) return;
   event.preventDefault();
   const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? PORTRAIT_SIZE : 1);
-  zoom.value = Math.max(1, Math.min(4, zoom.value * Math.exp(-delta * 0.002)));
+  zoom.value = Math.max(minimumZoom.value, Math.min(4, zoom.value * Math.exp(-delta * 0.002)));
 }
 
 function adjustWithKeyboard(event: KeyboardEvent): void {
@@ -152,7 +157,7 @@ function adjustWithKeyboard(event: KeyboardEvent): void {
     case "ArrowDown": y.value = Math.min(100, y.value + 2); break;
     case "+":
     case "=": zoom.value = Math.min(4, zoom.value + 0.1); break;
-    case "-": zoom.value = Math.max(1, zoom.value - 0.1); break;
+    case "-": zoom.value = Math.max(minimumZoom.value, zoom.value - 0.1); break;
     default: return;
   }
   event.preventDefault();
@@ -177,8 +182,8 @@ function moveDrag(event: PointerEvent): void {
   const scale = crop.side / (event.currentTarget as HTMLElement).getBoundingClientRect().width;
   const horizontalRange = source.value.naturalWidth - crop.side;
   const verticalRange = source.value.naturalHeight - crop.side;
-  if (horizontalRange > 0) x.value = Math.max(0, Math.min(100, x.value - (event.clientX - drag.value.x) * scale / horizontalRange * 100));
-  if (verticalRange > 0) y.value = Math.max(0, Math.min(100, y.value - (event.clientY - drag.value.y) * scale / verticalRange * 100));
+  if (Math.abs(horizontalRange) > 0.001) x.value = Math.max(0, Math.min(100, x.value - (event.clientX - drag.value.x) * scale / horizontalRange * 100));
+  if (Math.abs(verticalRange) > 0.001) y.value = Math.max(0, Math.min(100, y.value - (event.clientY - drag.value.y) * scale / verticalRange * 100));
   drag.value = { id: event.pointerId, x: event.clientX, y: event.clientY };
 }
 
@@ -196,6 +201,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.portrait-zoom {
+  width: 100%;
+  max-width: 380px;
+}
 .portrait-viewport {
   width: 256px;
   max-width: 100%;

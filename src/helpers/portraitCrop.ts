@@ -1,7 +1,11 @@
 export const PORTRAIT_SIZE = 256;
+// Alpha inspection: the first 12 pixels on every edge are opaque metal;
+// pixels 12–20 form the translucent shadow, and pixel 21 is transparent.
+export const PORTRAIT_FRAME_INSET = 12;
+export const PORTRAIT_MIN_ZOOM = (PORTRAIT_SIZE - 2 * PORTRAIT_FRAME_INSET) / PORTRAIT_SIZE;
 
 export function portraitCrop(width: number, height: number, zoom: number, x: number, y: number): { x: number; y: number; side: number } {
-  const side = Math.min(width, height) / Math.max(1, zoom);
+  const side = Math.min(width, height) / Math.max(PORTRAIT_MIN_ZOOM, zoom);
   return {
     x: (width - side) * Math.min(100, Math.max(0, x)) / 100,
     y: (height - side) * Math.min(100, Math.max(0, y)) / 100,
