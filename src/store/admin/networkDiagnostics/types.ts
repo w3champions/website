@@ -254,6 +254,8 @@ export interface PacingDto {
   mtrRoundMs?: number | null;
   pingIntervalMs?: number | null;
   streams?: number | null;
+  /** Microseconds between ICMP sends; set for Windows clients, null or absent otherwise and in older results. */
+  icmpSendGapUs?: number | null;
 }
 
 export interface AdapterDto {

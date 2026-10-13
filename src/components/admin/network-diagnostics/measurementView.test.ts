@@ -406,3 +406,15 @@ test("MTR notes: TCP MTR explains its last hop and the loss reading, ICMP MTR on
   assert.deepEqual(mtrNotes(null), []);
   assert.deepEqual(mtrNotes(undefined), []);
 });
+
+test("pacing shows the ICMP send gap in ms without trailing zeros, and is unchanged without it", () => {
+  const pacing = (p: MeasurementDetailDto["pacing"]): string => measurementFacts({ ...nullHeavy(), pacing: p }).find((f) => f.label === "Pacing")!.value;
+  const base = { mtrRoundMs: 6000, pingIntervalMs: 1000, streams: 330 };
+  const today = "MTR round 6000 ms · ping every 1000 ms · 330 streams";
+  assert.equal(pacing({ ...base, icmpSendGapUs: 2000 }), `${today} · ICMP send gap 2 ms`);
+  assert.equal(pacing({ ...base, icmpSendGapUs: 500 }), `${today} · ICMP send gap 0.5 ms`);
+  assert.equal(pacing({ ...base, icmpSendGapUs: 1250 }), `${today} · ICMP send gap 1.25 ms`);
+  assert.equal(pacing({ ...base, icmpSendGapUs: null }), today);
+  assert.equal(pacing(base), today);
+  assert.equal(pacing({ icmpSendGapUs: 2000 }), "ICMP send gap 2 ms");
+});
