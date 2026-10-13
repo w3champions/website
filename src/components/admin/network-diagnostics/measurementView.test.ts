@@ -358,6 +358,25 @@ test("route facts and VPN client evidence are shown whether or not a VPN is susp
   assert.equal(vpnLine(null), "—");
 });
 
+test("vpnLine drops blank entries, caps the list at six and passes markup through as plain text", () => {
+  assert.equal(vpnLine({ suspected: true, evidence: [] }), "suspected: no detail");
+  assert.equal(vpnLine({ suspected: false, evidence: [] }), "not detected");
+  assert.equal(vpnLine({ suspected: true, evidence: [""] }), "suspected: no detail");
+  assert.equal(vpnLine({ suspected: false, evidence: ["", "  "] }), "not detected");
+  assert.equal(vpnLine({ suspected: true, evidence: ["a", "b"] }), "suspected: a; b");
+  const eight = ["e1", "", "e2", "e3", "e4", "e5", "e6", "e7", "e8"];
+  assert.equal(vpnLine({ suspected: true, evidence: eight }), "suspected: e1; e2; e3; e4; e5; e6 (+2 more)");
+  assert.equal(vpnLine({ suspected: false, evidence: eight.slice(0, 7) }), "not detected — e1; e2; e3; e4; e5; e6 (+1 more)");
+  assert.equal(vpnLine({ suspected: false, evidence: ["e1", "e2", "e3", "e4", "e5", "e6"] }), "not detected — e1; e2; e3; e4; e5; e6");
+  assert.equal(vpnLine({ suspected: true, evidence: ["<img onerror=x>"] }), "suspected: <img onerror=x>");
+});
+
+test("measurementFacts shows route evidence for a result with no VPN suspected", () => {
+  const detail = { system: { vpn: { suspected: false, evidence: ["route to 1.1.1.1: en0 (wifi)", "route to 157.90.1.251: en0 (wifi)", "VPN client running: Tailscale"] } } } as MeasurementDetailDto;
+  const byLabel = new Map(measurementFacts(detail).map((f) => [f.label, f.value]));
+  assert.equal(byLabel.get("VPN"), "not detected — route to 1.1.1.1: en0 (wifi); route to 157.90.1.251: en0 (wifi); VPN client running: Tailscale");
+});
+
 test("a VPN object without a verdict is a dash, not 'not detected'", () => {
   assert.equal(vpnLine({ suspected: null }), "—");
   assert.equal(vpnLine({ suspected: false }), "not detected");
