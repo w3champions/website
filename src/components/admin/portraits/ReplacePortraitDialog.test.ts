@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
+import { defineComponent } from "vue";
 import ReplacePortraitDialog from "./ReplacePortraitDialog.vue";
 import { CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 
@@ -18,7 +19,6 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/config/env", () => ({ API_URL: "/mock/", INGAME_STATIC_RESOURCES_URL: "/mock/" }));
 vi.mock("@/services/admin/AdminService", () => ({ default: { previewPortraitReplacement: mocks.preview, replacePortrait: mocks.replace } }));
 vi.mock("@/services/admin/CloudStorageService", () => ({ default: { fetchFiles: mocks.files, readFile: mocks.read, uploadFile: mocks.upload } }));
-vi.mock("@/services/OptimizePortraitService", () => ({ optimizePortrait: mocks.optimize }));
 vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "token" }) }));
 vi.mock("@/store/admin/playerManagement/store", () => ({
   usePlayerManagementStore: () => ({
@@ -36,6 +36,15 @@ const dialog = {
 };
 const card = { template: "<div><slot /><slot name='actions' /></div>" };
 const button = { props: ["disabled"], template: "<button :disabled='disabled'><slot /></button>" };
+const editor = defineComponent({
+  name: "CropEditorStub",
+  props: { file: { type: Object, required: true }, initialFrame: Boolean, disabled: Boolean },
+  emits: ["prepared"],
+  mounted() {
+    this.$emit("prepared", mocks.optimize);
+  },
+  template: "<div>Source crop editor</div>",
+});
 const cleanup = { name: "PortraitCleanupDialog", props: ["modelValue"], template: "<div v-if='modelValue'>Cleanup prompt</div>" };
 let wrapper: VueWrapper;
 
@@ -54,13 +63,14 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-async function open(optimize = true): Promise<void> {
+async function open(optimize = true, preparePreview = true): Promise<void> {
   wrapper = mount(ReplacePortraitDialog, {
     props: { portraitId: 120, optimize },
-    global: { stubs: { VDialog: dialog, PortraitDialogCard: card, VBtn: button, VAlert: card, VCheckbox: true, PortraitCleanupDialog: cleanup } },
+    global: { stubs: { VDialog: dialog, PortraitDialogCard: card, VBtn: button, VAlert: card, VCheckbox: true, PortraitCleanupDialog: cleanup, PortraitCropEditor: editor } },
   });
   await wrapper.find("button").trigger("click");
   await flushPromises();
+  if (optimize && preparePreview && wrapper.text().includes("Prepare WebP preview")) await save("Prepare WebP preview");
 }
 async function save(label = "Save optimized portrait and replace"): Promise<void> {
   const saveButton = wrapper.findAll("button").find((b) => b.text() === label);
@@ -70,6 +80,23 @@ async function save(label = "Save optimized portrait and replace"): Promise<void
 }
 
 describe("portrait replacement workflow", () => {
+  it("loads the original into an editable square crop without encoding until preparation", async () => {
+    await open(true, false);
+    const crop = wrapper.findComponent(editor);
+    expect(crop.props("file")).toBe(await mocks.read.mock.results[0].value);
+    expect(crop.props("initialFrame")).toBe(false);
+    expect(mocks.optimize).not.toHaveBeenCalled();
+    expect(mocks.upload).not.toHaveBeenCalled();
+    await save("Prepare WebP preview");
+    expect(mocks.optimize).toHaveBeenCalledOnce();
+    expect(wrapper.text()).toContain("Original:");
+    expect(mocks.upload).not.toHaveBeenCalled();
+    await wrapper.findAll("button").find((b) => b.text() === "Adjust crop and frame")!.trigger("click");
+    expect(wrapper.findComponent(editor).vm).toBe(crop.vm);
+    await save("Prepare WebP preview");
+    expect(mocks.optimize).toHaveBeenCalledTimes(2);
+  });
+
   it("opens cleanup only after saving and the owner migration succeed", async () => {
     let finish!: (value: { updatedPlayers: number; updatedRewards: number }) => void;
     mocks.replace.mockReturnValue(

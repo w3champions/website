@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { PORTRAIT_MIN_ZOOM, portraitCrop } from "./portraitCrop";
 
 describe("portrait crop bounds", () => {
-  it.each([[1600, 900], [900, 1600], [256, 256]])("fills the square without sampling outside a %i × %i source", (width, height) => {
+  it.each([[1600, 900], [900, 1600], [256, 256], [2500, 2505], [2505, 2500]])("fills the square without sampling outside a %i × %i source", (width, height) => {
     for (const zoom of [1, 1.5, 4]) {
       for (const position of [0, 50, 100]) {
         const crop = portraitCrop(width, height, zoom, position, position);

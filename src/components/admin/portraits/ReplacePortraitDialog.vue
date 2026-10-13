@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props: activator }">
       <v-btn color="primary" variant="outlined" v-bind="activator">{{ optimize ? "Optimize" : "Replace portrait" }}</v-btn>
     </template>
-    <portrait-dialog-card :title="`${optimize ? 'Optimize' : 'Replace'} portrait #${portraitId}`" :subtitle="optimize ? 'Re-encode the stored image as WebP and compare before saving.' : 'Upload a new image and update existing owners.'" :busy="working" :close-label="result ? 'Close' : 'Cancel'" @close="open = false">
+    <portrait-dialog-card :title="`${optimize ? 'Optimize' : 'Replace'} portrait #${portraitId}`" :subtitle="optimize ? 'Crop the stored image, adjust its frame and compare WebP size before saving.' : 'Upload a new image and update existing owners.'" :busy="working" :close-label="result ? 'Close' : 'Cancel'" @close="open = false">
       <v-alert v-if="error" type="error" class="mb-3">{{ error }}</v-alert>
       <v-alert v-for="warning in warnings" :key="warning" type="warning" class="mb-3">{{ warning }}</v-alert>
       <p v-if="loading" role="status">Loading affected players…</p>
@@ -21,20 +21,22 @@
         <div v-if="optimize && preparedFile && !result" class="mb-3">
           <p>Original: {{ formatBytes(originalBytes) }} → WebP: {{ formatBytes(preparedFile.size) }}</p>
           <p>{{ sizeDifference }}</p>
-          <p class="text-caption">Re-encoding may change image quality. The existing frame and animation are preserved.</p>
+          <p class="text-caption">Re-encoding may change image quality. The stored frame is part of the source image. Cropping can remove it; the editor can add a new standard frame.</p>
           <img v-if="optimizedUrl" :src="optimizedUrl" width="256" height="256" alt="Optimized portrait preview" />
+          <v-btn v-if="!s3Uploaded" variant="text" :disabled="working" @click="editOptimization">Adjust crop and frame</v-btn>
         </div>
-        <template v-else-if="!optimize && !preview.replacementPortraitId && !result">
-          <file-drop-zone :model-value="file ? [file] : []" accept=".jpg,.jpeg,.png,.webp,.gif,.apng" label="Drag & drop a portrait image here" :disabled="working" @update:model-value="file = $event[0] ?? null" />
+        <div v-if="!preview.replacementPortraitId && !result" v-show="!optimize || !preparedFile">
+          <file-drop-zone v-if="!optimize" :model-value="file ? [file] : []" accept=".jpg,.jpeg,.png,.webp,.gif,.apng" label="Drag & drop a portrait image here" :disabled="working" @update:model-value="file = $event[0] ?? null" />
           <portrait-crop-editor
-            v-if="file && !preparedFile"
+            v-if="file && (optimize || !preparedFile)"
             :key="file.name + file.lastModified"
             :file="file"
             :disabled="working"
+            :initial-frame="!optimize"
             @prepared="prepare = $event"
           />
           <p v-if="preparedFile && !result" class="mb-3">Portrait {{ targetId }} is prepared. Retry will continue with this same image and ID.</p>
-        </template>
+        </div>
       </template>
       <p v-if="progress" role="status" class="mt-3">{{ progress }}</p>
       <v-alert v-if="result" type="success" class="mt-3">
@@ -48,9 +50,9 @@
           variant="flat"
           :loading="working"
           :disabled="working || loading || !preview || !!result || (!prepare && !preparedFile && !preview.replacementPortraitId)"
-          @click="submit"
+          @click="optimize && !preparedFile && !preview?.replacementPortraitId ? prepareOptimization() : submit()"
         >
-          {{ preview?.replacementPortraitId ? "Continue replacement" : optimize ? "Save optimized portrait and replace" : preparedFile ? "Continue replacement" : "Upload and replace" }}
+          {{ preview?.replacementPortraitId ? "Continue replacement" : optimize ? preparedFile ? "Save optimized portrait and replace" : "Prepare WebP preview" : preparedFile ? "Continue replacement" : "Upload and replace" }}
         </v-btn>
       </template>
     </portrait-dialog-card>
@@ -129,11 +131,7 @@ watch(open, async (isOpen) => {
       const original = await CloudStorageService.readFile(oauth.token, `SPECIAL_${props.portraitId}.jpg`, CloudStorageProvider.S3);
       if (request !== loadVersion) return;
       originalBytes.value = original.size;
-      const { optimizePortrait } = await import("@/services/OptimizePortraitService");
-      const encoded = await optimizePortrait(original, (message) => { progress.value = message; });
-      if (request !== loadVersion) return;
-      preparedFile.value = new File([encoded], `SPECIAL_${targetId.value}.jpg`, { type: encoded.type });
-      optimizedUrl.value = URL.createObjectURL(preparedFile.value);
+      file.value = original;
     }
   } catch (err) {
     if (request === loadVersion) error.value = err instanceof Error ? err.message : "Could not load replacement details.";
@@ -144,6 +142,26 @@ watch(open, async (isOpen) => {
     }
   }
 });
+
+function editOptimization(): void {
+  if (working.value || s3Uploaded) return;
+  if (optimizedUrl.value) URL.revokeObjectURL(optimizedUrl.value);
+  optimizedUrl.value = "";
+  preparedFile.value = null;
+}
+
+async function prepareOptimization(): Promise<void> {
+  if (!prepare.value || working.value) return;
+  working.value = true;
+  error.value = "";
+  try {
+    const encoded = await prepare.value();
+    preparedFile.value = new File([encoded], `SPECIAL_${targetId.value}.jpg`, { type: encoded.type });
+    optimizedUrl.value = URL.createObjectURL(preparedFile.value);
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "Could not prepare the optimized image.";
+  } finally { working.value = false; }
+}
 
 async function submit(): Promise<void> {
   if (!preview.value || working.value) return;

@@ -52,12 +52,12 @@ import { drawPortrait, portraitCrop, PORTRAIT_SIZE, PORTRAIT_MIN_ZOOM } from "@/
 import { portraitAnimationFormat, type PortraitAnimationFormat } from "@/helpers/portraitAnimation";
 
 const frameUrl = new URL("../../../assets/portraits/standard-frame.png", import.meta.url).href;
-const props = defineProps<{ file: File; disabled: boolean }>();
+const props = defineProps<{ file: File; disabled: boolean; initialFrame?: boolean }>();
 const emit = defineEmits<{ prepared: [prepare: (() => Promise<File>) | null] }>();
 const canvas = ref<HTMLCanvasElement | null>(null);
 const source = shallowRef<HTMLImageElement | null>(null);
 const frame = shallowRef<HTMLImageElement | null>(null);
-const includeFrame = ref(true);
+const includeFrame = ref(props.initialFrame ?? true);
 const zoom = ref(1);
 const minimumZoom = computed(() => includeFrame.value ? PORTRAIT_MIN_ZOOM : 1);
 watch(minimumZoom, (minimum) => { zoom.value = Math.max(minimum, zoom.value); });
