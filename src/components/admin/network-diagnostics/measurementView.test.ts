@@ -366,7 +366,7 @@ test("vpnLine drops blank entries, caps the list at six and passes markup throug
   assert.equal(vpnLine({ suspected: true, evidence: ["a", "b"] }), "suspected: a; b");
   const eight = ["e1", "", "e2", "e3", "e4", "e5", "e6", "e7", "e8"];
   assert.equal(vpnLine({ suspected: true, evidence: eight }), "suspected: e1; e2; e3; e4; e5; e6 (+2 more)");
-  assert.equal(vpnLine({ suspected: false, evidence: eight.slice(0, 7) }), "not detected — e1; e2; e3; e4; e5; e6 (+1 more)");
+  assert.equal(vpnLine({ suspected: false, evidence: eight.slice(0, 8) }), "not detected — e1; e2; e3; e4; e5; e6 (+1 more)");
   assert.equal(vpnLine({ suspected: false, evidence: ["e1", "e2", "e3", "e4", "e5", "e6"] }), "not detected — e1; e2; e3; e4; e5; e6");
   assert.equal(vpnLine({ suspected: true, evidence: ["<img onerror=x>"] }), "suspected: <img onerror=x>");
 });
