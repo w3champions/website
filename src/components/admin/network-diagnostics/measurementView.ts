@@ -290,10 +290,17 @@ export function memoryLine(memory: MemoryDto | null | undefined): string {
   return `${memory.usedMb ?? "?"} / ${memory.totalMb} MB`;
 }
 
+const VPN_EVIDENCE_LIMIT = 6;
+
 export function vpnLine(vpn: VpnDto | null | undefined): string {
   if (vpn == null) return DASH;
   if (vpn.suspected == null) return DASH;
-  return vpn.suspected ? `suspected: ${(vpn.evidence ?? []).join("; ") || "no detail"}` : "not detected";
+  // The submission allows up to 64 entries of 500 chars; keep the fact one readable line. The full list is not shown elsewhere on the page.
+  const entries = (vpn.evidence ?? []).filter((e) => e != null && e.trim() !== "");
+  const shown = entries.slice(0, VPN_EVIDENCE_LIMIT).join("; ");
+  const evidence = entries.length > VPN_EVIDENCE_LIMIT ? `${shown} (+${entries.length - VPN_EVIDENCE_LIMIT} more)` : shown;
+  if (vpn.suspected) return `suspected: ${evidence || "no detail"}`;
+  return evidence ? `not detected — ${evidence}` : "not detected";
 }
 
 export function antivirusLine(antivirus: AntivirusDto | null | undefined): string {
