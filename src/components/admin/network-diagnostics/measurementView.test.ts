@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import type { FloSnapshotRow, HopDto, MeasurementDetailDto, ProbeDto, StatsDto, TargetResultDto } from "@/store/admin/networkDiagnostics/types";
-import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hasProbeStats, hopEnrichment, hopRows, measurementFacts, memoryLine, methodLabel, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, outcomeColor, outcomeText, pathLabel, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, targetTitle, vpnLine, wifiLine } from "./measurementView";
+import { adapterLine, antivirusLine, cpuLine, endpointsLine, finalHop, formatBitRate, hasProbeStats, hopEnrichment, hopRows, measurementFacts, memoryLine, methodLabel, MTR_LOSS_NOTE, mtrNotes, NO_RAW_SAMPLES_NOTICE, orderedPaths, osText, outcomeColor, outcomeText, pathLabel, probeStatsLine, RAW_EXPIRED_NOTICE, rawSamplesNotice, rttSeries, snapshotRows, targetTitle, TCP_MTR_LAST_HOP_NOTE, vpnLine, wifiLine } from "./measurementView";
 
 const stats = (overrides: Partial<StatsDto> = {}): StatsDto => ({
   sent: 60,
@@ -397,4 +397,12 @@ test("a null path sorts last, reads as a dash in the chart legend and is not dra
   assert.deepEqual(series[1].dash, []);
   const unknown = rttSeries({ ...target, paths: [{ path: "relay", probes: [sample] }] }, ["#111111"]);
   assert.deepEqual(unknown.map((s) => s.label), ["relay · TCP ping"]);
+});
+
+test("MTR notes: TCP MTR explains its last hop and the loss reading, ICMP MTR only the loss reading, others nothing", () => {
+  assert.deepEqual(mtrNotes("TcpMtr"), [TCP_MTR_LAST_HOP_NOTE, MTR_LOSS_NOTE]);
+  assert.deepEqual(mtrNotes("IcmpMtr"), [MTR_LOSS_NOTE]);
+  assert.deepEqual(mtrNotes("TcpPing"), []);
+  assert.deepEqual(mtrNotes(null), []);
+  assert.deepEqual(mtrNotes(undefined), []);
 });

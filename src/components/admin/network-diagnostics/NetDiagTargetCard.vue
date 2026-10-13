@@ -20,7 +20,10 @@
               <span v-if="probe.reason" class="text-caption text-medium-emphasis">{{ probe.reason }}</span>
             </div>
             <div v-if="hasProbeStats(probe)" class="text-caption mb-1">{{ probeStatsLine(probe) }}</div>
-            <mtr-hop-table v-if="probe.hops && probe.hops.length > 0" :hops="hopRows(probe.hops)" :hop-info="hopEnrichment(probe.hops, ipInfo)" />
+            <template v-if="probe.hops && probe.hops.length > 0">
+              <p v-for="note in mtrNotes(probe.method)" :key="note" class="text-caption text-medium-emphasis mb-1">{{ note }}</p>
+              <mtr-hop-table :hops="hopRows(probe.hops)" :hop-info="hopEnrichment(probe.hops, ipInfo)" />
+            </template>
           </div>
         </v-col>
       </v-row>
@@ -33,7 +36,7 @@ import { computed } from "vue";
 import MtrHopTable from "@/components/admin/MtrHopTable.vue";
 import { OKABE_ITO_COLORS } from "@/helpers/lag-report-colors";
 import type { IpInfoDto, TargetResultDto } from "@/store/admin/networkDiagnostics/types";
-import { endpointsLine, hasProbeStats, hopEnrichment, hopRows, methodLabel, orderedPaths, outcomeColor, outcomeText, pathLabel, probeStatsLine, rttSeries, targetTitle } from "./measurementView";
+import { endpointsLine, hasProbeStats, hopEnrichment, hopRows, methodLabel, mtrNotes, orderedPaths, outcomeColor, outcomeText, pathLabel, probeStatsLine, rttSeries, targetTitle } from "./measurementView";
 import NetDiagRttChart from "./NetDiagRttChart.vue";
 
 const props = defineProps<{ target: TargetResultDto; ipInfo: Record<string, IpInfoDto | null>; showSeries: boolean }>();
