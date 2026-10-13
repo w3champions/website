@@ -1,11 +1,9 @@
 <template>
   <v-col>
     <v-card-title class="justify-center">Special Portraits</v-card-title>
-    <v-row no-gutters :justify="'start'">
-      <v-col v-for="portraitId in allSpecialPortraits" :key="portraitId" cols="1">
-        <assign-portrait :portraitId="portraitId" :imageVersion="imageVersion" class="pa-1" :selectable="selectable" @portrait-selected="portraitSelected" />
-      </v-col>
-    </v-row>
+    <div class="portrait-grid">
+      <assign-portrait v-for="portraitId in allSpecialPortraits" :key="portraitId" :portraitId="portraitId" :imageVersion="imageVersion" class="pa-0" :selectable="selectable" @portrait-selected="portraitSelected" />
+    </div>
   </v-col>
 </template>
 
@@ -59,3 +57,17 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.portrait-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 8px;
+}
+@media (max-width: 960px) {
+  .portrait-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .portrait-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+</style>

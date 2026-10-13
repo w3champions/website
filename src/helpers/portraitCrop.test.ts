@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { portraitCrop } from "./portraitCrop";
+import { PORTRAIT_MIN_ZOOM, portraitCrop } from "./portraitCrop";
 
 describe("portrait crop bounds", () => {
   it.each([[1600, 900], [900, 1600], [256, 256]])("fills the square without sampling outside a %i × %i source", (width, height) => {
@@ -21,7 +21,14 @@ describe("portrait crop bounds", () => {
     expect(portraitCrop(600, 400, 1, 100, 50).x).toBe(200);
   });
 
-  it("clamps out of range controls to prevent empty edges", () => {
-    expect(portraitCrop(600, 400, 0.5, -20, 120)).toEqual({ x: 0, y: 0, side: 400 });
+  it("fits a square inside the frame’s opaque 12-pixel border", () => {
+    const crop = portraitCrop(256, 256, PORTRAIT_MIN_ZOOM, 50, 50);
+    expect(-crop.x / crop.side * 256).toBeCloseTo(12);
+    expect((256 - crop.x) / crop.side * 256).toBeCloseTo(244);
+    expect(crop.y).toBe(crop.x);
+  });
+
+  it("clamps excessive zoom-out and position controls to the permitted frame inset", () => {
+    expect(portraitCrop(600, 400, 0.5, -20, 120)).toEqual(portraitCrop(600, 400, PORTRAIT_MIN_ZOOM, 0, 100));
   });
 });

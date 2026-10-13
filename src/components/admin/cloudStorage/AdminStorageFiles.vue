@@ -147,7 +147,7 @@
                 </v-btn>
               </template>
             </v-tooltip>
-            <v-tooltip location="top" max-width="320" :text="`Delete stored file from ${providerLabel}. Catalogue entries and player assignments are kept.`">
+            <v-tooltip location="top" max-width="320" :text="storedPortraitId(item) !== null ? 'Choose whether to delete images, player assignments and catalogue/reward references.' : 'Choose whether to delete this file from S3 and Alibaba.'">
               <template v-slot:activator="{ props: activator }">
                 <v-btn v-bind="activator" icon size="small" variant="text" :aria-label="`Delete ${item.name}`" @click="deleteFile(item)">
                   <v-icon>{{ mdiDelete }}</v-icon>
@@ -157,6 +157,7 @@
           </div>
         </template>
       </v-data-table>
+      <portrait-cleanup-dialog v-model="cleanupOpen" :portraitId="cleanupId" :filename="cleanupFilename" :provider="provider" @cleaned="loadFiles" />
       <portrait-details-dialog v-model="portraitPanelOpen" :portraitId="portraitPanelId" @image-uploaded="loadFiles" />
       <v-snackbar v-model="isValidationMessageVisible" location="top" :color="validationMessage.isSuccess ? 'green' : 'red accent-2'">
         {{ validationMessage.message }}
@@ -178,6 +179,7 @@ import { mdiDelete, mdiDownload, mdiCamera, mdiMagnify, mdiCog, mdiBookCheckOutl
 import { CloudFile, CloudValidationMessage, CloudStorageProvider } from "@/store/admin/cloudStorage/types";
 import { DataTableHeader } from "vuetify";
 import FileDropZone from "@/components/common/FileDropZone.vue";
+import PortraitCleanupDialog from "../portraits/PortraitCleanupDialog.vue";
 import PortraitDetailsDialog from "../portraits/PortraitDetailsDialog.vue";
 import { compactStorageDate, preciseStorageDate, compactStorageSize, preciseStorageSize, storageFileBytes, storageDateTimestamp } from "@/helpers/storageFileFormatting";
 import { PortraitStatusRequests } from "@/helpers/portraitStatusRequests";
@@ -189,12 +191,15 @@ import { INGAME_STATIC_RESOURCES_URL } from "@/config/env";
 
 export default defineComponent({
   name: "AdminStorageFiles",
-  components: { PortraitDetailsDialog, FileDropZone },
+  components: { PortraitDetailsDialog, PortraitCleanupDialog, FileDropZone },
   props: { provider: { type: String as PropType<CloudStorageProvider>, required: true } },
   setup(props) {
     const providerLabel = computed(() => props.provider === CloudStorageProvider.S3 ? "S3" : "Alibaba");
     const oauthStore = useOauthStore();
     const cloudStorageStore = useCloudStorageStore();
+    const cleanupOpen = ref(false);
+    const cleanupId = ref(0);
+    const cleanupFilename = ref("");
     const portraitPanelOpen = ref(false);
     const portraitPanelId = ref(0);
     function openPortrait(file: CloudFile): void {
@@ -262,12 +267,10 @@ export default defineComponent({
       cloudStorageStore.validationMessage = { message: "", isSuccess: true };
     }
 
-    async function deleteFile(file: CloudFile): Promise<void> {
-      const confirmation = confirm(`Are you sure you want to delete ${file.name}?`);
-      if (!confirmation) return;
-      await cloudStorageStore.deleteFile(file.name, props.provider);
-      isValidationMessageVisible.value = true;
-      await loadFiles();
+    function deleteFile(file: CloudFile): void {
+      cleanupId.value = storedPortraitId(file) ?? 0;
+      cleanupFilename.value = file.name;
+      cleanupOpen.value = true;
     }
 
     function downloadFile(file: CloudFile): void {
@@ -329,6 +332,9 @@ export default defineComponent({
     ];
 
     return {
+      cleanupOpen,
+      cleanupId,
+      cleanupFilename,
       storageDateTimestamp,
       compactStorageDate,
       preciseStorageDate,

@@ -1,6 +1,6 @@
 // Decode and compose each frame off the main thread; encode with libwebp.
 // A fresh worker per export releases the WASM heap when the job completes.
-import { PORTRAIT_SIZE } from "@/helpers/portraitCrop";
+import { PORTRAIT_FRAME_INSET, PORTRAIT_SIZE } from "@/helpers/portraitCrop";
 import { animatedWebpFrame, assembleAnimatedWebp } from "@/helpers/animatedWebp";
 import { animationFrameDelaysMilliseconds, portraitAnimationDimensions } from "@/helpers/portraitAnimation";
 import type { PortraitAnimationFormat } from "@/helpers/portraitAnimation";
@@ -67,7 +67,8 @@ async function encode(data: { file: File; format: PortraitAnimationFormat; crop:
   if (format === "webp" && dimensions.width * dimensions.height * dimensions.frames > 32_000_000) {
     throw new Error("This WebP animation is too large to decode. Try a smaller source.");
   }
-  if (![crop.x, crop.y, crop.side].every(Number.isFinite) || crop.side <= 0 || crop.x < 0 || crop.y < 0 || crop.x + crop.side > dimensions.width + 0.001 || crop.y + crop.side > dimensions.height + 0.001) {
+  const padding = crop.side * PORTRAIT_FRAME_INSET / PORTRAIT_SIZE + 0.001;
+  if (![crop.x, crop.y, crop.side].every(Number.isFinite) || crop.side <= 0 || crop.x < -padding * 2 || crop.y < -padding * 2 || crop.x + crop.side > dimensions.width + padding * 2 || crop.y + crop.side > dimensions.height + padding * 2) {
     throw new Error("The portrait crop is outside the image.");
   }
   self.postMessage({ status: keepAnimation ? "Loading animation encoder…" : "Preparing the first frame…" });
@@ -113,6 +114,10 @@ async function encode(data: { file: File; format: PortraitAnimationFormat; crop:
       patch.image.close();
     }
     output.context.clearRect(0, 0, PORTRAIT_SIZE, PORTRAIT_SIZE);
+    if (crop.side > Math.min(dimensions.width, dimensions.height)) {
+      output.context.fillStyle = "#000";
+      output.context.fillRect(0, 0, PORTRAIT_SIZE, PORTRAIT_SIZE);
+    }
     output.context.imageSmoothingQuality = "high";
     output.context.drawImage(source.image, crop.x, crop.y, crop.side, crop.side, 0, 0, PORTRAIT_SIZE, PORTRAIT_SIZE);
     if (frame) output.context.drawImage(frame, 0, 0, PORTRAIT_SIZE, PORTRAIT_SIZE);

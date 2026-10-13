@@ -15,6 +15,19 @@ export interface PortraitReplacementResult {
   updatedRewards: number;
 }
 
+export interface PortraitCleanupRequest {
+  removeAssignments: boolean;
+  removeDefinition: boolean;
+  deleteS3: boolean;
+  deleteAlibaba: boolean;
+}
+
+export interface PortraitCleanupResult {
+  updatedPlayers: number;
+  updatedRewards: number;
+  warnings: string[];
+}
+
 export interface PortraitAssetStatus {
   portraitId: number;
   inCatalogue: boolean;
@@ -317,9 +330,15 @@ export default class AdminService {
     return await response.json();
   }
 
-  public static async replacePortrait(token: string, oldId: number, newId: number): Promise<PortraitReplacementResult> {
-    const response = await authorizedFetch("POST", `${API_URL}api/rewards/portrait-replacements/${oldId}`, token, JSON.stringify({ newPortraitId: newId }));
+  public static async replacePortrait(token: string, oldId: number, newId: number, removeOldAssignments = true): Promise<PortraitReplacementResult> {
+    const response = await authorizedFetch("POST", `${API_URL}api/rewards/portrait-replacements/${oldId}`, token, JSON.stringify({ newPortraitId: newId, removeOldAssignments }));
     if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Portrait replacement failed. Retry to finish the migration."));
+    return await response.json();
+  }
+
+  public static async cleanupPortrait(token: string, id: number, request: PortraitCleanupRequest): Promise<PortraitCleanupResult> {
+    const response = await authorizedFetch("POST", `${API_URL}api/rewards/portraits/${id}/cleanup`, token, JSON.stringify(request));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Portrait cleanup failed. Retry to finish."));
     return await response.json();
   }
 

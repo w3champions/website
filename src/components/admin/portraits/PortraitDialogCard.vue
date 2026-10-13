@@ -29,6 +29,8 @@ defineEmits<{ close: [] }>();
 </script>
 
 <style scoped>
+.portrait-dialog { min-width: 0; }
+.portrait-dialog__header > div { min-width: 0; overflow-wrap: anywhere; }
 .portrait-dialog__header {
   display: flex;
   align-items: flex-start;
@@ -46,7 +48,8 @@ defineEmits<{ close: [] }>();
   font-size: 13px;
   opacity: 0.65;
 }
-.portrait-dialog__body { padding: 24px; }
+.portrait-dialog__body { padding: 24px; min-width: 0; overflow-wrap: anywhere; }
+.portrait-dialog__body :deep(.v-label) { white-space: normal; line-height: 1.4; }
 .portrait-dialog__body :deep(.portrait-form-title) {
   font-size: 16px;
   font-weight: 600;
@@ -58,7 +61,9 @@ defineEmits<{ close: [] }>();
   padding-top: 24px;
   border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
-.portrait-dialog__footer { padding: 16px 24px; gap: 12px; }
+.portrait-dialog__footer { padding: 16px 24px; gap: 12px; flex-wrap: wrap; }
+.portrait-dialog__footer :deep(.v-btn) { max-width: 100%; min-height: 36px; height: auto; }
+.portrait-dialog__footer :deep(.v-btn__content) { white-space: normal; }
 @media (max-width: 600px) {
   .portrait-dialog__header, .portrait-dialog__body, .portrait-dialog__footer { padding: 16px; }
 }
