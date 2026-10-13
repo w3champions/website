@@ -313,6 +313,7 @@ function pacingText(pacing: PacingDto | null | undefined): string {
     pacing?.mtrRoundMs != null && `MTR round ${pacing.mtrRoundMs} ms`,
     pacing?.pingIntervalMs != null && `ping every ${pacing.pingIntervalMs} ms`,
     pacing?.streams != null && `${pacing.streams} streams`,
+    pacing?.icmpSendGapUs != null && `ICMP send gap ${pacing.icmpSendGapUs / 1000} ms`,
   ]);
 }
 
