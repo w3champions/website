@@ -157,6 +157,15 @@ export function rttSeries(target: TargetResultDto, palette: readonly string[]): 
   }));
 }
 
+export const MTR_LOSS_NOTE = "Loss on an intermediate hop with no loss on the later hops is the router limiting its own replies, not packet loss on the path (often seen on the first hop, the local router). Loss that persists to the last hop is real.";
+export const TCP_MTR_LAST_HOP_NOTE = "The last hop was measured with a full TCP connect, so its RTT and loss are the real end-to-end figures; its hop number is the shortest path length seen.";
+
+/** Reading notes for a probe's hop table: both MTR kinds get the loss note, TCP MTR also explains its last hop. */
+export function mtrNotes(method: string | null | undefined): string[] {
+  if (method == null || !MTR_METHODS.has(method)) return [];
+  return method === "TcpMtr" ? [TCP_MTR_LAST_HOP_NOTE, MTR_LOSS_NOTE] : [MTR_LOSS_NOTE];
+}
+
 export const RAW_EXPIRED_NOTICE = "Raw data expired (>90 days): the RTT time-series is no longer available. The statistics below are kept.";
 export const NO_RAW_SAMPLES_NOTICE = "No raw samples were recorded: only TCP ping, flo UDP ping and the final hop of ICMP/TCP MTR record a time-series.";
 
