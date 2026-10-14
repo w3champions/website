@@ -4,144 +4,56 @@
       Manage Portraits
     </v-card-title>
     <v-container class="w3-container-width">
-      <v-row class="mb-1 pb-1">
-        <v-card-text>
-          This page is for adding new portraits and adding/editing what groups they are a part of, e.g.
-          <strong>Bronze Patreon Tier</strong>
-        </v-card-text>
-      </v-row>
-      <v-row class="justify-center ma-1 pa-1">
-        <add-new-portrait-dialog />
-      </v-row>
-      <v-row class="ma-1 pa-1">
-        <new-portrait-definition-dialog />
-      </v-row>
+      <div class="portrait-management__intro">
+        <p>Add a custom portrait, or select an existing one to manage its image, groups and assigned players.</p>
+        <p class="text-caption text-medium-emphasis">For a personal supporter portrait, leave groups empty and assign it directly to the player.</p>
+        <div class="portrait-management__actions">
+          <add-new-portrait-dialog />
+          <new-portrait-definition-dialog />
+          <new-portrait-definition-dialog mode="empty" />
+        </div>
+      </div>
 
-      <v-dialog v-model="editDialogOpen" max-width="650">
-        <v-card>
-          <v-container class="pa-6">
-            <v-row class="justify-center">
-              <v-card-title>Edit PortraitDefinition</v-card-title>
-            </v-row>
-            <v-row class="justify-center pt-0 mt-0">
-              <v-card-title>Portrait Id: {{ editPortraitId }}</v-card-title>
-            </v-row>
-            <v-row>
-              <v-col />
-              <v-col>
-                <assign-portrait :portraitId="editPortraitId" :selectable="false" />
-              </v-col>
-              <v-col />
-            </v-row>
-            <v-row class="justify-center">
-              <v-col>
-                <v-card-actions>
-                  <portrait-group-combobox :portraitId="editPortraitId" @groups-changed="updateGroupModel" />
-                </v-card-actions>
-              </v-col>
-            </v-row>
-            <v-row class="justify-center">
-              <v-card-actions>
-                <v-col>
-                  <v-btn size="x-large" class="bg-primary text-w3-race-bg" @click="changeGroups">Change groups</v-btn>
-                </v-col>
-                <v-col>
-                  <v-btn size="x-large" class="bg-error text-w3-race-bg" @click="confirmDeleteDialogOpen = true">
-                    Delete Definition
-                  </v-btn>
-                  <v-dialog v-model="confirmDeleteDialogOpen" width="300">
-                    <v-card>
-                      <v-card-title class="justify-center">{{ editPortraitId }}</v-card-title>
-                      <v-card-text>Are you sure you want to delete this definition?</v-card-text>
-                      <v-card-actions>
-                        <v-row class="justify-center pa-3">
-                          <v-col>
-                            <v-btn class="bg-primary text-w3-race-bg" @click="confirmDelete">Confirm</v-btn>
-                          </v-col>
-                          <v-col>
-                            <v-btn class="bg-info text-w3-race-bg" @click="confirmDeleteDialogOpen = false">Cancel</v-btn>
-                          </v-col>
-                        </v-row>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-col>
-              </v-card-actions>
-            </v-row>
-          </v-container>
-        </v-card>
-      </v-dialog>
+      <portrait-details-dialog v-model="editDialogOpen" :portraitId="editPortraitId" @image-uploaded="imageVersion = Date.now()" />
 
       <v-row class="mt-1 pt-1">
-        <v-card-text>Click on a portrait in the grid below to edit its groups.</v-card-text>
+        <v-card-text>Click on a portrait in the grid below to edit its groups or replace its image for existing owners.</v-card-text>
       </v-row>
 
       <v-row>
-        <available-portraits-gallery @portrait-selected="selectPortrait" />
+        <available-portraits-gallery :imageVersion="imageVersion" @portrait-selected="selectPortrait" />
       </v-row>
     </v-container>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import AvailablePortraitsGallery from "./portraits/AvailablePortraitsGallery.vue";
 import NewPortraitDefinitionDialog from "./portraits/NewPortraitDefinitionDialog.vue";
 import AddNewPortraitDialog from "./portraits/AddNewPortraitDialog.vue";
-import AssignPortrait from "./portraits/AssignPortrait.vue";
-import PortraitGroupCombobox from "./portraits/PortraitGroupCombobox.vue";
-import { PortraitDefinitionDTO } from "@/store/admin/types";
-import { usePlayerManagementStore } from "@/store/admin/playerManagement/store";
-
-export default defineComponent({
-  name: "AdminManagePortraits",
-  components: {
-    AvailablePortraitsGallery,
-    NewPortraitDefinitionDialog,
-    AddNewPortraitDialog,
-    AssignPortrait,
-    PortraitGroupCombobox,
-  },
-  setup() {
-    const playerManagement = usePlayerManagementStore();
-    const editPortraitId = ref<number>(0);
-    const editDialogOpen = ref<boolean>(false);
-    const confirmDeleteDialogOpen = ref<boolean>(false);
-    const groupsModel = ref<string[]>([]);
-
-    function selectPortrait(portraitId: number): void {
-      editPortraitId.value = portraitId;
-      editDialogOpen.value = true;
-    }
-
-    function updateGroupModel(groups: string[]): void {
-      groupsModel.value = groups;
-    }
-
-    async function changeGroups(): Promise<void> {
-      await playerManagement.updatePortraitDefinition({
-        ids: [editPortraitId.value],
-        groups: groupsModel.value,
-      } satisfies PortraitDefinitionDTO);
-      editDialogOpen.value = false;
-    }
-
-    async function confirmDelete(): Promise<void> {
-      await playerManagement.removePortraitDefinition({
-        ids: [editPortraitId.value],
-      } satisfies PortraitDefinitionDTO);
-      confirmDeleteDialogOpen.value = false;
-    }
-
-    return {
-      editDialogOpen,
-      editPortraitId,
-      updateGroupModel,
-      changeGroups,
-      confirmDeleteDialogOpen,
-      confirmDelete,
-      selectPortrait,
-    };
-  },
-});
+import PortraitDetailsDialog from "./portraits/PortraitDetailsDialog.vue";
+const editPortraitId = ref(0);
+const editDialogOpen = ref(false);
+const imageVersion = ref(0);
+function selectPortrait(portraitId: number): void {
+  editPortraitId.value = portraitId;
+  editDialogOpen.value = true;
+}
 </script>
+
+<style scoped>
+.portrait-management__intro {
+  padding: 0 12px 24px;
+}
+.portrait-management__intro p {
+  margin-bottom: 8px;
+}
+.portrait-management__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+</style>

@@ -9,29 +9,31 @@ The backend belonging to this repository lives in ../website-backend. Whenever y
 
 ### Development
 ```bash
-npm run dev           # Start development server at http://localhost:5173
+npm run dev           # Start development server at http://localhost:8080
 npm run build:prod    # Production build with locale generation
-npm run build:dev     # Development build without locale generation
+npm run build         # Build without locale generation
 ```
 
 ### Code Quality
 ```bash
-npm run lint          # Run ESLint to check for code issues
-npm run lint:fix      # Auto-fix ESLint issues
-npm run dprint        # Check code formatting
-npm run dprint:fix    # Auto-format code with dprint
+npm run lint           # Run ESLint to check for code issues
+npm run lint:fix       # Auto-fix ESLint issues
+npm run dprint         # Check code formatting
+npm run dprint:fix     # Auto-format code with dprint
+npm run type-check-vue # Type-check .ts and .vue files (what CI runs)
 ```
 
 ## Architecture Overview
 
 ### Technology Stack
 - **Vue 3.4** for the frontend framework
-- **TypeScript 4.9** for type safety
+- **TypeScript 6.0** for type safety
 - **Vuetify 3.10** for Material Design components
 - **Pinia** for state management (stores in `/src/store/`)
 - **Vue Router 4** for routing
 - **Vite** as the build tool
 - **Chart.js** for data visualization
+- **Leaflet** for the map on the network diagnostics pages
 - **TipTap** for rich text editing
 
 ### Project Structure
@@ -63,6 +65,30 @@ The admin section (`/src/components/admin/`) includes:
 - `AdminPatreonLinks.vue` - Patreon account linking management
 - `AdminDriftDetection.vue` - Sync discrepancy monitoring
 - `AdminProductMappings.vue` - Provider product to reward mapping
+
+#### Commercial Events
+The "Commercial Events" admin section (permission `CommercialLicense`) has four pages under `/admin/commercial-events/`: `tagged-accounts`, `allocations`, `events` (detail view at `events/<eventId>`) and `active-games`.
+- Client: `src/services/admin/CommercialEventsService.ts`; website-backend proxies `api/admin/commercial-events/...` to the matchmaking service.
+- Pure helpers with tests (drafts, validation, formatting, error messages by `code`): `src/store/admin/commercialEvents/`. Pages and dialogs: `src/components/admin/commercial-events/`.
+- Admin date fields are entered and shown in UTC. Battle tags are stored and compared exactly as written (never case-folded).
+- How events, allocations, periods and event games work: `docs/commercial-events.md` in the matchmaking-service repository.
+
+#### Replay Export
+The "Replay Export" admin section (permission `Replays`) has two pages: `admin-replay-export` (search, list, ZIP download, own past downloads) and `admin-replay-downloads` (the downloads of all users).
+- Client: `src/services/admin/ReplayExportService.ts`; the backend is `Admin/ReplayExport/` in website-backend.
+- Pure helpers with tests (form to filter, summary chips, prices, error texts): `src/store/admin/replayExport/`. Pages: `src/components/admin/replays/`.
+- A search returns the ids of all listed games (at most 5,000) and the games of the first page. The table loads the other pages with `POST matches`. Select all and Download work on the ids.
+- The ZIP downloads with a plain GET and a single-use ticket, so the browser streams it to disk.
+
+#### Network Diagnostics
+The "Network Diagnostics" admin group (permission `Proxies`) holds "Lag Reports", "Remote Measurements" and "Measurements". The last two live under `/admin/admin-remote-measurements`: the runs list, `new` (start a measurement), `runs/<runId>` (counters, assignments, cancel, fleet view), `measurements` (history by player or by run) and `measurements/<measurementId>` (one result).
+- Client: `src/services/admin/NetworkDiagnosticsService.ts` (website-backend `api/network-diagnostics/...`). Deploy website-backend first.
+- Types, error texts, the fleet selection and the three stores (runs, measurements, fleet): `src/store/admin/networkDiagnostics/`. Pages and their pure helpers with tests (`format.ts`, `runDraft.ts`, `listQuery.ts`, `measurementView.ts`, `fleet.ts`): `src/components/admin/network-diagnostics/`.
+- Helpers shared with the other admin sections: `src/store/admin/latest.ts` (the latest request wins) and `src/helpers/utc-dates.ts` (UTC input and display).
+- The fleet map is plain Leaflet on the canvas renderer (`NetDiagMap.vue`): `circleMarker` dots only, tooltips built with `textContent`, OpenStreetMap tiles with attribution. It draws at most 20,000 measurements and says so when more exist; measurements at identical coordinates share one dot.
+- The backend marks an answer that covers only its newest 200,000 observations with the `X-NetDiag-Truncated` header; the service returns it as `truncated` and the pages show a notice.
+- Times are shown in UTC. Battle tags are compared exactly as written (never case-folded).
+- The server's `reason` texts are shown as sent. A value the server did not send shows as a dash.
 
 ### API Integration Patterns
 
@@ -99,9 +125,10 @@ When implementing user search functionality, use the `PlayerSearch` component:
 ```vue
 <PlayerSearch
   @playerFound="onPlayerFound"
-  @playerSearchCleared="onPlayerSearchCleared"
+  @searchCleared="onPlayerSearchCleared"
 />
 ```
+Optional `@searchTextChanged="(text) => ..."` fires on every edit of the search text; use it to drop a previous selection once the text no longer matches.
 
 #### URL Encoding for BattleTags
 Always encode BattleTags in URLs due to the # character:
@@ -117,11 +144,11 @@ Use Vuetify's loading components consistently:
 ```
 
 ### Testing Approach
-The project doesn't have a traditional test suite. When making changes:
-1. Run `npm run lint` to catch TypeScript and linting errors
-2. Run `npm run dprint` to ensure consistent formatting
-3. Test functionality manually in development mode
-4. Verify no console errors in browser developer tools
+Vitest covers pure helpers (`npm test`; tests live beside the code as `src/**/*.test.ts`, run in the `node` environment with `node:assert/strict`) and a few component tests that opt into jsdom with a `// @vitest-environment jsdom` docblock and mount via `@vue/test-utils` (see `src/components/common/PlayerSearch.test.ts`). When making changes:
+1. Run `npm test` for the helper tests (add one when you change a pure helper)
+2. Run `npm run lint` to catch TypeScript and linting errors
+3. Run `npm run dprint` to ensure consistent formatting
+4. Test UI functionality manually in development mode and verify no console errors in the browser developer tools
 
 ### Environment Configuration
 Development environment variables are in `/public/env.js`:

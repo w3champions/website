@@ -32,7 +32,19 @@ export enum EAdminRouteName {
   MANAGE_API_TOKENS = "Admin - Manage API Tokens",
   LAG_REPORTS = "Admin - Lag Reports",
   LAG_REPORT_DETAIL = "Admin - Lag Report Detail",
+  NETDIAG_RUNS = "Admin - Remote Measurements",
+  NETDIAG_NEW_RUN = "Admin - Remote Measurements - New",
+  NETDIAG_RUN_DETAIL = "Admin - Remote Measurements - Run",
+  NETDIAG_MEASUREMENTS = "Admin - Remote Measurements - Measurements",
+  NETDIAG_MEASUREMENT_DETAIL = "Admin - Remote Measurements - Measurement",
   JOBS = "Admin - Jobs",
+  COMMERCIAL_EVENTS_TAGGED_ACCOUNTS = "Admin - Commercial Events - Tagged Accounts",
+  COMMERCIAL_EVENTS_ALLOCATIONS = "Admin - Commercial Events - Allocations",
+  COMMERCIAL_EVENTS_EVENTS = "Admin - Commercial Events - Events",
+  COMMERCIAL_EVENTS_EVENT_DETAIL = "Admin - Commercial Events - Event Detail",
+  COMMERCIAL_EVENTS_ACTIVE_GAMES = "Admin - Commercial Events - Active Games",
+  REPLAY_EXPORT = "Admin - Replay Export",
+  REPLAY_DOWNLOADS = "Admin - Replay Downloads",
 }
 
 export enum EStatisticsRouteName {
@@ -47,6 +59,7 @@ export enum EMainRouteName {
   LOGIN = "Login",
   FAQ = "FAQ",
   IMPRINT = "Imprint",
+  COMMERCIAL_EVENTS = "Commercial Events",
   PRIVACY = "Privacy Policy",
   COOKIES = "Cookie Policy",
   RANKINGS = "Rankings",

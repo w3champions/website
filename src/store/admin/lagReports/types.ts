@@ -63,6 +63,8 @@ export interface LagReportPlayerSummary {
   // one the field is absent from the payload, and a required number would let a read
   // silently compare undefined instead of forcing the caller to handle the gap.
   hostStallCount?: number;
+  // Optional for the same reason: older backends do not send it.
+  transportSwitchCount?: number;
 }
 
 export interface LagReportsResponse {
@@ -113,6 +115,78 @@ export interface LagReportPlayer {
   freeText: string;
   annotations: LagReportAnnotation[];
   diagnostics: PlayerDiagnostics;
+  // Optional: absent from older backends, and null until the relay telemetry fetch succeeds.
+  floPlayerId?: number | null;
+  relayChain?: RelayChain | null;
+}
+
+// ── Per-hop relay telemetry (flo controller GetGameRelayTelemetry) ───
+
+/** One player's recent game connections, each split into the TCP legs it crossed. */
+export interface RelayChain {
+  fetchedAt: string;
+  connections: RelayConnection[];
+}
+
+export interface RelayConnection {
+  connectedUnixMs: number;
+  /** Ordered client first, game node last. */
+  legs: RelayLeg[];
+}
+
+export interface RelayLeg {
+  fromLabel: string;
+  toLabel: string;
+  // A plain string, not a union: a newer controller may emit a status this build does not
+  // know, and it has to render verbatim rather than fail the type.
+  status: string;
+  /** Measured at the leg's sending end; null for the client end. */
+  near: RelaySeries | null;
+  /** Measured at the leg's receiving end. */
+  far: RelaySeries | null;
+  close: RelayCloseLine | null;
+}
+
+export interface RelaySeries {
+  /** node_player, node_quic, haproxy_fe or haproxy_be. */
+  role: string;
+  /** tcp or quic. */
+  kind: string;
+  firstSeenUnixMs: number;
+  /** 0 while the connection is still open. */
+  closedUnixMs: number;
+  /** Bucket i covers [start + i*bucketSecs, start + (i+1)*bucketSecs). */
+  bucketsStartUnixMs: number;
+  bucketSecs: number;
+  bucketCount: number;
+  buckets: RelayBucketColumns;
+  /** Client series only, from clients that report it: the transport of each bucket. */
+  kinds?: string[];
+}
+
+/** Parallel per-bucket arrays; null means not exposed by the transport, or a sampler gap. */
+export interface RelayBucketColumns {
+  srttMaxMs: (number | null)[];
+  rttvarMaxMs: (number | null)[];
+  retransDelta: (number | null)[];
+  lostMax: (number | null)[];
+  unackedMax: (number | null)[];
+  rxBytesDelta: (number | null)[];
+  txBytesDelta: (number | null)[];
+  stallSecs: (number | null)[];
+}
+
+/** HAProxy's close-line summary for a relayed connection. */
+export interface RelayCloseLine {
+  fcRttMs: number;
+  fcRttvarMs: number;
+  fcRetrans: number;
+  fcLost: number;
+  bcRttMs: number;
+  term: string | null;
+  bytesIn: number;
+  bytesOut: number;
+  durationMs: number;
 }
 
 export interface PlayerDiagnostics {
@@ -123,6 +197,24 @@ export interface PlayerDiagnostics {
   pingHistory: PingSample[];
   connectionEvents: ConnectionEventData[];
   hostStalls: HostStallData[];
+  // Optional: absent from older backends and from reports written before the field existed.
+  transportSwitches?: TransportSwitchData[];
+}
+
+/**
+ * The player's game stream changed transport: flo-client moved it between TCP and QUIC, or
+ * a reconnect came back over the other one. Measured by this player's client, so it is
+ * about this player's connection only.
+ */
+export interface TransportSwitchData {
+  timestamp: string;
+  gameTimeOffsetMs: number;
+  // Plain strings and not unions: a newer client may send a value this build has never
+  // heard of, and it has to render verbatim rather than fail the type.
+  from: string;
+  to: string;
+  /** "failover", "upgrade", "degraded" or "reconnect". */
+  reason: string;
 }
 
 export interface LagEvent {
@@ -153,6 +245,17 @@ export interface HopData {
   maxRttMs: number | null;
   stddevMs: number | null;
   lossPercent: number;
+}
+
+/** A hop row as MtrHopTable renders it: like HopData, but loss may be unmeasured (null). */
+export type MtrHopRow = Omit<HopData, "lossPercent"> & { lossPercent: number | null };
+
+/** GeoIP facts about a hop's IP; shown by MtrHopTable when given. */
+export interface HopEnrichment {
+  asn: number | null;
+  asnOrg: string | null;
+  city: string | null;
+  country: string | null;
 }
 
 export interface PingSample {

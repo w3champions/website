@@ -1,8 +1,10 @@
 <template>
-  <v-container @click="assignPortrait">
+  <v-container :class="{ 'portrait-clickable': selectable }" :role="selectable ? 'button' : undefined" :tabindex="selectable ? 0 : undefined" :aria-label="`Portrait ${portraitId}`" @keydown.enter.prevent="assignPortrait" @keydown.space.prevent="assignPortrait" @click="assignPortrait">
     <v-tooltip location="top" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
-        <v-img min-width="35" min-height="35" max-width="250" max-height="250" :src="urlById" v-bind="props" />
+        <v-img :aspect-ratio="1" width="100%" min-width="35" max-width="250" :src="urlById" v-bind="props">
+          <template v-slot:error><div class="portrait-slot-placeholder">#{{ portraitId }}<br /><span>No image</span></div></template>
+        </v-img>
       </template>
       <span>ID: {{ portraitId }}</span>
     </v-tooltip>
@@ -13,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent } from "vue";
 import { getAvatarUrl } from "@/helpers/url-functions";
 import { EAvatarCategory } from "@/store/types";
 import { mdiCloseCircleOutline } from "@mdi/js";
@@ -22,6 +24,7 @@ export default defineComponent({
   name: "AssignPortrait",
   components: {},
   props: {
+    imageVersion: { type: Number, default: 0 },
     portraitId: {
       type: Number,
       required: true,
@@ -38,7 +41,10 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const urlById = ref<string>(getAvatarUrl(EAvatarCategory.SPECIAL, props.portraitId, false));
+    const urlById = computed(() => {
+      const url = getAvatarUrl(EAvatarCategory.SPECIAL, props.portraitId, false);
+      return props.imageVersion ? url.replace(/\?v=.*$/, `?v=${props.imageVersion}`) : url;
+    });
 
     function removeAssignedPortrait(): void {
       if (props.selectable) {
@@ -63,6 +69,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.portrait-clickable { cursor: pointer; }
+.portrait-slot-placeholder { height: 100%; display: grid; place-content: center; text-align: center; font-size: 12px; background: rgba(var(--v-theme-on-surface), 0.06); border-radius: 4px; }
+.portrait-slot-placeholder span { font-size: 10px; opacity: 0.7; }
 .cancel-button {
   left: 27%;
 }

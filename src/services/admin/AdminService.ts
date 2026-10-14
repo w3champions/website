@@ -3,6 +3,50 @@ import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReason
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
+export interface PortraitReplacementPreview {
+  owners: number;
+  selectedProfiles: number;
+  rewardDefinitions: number;
+  replacementPortraitId: number | null;
+}
+
+export interface PortraitReplacementResult {
+  updatedPlayers: number;
+  updatedRewards: number;
+}
+
+export interface PortraitCleanupRequest {
+  removeAssignments: boolean;
+  removeDefinition: boolean;
+  deleteS3: boolean;
+  deleteAlibaba: boolean;
+}
+
+export interface PortraitCleanupResult {
+  updatedPlayers: number;
+  updatedRewards: number;
+  warnings: string[];
+}
+
+export interface PortraitAssetStatus {
+  portraitId: number;
+  inCatalogue: boolean;
+  owners: number;
+  selectedProfiles: number;
+  rewardDefinitions: number;
+}
+
+export interface PortraitOwner {
+  battleTag: string;
+  isSelected: boolean;
+  tooltip: string | null;
+}
+
+export interface PortraitOwnersResponse {
+  total: number;
+  players: PortraitOwner[];
+}
+
 export default class AdminService {
   public static async getBannedPlayers(token: string, req: BannedPlayersGetRequest): Promise<BannedPlayersResponse> {
     let url = `${API_URL}api/admin/bannedPlayers?page=${req.page}&itemsPerPage=${req.itemsPerPage}`;
@@ -226,6 +270,7 @@ export default class AdminService {
       Tooltip: command.mouseover,
     } as ChangePortraitsDto;
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(data));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to assign portrait."));
 
     return response.status;
   }
@@ -239,6 +284,7 @@ export default class AdminService {
     } as ChangePortraitsDto;
 
     const response = await authorizedFetch("DELETE", url, token, JSON.stringify(data));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to remove portrait access."));
 
     return response.status;
   }
@@ -261,13 +307,46 @@ export default class AdminService {
     const url = `${API_URL}api/rewards/portrait-definitions`;
 
     const response = await authorizedFetch("POST", url, token, JSON.stringify(definitions));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to create portrait."));
     return response.status;
+  }
+
+  public static async previewPortraitReplacement(token: string, oldId: number): Promise<PortraitReplacementPreview> {
+    const response = await authorizedFetch("GET", `${API_URL}api/rewards/portrait-replacements/${oldId}`, token);
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to load portrait replacement preview."));
+    return await response.json();
+  }
+
+  public static async getPortraitAssetStatuses(token: string, portraitIds: number[]): Promise<PortraitAssetStatus[]> {
+    const response = await authorizedFetch("POST", `${API_URL}api/rewards/portraits/asset-statuses`, token, JSON.stringify(portraitIds));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to load portrait usage."));
+    return await response.json();
+  }
+
+  public static async getPortraitOwners(token: string, portraitId: number, page: number, search: string): Promise<PortraitOwnersResponse> {
+    const query = new URLSearchParams({ page: String(page), pageSize: "25", search });
+    const response = await authorizedFetch("GET", `${API_URL}api/rewards/portraits/${portraitId}/owners?${query}`, token);
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to load assigned players."));
+    return await response.json();
+  }
+
+  public static async replacePortrait(token: string, oldId: number, newId: number, removeOldAssignments = true): Promise<PortraitReplacementResult> {
+    const response = await authorizedFetch("POST", `${API_URL}api/rewards/portrait-replacements/${oldId}`, token, JSON.stringify({ newPortraitId: newId, removeOldAssignments }));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Portrait replacement failed. Retry to finish the migration."));
+    return await response.json();
+  }
+
+  public static async cleanupPortrait(token: string, id: number, request: PortraitCleanupRequest): Promise<PortraitCleanupResult> {
+    const response = await authorizedFetch("POST", `${API_URL}api/rewards/portraits/${id}/cleanup`, token, JSON.stringify(request));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Portrait cleanup failed. Retry to finish."));
+    return await response.json();
   }
 
   public static async putPortraitDefinitions(token: string, definitions: PortraitDefinitionDTO): Promise<number> {
     const url = `${API_URL}api/rewards/portrait-definitions`;
 
     const response = await authorizedFetch("PUT", url, token, JSON.stringify(definitions));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to save portrait groups."));
 
     return response.status;
   }
@@ -276,6 +355,7 @@ export default class AdminService {
     const url = `${API_URL}api/rewards/portrait-definitions`;
 
     const response = await authorizedFetch("DELETE", url, token, JSON.stringify(definitions));
+    if (!response.ok) throw new Error(await getAdminErrorMessage(response, "Failed to remove portrait from the catalogue."));
     return response.status;
   }
 

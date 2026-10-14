@@ -46,6 +46,13 @@
           @open-inspector="openInspector"
         />
 
+        <lag-report-relay-legs
+          v-if="hasRelayTelemetry"
+          :report="report"
+          :player-colors="playerColors"
+          :telemetry="telemetry"
+        />
+
         <lag-report-inspector
           :report="report"
           :player-colors="playerColors"
@@ -81,6 +88,8 @@ import LagReportHostStalls from "@/components/admin/lag-reports/LagReportHostSta
 import LagReportTopology from "@/components/admin/lag-reports/LagReportTopology.vue";
 import LagReportContinuousMonitoring from "@/components/admin/lag-reports/LagReportContinuousMonitoring.vue";
 import LagReportInspector from "@/components/admin/lag-reports/LagReportInspector.vue";
+import LagReportRelayLegs from "@/components/admin/lag-reports/LagReportRelayLegs.vue";
+import { reportHasRelayTelemetry } from "@/components/admin/lag-reports/relayPlayerView";
 import LagReportEventData from "@/components/admin/lag-reports/LagReportEventData.vue";
 import LagReportRawData from "@/components/admin/lag-reports/LagReportRawData.vue";
 
@@ -94,6 +103,7 @@ export default defineComponent({
     LagReportTopology,
     LagReportContinuousMonitoring,
     LagReportInspector,
+    LagReportRelayLegs,
     LagReportEventData,
     LagReportRawData,
   },
@@ -123,7 +133,11 @@ export default defineComponent({
       })
     );
 
-    const expandedPanels = ref(["continuous", "inspector"]);
+    const hasRelayTelemetry = computed(() => (report.value ? reportHasRelayTelemetry(report.value) : false));
+
+    // The connection events (pauses, reconnects, lag start/stop) explain most of what the charts
+    // show, so they start open rather than hidden behind a click.
+    const expandedPanels = ref(["continuous", "relay", "inspector", "events"]);
     const inspectorLeftMs = ref<number | null>(null);
     const inspectorRightMs = ref<number | null>(null);
 
@@ -181,6 +195,7 @@ export default defineComponent({
       telemetry,
       reportError,
       telemetryNotice,
+      hasRelayTelemetry,
       expandedPanels,
       inspectorLeftMs,
       inspectorRightMs,

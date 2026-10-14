@@ -6,6 +6,7 @@ import CountryRankings from "@/views/CountryRankings.vue";
 import TournamentsList from "@/views/TournamentsList.vue";
 import Player from "@/views/Player.vue";
 import Imprint from "@/views/Imprint.vue";
+import CommercialEvents from "@/views/CommercialEvents.vue";
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
 import CookiePolicy from "@/views/CookiePolicy.vue";
 import MatchDetail from "@/views/MatchDetail.vue";
@@ -64,7 +65,14 @@ import { EAdminRouteName, EMainRouteName, EPlayerRouteName, ESetupGuideRouteName
 import AdminLauncherChat from "@/components/admin/AdminLauncherChat.vue";
 import AdminLagReports from "@/components/admin/AdminLagReports.vue";
 import AdminJobs from "@/components/admin/AdminJobs.vue";
+import AdminTaggedAccounts from "@/components/admin/commercial-events/AdminTaggedAccounts.vue";
+import AdminAllocations from "@/components/admin/commercial-events/AdminAllocations.vue";
+import AdminEvents from "@/components/admin/commercial-events/AdminEvents.vue";
+import AdminEventDetail from "@/components/admin/commercial-events/AdminEventDetail.vue";
+import AdminActiveGames from "@/components/admin/commercial-events/AdminActiveGames.vue";
 import AdminLagReportDetail from "@/components/admin/AdminLagReportDetail.vue";
+import AdminReplayExport from "@/components/admin/replays/AdminReplayExport.vue";
+import AdminReplayDownloads from "@/components/admin/replays/AdminReplayDownloads.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -131,6 +139,11 @@ const routes: RouteRecordRaw[] = [
     component: Imprint,
   },
   {
+    path: "/commercial-events",
+    name: EMainRouteName.COMMERCIAL_EVENTS,
+    component: CommercialEvents,
+  },
+  {
     path: "/privacy",
     name: EMainRouteName.PRIVACY,
     component: PrivacyPolicy,
@@ -182,14 +195,10 @@ const routes: RouteRecordRaw[] = [
     path: "/player/:id",
     component: Player,
     props: (route: {
-      query: {
-        freshLogin?: "true";
-      };
       params: {
         id: string;
       };
     }) => ({
-      freshLogin: route.query.freshLogin === "true",
       id: route.params.id,
     }),
     children: [
@@ -274,9 +283,16 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
+      { path: "commercial-events/tagged-accounts", name: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS, component: AdminTaggedAccounts },
+      { path: "commercial-events/allocations", name: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS, component: AdminAllocations },
+      { path: "commercial-events/events", name: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS, component: AdminEvents },
+      { path: "commercial-events/events/:eventId", name: EAdminRouteName.COMMERCIAL_EVENTS_EVENT_DETAIL, component: AdminEventDetail, props: true },
+      { path: "commercial-events/active-games", name: EAdminRouteName.COMMERCIAL_EVENTS_ACTIVE_GAMES, component: AdminActiveGames },
       { path: "admin-warnings", name: EAdminRouteName.PLAYER_WARNINGS, component: AdminWarnings },
       { path: "admin-warning-templates", name: EAdminRouteName.WARNING_TEMPLATES, component: AdminWarningTemplates },
       { path: "admin-view-game-chat", name: EAdminRouteName.VIEW_GAME_CHAT, component: AdminViewGameChat },
+      { path: "admin-replay-export", name: EAdminRouteName.REPLAY_EXPORT, component: AdminReplayExport },
+      { path: "admin-replay-downloads", name: EAdminRouteName.REPLAY_DOWNLOADS, component: AdminReplayDownloads },
       { path: "admin-launcher-chat", name: EAdminRouteName.LAUNCHER_CHAT, component: AdminLauncherChat },
       { path: "admin-proxies", name: EAdminRouteName.PROXY_SETTINGS, component: AdminProxies },
       { path: "admin-news-for-launcher", name: EAdminRouteName.NEWS, component: AdminNewsForLauncher },
@@ -299,6 +315,11 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-server-logs/:logFileName", name: EAdminRouteName.SERVER_LOG, component: AdminServerLog, props: true },
       { path: "admin-lag-reports", name: EAdminRouteName.LAG_REPORTS, component: AdminLagReports },
       { path: "admin-lag-reports/:id", name: EAdminRouteName.LAG_REPORT_DETAIL, component: AdminLagReportDetail, props: true },
+      { path: "admin-remote-measurements", name: EAdminRouteName.NETDIAG_RUNS, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagRuns.vue") },
+      { path: "admin-remote-measurements/new", name: EAdminRouteName.NETDIAG_NEW_RUN, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagNewRun.vue") },
+      { path: "admin-remote-measurements/runs/:runId", name: EAdminRouteName.NETDIAG_RUN_DETAIL, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagRunDetail.vue"), props: true },
+      { path: "admin-remote-measurements/measurements", name: EAdminRouteName.NETDIAG_MEASUREMENTS, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagMeasurements.vue") },
+      { path: "admin-remote-measurements/measurements/:measurementId", name: EAdminRouteName.NETDIAG_MEASUREMENT_DETAIL, component: () => import("@/components/admin/network-diagnostics/AdminNetDiagMeasurement.vue"), props: true },
       { path: "admin-jobs", name: EAdminRouteName.JOBS, component: AdminJobs },
     ],
   },

@@ -25,4 +25,6 @@ export enum EPermission {
   SmurfCheckerAdministration = 10,
   Warnings = 11,
   Jobs = 12,
+  CommercialLicense = 13,
+  Replays = 14,
 }

@@ -1,3 +1,5 @@
+const MAX_ERROR_BODY_CHARS = 500;
+
 /** Thrown when the backend answers with a non-OK status. */
 export class HttpError extends Error {
   readonly status: number;
@@ -14,6 +16,11 @@ export class HttpError extends Error {
     this.url = url;
     this.responseBody = responseBody;
   }
+
+  /** The body cut to a length that is safe to display or log. */
+  get bodyPreview(): string {
+    return this.responseBody.slice(0, MAX_ERROR_BODY_CHARS);
+  }
 }
 
 export interface AuthorizedClientDeps {
@@ -22,8 +29,6 @@ export interface AuthorizedClientDeps {
   /** Injectable for tests. Production callers omit it. */
   fetch?: typeof globalThis.fetch;
 }
-
-const MAX_ERROR_BODY_CHARS = 500;
 
 /**
  * Authenticated JSON client for the website backend.
@@ -54,6 +59,13 @@ export class AuthorizedClient {
     return `${this.endpoint}${path.startsWith("/") ? path.slice(1) : path}`;
   }
 
+  /** Throws {@link HttpError} when the response status is not OK. */
+  private async assertOk(response: Response, method: string, path: string): Promise<void> {
+    if (!response.ok) {
+      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response));
+    }
+  }
+
   /** Raw request, for the rare caller that needs the Response itself. */
   async request(method: string, path: string, token: string, body?: unknown): Promise<Response> {
     const headers: Record<string, string> = { Accept: "application/json" };
@@ -70,14 +82,25 @@ export class AuthorizedClient {
   /** Request and parse JSON, throwing {@link HttpError} on any non-OK status. */
   async requestJson<T>(method: string, path: string, token: string, body?: unknown): Promise<T> {
     const response = await this.request(method, path, token, body);
-    if (!response.ok) {
-      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response));
-    }
+    await this.assertOk(response, method, path);
     return await response.json() as T;
+  }
+
+  /** Request whose success carries no body (e.g. 204), throwing {@link HttpError} on any non-OK status. */
+  async requestVoid(method: string, path: string, token: string, body?: unknown): Promise<void> {
+    const response = await this.request(method, path, token, body);
+    await this.assertOk(response, method, path);
   }
 
   async getJson<T>(path: string, token: string): Promise<T> {
     return await this.requestJson<T>("GET", path, token);
+  }
+
+  /** As {@link getJson}, for the caller that also needs a response header (only headers the backend exposes via CORS are readable). */
+  async getJsonWithHeaders<T>(path: string, token: string): Promise<{ body: T; headers: Headers }> {
+    const response = await this.request("GET", path, token);
+    await this.assertOk(response, "GET", path);
+    return { body: await response.json() as T, headers: response.headers };
   }
 
   /**
@@ -87,16 +110,14 @@ export class AuthorizedClient {
   async getJsonOrNull<T>(path: string, token: string): Promise<T | null> {
     const response = await this.request("GET", path, token);
     if (response.status === 404) return null;
-    if (!response.ok) {
-      throw new HttpError(response.status, "GET", this.resolve(path), await readErrorBody(response));
-    }
+    await this.assertOk(response, "GET", path);
     return await response.json() as T;
   }
 }
 
 async function readErrorBody(response: Response): Promise<string> {
   try {
-    return (await response.text()).slice(0, MAX_ERROR_BODY_CHARS);
+    return await response.text();
   } catch {
     // A body that cannot be read must not mask the status we are reporting.
     return "";

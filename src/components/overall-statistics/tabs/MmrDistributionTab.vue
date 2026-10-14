@@ -114,7 +114,6 @@ export default defineComponent({
           try {
             await player.loadProfile({
               battleTag: verifiedBtag.value,
-              freshLogin: false,
             });
             await player.loadGameModeStats({
               battleTag: verifiedBtag.value,
@@ -166,7 +165,6 @@ export default defineComponent({
           try {
             await player.loadProfile({
               battleTag: verifiedBtag.value,
-              freshLogin: false,
             });
             if (player.battleTag === verifiedBtag.value) {
               await player.loadGameModeStats({});

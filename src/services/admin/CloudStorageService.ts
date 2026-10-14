@@ -6,9 +6,17 @@ export default class CloudStorageService {
   public static async fetchFiles(token: string, provider: CloudStorageProvider): Promise<CloudFile[]> {
     const url = `${API_URL}api/admin/storage/${provider}`;
 
-    const response = await authorizedFetch("GET", url, token);
+    let response: Response;
+    try {
+      response = await authorizedFetch("GET", url, token);
+    } catch {
+      throw new Error(`Could not reach the ${provider.toUpperCase()} storage API. Try again later.`);
+    }
 
-    return response.ok ? await response.json() : [];
+    if (!response.ok) {
+      throw new Error(`Could not load ${provider.toUpperCase()} files (HTTP ${response.status}). The storage API may be unavailable.`);
+    }
+    return await response.json();
   }
 
   public static async uploadFile(token: string, file: File, provider: CloudStorageProvider): Promise<CloudValidationMessage> {
@@ -28,6 +36,7 @@ export default class CloudStorageService {
             JSON.stringify({
               name: file.name,
               content: base64content,
+              contentType: file.type,
             }),
           );
 
@@ -53,13 +62,20 @@ export default class CloudStorageService {
     }
   }
 
+  public static async readFile(token: string, fileName: string, provider: CloudStorageProvider): Promise<File> {
+    const response = await authorizedFetch("GET", `${API_URL}api/admin/storage/${provider}/download/${encodeURIComponent(fileName)}`, token);
+    if (!response.ok) throw new Error(`Could not load the stored image (HTTP ${response.status}).`);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  }
+
   public static downloadFile(token: string, fileName: string, provider: CloudStorageProvider): void {
     const url = `${API_URL}api/admin/storage/${provider}/download/${fileName}`;
     authDownload(url, token, fileName);
   }
 
   public static async deleteFile(token: string, fileName: string, provider: CloudStorageProvider): Promise<CloudValidationMessage> {
-    const url = `${API_URL}api/admin/storage/${provider}/${fileName}`;
+    const url = `${API_URL}api/admin/storage/${provider}/${encodeURIComponent(fileName)}`;
     try {
       const response = await authorizedFetch("DELETE", url, token);
       const message = await response.json();

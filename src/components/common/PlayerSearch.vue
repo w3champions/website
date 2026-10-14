@@ -22,9 +22,10 @@
       glow
       color="primary"
       icon-color="primary"
-      variant="underlined"
+      :variant="variant"
       autocomplete="off"
       clearable
+      @update:model-value="onSelect"
       @click:clear="clearSearch"
       @click:append-inner="submitSearch"
       @keydown.enter.prevent="submitSearch"
@@ -33,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch, PropType } from "vue";
+import { computed, defineComponent, onBeforeUnmount, ref, watch, PropType } from "vue";
 import debounce from "debounce";
 import ProfileService from "@/services/ProfileService";
 
@@ -45,6 +46,10 @@ type SearchDensity = "default" | "comfortable" | "compact";
 export default defineComponent({
   name: "PlayerSearch",
   props: {
+    variant: {
+      type: String as PropType<"underlined" | "outlined">,
+      default: "underlined",
+    },
     classes: {
       type: String,
       required: false,
@@ -80,18 +85,34 @@ export default defineComponent({
     const input = ref<string>("");
     const isLoading = ref<boolean>(false);
     const SEARCH_DELAY = 500;
-    const debouncedSearch = debounce((val: string) => dispatchSearch(val), SEARCH_DELAY);
     const searchedPlayers = ref<PlayerProfile[]>([]);
     const selected = ref<string>();
 
-    async function dispatchSearch(val: string) {
-      const players = await ProfileService.searchPlayer(val.toLowerCase());
-      searchedPlayers.value = players;
-      isLoading.value = false;
+    // Advanced as soon as a search is queued (not when the debounce fires) and on every
+    // cancel, so a reply is only applied while it belongs to the latest queued text.
+    let latestSearchId = 0;
+    const debouncedSearch = debounce(dispatchSearch, SEARCH_DELAY);
+
+    async function dispatchSearch(val: string, searchId: number) {
+      try {
+        const players = await ProfileService.searchPlayer(val.toLowerCase());
+        if (searchId !== latestSearchId) return;
+        searchedPlayers.value = players;
+      } finally {
+        if (searchId === latestSearchId) isLoading.value = false;
+      }
     }
 
-    watch(selected, onSelect);
+    function cancelPendingSearch(): void {
+      debouncedSearch.clear();
+      latestSearchId++;
+    }
 
+    onBeforeUnmount(cancelPendingSearch);
+
+    // Driven by the field's update:model-value. Vuetify only emits that when the value
+    // changes, so onInput clears `selected` once the text diverges from it; otherwise
+    // re-picking the same player after editing the text would emit nothing.
     function onSelect(btag: string | undefined): void {
       if (!btag) return;
       context.emit("playerFound", btag);
@@ -110,12 +131,18 @@ export default defineComponent({
     watch(input, onInput);
 
     function onInput(val: string): void {
+      context.emit("searchTextChanged", val);
+      // Empty text is not an edit: Vuetify resets the search to "" on blur while the
+      // selection stays shown, and clears the selection itself when the user empties it.
+      if (val && selected.value && val !== selected.value) selected.value = undefined;
       if (!val || val.length < 3) {
+        cancelPendingSearch();
         searchedPlayers.value = [];
+        isLoading.value = false;
         return;
       }
       isLoading.value = true;
-      debouncedSearch(val);
+      debouncedSearch(val, ++latestSearchId);
     }
 
     const clearSearch = (): void => {
@@ -142,6 +169,7 @@ export default defineComponent({
       isLoading,
       searchedPlayers,
       clearSearch,
+      onSelect,
       submitSearch,
     };
   },

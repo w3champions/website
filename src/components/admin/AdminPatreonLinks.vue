@@ -98,9 +98,17 @@
         </template>
 
         <template v-slot:item.patreonUserId="{ item }">
-          <div class="d-flex align-center">
+          <div class="d-flex align-center py-2">
             <v-icon class="mr-2" color="orange" size="small">{{ mdiPatreon }}</v-icon>
-            <div class="text-caption font-family-monospace">{{ item.patreonUserId }}</div>
+            <div>
+              <div class="text-caption font-family-monospace">{{ item.patreonUserId }}</div>
+              <div class="patreon-tiers mt-1">
+                <template v-if="item.syncedTiers?.length">
+                  <v-chip v-for="tier in item.syncedTiers" :key="tier.tierId" size="x-small" variant="tonal" color="primary">{{ tier.title || `Tier ${tier.tierId}` }}</v-chip>
+                </template>
+                <span v-else class="text-caption text-medium-emphasis">{{ item.syncedTiers === undefined ? 'Tier unavailable' : item.lastSyncAt ? 'No active tier' : 'Not synced' }}</span>
+              </div>
+            </div>
           </div>
         </template>
 
@@ -421,10 +429,10 @@ export default defineComponent({
 
     // Table headers
     const headers: DataTableHeader[] = [
-      { title: "BattleTag", value: "battleTag", width: "25%", sortable: true },
-      { title: "Patreon User ID", value: "patreonUserId", width: "30%", sortable: true },
-      { title: "Linked At", value: "linkedAt", width: "20%", sortable: true },
-      { title: "Last Sync", value: "lastSyncAt", width: "20%", sortable: true },
+      { title: "BattleTag", value: "battleTag", sortable: true },
+      { title: "Patreon User ID", value: "patreonUserId", sortable: true },
+      { title: "Linked At", value: "linkedAt", sortable: true },
+      { title: "Last Sync", value: "lastSyncAt", sortable: true },
       { title: "Actions", value: "actions", width: "5%", sortable: false }
     ];
 
@@ -669,4 +677,5 @@ export default defineComponent({
 .text-caption {
   font-size: 0.75rem;
 }
+.patreon-tiers { display: flex; flex-wrap: wrap; gap: 4px; }
 </style>

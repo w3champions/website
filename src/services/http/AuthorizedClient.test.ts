@@ -13,7 +13,7 @@ function urlOf(input: RequestInfo | URL): string {
   return input.url;
 }
 
-function recordingFetch(responses: Array<{ status: number; body?: unknown }>) {
+function recordingFetch(responses: Array<{ status: number; body?: unknown; headers?: Record<string, string> }>) {
   const calls: Recorded[] = [];
   const queue = [...responses];
   const impl: typeof globalThis.fetch = (input, init) => {
@@ -23,14 +23,14 @@ function recordingFetch(responses: Array<{ status: number; body?: unknown }>) {
     return Promise.resolve(
       new Response(body, {
         status: next.status,
-        headers: body === null ? undefined : { "Content-Type": "application/json" },
+        headers: body === null ? next.headers : { "Content-Type": "application/json", ...next.headers },
       }),
     );
   };
   return { calls, impl };
 }
 
-function clientWith(responses: Array<{ status: number; body?: unknown }>) {
+function clientWith(responses: Array<{ status: number; body?: unknown; headers?: Record<string, string> }>) {
   const { calls, impl } = recordingFetch(responses);
   return { calls, client: new AuthorizedClient({ endpoint: "https://api.example.com/", fetch: impl }) };
 }
@@ -127,4 +127,52 @@ test("invokes the global fetch with a valid receiver on the non-injected path", 
   // Firefox brand-checks fetch's receiver and rejects a call whose `this` is the
   // client; Chromium tolerates it. Node does not check, so assert it directly.
   assert.ok(receiverIsGlobal, `global fetch must not be called as a method (receiver: ${receiverLabel})`);
+});
+
+test("requestVoid resolves on a 204 without trying to parse a body", async () => {
+  const { client, calls } = clientWith([{ status: 204 }]);
+
+  await client.requestVoid("DELETE", "api/thing/1", "tok");
+
+  assert.equal(calls[0].init.method, "DELETE");
+  assert.equal(calls[0].url, "https://api.example.com/api/thing/1");
+});
+
+test("requestVoid throws HttpError carrying the status on a non-OK response", async () => {
+  const { client } = clientWith([{ status: 404, body: { error: "nope" } }]);
+
+  await assert.rejects(
+    () => client.requestVoid("DELETE", "api/thing/1", "tok"),
+    (e: unknown) => e instanceof HttpError && e.status === 404,
+  );
+});
+
+test("keeps the full error body and truncates only the preview", async () => {
+  const body = { code: "EVENT_SUSPENDED", data: { message: "x".repeat(900) } };
+  const { client } = clientWith([{ status: 409, body }]);
+
+  const error = await client.getJson("api/thing", "tok").then(() => null, (e: unknown) => e);
+
+  assert.ok(error instanceof HttpError);
+  assert.deepEqual(JSON.parse(error.responseBody), body);
+  assert.equal(error.bodyPreview.length, 500);
+});
+
+test("getJsonWithHeaders returns the parsed body together with the response headers", async () => {
+  const { client, calls } = clientWith([{ status: 200, body: { rows: 1 }, headers: { "X-NetDiag-Truncated": "true" } }]);
+
+  const result = await client.getJsonWithHeaders<{ rows: number }>("api/thing", "tok");
+
+  assert.deepEqual(result.body, { rows: 1 });
+  assert.equal(result.headers.get("x-netdiag-truncated"), "true");
+  assert.equal(calls[0].init.method, "GET");
+});
+
+test("getJsonWithHeaders throws HttpError on a non-OK status", async () => {
+  const { client } = clientWith([{ status: 503, body: { error: "query_timeout" } }]);
+
+  const error = await client.getJsonWithHeaders("api/thing", "tok").then(() => null, (e: unknown) => e);
+
+  assert.ok(error instanceof HttpError);
+  assert.equal(error.status, 503);
 });

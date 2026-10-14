@@ -15,7 +15,7 @@
       </v-list-item-title>
     </v-list-item>
 
-    <v-list density="compact" nav>
+    <v-list v-model:opened="openedGroups" density="compact" nav>
       <template v-for="(item, index) in filteredNavItems">
         <v-list-item
           v-if="!item.items || item.items.length === 0"
@@ -46,6 +46,7 @@
             :to="{ name: subItem.routeName }"
             :title="subItem.title"
             :value="subItem.title"
+            :active="isSubItemActive(subItem.routeName)"
             color="primary"
           />
         </v-list-group>
@@ -55,13 +56,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { AdminNavigationItem } from "@/store/admin/types";
 import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline, mdiFormatAlignCenter } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
+import { isNavItemActive, navGroupOfDetailRoute } from "@/components/admin/adminNavActive";
 import {
   mdiAccountBoxOutline, mdiAccountGroup, mdiAccountNetwork, mdiAccountQuestion,
   mdiAccountRemove, mdiBriefcase, mdiChartLine, mdiChatRemove, mdiChatRemoveOutline,
@@ -69,7 +71,8 @@ import {
   mdiMonitorDashboard, mdiRocket, mdiRss, mdiSwordCross, mdiTable, mdiTooltipTextOutline,
   mdiAccountKey, mdiFileDocumentOutline, mdiFileDocument, mdiTrophy, mdiLink,
   mdiAccountMultiple, mdiRadar, mdiAccountHeart, mdiApi, mdiTranslate, mdiWaveform,
-  mdiAlertCircleOutline, mdiPlayBoxOutline,
+  mdiAlertCircleOutline, mdiPlayBoxOutline, mdiCertificate, mdiCalendarStar, mdiTicketConfirmationOutline, mdiPlayCircleOutline,
+  mdiFilmstrip, mdiFolderDownloadOutline, mdiHistory, mdiAccessPointNetwork, mdiClipboardListOutline,
 } from "@mdi/js";
 
 export default defineComponent({
@@ -139,6 +142,11 @@ export default defineComponent({
 
     watch(permissions, init);
 
+    // Detail pages (event detail, run detail, …) keep their list item highlighted; `undefined` leaves the decision to the link.
+    function isSubItemActive(routeName: string | undefined): true | undefined {
+      return isNavItemActive(routeName, route.name);
+    }
+
     const navItems: Array<AdminNavigationItem> = [
       {
         title: "Data Science",
@@ -151,6 +159,27 @@ export default defineComponent({
             permission: EPermission.Queue,
             component: "admin-queue-data",
             routeName: EAdminRouteName.LIVE_QUEUE_DATA,
+          },
+        ],
+      },
+      {
+        title: "Replays",
+        icon: mdiFilmstrip,
+        permission: EPermission.Replays,
+        items: [
+          {
+            title: "Replay Export",
+            icon: mdiFolderDownloadOutline,
+            permission: EPermission.Replays,
+            component: "admin-replay-export",
+            routeName: EAdminRouteName.REPLAY_EXPORT,
+          },
+          {
+            title: "Replay Downloads",
+            icon: mdiHistory,
+            permission: EPermission.Replays,
+            component: "admin-replay-downloads",
+            routeName: EAdminRouteName.REPLAY_DOWNLOADS,
           },
         ],
       },
@@ -200,6 +229,41 @@ export default defineComponent({
             permission: EPermission.Moderation,
             component: "admin-launcher-chat",
             routeName: EAdminRouteName.LAUNCHER_CHAT,
+          },
+        ],
+      },
+      {
+        title: "Commercial Events",
+        icon: mdiCalendarStar,
+        permission: EPermission.CommercialLicense,
+        items: [
+          {
+            title: "Tagged accounts",
+            icon: mdiCertificate,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/tagged-accounts",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS,
+          },
+          {
+            title: "Allocations",
+            icon: mdiTicketConfirmationOutline,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/allocations",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_ALLOCATIONS,
+          },
+          {
+            title: "Events",
+            icon: mdiTrophy,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/events",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_EVENTS,
+          },
+          {
+            title: "Active games",
+            icon: mdiPlayCircleOutline,
+            permission: EPermission.CommercialLicense,
+            component: "commercial-events/active-games",
+            routeName: EAdminRouteName.COMMERCIAL_EVENTS_ACTIVE_GAMES,
           },
         ],
       },
@@ -439,6 +503,20 @@ export default defineComponent({
             component: "admin-lag-reports",
             routeName: EAdminRouteName.LAG_REPORTS,
           },
+          {
+            title: "Remote Measurements",
+            icon: mdiAccessPointNetwork,
+            permission: EPermission.Proxies,
+            component: "admin-remote-measurements",
+            routeName: EAdminRouteName.NETDIAG_RUNS,
+          },
+          {
+            title: "Measurements",
+            icon: mdiClipboardListOutline,
+            permission: EPermission.Proxies,
+            component: "admin-remote-measurements/measurements",
+            routeName: EAdminRouteName.NETDIAG_MEASUREMENTS,
+          },
         ],
       },
       {
@@ -457,10 +535,19 @@ export default defineComponent({
       },
     ];
 
+    // A detail page is not its item's own route, so Vuetify leaves the group closed after a direct load: open it.
+    const openedGroups = ref<string[]>([]);
+    watch([() => route.name, filteredNavItems] as const, ([routeName, items]) => {
+      const group = navGroupOfDetailRoute(items, routeName);
+      if (group !== undefined && !openedGroups.value.includes(group)) openedGroups.value = [...openedGroups.value, group];
+    }, { immediate: true });
+
     return {
       mdiAccountTie,
       filteredNavItems,
       isDrawerOpen,
+      isSubItemActive,
+      openedGroups,
     };
   },
 });

@@ -67,7 +67,6 @@ export default defineComponent({
       if (verifiedBtag.value) {
         promises.push(playerStore.loadProfile({
           battleTag: verifiedBtag.value,
-          freshLogin: false,
         }));
       }
       await Promise.all(promises);

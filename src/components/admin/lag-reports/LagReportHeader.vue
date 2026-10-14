@@ -41,6 +41,19 @@
               ({{ playerName(player.battleTag) }})
             </span>
           </v-chip>
+          <v-chip
+            v-for="(ts, ti) in playerTransportSwitches(player)"
+            :key="'ts-' + pi + '-' + ti"
+            size="x-small"
+            :color="transportSwitchColor(ts)"
+            variant="tonal"
+            :title="transportSwitchReasonLabel(ts.reason)"
+          >
+            {{ transportSwitchLabel(ts) }} {{ formatGameTime(ts.gameTimeOffsetMs) }}
+            <span class="ml-1" :style="{ color: playerColors[pi], fontWeight: 600 }">
+              ({{ playerName(player.battleTag) }})
+            </span>
+          </v-chip>
         </template>
         <span class="text-medium-emphasis text-caption ml-2">Categories:</span>
         <template v-for="(player, pi) in report.players" :key="'cat-' + pi">
@@ -69,6 +82,12 @@ import { computed, defineComponent, PropType } from "vue";
 import { EConnectionEventType, LagReportDetail } from "@/store/admin/lagReports/types";
 import { playerColorStyle } from "@/helpers/lag-report-colors";
 import { formatStallDuration, groupHostStalls, summarizeHostStalls } from "@/components/admin/lag-reports/hostStalls";
+import {
+  playerTransportSwitches,
+  transportSwitchColor,
+  transportSwitchLabel,
+  transportSwitchReasonLabel,
+} from "@/components/admin/lag-reports/transportSwitches";
 
 export default defineComponent({
   name: "LagReportHeader",
@@ -135,6 +154,10 @@ export default defineComponent({
       connectionEventLabel,
       eventColor,
       playerLagChipStyle,
+      playerTransportSwitches,
+      transportSwitchColor,
+      transportSwitchLabel,
+      transportSwitchReasonLabel,
       EConnectionEventType,
     };
   },

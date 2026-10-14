@@ -171,6 +171,15 @@
             proxied{{ p.proxyName ? `: ${p.proxyName}` : '' }}
           </v-chip>
           <v-chip
+            v-if="transportSwitchIndicatorCount(p) !== null"
+            size="x-small"
+            color="warning"
+            variant="tonal"
+            title="Times this player's game moved between TCP and QUIC"
+          >
+            {{ transportSwitchIndicatorCount(p) }}x TCP/QUIC
+          </v-chip>
+          <v-chip
             v-for="(cat, ci) in p.issueCategories"
             :key="ci"
             size="x-small"
@@ -201,6 +210,7 @@ import { computed, defineComponent, onMounted, reactive, ref } from "vue";
 import { useLagReportsStore } from "@/store/admin/lagReports/store";
 import { LagReportListItem, LagReportQueryParams } from "@/store/admin/lagReports/types";
 import { hostStallIndicatorCount } from "@/components/admin/lag-reports/hostStalls";
+import { transportSwitchIndicatorCount } from "@/components/admin/lag-reports/transportSwitches";
 import { mdiCheckCircle, mdiCloseCircle, mdiEye } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
@@ -491,6 +501,7 @@ export default defineComponent({
       refreshResults,
       formatDate,
       hostStallCount,
+      transportSwitchIndicatorCount,
       openDetail,
       mdiCheckCircle,
       mdiCloseCircle,

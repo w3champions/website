@@ -3,3 +3,4 @@
 
 declare module "vuetify/styles";
 declare module "@/scss/main.scss";
+declare module "leaflet/dist/leaflet.css";
