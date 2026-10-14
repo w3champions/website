@@ -4,11 +4,13 @@
       {{ formatRanking(team.matchRanking) }}
     </div>
     <div class="team-content">
-      <div v-for="(player, index) in team.players" :key="index" class="player-row">
-        <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking">
+      <div v-for="(player, index) in team.players" :key="index" class="player-row d-flex align-center w-100" :class="{ 'justify-end': left, 'justify-start': !left }">
+        <div v-if="isNil(team.matchRanking) && !isNil(player.matchRanking)" class="player-ranking" :style="{ order: 2 }">
           {{ formatRanking(player.matchRanking) }}
         </div>
         <player-match-info
+          :partyColor="player.atTeamId ? partyColorMap.get(player.atTeamId) : undefined"
+          :style="{ order: left ? 3 : 1 }"
           :unfinishedMatch="unfinishedMatch"
           :player="player"
           :left="left"
@@ -100,9 +102,28 @@ export default defineComponent({
     );
     const formatRanking = (ranking: number): string => hideRanking.value ? "#?" : `#${ranking + 1}`;
 
+    const partyColorMap = computed(() => {
+      const map = new Map<string, string>();
+      if (!props.team) return map;
+
+      const colors = ["primary", "success", "warning", "info", "error"];
+      let colorIndex = 0;
+
+      for (const player of props.team.players) {
+        if (player.atTeamId) {
+          if (!map.has(player.atTeamId)) {
+            map.set(player.atTeamId, colors[colorIndex % colors.length]);
+            colorIndex++;
+          }
+        }
+      }
+      return map;
+    });
+
     return {
       isNil,
       formatRanking,
+      partyColorMap,
     };
   },
 });

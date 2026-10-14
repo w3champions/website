@@ -7,7 +7,12 @@
       :big="bigRaceIcon"
     />
     <div class="details-column" :class="{ 'mr-2': left, 'ml-2': !left }">
-      <span>
+      <span class="d-flex align-center" :class="{ 'justify-end': left }">
+        <v-tooltip v-if="partyColor && left" location="top" text="Arranged Team Party" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
+            <at-icon v-bind="props" :size="16" :class="`text-${partyColor} mr-1`" />
+          </template>
+        </v-tooltip>
         <span v-if="!left && (player.countryCode || player.location)" class="mr-1">
           <country-flag-extended
             :countryCode="player.countryCode"
@@ -47,6 +52,11 @@
             :location="player.location"
           />
         </span>
+        <v-tooltip v-if="partyColor && !left" location="top" text="Arranged Team Party" content-class="w3-tooltip elevation-1">
+          <template v-slot:activator="{ props }">
+            <at-icon v-bind="props" :size="16" :class="`text-${partyColor} ml-1`" />
+          </template>
+        </v-tooltip>
       </span>
       <hero-icon-row :heroes="player.heroes" :left="left" :show="showHeroes" :selectedHeroes="selectedHeroes" :size="24" />
     </div>
@@ -70,6 +80,7 @@ import { getProfileUrl } from "@/helpers/url-functions";
 import { leagueNameFromOrder } from "@/helpers/leagues";
 import HeroIconRow from "@/components/matches/HeroIconRow.vue";
 import { useSpoilerFreeStore } from "@/store/spoilerFree/store";
+import AtIcon from "@/components/matches/AtIcon.vue";
 
 export default defineComponent({
   name: "PlayerMatchInfo",
@@ -77,6 +88,7 @@ export default defineComponent({
     HeroIconRow,
     PlayerIcon,
     CountryFlagExtended,
+    AtIcon,
   },
   props: {
     player: {
@@ -110,6 +122,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    partyColor: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     spoilerFreeWinner: {
       type: Boolean,

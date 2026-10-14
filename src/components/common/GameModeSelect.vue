@@ -27,14 +27,15 @@
 </template>
 
 <script setup lang="ts">
-import { activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
+import { activeGameModes, activeGameModesWithAT, loadActiveGameModes } from "@/composables/GameModesMixin";
 import { EGameMode } from "@/store/types";
 import { mdiControllerClassic } from "@mdi/js";
 import { onMounted } from "vue";
 
-const { gameMode = EGameMode.UNDEFINED, disabledModes = [] } = defineProps<{
+const { gameMode = EGameMode.UNDEFINED, disabledModes = [], includeAT = true } = defineProps<{
   gameMode?: EGameMode;
   disabledModes?: EGameMode[];
+  includeAT?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -42,7 +43,7 @@ const emit = defineEmits<{
 }>();
 
 function gameModes(): Array<{ name: string; id: number }> {
-  let modes = activeGameModesWithAT();
+  let modes = includeAT ? activeGameModesWithAT() : activeGameModes();
 
   if (disabledModes) {
     modes = modes?.filter((x) => !disabledModes?.includes(x.id));
@@ -56,7 +57,7 @@ function gameModeName(): string {
     return "";
   }
 
-  const mode = activeGameModesWithAT()?.filter((g) => g.id == gameMode)[0];
+  const mode = (includeAT ? activeGameModesWithAT() : activeGameModes())?.filter((g) => g.id == gameMode)[0];
 
   if (!mode) {
     return "Not Supported";

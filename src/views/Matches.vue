@@ -20,7 +20,7 @@
             <div class="matches-filter-scroll">
               <div class="matches-filter-row d-flex align-center">
                 <matches-status-select />
-                <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" @gameModeChanged="gameModeChanged" />
+                <game-mode-select :disabledModes="disabledGameModes" :gameMode="gameMode" :includeAT="false" @gameModeChanged="gameModeChanged" />
                 <map-select :mapInfo="maps" :map="map" @mapChanged="mapChanged" />
                 <mmr-select :mmr="mmr" @mmrFilterChanged="mmrFilterChanged" />
                 <duration-select v-if="!unfinished" :duration="duration" @durationFilterChanged="durationFilterChanged" />
