@@ -19,6 +19,11 @@ let reportsSeq = 0;
 let nodeDaySeq = 0;
 let battleTagSeq = 0;
 
+// The backend's ceiling for battleTag buckets (MaxBattleTagBuckets in website-backend's
+// LagReportController). It clamps any larger limit, so keep the two in step. A full
+// response means the ranking truncated: some repeat badges may be missing, never wrong.
+const MAX_BATTLE_TAG_BUCKETS = 500;
+
 export const useLagReportsStore = defineStore("lagReports", {
   state: (): LagReportsState => ({
     reports: [],
@@ -128,7 +133,7 @@ export const useLagReportsStore = defineStore("lagReports", {
     async loadBattleTagCounts(scope: Pick<LagReportAggregateParams, "dateFrom" | "dateTo" | "serverNames" | "serverNodeIds">) {
       const seq = ++battleTagSeq;
       try {
-        const buckets = await this.fetchAggregate({ ...scope, groupBy: "battleTag", limit: 500 });
+        const buckets = await this.fetchAggregate({ ...scope, groupBy: "battleTag", limit: MAX_BATTLE_TAG_BUCKETS });
         if (seq !== battleTagSeq) return;
         this.battleTagCounts = new Map(
           buckets.filter((b) => b.battleTag).map((b) => [b.battleTag as string, b]),

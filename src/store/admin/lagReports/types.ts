@@ -103,8 +103,8 @@ export interface LagReportQueryParams {
   explicitOnly?: boolean;
   minPlayers?: number;
   maxPlayers?: number;
-  // ≥2 activates; "submitted" (default) keeps reports the chronic personally
-  // submitted, "involved" keeps every report they appear in.
+  // ≥2 activates; "submitted" (default) keeps only reports the player filed
+  // themselves, "involved" keeps every report they appear in.
   minRepeat?: number;
   repeatMode?: LagReportRepeatMode;
 }

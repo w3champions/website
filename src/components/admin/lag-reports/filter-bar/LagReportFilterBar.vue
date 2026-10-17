@@ -257,7 +257,7 @@ export default defineComponent({
         const applied = filterHasValue(def.key);
         // Dates always show the window itself and never carry an × — the
         // window always holds a value, and the editor's "Today + yesterday"
-        // preset is the way back to the default (Mark's ruling).
+        // preset is the way back to the default.
         const showValue = applied || def.key === "dates";
         return {
           key: def.key,
