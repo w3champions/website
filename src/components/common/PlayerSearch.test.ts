@@ -5,11 +5,29 @@ import { createVuetify } from "vuetify";
 import { VAutocomplete } from "vuetify/components/VAutocomplete";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 
-const { searchPlayer } = vi.hoisted(() => ({ searchPlayer: vi.fn() }));
+const { searchPlayer, globalSearch, flags } = vi.hoisted(() => ({
+  searchPlayer: vi.fn(),
+  globalSearch: vi.fn(),
+  flags: { useNewSearch: true },
+}));
 
 vi.mock("@/services/ProfileService", () => ({
   default: { searchPlayer },
 }));
+
+vi.mock("@/services/GlobalSearchService", () => ({
+  default: { search: globalSearch },
+}));
+
+// A getter, so each pass of the suite below can switch the search engine.
+vi.mock("@/helpers/featureFlags", () => ({
+  get USE_NEW_SEARCH() {
+    return flags.useNewSearch;
+  },
+}));
+
+// The row template's avatar and season badge helpers read window._env_ at import time.
+vi.mock("@/config/env", () => ({ API_URL: "/mock/", INGAME_STATIC_RESOURCES_URL: "/mock/" }));
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -25,8 +43,10 @@ function items(wrapper: VueWrapper): unknown[] {
   return wrapper.findComponent(VAutocomplete).props("items") as unknown[];
 }
 
-describe("PlayerSearch", () => {
+describe.each([true, false])("PlayerSearch (USE_NEW_SEARCH %s)", (useNewSearch) => {
   let wrapper: VueWrapper;
+  // The engine the flag selects: global-search when on, the legacy player search when off.
+  const search = () => (useNewSearch ? globalSearch : searchPlayer);
 
   function mountSearch() {
     // jsdom lacks these browser APIs that Vuetify's field and menu overlay touch.
@@ -61,7 +81,9 @@ describe("PlayerSearch", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    flags.useNewSearch = useNewSearch;
     searchPlayer.mockReset();
+    globalSearch.mockReset();
   });
 
   afterEach(() => {
@@ -69,17 +91,29 @@ describe("PlayerSearch", () => {
     vi.useRealTimers();
   });
 
+  it("dispatches to the engine USE_NEW_SEARCH selects", async () => {
+    search().mockResolvedValue([player("abc#1")]);
+    mountSearch();
+
+    await type("abc");
+    await vi.advanceTimersByTimeAsync(500);
+
+    expect(search()).toHaveBeenCalledWith(...(useNewSearch ? ["abc", "", 20] : ["abc"]));
+    expect(useNewSearch ? searchPlayer : globalSearch).not.toHaveBeenCalled();
+    expect(items(wrapper)).toEqual([player("abc#1")]);
+  });
+
   it("ignores a stale reply that arrives after a newer one", async () => {
     const first = deferred<never[]>();
     const second = deferred<never[]>();
-    searchPlayer.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    search().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
     mountSearch();
 
     await type("abc");
     await vi.advanceTimersByTimeAsync(500);
     await type("abcd");
     await vi.advanceTimersByTimeAsync(500);
-    expect(searchPlayer).toHaveBeenCalledTimes(2);
+    expect(search()).toHaveBeenCalledTimes(2);
 
     second.resolve([player("abcd#1")]);
     await flushPromises();
@@ -91,7 +125,7 @@ describe("PlayerSearch", () => {
 
   it("drops an in-flight reply and a pending search once the text gets too short", async () => {
     const inFlight = deferred<never[]>();
-    searchPlayer.mockReturnValueOnce(inFlight.promise);
+    search().mockReturnValueOnce(inFlight.promise);
     mountSearch();
 
     await type("abc");
@@ -104,7 +138,7 @@ describe("PlayerSearch", () => {
     await type("abc");
     await type("ab");
     await vi.advanceTimersByTimeAsync(1000);
-    expect(searchPlayer).toHaveBeenCalledTimes(1);
+    expect(search()).toHaveBeenCalledTimes(1);
   });
 
   it("cancels a pending debounced search on unmount", async () => {
@@ -112,14 +146,14 @@ describe("PlayerSearch", () => {
     await type("abc");
     wrapper.unmount();
     await vi.advanceTimersByTimeAsync(1000);
-    expect(searchPlayer).not.toHaveBeenCalled();
+    expect(search()).not.toHaveBeenCalled();
     mountSearch(); // keeps afterEach's unmount valid
   });
 
   it("keeps loading and drops the in-flight reply once newer text is queued", async () => {
     const first = deferred<never[]>();
     const second = deferred<never[]>();
-    searchPlayer.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    search().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
     const autocomplete = mountSearch();
 
     await type("abc");
@@ -140,7 +174,7 @@ describe("PlayerSearch", () => {
   });
 
   it("emits playerFound when the same player is re-picked after the text was edited", async () => {
-    searchPlayer.mockResolvedValue([player("abc#1")]);
+    search().mockResolvedValue([player("abc#1")]);
     mountSearch();
 
     await type("abc");
@@ -156,7 +190,7 @@ describe("PlayerSearch", () => {
   });
 
   it("keeps the selection when the field only loses focus", async () => {
-    searchPlayer.mockResolvedValue([player("abc#1")]);
+    search().mockResolvedValue([player("abc#1")]);
     const autocomplete = mountSearch();
 
     await type("abc");
