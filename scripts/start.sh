@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sh /usr/share/nginx/html/env.sh $BASE_URL $IDENTIFICATION_URL $IS_LAUNCHER_ENABLED $LAUNCHER_UPDATE_URL $INGAME_STATIC_RESOURCES_URL $BNET_API_CLIENT_ID $TURNSTILE_SITE_KEY
+sh /usr/share/nginx/html/env.sh
