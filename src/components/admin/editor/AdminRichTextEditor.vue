@@ -25,11 +25,19 @@
               @mousedown.prevent
               @click="control.run()"
             />
-            <label class="announcement-editor__color" title="Text color">
-              <span class="text-caption">Color</span>
-              <input type="color" aria-label="Text color" :value="color" @input="applyColor" />
-            </label>
-            <v-btn type="button" variant="text" size="small" aria-label="Reset text color" title="Reset text color" @mousedown.prevent @click="resetColor">Reset color</v-btn>
+            <v-menu :close-on-content-click="false">
+              <template v-slot:activator="{ props: activatorProps }">
+                <v-btn v-bind="activatorProps" type="button" variant="text" size="small" icon aria-label="Text color" title="Text color" @mousedown.prevent>
+                  <span class="announcement-editor__swatch" :style="{ backgroundColor: color }"></span>
+                </v-btn>
+              </template>
+              <v-card>
+                <v-color-picker :model-value="color" mode="hex" :modes="['hex']" aria-label="Text color picker" @update:model-value="applyColor" />
+                <v-card-actions>
+                  <v-btn type="button" aria-label="Reset text color" @mousedown.prevent @click="resetColor">Reset color</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-menu>
           </div>
           <editor-content :editor="editor" class="announcement-editor__visual" />
         </template>
@@ -108,9 +116,10 @@ function updateHtml(event: Event) {
   emit("update:modelValue", (event.target as HTMLTextAreaElement).value);
 }
 
-function applyColor(event: Event) {
-  color.value = (event.target as HTMLInputElement).value;
-  editor.value?.chain().focus().setColor(color.value).run();
+function applyColor(value: string | null) {
+  if (!value) return;
+  color.value = value;
+  editor.value?.chain().focus().setColor(value).run();
 }
 
 function syncColor(current: Editor) {
@@ -191,8 +200,7 @@ const controls = computed(() => {
 .announcement-editor__field { width: 100%; border: 1px solid rgba(var(--v-theme-on-surface), 0.4); border-radius: 4px; overflow: hidden; }
 .announcement-editor__field:focus-within { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: -1px; }
 .announcement-editor__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 6px; border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.2); }
-.announcement-editor__color { display: flex; align-items: center; gap: 6px; padding: 0 8px; }
-.announcement-editor__color input { width: 30px; height: 30px; cursor: pointer; }
+.announcement-editor__swatch { width: 22px; height: 22px; border: 1px solid rgba(var(--v-theme-on-surface), 0.4); border-radius: 2px; }
 .announcement-editor__html { display: block; width: 100%; min-height: 220px; padding: 16px; color: inherit; font: 14px/1.5 monospace; resize: vertical; }
 .announcement-editor__visual :deep(.tiptap) { min-height: 220px; max-height: 500px; padding: 16px; overflow-y: auto; overflow-wrap: anywhere; outline: none; color: #fff; background: #111; font: 18px/1.4 "Friz Quadrata Std Medium", serif; }
 .announcement-editor__visual :deep(h1), .announcement-editor__visual :deep(h2), .announcement-editor__visual :deep(h3), .announcement-editor__visual :deep(h4), .announcement-editor__visual :deep(h5), .announcement-editor__visual :deep(h6) { margin: 1rem 0 0.75rem; color: #ffd428; font-family: "Friz Quadrata Std Bold", serif; font-weight: normal; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }

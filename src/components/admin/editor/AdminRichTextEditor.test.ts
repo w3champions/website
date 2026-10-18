@@ -14,6 +14,10 @@ async function openEditor(modelValue: string) {
     global: {
       stubs: {
         VInput: container,
+        VMenu: { template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+        VCard: container,
+        VCardActions: container,
+        VColorPicker: { name: "VColorPicker", props: { modelValue: { type: String, default: "" } }, emits: ["update:modelValue"], template: "<div />" },
         VAlert: container,
         VBtn: { props: { disabled: Boolean }, template: '<button :disabled="disabled"><slot /></button>' },
         VDialog: { props: { modelValue: Boolean }, template: '<div v-if="modelValue"><slot /></div>' },
@@ -95,12 +99,21 @@ describe("shared announcement editor", () => {
     const wrapper = await openEditor("<p>Community Event</p>");
     editorOf(wrapper).commands.setTextSelection({ from: 1, to: 10 });
     await wrapper.find('button[aria-label="Bold"]').trigger("click");
-    await wrapper.find('input[type="color"]').setValue("#ff0000");
+    wrapper.findComponent({ name: "VColorPicker" }).vm.$emit("update:modelValue", "#ff0000");
     await flushPromises();
     const result = document.createElement("div");
     result.innerHTML = String(wrapper.props("modelValue"));
     expect(result.querySelector("strong")?.textContent).toBe("Community");
     expect(result.querySelector("span")?.style.color).toBe("rgb(255, 0, 0)");
+  });
+
+  it("resets a selected color through the picker", async () => {
+    const wrapper = await openEditor('<h3 style="color: #ff0000">Community Event</h3>');
+    editorOf(wrapper).commands.setTextSelection({ from: 1, to: 10 });
+    await wrapper.find('button[aria-label="Reset text color"]').trigger("click");
+    expect(editorOf(wrapper).getHTML()).not.toContain("color:");
+    expect(wrapper.findComponent({ name: "VColorPicker" }).props("modelValue")).toBe("#ffd428");
+    expect(wrapper.find('button[aria-label="Text color"] .announcement-editor__swatch').attributes("style")).toContain("background-color: rgb(255, 212, 40)");
   });
 
   it("keeps unsupported HTML untouched and disables the lossy Visual switch", async () => {
@@ -116,9 +129,9 @@ describe("shared announcement editor", () => {
     const wrapper = await openEditor("<p>First</p>");
     await wrapper.setProps({ modelValue: "<h3>Second</h3>" });
     expect(editorOf(wrapper).getHTML()).toBe("<h3>Second</h3>");
-    expect(wrapper.find<HTMLInputElement>('input[type="color"]').element.value).toBe("#ffd428");
+    expect(wrapper.findComponent({ name: "VColorPicker" }).props("modelValue")).toBe("#ffd428");
     await wrapper.setProps({ modelValue: "" });
     expect(editorOf(wrapper).isEmpty).toBe(true);
-    expect(wrapper.find<HTMLInputElement>('input[type="color"]').element.value).toBe("#ffffff");
+    expect(wrapper.findComponent({ name: "VColorPicker" }).props("modelValue")).toBe("#ffffff");
   });
 });

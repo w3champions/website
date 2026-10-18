@@ -36,6 +36,8 @@ async function openEditor() {
         VDivider: true,
         VForm: form,
         VInput: input,
+        VMenu: { template: '<div><slot name="activator" :props="{}" /><slot /></div>' },
+        VColorPicker: true,
         VDialog: { props: { modelValue: Boolean }, template: '<div v-if="modelValue"><slot /></div>' },
         VBtn: { props: { disabled: Boolean }, template: '<button :disabled="disabled"><slot /></button>' },
       },
