@@ -92,6 +92,17 @@ test("getTaggedPlayers normalizes null and missing restrictions", async () => {
   assert.deepEqual(result[3].restrictions, { asPlayer: true, asObserver: false, floTv: "all", includeSmurfs: true });
 });
 
+test("getTaggedPlayers normalizes a null restrictions.includeSmurfs to false", async () => {
+  const { service } = serviceWith({
+    status: 200,
+    body: [{ battleTag: "A#1", restrictions: { asPlayer: true, asObserver: true, floTv: "custom", includeSmurfs: null } }],
+  });
+
+  const [player] = await service.getTaggedPlayers("tok");
+
+  assert.deepEqual(player.restrictions, { asPlayer: true, asObserver: true, floTv: "custom", includeSmurfs: false });
+});
+
 test("upsertTaggedPlayer normalizes a null restrictions in the result", async () => {
   const { service } = serviceWith({ status: 200, body: { battleTag: "A#1", restrictions: null } });
 
