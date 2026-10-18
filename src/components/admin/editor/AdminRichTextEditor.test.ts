@@ -55,6 +55,29 @@ describe("shared announcement editor", () => {
     expect(result.textContent).toBe("Visit https://example.com/pasted.");
   });
 
+  it("shows plain URLs as links when loading content and switching from HTML to Visual", async () => {
+    const wrapper = await openEditor("<p>Visit https://example.com/loaded</p>");
+    expect(wrapper.find('[role="textbox"] a').attributes("href")).toBe("https://example.com/loaded");
+    await mode(wrapper, "HTML");
+    expect(wrapper.find("textarea").element.value).toContain('href="https://example.com/loaded"');
+    await wrapper.find("textarea").setValue("<p><strong>Visit</strong> https://example.com/source</p>");
+    await mode(wrapper, "Visual");
+    expect(wrapper.find('[role="textbox"] a').attributes("href")).toBe("https://example.com/source");
+    expect(wrapper.find('[role="textbox"] strong').text()).toBe("Visit");
+    expect(wrapper.props("modelValue")).toContain('href="https://example.com/source"');
+    await wrapper.setProps({ modelValue: "<p>https://example.com/reloaded</p>" });
+    expect(wrapper.find('[role="textbox"] a').attributes("href")).toBe("https://example.com/reloaded");
+  });
+
+  it("allows removing an automatic link without the model watcher restoring it", async () => {
+    const wrapper = await openEditor("<p>https://example.com/removable</p>");
+    editorOf(wrapper).commands.setTextSelection(2);
+    editorOf(wrapper).commands.unsetLink();
+    await flushPromises();
+    expect(wrapper.find('[role="textbox"] a').exists()).toBe(false);
+    expect(wrapper.props("modelValue")).not.toContain("<a");
+  });
+
   it("round trips between HTML and Visual with heading color, margins and line breaks", async () => {
     const wrapper = await openEditor('<h3 style="color: #ffd428; margin: 0 0 10px">Community Event</h3><div>One<br>Two</div>');
     await mode(wrapper, "HTML");

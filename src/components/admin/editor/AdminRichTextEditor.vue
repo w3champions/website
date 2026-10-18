@@ -37,7 +37,7 @@
       </div>
     </v-input>
     <div class="d-flex justify-space-between flex-wrap ga-2 text-caption mb-4">
-      <span>HTTP(S) URLs become clickable links when saved.</span>
+      <span>HTTP(S) URLs link automatically in Visual mode as you type or paste.</span>
       <span v-if="maxLength" :class="{ 'text-error': preparedHtml.length > maxLength }">{{ preparedHtml.length }} / {{ maxLength }} (including HTML)</span>
     </div>
 
@@ -75,7 +75,7 @@ const preparedHtml = computed(() => linkifyAnnouncementHtml(props.modelValue));
 const rules = computed(() => [() => !props.maxLength || preparedHtml.value.length <= props.maxLength || `Max ${props.maxLength} characters, including HTML and generated links`]);
 const editor = useEditor({
   extensions: announcementExtensions(),
-  content: htmlOnly.value ? "" : props.modelValue,
+  content: htmlOnly.value ? "" : preparedHtml.value,
   editorProps: { attributes: { role: "textbox", "aria-label": props.label, "aria-multiline": "true" } },
   onCreate: ({ editor: current }) => syncColor(current),
   onSelectionUpdate: ({ editor: current }) => syncColor(current),
@@ -90,14 +90,14 @@ watch(() => props.modelValue, (html) => {
     mode.value = "html";
     return;
   }
-  if (editor.value && editor.value.getHTML() !== html) editor.value.commands.setContent(html, false);
+  if (mode.value === "visual" && editor.value && editor.value.getHTML() !== html) editor.value.commands.setContent(preparedHtml.value, false);
   if (editor.value) syncColor(editor.value);
 });
 
 function setMode(next: "visual" | "html") {
   if (next === "visual" && htmlOnly.value) return;
-  if (next === "visual" && mode.value !== next && editor.value) {
-    editor.value.commands.setContent(props.modelValue, false);
+  if (mode.value !== next && editor.value) {
+    if (next === "visual") editor.value.commands.setContent(preparedHtml.value, false);
     syncColor(editor.value);
     emit("update:modelValue", editor.value.getHTML());
   }
