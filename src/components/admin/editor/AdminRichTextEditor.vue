@@ -40,8 +40,6 @@
       <span>HTTP(S) URLs become clickable links when saved.</span>
       <span v-if="maxLength" :class="{ 'text-error': preparedHtml.length > maxLength }">{{ preparedHtml.length }} / {{ maxLength }} (including HTML)</span>
     </div>
-    <h3 class="text-subtitle-1 mb-2">Preview</h3>
-    <iframe class="announcement-editor__preview" :title="`${label} preview`" sandbox="" referrerpolicy="no-referrer" :srcdoc="preview"></iframe>
 
     <v-dialog v-model="urlDialog" max-width="480">
       <v-card :title="urlKind === 'link' ? 'Edit link' : 'Insert image'">
@@ -61,6 +59,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import "@/scss/fonts/friz.scss";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import type { Editor } from "@tiptap/core";
 import { mdiCodeTags, mdiFileImage, mdiFormatBold, mdiFormatHeader1, mdiFormatHeader2, mdiFormatHeader3, mdiFormatItalic, mdiFormatListBulleted, mdiFormatListNumbered, mdiFormatParagraph, mdiFormatStrikethrough, mdiFormatUnderline, mdiLink, mdiMinus, mdiRedo, mdiUndo } from "@mdi/js";
@@ -184,14 +183,6 @@ const controls = computed(() => {
   ];
 });
 
-const preview = computed(() => `<!doctype html>
-<html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src https: http: data:">
-<style>
-  body { margin: 20px; color: #fff; background: #111; font: 18px/1.4 Georgia, serif; overflow-wrap: anywhere; }
-  h1, h2, h3, a { color: #ffd428; }
-  a { pointer-events: none; }
-  img { max-width: 100%; height: auto; }
-</style></head><body>${preparedHtml.value}</body></html>`);
 </script>
 
 <style scoped>
@@ -203,9 +194,22 @@ const preview = computed(() => `<!doctype html>
 .announcement-editor__color { display: flex; align-items: center; gap: 6px; padding: 0 8px; }
 .announcement-editor__color input { width: 30px; height: 30px; cursor: pointer; }
 .announcement-editor__html { display: block; width: 100%; min-height: 220px; padding: 16px; color: inherit; font: 14px/1.5 monospace; resize: vertical; }
-.announcement-editor__visual :deep(.tiptap) { min-height: 220px; max-height: 500px; padding: 16px; overflow-y: auto; overflow-wrap: anywhere; outline: none; }
-.announcement-editor__visual :deep(h1), .announcement-editor__visual :deep(h2), .announcement-editor__visual :deep(h3), .announcement-editor__visual :deep(a) { color: #ffd428; }
-.announcement-editor__visual :deep(ul), .announcement-editor__visual :deep(ol) { padding-left: 24px; }
-.announcement-editor__visual :deep(img) { max-width: 100%; }
-.announcement-editor__preview { display: block; width: 100%; height: 260px; border: 1px solid rgba(var(--v-theme-on-surface), 0.3); border-radius: 4px; background: #111; }
+.announcement-editor__visual :deep(.tiptap) { min-height: 220px; max-height: 500px; padding: 16px; overflow-y: auto; overflow-wrap: anywhere; outline: none; color: #fff; background: #111; font: 18px/1.4 "Friz Quadrata Std Medium", serif; }
+.announcement-editor__visual :deep(h1), .announcement-editor__visual :deep(h2), .announcement-editor__visual :deep(h3), .announcement-editor__visual :deep(h4), .announcement-editor__visual :deep(h5), .announcement-editor__visual :deep(h6) { margin: 1rem 0 0.75rem; color: #ffd428; font-family: "Friz Quadrata Std Bold", serif; font-weight: normal; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+.announcement-editor__visual :deep(h1) { font-size: 1.5rem; }
+.announcement-editor__visual :deep(h2) { font-size: 1.4rem; }
+.announcement-editor__visual :deep(h3) { font-size: 1.3rem; }
+.announcement-editor__visual :deep(h4) { font-size: 1.2rem; }
+.announcement-editor__visual :deep(h5), .announcement-editor__visual :deep(h6) { font-size: 1rem; }
+.announcement-editor__visual :deep(p) { margin: 0.75rem 0; }
+.announcement-editor__visual :deep(ul), .announcement-editor__visual :deep(ol) { margin: 0.75rem 0; padding-left: 1.5rem; }
+.announcement-editor__visual :deep(li) { margin: 0.25rem 0; }
+.announcement-editor__visual :deep(a) { color: #4fc3f7; text-decoration: none; }
+.announcement-editor__visual :deep(a:hover) { color: #81d4fa; text-decoration: underline; }
+.announcement-editor__visual :deep(strong) { font-family: "Friz Quadrata Std Bold", serif; font-weight: normal; }
+.announcement-editor__visual :deep(em) { font-family: "Friz Quadrata Std Italic", serif; font-style: normal; }
+.announcement-editor__visual :deep(strong em), .announcement-editor__visual :deep(em strong) { font-family: "Friz Quadrata Std Bold Italic", serif; }
+.announcement-editor__visual :deep(code) { padding: 0.2rem 0.5rem; color: #81d4fa; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; font: 0.9rem "Courier New", monospace; }
+.announcement-editor__visual :deep(hr) { margin: 1.5rem 0; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+.announcement-editor__visual :deep(img) { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
 </style>

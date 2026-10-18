@@ -65,7 +65,7 @@ describe("shared announcement editor", () => {
     expect(result.querySelector("h3")?.style.color).toBe("rgb(255, 212, 40)");
     expect(result.querySelector("h3")?.style.margin).toBe("0px 0px 10px");
     expect(result.querySelector("br")).not.toBeNull();
-    expect(wrapper.find("iframe").attributes("srcdoc")).toContain(html);
+    expect(wrapper.find("iframe").exists()).toBe(false);
   });
 
   it("applies formatting and chosen text colors through the shared toolbar", async () => {
@@ -86,7 +86,7 @@ describe("shared announcement editor", () => {
     expect(wrapper.find("textarea").element.value).toBe(html);
     expect(wrapper.findAll("button").find((button) => button.text() === "Visual")!.attributes("disabled")).toBeDefined();
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
-    expect(wrapper.find("iframe").attributes("srcdoc")).toContain(html);
+    expect(wrapper.find("iframe").exists()).toBe(false);
   });
 
   it("updates when the parent loads another announcement or clears the draft", async () => {

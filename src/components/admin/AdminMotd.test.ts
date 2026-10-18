@@ -63,14 +63,13 @@ beforeEach(() => {
 });
 
 describe("MOTD editor", () => {
-  it("previews the generated links and formatting live without allowing scripts", async () => {
+  it("edits formatting directly in Visual mode without a separate preview", async () => {
     const wrapper = await openEditor();
-    const preview = wrapper.find("iframe");
-    expect(preview.attributes("sandbox")).toBe("");
-    expect(preview.attributes("srcdoc")).toContain("Current announcement");
-    await setHtml(wrapper, "<strong>Join today</strong>: https://example.com/events/qualifier");
-    expect(preview.attributes("srcdoc")).toContain('<strong>Join today</strong>: <a href="https://example.com/events/qualifier">https://example.com/events/qualifier</a>');
-    expect(preview.attributes("srcdoc")).toContain("default-src 'none'");
+    expect(wrapper.find('[role="textbox"]').text()).toBe("Current announcement");
+    expect(wrapper.find("iframe").exists()).toBe(false);
+    await setHtml(wrapper, "<p><strong>Join today</strong></p>");
+    await wrapper.findAll("button").find((button) => button.text() === "Visual")!.trigger("click");
+    expect(wrapper.find('[role="textbox"] strong').text()).toBe("Join today");
     expect(mocks.save).not.toHaveBeenCalled();
     wrapper.unmount();
   });
