@@ -36,6 +36,25 @@ afterEach(() => {
 });
 
 describe("shared announcement editor", () => {
+  it("uses Tiptap's Link extension to convert a typed URL after whitespace", async () => {
+    const wrapper = await openEditor("<p></p>");
+    editorOf(wrapper).commands.insertContent("https://example.com/typed ");
+    await flushPromises();
+    const result = document.createElement("div");
+    result.innerHTML = editorOf(wrapper).getHTML();
+    expect(result.querySelector("a")?.getAttribute("href")).toBe("https://example.com/typed");
+  });
+
+  it("uses Tiptap's native paste handling for URLs pasted into Visual mode", async () => {
+    const wrapper = await openEditor("<p></p>");
+    editorOf(wrapper).view.pasteText("Visit https://example.com/pasted.", new Event("paste") as ClipboardEvent);
+    await flushPromises();
+    const result = document.createElement("div");
+    result.innerHTML = editorOf(wrapper).getHTML();
+    expect(result.querySelector("a")?.getAttribute("href")).toBe("https://example.com/pasted");
+    expect(result.textContent).toBe("Visit https://example.com/pasted.");
+  });
+
   it("round trips between HTML and Visual with heading color, margins and line breaks", async () => {
     const wrapper = await openEditor('<h3 style="color: #ffd428; margin: 0 0 10px">Community Event</h3><div>One<br>Two</div>');
     await mode(wrapper, "HTML");

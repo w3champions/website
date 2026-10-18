@@ -10,6 +10,21 @@ function parse(html: string): HTMLTemplateElement {
 }
 
 describe("MOTD links", () => {
+  it("uses native link rules without normalizing unsupported custom markup", () => {
+    const html = '<table style="font-family: monospace"><tr><td>Visit https://example.com/event</td></tr></table>';
+    const result = parse(linkifyAnnouncementHtml(html));
+    expect(result.content.querySelector("table")?.style.fontFamily).toBe("monospace");
+    expect(result.content.querySelector("td a")?.getAttribute("href")).toBe("https://example.com/event");
+    expect(result.content.textContent).toBe(parse(html).content.textContent);
+  });
+
+  it("maps native link marks back to their original text nodes", () => {
+    const result = parse(linkifyAnnouncementHtml("<p>No URL here</p><h3>https://example.com/one</h3><p>http://example.com/two</p>"));
+    expect(result.content.querySelector("h3 a")?.getAttribute("href")).toBe("https://example.com/one");
+    expect(result.content.querySelector("p a")?.getAttribute("href")).toBe("http://example.com/two");
+    expect(result.content.querySelector("p")?.textContent).toBe("No URL here");
+  });
+
   it("converts an announcement's plain URL into a saved HTML link", () => {
     const html = `<h3 style="color: #ffd428">Open Qualifier Today</h3><div>19.00 CEST - https://example.com/events/qualifier</div>`;
     const result = parse(linkifyAnnouncementHtml(html));
