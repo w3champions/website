@@ -76,8 +76,16 @@
           color="primary"
           hide-details
         />
+        <v-checkbox
+          v-model="draft.includeSmurfs"
+          class="mt-2"
+          label="Also apply restrictions to known smurfs"
+          color="primary"
+          density="compact"
+          hide-details
+        />
         <div class="text-caption text-medium-emphasis mt-2">
-          Restrictions also apply to direct smurfs of this account. Blocked players see a "Commercial Event Partnership required" notice in the launcher that links to the Commercial Events page.
+          Without this, restrictions apply only to this exact account. Discord notifications and the commercial event notice always include direct smurfs. Blocked players see a "Commercial Event Partnership required" notice in the launcher that links to the Commercial Events page.
         </div>
 
         <v-alert v-if="error" type="error" variant="tonal" density="compact" class="mt-4">

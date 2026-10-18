@@ -7,7 +7,7 @@ const tag = {
   battleTag: "Foo#1234",
   note: "streams on twitch",
   notify: false,
-  restrictions: { asPlayer: true, asObserver: false, floTv: "custom" as const },
+  restrictions: { asPlayer: true, asObserver: false, floTv: "custom" as const, includeSmurfs: true },
   commercialEventNotice: true,
   createdBy: "Mod#1",
   createdAt: "2026-10-08T10:00:00Z",
@@ -20,7 +20,7 @@ function draftWith(overrides: Partial<CommercialLicenseDraft>): CommercialLicens
 }
 
 test("emptyDraft starts with notifications on, no restrictions and no event notice", () => {
-  assert.deepEqual(emptyDraft(), { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none", commercialEventNotice: false });
+  assert.deepEqual(emptyDraft(), { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false, commercialEventNotice: false });
 });
 
 test("draftFromTag copies only the editable fields, flattening the restrictions", () => {
@@ -31,6 +31,7 @@ test("draftFromTag copies only the editable fields, flattening the restrictions"
     asPlayer: true,
     asObserver: false,
     floTv: "custom",
+    includeSmurfs: true,
     commercialEventNotice: true,
   });
 });
@@ -39,13 +40,14 @@ test("toTagRequest drops the battleTag and always sends the restrictions", () =>
   assert.deepEqual(toTagRequest(draftWith({ battleTag: "Foo#1234", note: "n" })), {
     note: "n",
     notify: true,
-    restrictions: { asPlayer: false, asObserver: false, floTv: "none" },
+    restrictions: { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false },
     commercialEventNotice: false,
   });
   assert.deepEqual(toTagRequest(draftWith({ asPlayer: true, asObserver: true, floTv: "all" })).restrictions, {
     asPlayer: true,
     asObserver: true,
     floTv: "all",
+    includeSmurfs: false,
   });
 });
 
@@ -103,4 +105,9 @@ test("toTagRequest always sends commercialEventNotice and editing round-trips it
   assert.equal(toTagRequest(draftWith({ battleTag: "Foo#1", commercialEventNotice: true })).commercialEventNotice, true);
   assert.equal(toTagRequest(draftFromTag(tag)).commercialEventNotice, true);
   assert.equal(toTagRequest(draftFromTag({ ...tag, commercialEventNotice: false })).commercialEventNotice, false);
+});
+
+test("toTagRequest always sends restrictions.includeSmurfs", () => {
+  assert.equal(toTagRequest(emptyDraft()).restrictions.includeSmurfs, false);
+  assert.equal(toTagRequest(draftWith({ includeSmurfs: true })).restrictions.includeSmurfs, true);
 });

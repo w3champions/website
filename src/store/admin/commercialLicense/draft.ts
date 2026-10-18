@@ -14,11 +14,12 @@ export interface CommercialLicenseDraft {
   asPlayer: boolean;
   asObserver: boolean;
   floTv: FloTvRestriction;
+  includeSmurfs: boolean;
   commercialEventNotice: boolean;
 }
 
 export function emptyDraft(): CommercialLicenseDraft {
-  return { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none", commercialEventNotice: false };
+  return { battleTag: "", note: "", notify: true, asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false, commercialEventNotice: false };
 }
 
 export function draftFromTag(tag: CommercialLicenseTaggedPlayer): CommercialLicenseDraft {
@@ -29,6 +30,7 @@ export function draftFromTag(tag: CommercialLicenseTaggedPlayer): CommercialLice
     asPlayer: tag.restrictions.asPlayer,
     asObserver: tag.restrictions.asObserver,
     floTv: tag.restrictions.floTv,
+    includeSmurfs: tag.restrictions.includeSmurfs,
     commercialEventNotice: tag.commercialEventNotice,
   };
 }
@@ -38,7 +40,7 @@ export function toTagRequest(draft: CommercialLicenseDraft): CommercialLicenseTa
   return {
     note: draft.note,
     notify: draft.notify,
-    restrictions: { asPlayer: draft.asPlayer, asObserver: draft.asObserver, floTv: draft.floTv },
+    restrictions: { asPlayer: draft.asPlayer, asObserver: draft.asObserver, floTv: draft.floTv, includeSmurfs: draft.includeSmurfs },
     commercialEventNotice: draft.commercialEventNotice,
   };
 }

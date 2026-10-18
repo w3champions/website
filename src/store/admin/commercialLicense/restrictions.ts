@@ -9,7 +9,7 @@ export const FLO_TV_OPTIONS: { title: string; value: FloTvRestriction }[] = [
 
 /** What a tag without restrictions reads as (contract C-R1). */
 function noRestrictions(): CommercialLicenseRestrictions {
-  return { asPlayer: false, asObserver: false, floTv: "none" };
+  return { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false };
 }
 
 /**
@@ -17,7 +17,7 @@ function noRestrictions(): CommercialLicenseRestrictions {
  * null or missing (System.Text.Json emits null; older matchmaking omits them).
  */
 export type CommercialLicenseTaggedPlayerWire = Omit<CommercialLicenseTaggedPlayer, "restrictions" | "commercialEventNotice"> & {
-  restrictions?: CommercialLicenseRestrictions | null;
+  restrictions?: (Omit<CommercialLicenseRestrictions, "includeSmurfs"> & { includeSmurfs?: boolean | null }) | null;
   commercialEventNotice?: boolean | null;
 };
 
@@ -26,7 +26,11 @@ export type CommercialLicenseTaggedPlayerWire = Omit<CommercialLicenseTaggedPlay
  * restrictionSummary, the table) never sees a null restrictions object or notice flag.
  */
 export function normalizeTag(raw: CommercialLicenseTaggedPlayerWire): CommercialLicenseTaggedPlayer {
-  return { ...raw, restrictions: raw.restrictions ?? noRestrictions(), commercialEventNotice: raw.commercialEventNotice ?? false };
+  return {
+    ...raw,
+    restrictions: raw.restrictions ? { ...raw.restrictions, includeSmurfs: raw.restrictions.includeSmurfs ?? false } : noRestrictions(),
+    commercialEventNotice: raw.commercialEventNotice ?? false,
+  };
 }
 
 /** Compact labels for the table, one per active restriction; empty when the tag restricts nothing. */
@@ -37,5 +41,6 @@ export function restrictionSummary(restrictions: CommercialLicenseRestrictions):
   if (restrictions.floTv === "custom") labels.push("FloTV: custom games");
   else if (restrictions.floTv === "all") labels.push("FloTV: all games");
   else if (restrictions.floTv !== "none") labels.push("FloTV: " + String(restrictions.floTv)); // unknown future value: never look unrestricted
+  if (restrictions.includeSmurfs && labels.length > 0) labels.push("Incl. smurfs");
   return labels;
 }
