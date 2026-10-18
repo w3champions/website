@@ -2,8 +2,8 @@ import { find } from "linkifyjs";
 
 export const MOTD_MAX_LENGTH = 2000;
 
-/** Convert web URLs in MOTD text to links without changing existing HTML links. */
-export function linkifyMotd(html: string): string {
+/** Convert web URLs in announcement text to links without changing existing HTML links. */
+export function linkifyAnnouncementHtml(html: string): string {
   const template = document.createElement("template");
   template.innerHTML = html;
   const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);

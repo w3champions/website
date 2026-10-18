@@ -16,12 +16,8 @@
             <v-divider class="mt-4" />
           </v-card-text>
           <v-form ref="form" v-model="isFormValid">
-            <v-card-actions class="ma-3 pa-3">
-              <v-textarea v-model="newMotd" variant="outlined" :counter="MOTD_MAX_LENGTH" :counter-value="() => linkedMotd.length" label="New Motd:" :rules="rules" hint="HTTP(S) URLs become clickable links when saved. The character count includes link markup." persistent-hint />
-            </v-card-actions>
             <v-card-text class="px-6">
-              <h3 class="mb-3">Preview</h3>
-              <iframe class="motd-preview" title="Message of the Day preview" sandbox="" referrerpolicy="no-referrer" :srcdoc="motdPreview"></iframe>
+              <AdminRichTextEditor v-model="newMotd" label="Message of the Day" :max-length="MOTD_MAX_LENGTH" />
             </v-card-text>
             <v-card-actions class="pa-3 ma-3 justify-end">
               <v-btn class="bg-primary text-w3-race-bg" :disabled="!isFormValid" @click="confirmNewMotd">Set New Motd</v-btn>
@@ -36,12 +32,12 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useInfoMessagesStore } from "@/store/admin/infoMessages/store";
-import type { ValidationRule } from "vuetify";
-import { linkifyMotd, MOTD_MAX_LENGTH } from "@/helpers/motdLinks";
+import AdminRichTextEditor from "./editor/AdminRichTextEditor.vue";
+import { linkifyAnnouncementHtml, MOTD_MAX_LENGTH } from "@/helpers/announcementHtml";
 
 export default defineComponent({
   name: "AdminMotd",
-  components: {},
+  components: { AdminRichTextEditor },
   setup() {
     const infoMessagesStore = useInfoMessagesStore();
 
@@ -52,21 +48,7 @@ export default defineComponent({
     const isFormValid = ref(false);
 
     const motd = computed<string>(() => infoMessagesStore.messageOfTheDay.motd);
-    const linkedMotd = computed(() => linkifyMotd(newMotd.value));
-    const motdPreview = computed(() => `<!doctype html>
-<html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
-<style>
-  body { margin: 20px; color: #fff; background: #111; font: 18px/1.4 Georgia, serif; overflow-wrap: anywhere; }
-  h1, h2, h3, a { color: #ffd428; }
-  a { pointer-events: none; }
-</style></head><body>${linkedMotd.value}</body></html>`);
-
-    const rules = computed<ValidationRule[]>(() => {
-      return [
-        () => linkedMotd.value.length <= MOTD_MAX_LENGTH || `Max ${MOTD_MAX_LENGTH} characters, including generated links`,
-      ];
-    });
-
+    const linkedMotd = computed(() => linkifyAnnouncementHtml(newMotd.value));
     async function confirmNewMotd(): Promise<void> {
       if (!(await form.value.validate()).valid) return;
       await setMotd(linkedMotd.value);
@@ -90,10 +72,8 @@ export default defineComponent({
       loaded,
       loading,
       motd,
-      motdPreview,
       linkedMotd,
       MOTD_MAX_LENGTH,
-      rules,
       newMotd,
       confirmNewMotd,
       form,
@@ -102,14 +82,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.motd-preview {
-  display: block;
-  width: 100%;
-  height: 260px;
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.3);
-  border-radius: 4px;
-  background: #111;
-}
-</style>
