@@ -10,12 +10,12 @@ function parse(html: string): HTMLTemplateElement {
 }
 
 describe("MOTD links", () => {
-  it("converts the qualifier announcement's plain URL into a saved HTML link", () => {
-    const html = `<h3 style="color: #ffd428">Open Qualifier Today</h3><div>19.00 CEST - https://challonge.com/DLEEQualifier</div>`;
+  it("converts an announcement's plain URL into a saved HTML link", () => {
+    const html = `<h3 style="color: #ffd428">Open Qualifier Today</h3><div>19.00 CEST - https://example.com/events/qualifier</div>`;
     const result = parse(linkifyMotd(html));
     const link = result.content.querySelector("a")!;
-    expect(link.getAttribute("href")).toBe("https://challonge.com/DLEEQualifier");
-    expect(link.textContent).toBe("https://challonge.com/DLEEQualifier");
+    expect(link.getAttribute("href")).toBe("https://example.com/events/qualifier");
+    expect(link.textContent).toBe("https://example.com/events/qualifier");
     expect(result.content.textContent).toBe(parse(html).content.textContent);
     expect(result.content.querySelector("h3")?.getAttribute("style")).toBe("color: #ffd428");
   });

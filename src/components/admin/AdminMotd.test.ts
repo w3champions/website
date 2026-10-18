@@ -60,8 +60,8 @@ describe("MOTD editor", () => {
     const preview = wrapper.find("iframe");
     expect(preview.attributes("sandbox")).toBe("");
     expect(preview.attributes("srcdoc")).toContain("Current announcement");
-    await wrapper.find("textarea").setValue("<strong>Join today</strong>: https://challonge.com/DLEEQualifier");
-    expect(preview.attributes("srcdoc")).toContain(`<strong>Join today</strong>: <a href="https://challonge.com/DLEEQualifier">https://challonge.com/DLEEQualifier</a>`);
+    await wrapper.find("textarea").setValue("<strong>Join today</strong>: https://example.com/events/qualifier");
+    expect(preview.attributes("srcdoc")).toContain(`<strong>Join today</strong>: <a href="https://example.com/events/qualifier">https://example.com/events/qualifier</a>`);
     expect(preview.attributes("srcdoc")).toContain("default-src 'none'");
     expect(mocks.save).not.toHaveBeenCalled();
     wrapper.unmount();
@@ -69,10 +69,10 @@ describe("MOTD editor", () => {
 
   it("saves plain URLs as anchors and keeps existing formatted content", async () => {
     const wrapper = await openEditor();
-    await wrapper.find("textarea").setValue("<strong>Join today</strong>: https://challonge.com/DLEEQualifier");
+    await wrapper.find("textarea").setValue("<strong>Join today</strong>: https://example.com/events/qualifier");
     await wrapper.find("button").trigger("click");
     await flushPromises();
-    expect(mocks.save).toHaveBeenCalledWith({ motd: `<strong>Join today</strong>: <a href="https://challonge.com/DLEEQualifier">https://challonge.com/DLEEQualifier</a>` });
+    expect(mocks.save).toHaveBeenCalledWith({ motd: `<strong>Join today</strong>: <a href="https://example.com/events/qualifier">https://example.com/events/qualifier</a>` });
     wrapper.unmount();
   });
 
@@ -81,7 +81,7 @@ describe("MOTD editor", () => {
     const input = `${"a".repeat(1965)} https://example.com`;
     expect(input.length).toBeLessThan(2000);
     await wrapper.find("textarea").setValue(input);
-    const [validateLength] = wrapper.findComponent(textarea).props("rules")!;
+    const [validateLength] = wrapper.findComponent(textarea).props("rules");
     expect(validateLength(input)).toBe("Max 2000 characters, including generated links");
     mocks.validate.mockResolvedValue({ valid: false });
     await wrapper.find("button").trigger("click");
@@ -93,7 +93,7 @@ describe("MOTD editor", () => {
   it("accepts the 2000-character boundary and rejects longer messages", async () => {
     const wrapper = await openEditor();
     await wrapper.find("textarea").setValue("a".repeat(2000));
-    const [validateLength] = wrapper.findComponent(textarea).props("rules")!;
+    const [validateLength] = wrapper.findComponent(textarea).props("rules");
     expect(validateLength()).toBe(true);
     await wrapper.find("textarea").setValue("a".repeat(2001));
     expect(validateLength()).toBe("Max 2000 characters, including generated links");
