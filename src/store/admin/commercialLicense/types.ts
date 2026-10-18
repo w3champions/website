@@ -8,6 +8,8 @@ export interface CommercialLicenseRestrictions {
   asPlayer: boolean;
   asObserver: boolean;
   floTv: FloTvRestriction;
+  /** Restrictions also apply to the tag's direct smurfs (notifications always do). */
+  includeSmurfs: boolean;
 }
 
 /** Mirrors CommercialLicenseTaggedPlayerDto (contracts C2, C-R1, C-E3). Timestamps are ISO-8601. */

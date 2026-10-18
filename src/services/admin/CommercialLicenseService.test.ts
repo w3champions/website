@@ -48,7 +48,7 @@ test("getTaggedPlayers surfaces a failure instead of returning an empty list", a
 
 test("upsertTaggedPlayer PUTs note, notify, restrictions and commercialEventNotice to the url-encoded battleTag", async () => {
   const { service, calls } = serviceWith({ status: 200, body: { battleTag: "Foo#1234" } });
-  const restrictions = { asPlayer: true, asObserver: false, floTv: "custom" as const };
+  const restrictions = { asPlayer: true, asObserver: false, floTv: "custom" as const, includeSmurfs: true };
 
   await service.upsertTaggedPlayer("tok", "Foo#1234", { note: "n", notify: true, restrictions, commercialEventNotice: true });
 
@@ -79,15 +79,28 @@ test("getTaggedPlayers normalizes null and missing restrictions", async () => {
       { battleTag: "A#1", restrictions: null },
       { battleTag: "B#2" },
       { battleTag: "C#3", restrictions: { asPlayer: true, asObserver: false, floTv: "all" } },
+      { battleTag: "D#4", restrictions: { asPlayer: true, asObserver: false, floTv: "all", includeSmurfs: true } },
     ],
   });
 
   const result = await service.getTaggedPlayers("tok");
 
-  const none = { asPlayer: false, asObserver: false, floTv: "none" };
+  const none = { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false };
   assert.deepEqual(result[0].restrictions, none);
   assert.deepEqual(result[1].restrictions, none);
-  assert.deepEqual(result[2].restrictions, { asPlayer: true, asObserver: false, floTv: "all" });
+  assert.deepEqual(result[2].restrictions, { asPlayer: true, asObserver: false, floTv: "all", includeSmurfs: false });
+  assert.deepEqual(result[3].restrictions, { asPlayer: true, asObserver: false, floTv: "all", includeSmurfs: true });
+});
+
+test("getTaggedPlayers normalizes a null restrictions.includeSmurfs to false", async () => {
+  const { service } = serviceWith({
+    status: 200,
+    body: [{ battleTag: "A#1", restrictions: { asPlayer: true, asObserver: true, floTv: "custom", includeSmurfs: null } }],
+  });
+
+  const [player] = await service.getTaggedPlayers("tok");
+
+  assert.deepEqual(player.restrictions, { asPlayer: true, asObserver: true, floTv: "custom", includeSmurfs: false });
 });
 
 test("upsertTaggedPlayer normalizes a null restrictions in the result", async () => {
@@ -96,9 +109,9 @@ test("upsertTaggedPlayer normalizes a null restrictions in the result", async ()
   const saved = await service.upsertTaggedPlayer("tok", "A#1", {
     note: "",
     notify: true,
-    restrictions: { asPlayer: false, asObserver: false, floTv: "none" },
+    restrictions: { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false },
     commercialEventNotice: false,
   });
 
-  assert.deepEqual(saved.restrictions, { asPlayer: false, asObserver: false, floTv: "none" });
+  assert.deepEqual(saved.restrictions, { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false });
 });

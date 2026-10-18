@@ -14,15 +14,15 @@ const base = {
 };
 
 test("normalizeTag fills restrictions when the backend sent null", () => {
-  assert.deepEqual(normalizeTag({ ...base, restrictions: null }).restrictions, { asPlayer: false, asObserver: false, floTv: "none" });
+  assert.deepEqual(normalizeTag({ ...base, restrictions: null }).restrictions, { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false });
 });
 
 test("normalizeTag fills restrictions when the field is missing", () => {
-  assert.deepEqual(normalizeTag(base).restrictions, { asPlayer: false, asObserver: false, floTv: "none" });
+  assert.deepEqual(normalizeTag(base).restrictions, { asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false });
 });
 
 test("normalizeTag keeps present restrictions and the other fields", () => {
-  const restrictions = { asPlayer: true, asObserver: false, floTv: "all" as const };
+  const restrictions = { asPlayer: true, asObserver: false, floTv: "all" as const, includeSmurfs: true };
   assert.deepEqual(normalizeTag({ ...base, restrictions, commercialEventNotice: true }), { ...base, restrictions, commercialEventNotice: true });
 });
 
@@ -32,15 +32,15 @@ test("normalizeTag reads a null or missing commercialEventNotice as false", () =
 });
 
 test("no restrictions yields an empty summary", () => {
-  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "none" }), []);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false }), []);
 });
 
 test("each restriction yields its own label, in a stable order", () => {
-  assert.deepEqual(restrictionSummary({ asPlayer: true, asObserver: false, floTv: "none" }), ["Player"]);
-  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: true, floTv: "none" }), ["Observer"]);
-  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "custom" }), ["FloTV: custom games"]);
-  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "all" }), ["FloTV: all games"]);
-  assert.deepEqual(restrictionSummary({ asPlayer: true, asObserver: true, floTv: "all" }), ["Player", "Observer", "FloTV: all games"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: true, asObserver: false, floTv: "none", includeSmurfs: false }), ["Player"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: true, floTv: "none", includeSmurfs: false }), ["Observer"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "custom", includeSmurfs: false }), ["FloTV: custom games"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "all", includeSmurfs: false }), ["FloTV: all games"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: true, asObserver: true, floTv: "all", includeSmurfs: false }), ["Player", "Observer", "FloTV: all games"]);
 });
 
 test("the FloTV select offers none, custom and all, in that order", () => {
@@ -52,9 +52,19 @@ test("the FloTV select offers none, custom and all, in that order", () => {
 });
 
 test("restrictionSummary surfaces an unknown future FloTV value instead of hiding it", () => {
-  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "future" as FloTvRestriction }), ["FloTV: future"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "future" as FloTvRestriction, includeSmurfs: false }), ["FloTV: future"]);
 });
 
 test("restrictionSummary shows no FloTV chip for none", () => {
-  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "none" }), []);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: false }), []);
+});
+
+test("normalizeTag reads a null or missing restrictions.includeSmurfs as false", () => {
+  assert.equal(normalizeTag({ ...base, restrictions: { asPlayer: true, asObserver: false, floTv: "all" } }).restrictions.includeSmurfs, false);
+  assert.equal(normalizeTag({ ...base, restrictions: { asPlayer: true, asObserver: false, floTv: "all", includeSmurfs: null } }).restrictions.includeSmurfs, false);
+});
+
+test("restrictionSummary appends 'Incl. smurfs' only next to an active restriction", () => {
+  assert.deepEqual(restrictionSummary({ asPlayer: true, asObserver: false, floTv: "none", includeSmurfs: true }), ["Player", "Incl. smurfs"]);
+  assert.deepEqual(restrictionSummary({ asPlayer: false, asObserver: false, floTv: "none", includeSmurfs: true }), []);
 });
