@@ -5,6 +5,7 @@ export enum EAdminRouteName {
   SMURF_CHECKER = "Admin - Smurf Checker",
   SMURF_CHECKER_QUERY = "Admin - Search Smurfs",
   SMURF_CHECKER_MANAGE_IDENTIFIERS = "Admin - Manage Identifiers",
+  SMURF_CHECKER_HARDWARE_LINKS = "Admin - Hardware Links",
   GLOBAL_MUTE = "Admin - Global Mute",
   LOUNGE_MUTE = "Admin - Lounge Mute",
   PLAYER_WARNINGS = "Admin - Player Warnings",

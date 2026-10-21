@@ -73,6 +73,13 @@ The "Commercial Events" admin section (permission `CommercialLicense`) has four 
 - Admin date fields are entered and shown in UTC. Battle tags are stored and compared exactly as written (never case-folded).
 - How events, allocations, periods and event games work: `docs/commercial-events.md` in the matchmaking-service repository.
 
+#### Hardware Links (smurf moderation)
+The "Hardware Links" page (`admin-hardware-smurfs`, "Smurf Checker" group) shows one account's hardware links, ended links (tombstones), hardware items and the moderator override history. Reading needs `SmurfCheckerQuery`; every override button needs `SmurfCheckerAdministration`.
+- Client: `src/services/admin/HardwareSmurfService.ts` (website-backend `api/admin/smurf-detection/...`, proxied to the matchmaking service, which sets the author). Response types: `src/services/admin/smurf-detection/HardwareSmurfResponse.ts`.
+- Store and pure helpers with tests (tombstone labels, available actions, dialog copy, results, audit paging): `src/store/admin/hardwareSmurfs/`. Page parts: `src/components/admin/hardware-smurfs/`. Copy: `views_admin.hardware_smurfs` in `src/locales/en.ts`.
+- Items are always selected as (battleTag, hash8). Trust and ignore show the holder count before confirming. Overrides queue a re-check, so the page says so and never shows the change as immediate.
+- The repo is public: show what the server returns (flags, outcomes, messages), never detection thresholds or rule details.
+
 #### Replay Export
 The "Replay Export" admin section (permission `Replays`) has two pages: `admin-replay-export` (search, list, ZIP download, own past downloads) and `admin-replay-downloads` (the downloads of all users).
 - Client: `src/services/admin/ReplayExportService.ts`; the backend is `Admin/ReplayExport/` in website-backend.
