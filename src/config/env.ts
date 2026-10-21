@@ -7,6 +7,7 @@ declare global {
       INGAME_STATIC_RESOURCES_URL: string;
       BNET_API_CLIENT_ID: string;
       TURNSTILE_SITE_KEY: string;
+      USE_NEW_SEARCH: boolean; // new-search rollout flag — see src/helpers/featureFlags.ts
     };
   }
 }
