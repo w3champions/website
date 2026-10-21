@@ -37,6 +37,7 @@ import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
 import AdminBanReasonTranslations from "@/components/admin/AdminBanReasonTranslations.vue";
 import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
 import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
+import AdminHardwareSmurfs from "@/components/admin/AdminHardwareSmurfs.vue";
 import AdminGlobalMute from "@/components/admin/AdminGlobalMute.vue";
 import AdminLoungeMute from "@/components/admin/AdminLoungeMute.vue";
 import AdminWarnings from "@/components/admin/AdminWarnings.vue";
@@ -281,6 +282,7 @@ const routes: RouteRecordRaw[] = [
       { path: "admin-ban-reason-translations", name: EAdminRouteName.BAN_REASON_TRANSLATIONS, component: AdminBanReasonTranslations },
       { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: AdminSmurfs },
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },
+      { path: "admin-hardware-smurfs", name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, component: AdminHardwareSmurfs },
       { path: "admin-global-mute", name: EAdminRouteName.GLOBAL_MUTE, component: AdminGlobalMute },
       { path: "admin-lounge-mute", name: EAdminRouteName.LOUNGE_MUTE, component: AdminLoungeMute },
       { path: "commercial-events/tagged-accounts", name: EAdminRouteName.COMMERCIAL_EVENTS_TAGGED_ACCOUNTS, component: AdminTaggedAccounts },
