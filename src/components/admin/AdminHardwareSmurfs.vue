@@ -16,6 +16,7 @@
                 :hideDetails="true"
                 @playerFound="playerFound"
                 @searchCleared="searchCleared"
+                @searchTextChanged="onSearchTextChanged"
               />
             </v-col>
             <v-col cols="12" sm="3">
@@ -78,6 +79,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
 import { getProfileUrl } from "@/helpers/url-functions";
+import { isStaleSelection } from "@/store/admin/commercialLicense/draft";
 import type { HardwareProfileItemView } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
 import { EPermission } from "@/store/admin/permission/types";
 import { type ActionOption, isWideImpact, type ItemAction, type OverrideAction, type PairAction } from "@/store/admin/hardwareSmurfs/actions";
@@ -110,6 +112,11 @@ const selectedPlayer = ref("");
 
 function playerFound(battleTag: string): void {
   selectedPlayer.value = battleTag;
+}
+
+// Editing the text after picking a player drops the pick, so Search never opens an account the field no longer shows.
+function onSearchTextChanged(text: string): void {
+  if (isStaleSelection(selectedPlayer.value, text)) selectedPlayer.value = "";
 }
 
 function searchCleared(): void {
