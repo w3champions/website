@@ -232,6 +232,8 @@ describe("LauncherSetup download source", () => {
 
     await switchButton("中国大陆用户")!.trigger("click");
     expect(status()).toContain("下载线路：中国大陆线路");
+    expect(status()).toContain("（你的选择）");
+    expect(status()).not.toContain("chosen by you");
     expect(status()).toContain("改用国际线路（GitHub）");
     expect(status()).not.toContain("Use Global (GitHub)");
   });

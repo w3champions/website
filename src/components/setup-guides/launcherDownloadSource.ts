@@ -47,6 +47,7 @@ export const ZH = {
   global: "国际线路（GitHub）",
   china: "中国大陆线路",
   detectedNotice: "检测到您在中国大陆，已自动使用中国大陆线路下载。",
+  chosenByYou: "（你的选择）",
   useChina: "中国大陆用户：使用中国大陆线路",
   useGlobal: "改用国际线路（GitHub）",
   hintGlobalSource: (platformName: string) => `下载没反应或很慢？用中国大陆线路重新下载 ${platformName} 版`,

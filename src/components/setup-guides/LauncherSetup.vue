@@ -79,7 +79,8 @@
                           <template v-if="showEnglish">
                             <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}
                           </template>
-                          <span>({{ $t("components_launchersetup.chosen_by_you") }})</span>
+                          <span v-if="showEnglish">({{ $t("components_launchersetup.chosen_by_you") }})</span>
+                          <span v-else lang="zh-CN">{{ ZH.chosenByYou }}</span>
                           ·
                         </template>
                         <button
