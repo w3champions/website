@@ -162,12 +162,12 @@ describe("LauncherSetup download source", () => {
     expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=cn");
   });
 
-  it("downloadButtonsReferenceTheStatusLine", async () => {
+  it("downloadButtonsAreDescribedByTheShortStatusSentence", async () => {
     fetchDetected.mockResolvedValue("global");
     await mountSetup();
 
-    const id = wrapper!.get(".source-status").attributes("id");
-    expect(id).toBeTruthy();
+    const id = wrapper!.get("#launcher-download-source-status-text").attributes("id");
+    expect(wrapper!.get(`#${id}`).text()).toBe("Download source: Global (GitHub)");
     for (const a of wrapper!.findAll("a.join-button")) expect(a.attributes("aria-describedby")).toBe(id);
   });
 
@@ -179,17 +179,39 @@ describe("LauncherSetup download source", () => {
     const firstButton = wrapper!.get("a.join-button").element;
     expect(notice.compareDocumentPosition(firstButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(wrapper!.get(".source-notice").text()).toContain("检测到您在中国大陆");
-    for (const a of wrapper!.findAll("a.join-button")) {
-      expect(a.attributes("aria-describedby")).toBe(wrapper!.get(".source-notice").attributes("id"));
-    }
+    // Described by the sentence only, not by the switch link next to it.
+    const describedBy = wrapper!.get("a.join-button").attributes("aria-describedby");
+    expect(wrapper!.get(`#${describedBy}`).text()).not.toContain("改用国际线路");
+    expect(wrapper!.get(`#${describedBy}`).text()).toContain("检测到您在中国大陆");
   });
 
-  it("statusAndNoticeAreLiveRegions", async () => {
+  it("onlyTheDetectionNoticeIsALiveRegion", async () => {
     fetchDetected.mockResolvedValue("global");
     await mountSetup();
 
-    expect(wrapper!.get(".source-status").attributes("aria-live")).toBe("polite");
+    // The status line is read together with the focused switch; a live region
+    // there would announce the change twice.
+    expect(wrapper!.get(".source-status").attributes("aria-live")).toBeUndefined();
     expect(wrapper!.get(".source-notice").attributes("aria-live")).toBe("polite");
+  });
+
+  it("focusFollowsTheSwitchWhenLateDetectionReplacesIt", async () => {
+    let resolveDetection!: (value: "cn") => void;
+    fetchDetected.mockReturnValue(new Promise((resolve) => (resolveDetection = resolve)));
+    await mountSetup();
+
+    // Chosen before detection answered: focus sits on the status line's switch.
+    await switchButton("中国大陆用户")!.trigger("click");
+    await flushPromises();
+    expect(focusedButtonText()).toContain("Use Global (GitHub)");
+
+    // Detection then agrees, the choice is cleared and the notice's switch replaces it.
+    resolveDetection("cn");
+    await flushPromises();
+
+    expect(wrapper!.get(".source-notice").text()).toContain("检测到您在中国大陆");
+    expect(wrapper!.get(".source-notice").element.contains(document.activeElement)).toBe(true);
+    expect(focusedButtonText()).toContain("改用国际线路");
   });
 
   it("focusMovesToTheNewSwitchAfterSwitching", async () => {

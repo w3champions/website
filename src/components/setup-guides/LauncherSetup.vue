@@ -33,13 +33,15 @@
                   <br />
                   <v-card-text ref="downloadArea" class="pa-0">
                     <!-- State 1: the notice goes above the buttons. -->
-                    <div :id="noticeId" aria-live="polite" class="source-controls source-notice text-body-2" :class="{ 'mb-4': mode === 'detected-cn' }">
+                    <div aria-live="polite" class="source-controls source-notice text-body-2 text-high-emphasis" :class="{ 'mb-4': mode === 'detected-cn' }">
                       <template v-if="mode === 'detected-cn'">
-                        <span lang="zh-CN">{{ ZH.detectedNotice }}</span>
-                        <template v-if="showEnglish">
-                          <br />
-                          <span>{{ $t("components_launchersetup.detected_notice") }}</span>
-                        </template>
+                        <span :id="noticeTextId">
+                          <span lang="zh-CN">{{ ZH.detectedNotice }}</span>
+                          <template v-if="showEnglish">
+                            <br />
+                            <span>{{ $t("components_launchersetup.detected_notice") }}</span>
+                          </template>
+                        </span>
                         <br />
                         <button type="button" class="source-switch" @click="choose('global', true)">
                           <span lang="zh-CN">{{ ZH.useGlobal }}</span>
@@ -55,7 +57,7 @@
                         v-for="platform in platforms"
                         :key="platform.id"
                         :href="platform.url"
-                        :aria-describedby="mode === 'detected-cn' ? noticeId : statusId"
+                        :aria-describedby="describedBy"
                         target="_blank"
                         rel="noopener"
                         class="join-button mt-0"
@@ -66,14 +68,14 @@
                       </v-btn>
                     </div>
 
-                    <p :id="statusId" aria-live="polite" class="source-controls source-status text-body-2 mt-4 mb-1">
+                    <p class="source-controls source-status text-body-2 text-high-emphasis mt-4 mb-1">
                       <template v-if="mode === 'unknown'">
                         <button type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
                           {{ ZH.useChina }}
                         </button>
                       </template>
                       <template v-else-if="mode !== 'detected-cn'">
-                        <span :lang="showEnglish ? undefined : 'zh-CN'">{{ statusLabel }}</span>
+                        <span :id="statusTextId" :lang="showEnglish ? undefined : 'zh-CN'">{{ statusLabel }}</span>
                         ·
                         <template v-if="mode === 'chosen'">
                           <template v-if="showEnglish">
@@ -100,7 +102,7 @@
                       </template>
                     </p>
 
-                    <div aria-live="polite" class="source-hint text-body-2">
+                    <div aria-live="polite" class="source-hint text-body-2 text-high-emphasis">
                       <button
                         v-if="hint"
                         type="button"
@@ -205,6 +207,10 @@ const PLATFORMS: PlatformEntry[] = [
   { id: "mac-x64", label: "macOS (Intel)" },
 ];
 
+// The short sentence the download buttons are described by (never the switch links).
+const NOTICE_TEXT_ID = "launcher-download-source-notice-text";
+const STATUS_TEXT_ID = "launcher-download-source-status-text";
+
 export default defineComponent({
   name: "LauncherSetup",
   components: {},
@@ -222,13 +228,27 @@ export default defineComponent({
     // The last download the visitor started, and the source it came from.
     const lastClick = ref<{ platform: PlatformEntry; source: DownloadSource } | null>(null);
 
+    function isSwitchFocused(): boolean {
+      const active = document.activeElement;
+      return !!active?.classList.contains("source-switch") && !!active.closest(".source-controls");
+    }
+
+    async function focusSwitch() {
+      await nextTick();
+      downloadArea.value?.$el.querySelector<HTMLElement>(".source-controls .source-switch")?.focus();
+    }
+
     onMounted(async () => {
-      detected.value = await LauncherDownloadSourceService.fetchDetected();
+      const answer = await LauncherDownloadSourceService.fetchDetected();
+      // The answer can replace the switch the visitor is on; focus must follow it.
+      const hadFocus = isSwitchFocused();
+      detected.value = answer;
       // A saved choice that equals what detection picks is no longer a choice.
       if (detected.value !== null && saved.value === detected.value) {
         saved.value = nextSaved(detected.value, saved.value);
         writeSavedSource(saved.value);
       }
+      if (hadFocus) await focusSwitch();
     });
 
     const linkSource = computed(() => effectiveSource(detected.value, saved.value));
@@ -247,6 +267,11 @@ export default defineComponent({
         : `${ZH.label}：${source.value === "cn" ? ZH.china : ZH.global}`
     );
 
+    const describedBy = computed(() => {
+      if (mode.value === "detected-cn") return NOTICE_TEXT_ID;
+      return mode.value === "unknown" ? undefined : STATUS_TEXT_ID;
+    });
+
     const platforms = computed(() =>
       PLATFORMS.map((p) => ({ ...p, url: installerUrl(LAUNCHER_UPDATE_URL, p.id, linkSource.value) }))
     );
@@ -264,9 +289,7 @@ export default defineComponent({
     async function choose(chosen: DownloadSource, keepFocus = false) {
       saved.value = nextSaved(detected.value, chosen);
       writeSavedSource(saved.value);
-      if (!keepFocus) return;
-      await nextTick();
-      downloadArea.value?.$el.querySelector<HTMLElement>(".source-controls .source-switch")?.focus();
+      if (keepFocus) await focusSwitch();
     }
 
     function onDownloadClick(platform: PlatformEntry) {
@@ -298,8 +321,9 @@ export default defineComponent({
       ingameAddonLink,
       alertMessage,
       mdiDownload,
-      statusId: "launcher-download-source-status",
-      noticeId: "launcher-download-source-notice",
+      noticeTextId: NOTICE_TEXT_ID,
+      statusTextId: STATUS_TEXT_ID,
+      describedBy,
       downloadArea,
       statusLabel,
       ZH,
@@ -328,12 +352,6 @@ export default defineComponent({
       width: 100%;
     }
   }
-}
-
-.source-notice,
-.source-status,
-.source-hint {
-  opacity: 0.85;
 }
 
 // Reserved so the section does not jump when detection answers.
