@@ -32,33 +32,79 @@
                   <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
                   <v-card-text class="pa-0">
-                    <v-btn
-                      :href="launcherEUrl"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-button mt-0 mb-4"
-                    >
-                      <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2">Windows</span>
-                    </v-btn>
-                    <v-btn
-                      :href="launcherEMacArm64Url"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-button mt-0 mb-4 ml-8"
-                    >
-                      <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2">macOS (Apple Silicon)</span>
-                    </v-btn>
-                    <v-btn
-                      :href="launcherEMacIntelUrl"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-button mt-0 mb-4 ml-8"
-                    >
-                      <v-icon>{{ mdiDownload }}</v-icon>
-                      <span class="mr-2">macOS (Intel)</span>
-                    </v-btn>
+                    <div class="download-buttons">
+                      <v-btn
+                        v-for="platform in platforms"
+                        :key="platform.id"
+                        :href="platform.url"
+                        :aria-describedby="statusId"
+                        target="_blank"
+                        rel="noopener"
+                        class="join-button mt-0"
+                        @click="onDownloadClick(platform)"
+                      >
+                        <v-icon>{{ mdiDownload }}</v-icon>
+                        <span class="mr-2">{{ platform.label }}</span>
+                      </v-btn>
+                    </div>
+
+                    <p :id="statusId" class="source-status text-body-2 mt-4 mb-1">
+                      <template v-if="mode === 'detected-cn'">
+                        <span lang="zh-CN">{{ ZH.detectedNotice }}</span>
+                        <template v-if="showEnglish">
+                          <br />
+                          <span>{{ $t("components_launchersetup.detected_notice") }}</span>
+                        </template>
+                        <br />
+                        <button type="button" class="source-switch" @click="choose('global')">
+                          <span lang="zh-CN">{{ ZH.useGlobal }}</span>
+                          <template v-if="showEnglish">
+                            · {{ $t("components_launchersetup.use_global") }}
+                          </template>
+                        </button>
+                      </template>
+                      <template v-else-if="mode === 'unknown'">
+                        <button type="button" class="source-switch" lang="zh-CN" @click="choose('cn')">
+                          {{ ZH.useChina }}
+                        </button>
+                      </template>
+                      <template v-else>
+                        <span>{{ $t("components_launchersetup.label") }}: {{ $t(`components_launchersetup.${source}`) }}</span>
+                        ·
+                        <template v-if="mode === 'chosen'">
+                          <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}<span>({{ $t("components_launchersetup.chosen_by_you") }})</span>
+                          ·
+                        </template>
+                        <button
+                          v-if="source === 'cn'"
+                          type="button"
+                          class="source-switch"
+                          @click="choose('global')"
+                        >
+                          <span lang="zh-CN">{{ ZH.useGlobal }}</span>
+                          <template v-if="showEnglish">
+                            · {{ $t("components_launchersetup.use_global") }}
+                          </template>
+                        </button>
+                        <button v-else type="button" class="source-switch" lang="zh-CN" @click="choose('cn')">
+                          {{ ZH.useChina }}
+                        </button>
+                      </template>
+                    </p>
+
+                    <div aria-live="polite" class="source-hint text-body-2">
+                      <button
+                        v-if="hint"
+                        type="button"
+                        class="source-switch"
+                        @click="onHintClick"
+                      >
+                        <span lang="zh-CN">{{ hint.zh }}</span>
+                        <template v-if="hint.showEnglish">
+                          · {{ $t("components_launchersetup.hint_try_global") }}
+                        </template>
+                      </button>
+                    </div>
                   </v-card-text>
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
                   <br />
@@ -123,10 +169,33 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { LAUNCHER_UPDATE_URL } from "@/config/env";
 import { mdiDownload } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
+import LauncherDownloadSourceService from "@/services/LauncherDownloadSourceService";
+import {
+  type DownloadSource,
+  effectiveSource,
+  installerUrl,
+  type InstallerPlatform,
+  nextSaved,
+  otherSource,
+  ZH,
+} from "./launcherDownloadSource";
+import { readSavedSource, writeSavedSource } from "./launcherDownloadSourceStorage";
+
+interface PlatformEntry {
+  id: InstallerPlatform;
+  label: string;
+}
+
+const PLATFORMS: PlatformEntry[] = [
+  { id: "windows", label: "Windows" },
+  { id: "mac-arm64", label: "macOS (Apple Silicon)" },
+  { id: "mac-x64", label: "macOS (Intel)" },
+];
 
 export default defineComponent({
   name: "LauncherSetup",
@@ -134,12 +203,59 @@ export default defineComponent({
   setup() {
     const alertMessage = ref<string>("These steps are only needed if you have problems with the normal W3Champions App. In that case, please reach out on Discord!");
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
-    const launcherEUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e");
-    const launcherEMacArm64Url = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e/mac-arm64");
-    const launcherEMacIntelUrl = ref<string>(LAUNCHER_UPDATE_URL + "launcher-e/mac-x64");
     const route = useRoute();
     const router = useRouter();
+    const { locale } = useI18n();
     const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
+
+    const detected = ref<DownloadSource | null>(null);
+    const saved = ref<DownloadSource | null>(readSavedSource());
+    // The last download the visitor started, and the source it came from.
+    const lastClick = ref<{ platform: PlatformEntry; source: DownloadSource } | null>(null);
+
+    onMounted(async () => {
+      detected.value = await LauncherDownloadSourceService.fetchDetected();
+    });
+
+    const linkSource = computed(() => effectiveSource(detected.value, saved.value));
+    // The source named in the status line; while detection is unknown nothing is claimed.
+    const source = computed<DownloadSource>(() => (linkSource.value === "cn" ? "cn" : "global"));
+    const mode = computed(() => {
+      if (saved.value !== null) return "chosen";
+      if (detected.value === "cn") return "detected-cn";
+      return detected.value === null ? "unknown" : "global";
+    });
+    const showEnglish = computed(() => !locale.value.startsWith("zh"));
+
+    const platforms = computed(() =>
+      PLATFORMS.map((p) => ({ ...p, url: installerUrl(LAUNCHER_UPDATE_URL, p.id, linkSource.value) }))
+    );
+
+    const hint = computed(() => {
+      const click = lastClick.value;
+      if (!click) return null;
+      return click.source === "cn"
+        ? { zh: ZH.hintChinaSource, showEnglish: showEnglish.value }
+        : { zh: ZH.hintGlobalSource(click.platform.label), showEnglish: false };
+    });
+
+    function choose(chosen: DownloadSource) {
+      saved.value = nextSaved(detected.value, chosen);
+      writeSavedSource(saved.value);
+    }
+
+    function onDownloadClick(platform: PlatformEntry) {
+      lastClick.value = { platform, source: source.value };
+    }
+
+    function onHintClick() {
+      const click = lastClick.value;
+      if (!click) return;
+      const target = otherSource(click.source);
+      choose(target);
+      lastClick.value = { platform: click.platform, source: target };
+      window.open(installerUrl(LAUNCHER_UPDATE_URL, click.platform.id, target), "_blank", "noopener");
+    }
 
     watch(() => tabsModel.value.self, (newVal) => {
       if (route.query.tabsModel !== newVal) {
@@ -157,14 +273,57 @@ export default defineComponent({
       ingameAddonLink,
       alertMessage,
       mdiDownload,
-      launcherEUrl,
-      launcherEMacArm64Url,
-      launcherEMacIntelUrl
+      statusId: "launcher-download-source-status",
+      ZH,
+      platforms,
+      mode,
+      source,
+      showEnglish,
+      hint,
+      choose,
+      onDownloadClick,
+      onHintClick
     };
   },
 });
 </script>
 <style lang="scss" scoped>
+.download-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  @media (max-width: 599.98px) {
+    flex-direction: column;
+
+    .v-btn {
+      width: 100%;
+    }
+  }
+}
+
+.source-status,
+.source-hint {
+  opacity: 0.85;
+}
+
+.source-hint {
+  min-height: 1.5em;
+}
+
+.source-switch {
+  color: inherit;
+  text-decoration: underline;
+  text-align: left;
+  cursor: pointer;
+  padding: 4px 0;
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
 .v-tab--selected::after {
   opacity: 0.12 !important;
 }
