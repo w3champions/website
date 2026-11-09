@@ -29,4 +29,30 @@ describe("LauncherDownloadSourceService.fetchDetected", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
     expect(await LauncherDownloadSourceService.fetchDetected()).toBeNull();
   });
+
+  it("returnsNullWhenNoAnswerArrivesWithinThreeSeconds", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn((_url: string, init: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init.signal!.addEventListener("abort", () => reject(new Error("aborted")));
+          })
+        ),
+      );
+
+      const pending = LauncherDownloadSourceService.fetchDetected();
+      await vi.advanceTimersByTimeAsync(2999);
+      let settled = false;
+      void pending.then(() => (settled = true));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(settled).toBe(false);
+
+      await vi.advanceTimersByTimeAsync(1);
+      expect(await pending).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

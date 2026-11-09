@@ -31,13 +31,31 @@
                 <v-card-text class="pt-0 px-3">
                   <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
-                  <v-card-text class="pa-0">
+                  <v-card-text ref="downloadArea" class="pa-0">
+                    <!-- State 1: the notice goes above the buttons. -->
+                    <div :id="noticeId" aria-live="polite" class="source-controls source-notice text-body-2" :class="{ 'mb-4': mode === 'detected-cn' }">
+                      <template v-if="mode === 'detected-cn'">
+                        <span lang="zh-CN">{{ ZH.detectedNotice }}</span>
+                        <template v-if="showEnglish">
+                          <br />
+                          <span>{{ $t("components_launchersetup.detected_notice") }}</span>
+                        </template>
+                        <br />
+                        <button type="button" class="source-switch" @click="choose('global', true)">
+                          <span lang="zh-CN">{{ ZH.useGlobal }}</span>
+                          <template v-if="showEnglish">
+                            · {{ $t("components_launchersetup.use_global") }}
+                          </template>
+                        </button>
+                      </template>
+                    </div>
+
                     <div class="download-buttons">
                       <v-btn
                         v-for="platform in platforms"
                         :key="platform.id"
                         :href="platform.url"
-                        :aria-describedby="statusId"
+                        :aria-describedby="mode === 'detected-cn' ? noticeId : statusId"
                         target="_blank"
                         rel="noopener"
                         class="join-button mt-0"
@@ -48,45 +66,34 @@
                       </v-btn>
                     </div>
 
-                    <p :id="statusId" class="source-status text-body-2 mt-4 mb-1">
-                      <template v-if="mode === 'detected-cn'">
-                        <span lang="zh-CN">{{ ZH.detectedNotice }}</span>
-                        <template v-if="showEnglish">
-                          <br />
-                          <span>{{ $t("components_launchersetup.detected_notice") }}</span>
-                        </template>
-                        <br />
-                        <button type="button" class="source-switch" @click="choose('global')">
-                          <span lang="zh-CN">{{ ZH.useGlobal }}</span>
-                          <template v-if="showEnglish">
-                            · {{ $t("components_launchersetup.use_global") }}
-                          </template>
-                        </button>
-                      </template>
-                      <template v-else-if="mode === 'unknown'">
-                        <button type="button" class="source-switch" lang="zh-CN" @click="choose('cn')">
+                    <p :id="statusId" aria-live="polite" class="source-controls source-status text-body-2 mt-4 mb-1">
+                      <template v-if="mode === 'unknown'">
+                        <button type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
                           {{ ZH.useChina }}
                         </button>
                       </template>
-                      <template v-else>
-                        <span>{{ $t("components_launchersetup.label") }}: {{ $t(`components_launchersetup.${source}`) }}</span>
+                      <template v-else-if="mode !== 'detected-cn'">
+                        <span :lang="showEnglish ? undefined : 'zh-CN'">{{ statusLabel }}</span>
                         ·
                         <template v-if="mode === 'chosen'">
-                          <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}<span>({{ $t("components_launchersetup.chosen_by_you") }})</span>
+                          <template v-if="showEnglish">
+                            <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}
+                          </template>
+                          <span>({{ $t("components_launchersetup.chosen_by_you") }})</span>
                           ·
                         </template>
                         <button
                           v-if="source === 'cn'"
                           type="button"
                           class="source-switch"
-                          @click="choose('global')"
+                          @click="choose('global', true)"
                         >
                           <span lang="zh-CN">{{ ZH.useGlobal }}</span>
                           <template v-if="showEnglish">
                             · {{ $t("components_launchersetup.use_global") }}
                           </template>
                         </button>
-                        <button v-else type="button" class="source-switch" lang="zh-CN" @click="choose('cn')">
+                        <button v-else type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
                           {{ ZH.useChina }}
                         </button>
                       </template>
@@ -169,7 +176,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, nextTick, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { LAUNCHER_UPDATE_URL } from "@/config/env";
 import { mdiDownload } from "@mdi/js";
@@ -205,7 +212,8 @@ export default defineComponent({
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const route = useRoute();
     const router = useRouter();
-    const { locale } = useI18n();
+    const { locale, t } = useI18n();
+    const downloadArea = ref<{ $el: HTMLElement } | null>(null);
     const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
 
     const detected = ref<DownloadSource | null>(null);
@@ -215,6 +223,11 @@ export default defineComponent({
 
     onMounted(async () => {
       detected.value = await LauncherDownloadSourceService.fetchDetected();
+      // A saved choice that equals what detection picks is no longer a choice.
+      if (detected.value !== null && saved.value === detected.value) {
+        saved.value = nextSaved(detected.value, saved.value);
+        writeSavedSource(saved.value);
+      }
     });
 
     const linkSource = computed(() => effectiveSource(detected.value, saved.value));
@@ -226,6 +239,12 @@ export default defineComponent({
       return detected.value === null ? "unknown" : "global";
     });
     const showEnglish = computed(() => !locale.value.startsWith("zh"));
+    // "Download source: Global (GitHub)", in Chinese for the Chinese site language.
+    const statusLabel = computed(() =>
+      showEnglish.value
+        ? `${t("components_launchersetup.label")}: ${t(`components_launchersetup.${source.value}`)}`
+        : `${ZH.label}：${source.value === "cn" ? ZH.china : ZH.global}`
+    );
 
     const platforms = computed(() =>
       PLATFORMS.map((p) => ({ ...p, url: installerUrl(LAUNCHER_UPDATE_URL, p.id, linkSource.value) }))
@@ -239,9 +258,14 @@ export default defineComponent({
         : { zh: ZH.hintGlobalSource(click.platform.label), showEnglish: false };
     });
 
-    function choose(chosen: DownloadSource) {
+    // The switch the visitor activated is replaced by its counterpart, so focus
+    // would fall to <body>; move it to the new one when asked to.
+    async function choose(chosen: DownloadSource, keepFocus = false) {
       saved.value = nextSaved(detected.value, chosen);
       writeSavedSource(saved.value);
+      if (!keepFocus) return;
+      await nextTick();
+      downloadArea.value?.$el.querySelector<HTMLElement>(".source-controls .source-switch")?.focus();
     }
 
     function onDownloadClick(platform: PlatformEntry) {
@@ -274,6 +298,9 @@ export default defineComponent({
       alertMessage,
       mdiDownload,
       statusId: "launcher-download-source-status",
+      noticeId: "launcher-download-source-notice",
+      downloadArea,
+      statusLabel,
       ZH,
       platforms,
       mode,
@@ -302,9 +329,15 @@ export default defineComponent({
   }
 }
 
+.source-notice,
 .source-status,
 .source-hint {
   opacity: 0.85;
+}
+
+// Reserved so the section does not jump when detection answers.
+.source-status {
+  min-height: 3em;
 }
 
 .source-hint {
@@ -316,7 +349,15 @@ export default defineComponent({
   text-decoration: underline;
   text-align: left;
   cursor: pointer;
-  padding: 4px 0;
+  position: relative;
+  min-height: 24px;
+
+  // Extends the hit area to about 44 px without changing how it looks.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -10px -4px;
+  }
 
   &:focus-visible {
     outline: 2px solid currentColor;
