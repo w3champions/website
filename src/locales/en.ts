@@ -693,12 +693,15 @@ const en = {
 
   components_launchersetup: {
     label: "Download source",
-    global: "Global (GitHub)",
-    cn: "China mainland",
-    chosen_by_you: "chosen by you",
-    detected_notice: "You appear to be in mainland China, so downloads use our China mainland source.",
-    use_global: "Use Global (GitHub)",
-    hint_try_global: "Not starting? Try Global (GitHub)",
+    recommended: "Recommended for you",
+    global_name: "Standard download",
+    global_desc: "Fastest for most players worldwide.",
+    intl_name: "Backup download",
+    intl_desc: "Hosted by W3Champions. Try it if the standard download is slow or does not start.",
+    cn_name: "Mainland China",
+    cn_desc: "Optimized for downloading in mainland China.",
+    detected_notice: "You appear to be in mainland China, so we selected the download optimized for mainland China.",
+    hint_try: "Download not starting or slow? Try {source}",
   },
 
   views_sso_continue: {

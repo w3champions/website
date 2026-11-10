@@ -77,18 +77,8 @@ SET_IS_ADMIN(isAdmin: boolean): void {
 ```
 
 ### Working with Localization
-The website rebuilds localizations on each new deployment, running this script:
-
-[generate-locales.ts](https://github.com/w3champions/website/blob/master/scripts/generate-locales.ts)
-
-this works by gathering all the localization strings from this Google Drive document:
-
-[Localization Tables](https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc)
-
-It then merges with the existing localizations here, which contains some english-specific translations, such as the names of maps and proxies:
-
-[locales](https://github.com/w3champions/website/tree/master/src/locales)
-
-If you'd like to add new strings to the website, you can request access to edit the localization document above to add them, and then refer to them in the html by calling the `v18n` library in that component.
+Translations are edited by hand in [src/locales](https://github.com/w3champions/website/tree/master/src/locales): English strings live in `en.ts`, every other language in its own block of `data.ts`. To add a string, add it to `en.ts` and to each language block in `data.ts`, then use it in the component with `$t("section.key")`:
 
 [example](https://github.com/w3champions/website/blob/10eb639aad5175481a6230d3ff55a18f11f831f5/src/views/Home.vue#L8)
+
+The production build runs a `generate-locales` step that would regenerate `data.ts` from a Google Sheet. It needs a Google API key, which the CI build does not have, so it leaves `data.ts` unchanged. Do not run `npm run generate-locales` locally with a key: it would overwrite the hand-edited translations.

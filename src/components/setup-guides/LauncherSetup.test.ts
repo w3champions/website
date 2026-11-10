@@ -16,6 +16,7 @@ vi.mock("vue-router", () => ({
 }));
 
 const STORAGE_KEY = "w3c-launcher-download-source";
+const CJK = /[　-〿一-鿿＀-￯]/;
 
 describe("LauncherSetup download source", () => {
   let wrapper: VueWrapper | undefined;
@@ -41,14 +42,21 @@ describe("LauncherSetup download source", () => {
     return wrapper;
   }
 
-  // The notice (state 1, above the buttons) and the status line (below) are one story.
-  const status = () => wrapper!.findAll(".source-controls").map((e) => e.text()).filter(Boolean).join(" ");
-  const hint = () => wrapper!.get(".source-hint").text();
+  const radios = () => wrapper!.findAll<HTMLInputElement>("fieldset input[type=radio]");
+  const order = () => radios().map((r) => r.element.value);
+  const checked = () => radios().filter((r) => r.element.checked).map((r) => r.element.value);
+  const row = (source: string) => wrapper!.get(`[data-source=${source}]`);
+  const badged = () => wrapper!.findAll(".source-badge").map((b) => b.element.closest("[data-source]")!.getAttribute("data-source"));
+  const notice = () => wrapper!.get(".source-notice").text();
+  const hintButtons = () => wrapper!.findAll(".source-hint button");
   const downloadHrefs = () => wrapper!.findAll("a.join-button").map((a) => a.attributes("href"));
-  const switchButton = (text: string) => wrapper!.findAll("button").find((b) => b.text().includes(text));
-
-  // body.textContent holds the whole page, so focus on <body> must not pass: require a button.
-  const focusedButtonText = () => (document.activeElement?.tagName === "BUTTON" ? document.activeElement.textContent : "");
+  const describedBy = () => wrapper!.findAll("a.join-button").map((a) => a.attributes("aria-describedby"));
+  const choose = (source: string) => wrapper!.get<HTMLInputElement>(`input[value=${source}]`).setValue(true);
+  const hrefsFor = (source: string) => [
+    `https://x/api/launcher-e/windows?source=${source}`,
+    `https://x/api/launcher-e/mac-arm64?source=${source}`,
+    `https://x/api/launcher-e/mac-x64?source=${source}`,
+  ];
 
   beforeEach(() => {
     localStorage.clear();
@@ -64,114 +72,239 @@ describe("LauncherSetup download source", () => {
     vi.restoreAllMocks();
   });
 
-  it("detectedChinaShowsBilingualNotice", async () => {
+  it("outsideChinaListsStandardBackupChinaWithStandardCheckedAndBadged", async () => {
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup();
+
+    expect(wrapper!.get("fieldset legend").text()).toBe("Download source");
+    expect(order()).toEqual(["global", "intl", "cn"]);
+    expect(checked()).toEqual(["global"]);
+    expect(badged()).toEqual(["global"]);
+    expect(row("global").get(".source-badge").text()).toBe("Recommended for you");
+    expect(row("global").text()).toContain("Standard download");
+    expect(row("global").text()).toContain("Fastest for most players worldwide.");
+    expect(row("intl").text()).toContain("Backup download");
+    expect(notice()).toBe("");
+    // No design E status line.
+    expect(wrapper!.find(".source-status").exists()).toBe(false);
+    expect(downloadHrefs()).toEqual(hrefsFor("global"));
+  });
+
+  it("detectedChinaPutsChinaFirstWithBadgeAndBilingualNotice", async () => {
     fetchDetected.mockResolvedValue("cn");
     await mountSetup();
 
-    expect(status()).toContain("检测到您在中国大陆，已自动使用中国大陆线路下载。");
-    expect(status()).toContain("You appear to be in mainland China, so downloads use our China mainland source.");
-    expect(status()).toContain("改用国际线路（GitHub）");
-    expect(status()).toContain("Use Global (GitHub)");
-    expect(wrapper!.find(".source-controls [lang='zh-CN']").exists()).toBe(true);
-    expect(downloadHrefs()).toEqual([
-      "https://x/api/launcher-e/windows?source=cn",
-      "https://x/api/launcher-e/mac-arm64?source=cn",
-      "https://x/api/launcher-e/mac-x64?source=cn",
-    ]);
+    expect(order()).toEqual(["cn", "intl", "global"]);
+    expect(checked()).toEqual(["cn"]);
+    expect(badged()).toEqual(["cn"]);
+    const region = wrapper!.get(".source-notice");
+    expect(region.attributes("aria-live")).toBe("polite");
+    expect(notice()).toContain("You appear to be in mainland China, so we selected the download optimized for mainland China.");
+    expect(region.get("[lang='zh-CN']").text()).toBe("检测到您在中国大陆，已自动选择专为中国大陆优化的下载。");
+    // The notice sits above the list.
+    expect(region.element.compareDocumentPosition(wrapper!.get("fieldset").element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(downloadHrefs()).toEqual(hrefsFor("cn"));
   });
 
-  it("globalShowsChineseOnlyChinaLink", async () => {
-    fetchDetected.mockResolvedValue("global");
-    await mountSetup();
-
-    expect(status()).toBe("Download source: Global (GitHub) · 中国大陆用户：使用中国大陆线路");
-    expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=global");
-  });
-
-  it("unknownDetectionShowsOnlyChineseLinkAndUsesAuto", async () => {
+  it("unknownDetectionChecksNothingShowsNoBadgeAndLinksAuto", async () => {
     fetchDetected.mockResolvedValue(null);
     await mountSetup();
 
-    expect(status()).toBe("中国大陆用户：使用中国大陆线路");
-    expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=auto");
+    expect(order()).toEqual(["global", "intl", "cn"]);
+    expect(checked()).toEqual([]);
+    expect(badged()).toEqual([]);
+    expect(notice()).toBe("");
+    expect(downloadHrefs()).toEqual(hrefsFor("auto"));
   });
 
-  it("hintAfterAutoDownloadOffersBothSourcesBecauseEitherMayHaveBeenUsed", async () => {
-    fetchDetected.mockResolvedValue(null);
-    await mountSetup();
-
-    await wrapper!.findAll("a.join-button")[0].trigger("click");
-
-    const buttons = wrapper!.findAll(".source-hint button").map((b) => b.text());
-    expect(buttons).toHaveLength(2);
-    expect(buttons[0]).toContain("下载没反应或很慢？用中国大陆线路重新下载 Windows 版");
-    expect(buttons[1]).toContain("下载没反应或很慢？试试国际线路（GitHub）");
-
-    await wrapper!.findAll(".source-hint button")[1].trigger("click");
-    expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/windows?source=global", "_blank", "noopener");
-  });
-
-  it("separatorsAreHiddenFromScreenReaders", async () => {
-    fetchDetected.mockResolvedValue("global");
-    await mountSetup();
-    await switchButton("中国大陆用户")!.trigger("click");
-
-    const text = wrapper!.get(".source-status").element.textContent ?? "";
-    const dots = text.split("·").length - 1;
-    expect(dots).toBeGreaterThan(0);
-    const hidden = wrapper!.findAll(".source-controls [aria-hidden=true]").filter((e) => e.text() === "·");
-    expect(hidden).toHaveLength(dots);
-  });
-
-  it("manualSwitchPersistsAndRelabels", async () => {
+  it("choosingBackupSavesIntlAndRelinksButtons", async () => {
     fetchDetected.mockResolvedValue("global");
     await mountSetup();
 
-    await switchButton("中国大陆用户")!.trigger("click");
+    await choose("intl");
 
-    expect(localStorage.getItem(STORAGE_KEY)).toBe("cn");
-    expect(status()).toContain("Download source: China mainland · 中国大陆线路");
-    expect(status()).toContain("chosen by you");
-    expect(status()).toContain("Use Global (GitHub)");
-    expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=cn");
+    expect(localStorage.getItem(STORAGE_KEY)).toBe("intl");
+    expect(checked()).toEqual(["intl"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("intl"));
+    // The badge stays on the detected source; the choice does not move it.
+    expect(badged()).toEqual(["global"]);
+  });
 
-    // Going back to what detection picks clears the saved choice.
-    await switchButton("Use Global (GitHub)")!.trigger("click");
+  it("choosingTheDetectedSourceClearsTheSavedChoice", async () => {
+    localStorage.setItem(STORAGE_KEY, "intl");
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup();
+    expect(checked()).toEqual(["intl"]);
+
+    await choose("global");
+
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-    expect(status()).toBe("Download source: Global (GitHub) · 中国大陆用户：使用中国大陆线路");
+    expect(checked()).toEqual(["global"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("global"));
   });
 
-  it("savedChoiceIsAppliedOnLoad", async () => {
+  it("savedDesignEChoiceStillLoads", async () => {
     localStorage.setItem(STORAGE_KEY, "cn");
     fetchDetected.mockResolvedValue("global");
     await mountSetup();
+    expect(checked()).toEqual(["cn"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("cn"));
+    wrapper!.unmount();
 
-    expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=cn");
-  });
-
-  it("hintAfterClickOpensOtherSourceAndSaves", async () => {
-    fetchDetected.mockResolvedValue("global");
+    localStorage.setItem(STORAGE_KEY, "global");
+    fetchDetected.mockResolvedValue("cn");
     await mountSetup();
-    expect(hint()).toBe("");
-
-    await wrapper!.findAll("a.join-button")[1].trigger("click");
-    expect(hint()).toBe("下载没反应或很慢？用中国大陆线路重新下载 macOS (Apple Silicon) 版");
-
-    await wrapper!.get(".source-hint button").trigger("click");
-
-    expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/mac-arm64?source=cn", "_blank", "noopener");
-    expect(localStorage.getItem(STORAGE_KEY)).toBe("cn");
-    expect(hint()).toContain("下载没反应或很慢？试试国际线路（GitHub）");
-    expect(hint()).toContain("Not starting? Try Global (GitHub)");
+    expect(checked()).toEqual(["global"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("global"));
+    // A saved choice means the visitor already decided: no detection notice.
+    expect(notice()).toBe("");
+    expect(localStorage.getItem(STORAGE_KEY)).toBe("global");
   });
 
-  it("zhLocaleDropsEnglishNoticeLine", async () => {
+  it("zhSiteShowsChineseOnce", async () => {
     fetchDetected.mockResolvedValue("cn");
     await mountSetup("zh");
 
-    expect(status()).toContain("检测到您在中国大陆");
-    expect(status()).not.toContain("You appear to be in mainland China");
-    expect(status()).not.toContain("Use Global (GitHub)");
+    const cnText = row("cn").text();
+    expect(cnText.split("中国大陆线路")).toHaveLength(2);
+    expect(cnText.split("专为中国大陆下载优化")).toHaveLength(2);
+    // Latin letters only in the brand name.
+    expect(wrapper!.get("fieldset").text().replaceAll("W3Champions", "")).not.toMatch(/[A-Za-z]/);
+    expect(notice().split("检测到您在中国大陆")).toHaveLength(2);
+    expect(notice()).not.toMatch(/[A-Za-z]/);
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toBe("下载没反应或很慢？试试备用下载");
+  });
+
+  it("germanSiteShowsGermanTextPlusChineseOnChinaRowOnly", async () => {
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup("de");
+
+    expect(wrapper!.get("fieldset legend").text()).toBe("Download-Quelle");
+    expect(row("global").text()).toContain("Standard-Download");
+    expect(row("global").get(".source-badge").text()).toBe("Für dich empfohlen");
+    expect(row("global").text()).not.toMatch(CJK);
+    expect(row("intl").text()).not.toMatch(CJK);
+    expect(row("cn").text()).toContain("Festland-China");
+    expect(row("cn").text()).toContain("Optimiert für Downloads in Festland-China.");
+    expect(row("cn").findAll("[lang='zh-CN']").map((e) => e.text())).toEqual(["中国大陆线路", "专为中国大陆下载优化"]);
+    expect(row("cn").get(".source-desc").text()).toBe("Optimiert für Downloads in Festland-China. 专为中国大陆下载优化");
+  });
+
+  it("noVisibleTextMentionsGithubServerOrMirror", async () => {
+    for (const locale of Object.keys(languages)) {
+      for (const detection of ["cn", "global"] as const) {
+        fetchDetected.mockResolvedValue(detection);
+        await mountSetup(locale);
+        await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+        const text = wrapper!.get(".download-area").text();
+        expect(text, `${locale}/${detection}`).not.toMatch(/github|asia|server|mirror|镜像/i);
+        wrapper!.unmount();
+        wrapper = undefined;
+      }
+    }
+  });
+
+  it("hintAfterChinaDownloadOffersBackupAndRestartsIt", async () => {
+    fetchDetected.mockResolvedValue("cn");
+    await mountSetup();
+    expect(hintButtons()).toHaveLength(0);
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toContain("Download not starting or slow? Try Backup download");
+    expect(hintButtons()[0].get("[lang='zh-CN']").text()).toBe("下载没反应或很慢？试试备用下载");
+
+    await hintButtons()[0].trigger("click");
+
+    expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/windows?source=intl", "_blank", "noopener");
+    expect(localStorage.getItem(STORAGE_KEY)).toBe("intl");
+    expect(checked()).toEqual(["intl"]);
+    // The next suggestion follows the list order.
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toContain("Try Standard download");
+  });
+
+  it("hintAfterAutoDownloadOffersBackup", async () => {
+    fetchDetected.mockResolvedValue(null);
+    await mountSetup();
+
+    await wrapper!.findAll("a.join-button")[1].trigger("click");
+
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toBe("Download not starting or slow? Try Backup download");
+    expect(hintButtons()[0].text()).not.toMatch(CJK);
+
+    await hintButtons()[0].trigger("click");
+    expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/mac-arm64?source=intl", "_blank", "noopener");
+  });
+
+  it("hintToChinaForUndetectedVisitorAddsChinese", async () => {
+    fetchDetected.mockResolvedValue(null);
+    await mountSetup();
+    await choose("intl");
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toContain("Try Mainland China");
+    expect(hintButtons()[0].get("[lang='zh-CN']").text()).toBe("下载没反应或很慢？试试中国大陆线路");
+  });
+
+  it("hintToChinaForOutsideVisitorAddsChinese", async () => {
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup();
+    await choose("intl");
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    expect(hintButtons()[0].text()).toContain("Try Mainland China");
+    expect(hintButtons()[0].get("[lang='zh-CN']").text()).toBe("下载没反应或很慢？试试中国大陆线路");
+  });
+
+  it("focusStaysOnTheSameSourceWhenDetectionReorders", async () => {
+    // Which rows the reorder moves in the DOM is up to Vue, so check every source.
+    for (const source of ["global", "intl", "cn"]) {
+      let resolveDetection!: (value: "cn") => void;
+      fetchDetected.mockReturnValue(new Promise((resolve) => (resolveDetection = resolve)));
+      await mountSetup();
+      expect(order()).toEqual(["global", "intl", "cn"]);
+
+      const radio = wrapper!.get<HTMLInputElement>(`input[value=${source}]`).element;
+      radio.focus();
+      expect(document.activeElement).toBe(radio);
+
+      resolveDetection("cn");
+      await flushPromises();
+
+      expect(order()).toEqual(["cn", "intl", "global"]);
+      expect((document.activeElement as HTMLInputElement | null)?.value, source).toBe(source);
+      wrapper!.unmount();
+      wrapper = undefined;
+    }
+  });
+
+  it("buttonsAreDescribedByTheCheckedSourceName", async () => {
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup();
+
+    expect(describedBy()).toEqual(Array(3).fill("launcher-source-name-global"));
+    expect(wrapper!.get("#launcher-source-name-global").text()).toBe("Standard download");
+
+    await choose("cn");
+    expect(describedBy()).toEqual(Array(3).fill("launcher-source-name-cn"));
+    expect(wrapper!.get("#launcher-source-name-cn").text()).toContain("Mainland China");
+  });
+
+  it("buttonsHaveNoDescriptionWhileNothingIsChecked", async () => {
+    fetchDetected.mockResolvedValue(null);
+    await mountSetup();
+
+    expect(describedBy()).toEqual([undefined, undefined, undefined]);
   });
 
   it("localStorageThrowingStillRenders", async () => {
@@ -184,115 +317,9 @@ describe("LauncherSetup download source", () => {
     fetchDetected.mockResolvedValue("global");
     await mountSetup();
 
-    await switchButton("中国大陆用户")!.trigger("click");
+    await choose("cn");
 
-    expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=cn");
-  });
-
-  it("downloadButtonsAreDescribedByTheShortStatusSentence", async () => {
-    fetchDetected.mockResolvedValue("global");
-    await mountSetup();
-
-    const id = wrapper!.get("#launcher-download-source-status-text").attributes("id");
-    expect(wrapper!.get(`#${id}`).text()).toBe("Download source: Global (GitHub)");
-    for (const a of wrapper!.findAll("a.join-button")) expect(a.attributes("aria-describedby")).toBe(id);
-  });
-
-  it("stateOneNoticeIsAboveTheButtons", async () => {
-    fetchDetected.mockResolvedValue("cn");
-    await mountSetup();
-
-    const notice = wrapper!.get(".source-notice").element;
-    const firstButton = wrapper!.get("a.join-button").element;
-    expect(notice.compareDocumentPosition(firstButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(wrapper!.get(".source-notice").text()).toContain("检测到您在中国大陆");
-    // Described by the sentence only, not by the switch link next to it.
-    const describedBy = wrapper!.get("a.join-button").attributes("aria-describedby");
-    expect(wrapper!.get(`#${describedBy}`).text()).not.toContain("改用国际线路");
-    expect(wrapper!.get(`#${describedBy}`).text()).toContain("检测到您在中国大陆");
-  });
-
-  it("onlyTheDetectionNoticeIsALiveRegion", async () => {
-    fetchDetected.mockResolvedValue("global");
-    await mountSetup();
-
-    // The status line is read together with the focused switch; a live region
-    // there would announce the change twice.
-    expect(wrapper!.get(".source-status").attributes("aria-live")).toBeUndefined();
-    expect(wrapper!.get(".source-notice").attributes("aria-live")).toBe("polite");
-  });
-
-  it("focusFollowsTheSwitchWhenLateDetectionReplacesIt", async () => {
-    let resolveDetection!: (value: "cn") => void;
-    fetchDetected.mockReturnValue(new Promise((resolve) => (resolveDetection = resolve)));
-    await mountSetup();
-
-    // Chosen before detection answered: focus sits on the status line's switch.
-    await switchButton("中国大陆用户")!.trigger("click");
-    await flushPromises();
-    expect(focusedButtonText()).toContain("Use Global (GitHub)");
-
-    // Detection then agrees, the choice is cleared and the notice's switch replaces it.
-    resolveDetection("cn");
-    await flushPromises();
-
-    expect(wrapper!.get(".source-notice").text()).toContain("检测到您在中国大陆");
-    expect(wrapper!.get(".source-notice").element.contains(document.activeElement)).toBe(true);
-    expect(focusedButtonText()).toContain("改用国际线路");
-  });
-
-  it("focusMovesToTheNewSwitchAfterSwitching", async () => {
-    fetchDetected.mockResolvedValue("global");
-    await mountSetup();
-
-    await switchButton("中国大陆用户")!.trigger("click");
-    await flushPromises();
-    expect(focusedButtonText()).toContain("Use Global (GitHub)");
-
-    await switchButton("Use Global (GitHub)")!.trigger("click");
-    await flushPromises();
-    expect(focusedButtonText()).toContain("中国大陆用户");
-  });
-
-  it("focusMovesToTheNewSwitchWhenLeavingTheDetectedNotice", async () => {
-    fetchDetected.mockResolvedValue("cn");
-    await mountSetup();
-
-    await switchButton("Use Global (GitHub)")!.trigger("click");
-    await flushPromises();
-
-    expect(focusedButtonText()).toContain("中国大陆用户");
-  });
-
-  it("savedChoiceEqualToDetectionShowsDetectedWordingAndIsCleared", async () => {
-    localStorage.setItem(STORAGE_KEY, "cn");
-    fetchDetected.mockResolvedValue("cn");
-    await mountSetup();
-
-    expect(status()).toContain("You appear to be in mainland China");
-    expect(status()).not.toContain("chosen by you");
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-  });
-
-  it("zhLocaleUsesChineseLabelsInStatusLine", async () => {
-    fetchDetected.mockResolvedValue("global");
-    await mountSetup("zh");
-    expect(status()).toBe("下载线路：国际线路（GitHub） · 中国大陆用户：使用中国大陆线路");
-
-    await switchButton("中国大陆用户")!.trigger("click");
-    expect(status()).toContain("下载线路：中国大陆线路");
-    expect(status()).toContain("（你的选择）");
-    expect(status()).not.toContain("chosen by you");
-    expect(status()).toContain("改用国际线路（GitHub）");
-    expect(status()).not.toContain("Use Global (GitHub)");
-  });
-
-  it("zhLocaleDropsEnglishFromTheHint", async () => {
-    fetchDetected.mockResolvedValue("cn");
-    await mountSetup("zh");
-
-    await wrapper!.findAll("a.join-button")[0].trigger("click");
-
-    expect(hint()).toBe("下载没反应或很慢？试试国际线路（GitHub）");
+    expect(checked()).toEqual(["cn"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("cn"));
   });
 });
