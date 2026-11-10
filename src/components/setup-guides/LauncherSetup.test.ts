@@ -242,6 +242,29 @@ describe("LauncherSetup download source", () => {
     expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/mac-arm64?source=intl", "_blank", "noopener");
   });
 
+  it("hintToChinaForUndetectedVisitorAddsChinese", async () => {
+    fetchDetected.mockResolvedValue(null);
+    await mountSetup();
+    await choose("intl");
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toContain("Try Mainland China");
+    expect(hintButtons()[0].get("[lang='zh-CN']").text()).toBe("下载没反应或很慢？试试中国大陆线路");
+  });
+
+  it("hintToChinaForOutsideVisitorAddsChinese", async () => {
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup();
+    await choose("intl");
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    expect(hintButtons()[0].text()).toContain("Try Mainland China");
+    expect(hintButtons()[0].get("[lang='zh-CN']").text()).toBe("下载没反应或很慢？试试中国大陆线路");
+  });
+
   it("focusStaysOnTheSameSourceWhenDetectionReorders", async () => {
     // Which rows the reorder moves in the DOM is up to Vue, so check every source.
     for (const source of ["global", "intl", "cn"]) {
