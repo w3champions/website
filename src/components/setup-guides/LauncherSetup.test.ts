@@ -16,13 +16,14 @@ vi.mock("vue-router", () => ({
 }));
 
 const STORAGE_KEY = "w3c-launcher-download-source";
+const DETECTED_KEY = "w3c-launcher-detected-source";
 const CJK = /[　-〿一-鿿＀-￯]/;
 
 describe("LauncherSetup download source", () => {
   let wrapper: VueWrapper | undefined;
   let open: ReturnType<typeof vi.fn>;
 
-  async function mountSetup(locale = "en") {
+  async function mountSetup(locale = "en", { settle = true } = {}) {
     // jsdom lacks the observer Vuetify's tabs use.
     globalThis.ResizeObserver ??= class {
       observe() {}
@@ -38,7 +39,7 @@ describe("LauncherSetup download source", () => {
         ],
       },
     });
-    await flushPromises();
+    if (settle) await flushPromises();
     return wrapper;
   }
 
@@ -46,8 +47,13 @@ describe("LauncherSetup download source", () => {
   const order = () => radios().map((r) => r.element.value);
   const checked = () => radios().filter((r) => r.element.checked).map((r) => r.element.value);
   const row = (source: string) => wrapper!.get(`[data-source=${source}]`);
-  const badged = () => wrapper!.findAll(".source-badge").map((b) => b.element.closest("[data-source]")!.getAttribute("data-source"));
-  const notice = () => wrapper!.get(".source-notice").text();
+  // Rows showing the badge; the first row also holds a hidden one while nothing is recommended.
+  const badged = () => wrapper!.findAll(".source-badge:not(.source-badge--reserved)").map((b) => b.element.closest("[data-source]")!.getAttribute("data-source"));
+  const badgeRows = () => wrapper!.findAll(".source-badge").map((b) => b.element.closest("[data-source]")!.getAttribute("data-source"));
+  const firstBadge = () => wrapper!.get("[data-source]:first-child .source-badge");
+  const veil = () => wrapper!.find(".source-veil");
+  const optionsBox = () => wrapper!.get(".source-options");
+  const noNotice = () => expect(wrapper!.find(".source-notice").exists()).toBe(false);
   const hintButtons = () => wrapper!.findAll(".source-hint button");
   const downloadHrefs = () => wrapper!.findAll("a.join-button").map((a) => a.attributes("href"));
   const describedBy = () => wrapper!.findAll("a.join-button").map((a) => a.attributes("aria-describedby"));
@@ -58,8 +64,23 @@ describe("LauncherSetup download source", () => {
     `https://x/api/launcher-e/mac-x64?source=${source}`,
   ];
 
+  /** Detection that answers only when the test says so. */
+  function holdDetection() {
+    let answer!: (value: "cn" | "global" | null) => Promise<void>;
+    fetchDetected.mockReturnValue(
+      new Promise((resolve) => {
+        answer = async (value) => {
+          resolve(value);
+          await flushPromises();
+        };
+      }),
+    );
+    return (value: "cn" | "global" | null) => answer(value);
+  }
+
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
     fetchDetected.mockReset();
     open = vi.fn();
     vi.stubGlobal("open", open);
@@ -84,25 +105,21 @@ describe("LauncherSetup download source", () => {
     expect(row("global").text()).toContain("Standard download");
     expect(row("global").text()).toContain("Fastest for most players worldwide.");
     expect(row("intl").text()).toContain("Backup download");
-    expect(notice()).toBe("");
+    noNotice();
     // No design E status line.
     expect(wrapper!.find(".source-status").exists()).toBe(false);
     expect(downloadHrefs()).toEqual(hrefsFor("global"));
   });
 
-  it("detectedChinaPutsChinaFirstWithBadgeAndBilingualNotice", async () => {
+  it("detectedChinaPutsChinaFirstCheckedAndBadgedWithoutNotice", async () => {
     fetchDetected.mockResolvedValue("cn");
     await mountSetup();
 
     expect(order()).toEqual(["cn", "intl", "global"]);
     expect(checked()).toEqual(["cn"]);
     expect(badged()).toEqual(["cn"]);
-    const region = wrapper!.get(".source-notice");
-    expect(region.attributes("aria-live")).toBe("polite");
-    expect(notice()).toContain("You appear to be in mainland China, so we selected the download optimized for mainland China.");
-    expect(region.get("[lang='zh-CN']").text()).toBe("检测到您在中国大陆，已自动选择专为中国大陆优化的下载。");
-    // The notice sits above the list.
-    expect(region.element.compareDocumentPosition(wrapper!.get("fieldset").element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    noNotice();
+    expect(wrapper!.text()).not.toContain("You appear to be in mainland China");
     expect(downloadHrefs()).toEqual(hrefsFor("cn"));
   });
 
@@ -113,7 +130,7 @@ describe("LauncherSetup download source", () => {
     expect(order()).toEqual(["global", "intl", "cn"]);
     expect(checked()).toEqual([]);
     expect(badged()).toEqual([]);
-    expect(notice()).toBe("");
+    noNotice();
     expect(downloadHrefs()).toEqual(hrefsFor("auto"));
   });
 
@@ -151,13 +168,13 @@ describe("LauncherSetup download source", () => {
     expect(downloadHrefs()).toEqual(hrefsFor("cn"));
     wrapper!.unmount();
 
+    // Another browser session, so detection runs again.
+    sessionStorage.clear();
     localStorage.setItem(STORAGE_KEY, "global");
     fetchDetected.mockResolvedValue("cn");
     await mountSetup();
     expect(checked()).toEqual(["global"]);
     expect(downloadHrefs()).toEqual(hrefsFor("global"));
-    // A saved choice means the visitor already decided: no detection notice.
-    expect(notice()).toBe("");
     expect(localStorage.getItem(STORAGE_KEY)).toBe("global");
   });
 
@@ -170,8 +187,6 @@ describe("LauncherSetup download source", () => {
     expect(cnText.split("专为中国大陆下载优化")).toHaveLength(2);
     // Latin letters only in the brand name.
     expect(wrapper!.get("fieldset").text().replaceAll("W3Champions", "")).not.toMatch(/[A-Za-z]/);
-    expect(notice().split("检测到您在中国大陆")).toHaveLength(2);
-    expect(notice()).not.toMatch(/[A-Za-z]/);
 
     await wrapper!.findAll("a.join-button")[0].trigger("click");
     expect(hintButtons()).toHaveLength(1);
@@ -196,6 +211,7 @@ describe("LauncherSetup download source", () => {
   it("noVisibleTextMentionsGithubServerOrMirror", async () => {
     for (const locale of Object.keys(languages)) {
       for (const detection of ["cn", "global"] as const) {
+        sessionStorage.clear();
         fetchDetected.mockResolvedValue(detection);
         await mountSetup(locale);
         await wrapper!.findAll("a.join-button")[0].trigger("click");
@@ -266,28 +282,6 @@ describe("LauncherSetup download source", () => {
     expect(hintButtons()[0].get("[lang='zh-CN']").text()).toBe("下载没反应或很慢？试试中国大陆线路");
   });
 
-  it("focusStaysOnTheSameSourceWhenDetectionReorders", async () => {
-    // Which rows the reorder moves in the DOM is up to Vue, so check every source.
-    for (const source of ["global", "intl", "cn"]) {
-      let resolveDetection!: (value: "cn") => void;
-      fetchDetected.mockReturnValue(new Promise((resolve) => (resolveDetection = resolve)));
-      await mountSetup();
-      expect(order()).toEqual(["global", "intl", "cn"]);
-
-      const radio = wrapper!.get<HTMLInputElement>(`input[value=${source}]`).element;
-      radio.focus();
-      expect(document.activeElement).toBe(radio);
-
-      resolveDetection("cn");
-      await flushPromises();
-
-      expect(order()).toEqual(["cn", "intl", "global"]);
-      expect((document.activeElement as HTMLInputElement | null)?.value, source).toBe(source);
-      wrapper!.unmount();
-      wrapper = undefined;
-    }
-  });
-
   it("buttonsAreDescribedByTheCheckedSourceName", async () => {
     fetchDetected.mockResolvedValue("global");
     await mountSetup();
@@ -321,5 +315,175 @@ describe("LauncherSetup download source", () => {
 
     expect(checked()).toEqual(["cn"]);
     expect(downloadHrefs()).toEqual(hrefsFor("cn"));
+  });
+
+  it("pendingVeilsAnInertBusyListWhileButtonsLinkAuto", async () => {
+    const answer = holdDetection();
+    await mountSetup();
+
+    expect(veil().exists()).toBe(true);
+    expect(veil().attributes("role")).toBe("status");
+    expect(veil().text()).toBe("Finding the best download for you…");
+    expect(optionsBox().attributes("inert")).toBeDefined();
+    expect(optionsBox().attributes("aria-busy")).toBe("true");
+    // Laid out as it will be without an answer.
+    expect(order()).toEqual(["global", "intl", "cn"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("auto"));
+    expect(wrapper!.findAll("a.join-button").every((a) => a.attributes("disabled") === undefined)).toBe(true);
+
+    await answer("global");
+
+    expect(veil().exists()).toBe(false);
+    expect(optionsBox().attributes("inert")).toBeUndefined();
+    expect(optionsBox().attributes("aria-busy")).toBeUndefined();
+  });
+
+  it("pendingButtonsFollowTheSavedChoice", async () => {
+    localStorage.setItem(STORAGE_KEY, "intl");
+    const answer = holdDetection();
+    await mountSetup();
+
+    expect(veil().exists()).toBe(true);
+    expect(downloadHrefs()).toEqual(hrefsFor("intl"));
+
+    await answer("cn");
+
+    expect(order()).toEqual(["cn", "intl", "global"]);
+    expect(checked()).toEqual(["intl"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("intl"));
+  });
+
+  it("chinaAnswerLiftsVeilWithChinaFirstCheckedAndBadged", async () => {
+    const answer = holdDetection();
+    await mountSetup();
+
+    await answer("cn");
+
+    expect(veil().exists()).toBe(false);
+    expect(order()).toEqual(["cn", "intl", "global"]);
+    expect(checked()).toEqual(["cn"]);
+    expect(firstBadge().classes()).not.toContain("source-badge--reserved");
+    expect(firstBadge().attributes("aria-hidden")).toBeUndefined();
+    expect(badged()).toEqual(["cn"]);
+    noNotice();
+  });
+
+  it("globalAnswerLiftsVeilWithStandardFirstAndBadged", async () => {
+    const answer = holdDetection();
+    await mountSetup();
+
+    await answer("global");
+
+    expect(veil().exists()).toBe(false);
+    expect(order()).toEqual(["global", "intl", "cn"]);
+    expect(checked()).toEqual(["global"]);
+    expect(firstBadge().attributes("aria-hidden")).toBeUndefined();
+    expect(badged()).toEqual(["global"]);
+  });
+
+  it("unknownAnswerLiftsVeilAndKeepsTheBadgeSpaceHidden", async () => {
+    const answer = holdDetection();
+    await mountSetup();
+
+    await answer(null);
+
+    expect(veil().exists()).toBe(false);
+    expect(order()).toEqual(["global", "intl", "cn"]);
+    expect(firstBadge().classes()).toContain("source-badge--reserved");
+    expect(firstBadge().attributes("aria-hidden")).toBe("true");
+    expect(firstBadge().text()).toBe("Recommended for you");
+    expect(badged()).toEqual([]);
+  });
+
+  it("onlyTheFirstRowEverHoldsTheBadge", async () => {
+    for (const result of ["cn", "global", null] as const) {
+      sessionStorage.clear();
+      const answer = holdDetection();
+      await mountSetup();
+      expect(badgeRows(), "pending").toEqual(["global"]);
+      expect(firstBadge().attributes("aria-hidden"), "pending").toBe("true");
+
+      await answer(result);
+
+      expect(badgeRows(), String(result)).toEqual([order()[0]]);
+      wrapper!.unmount();
+      wrapper = undefined;
+    }
+  });
+
+  it("rememberedChinaAnswerRendersFinalStateFirstWithoutAsking", async () => {
+    sessionStorage.setItem(DETECTED_KEY, "cn");
+    await mountSetup("en", { settle: false });
+
+    expect(veil().exists()).toBe(false);
+    expect(optionsBox().attributes("inert")).toBeUndefined();
+    expect(order()).toEqual(["cn", "intl", "global"]);
+    expect(checked()).toEqual(["cn"]);
+    expect(badged()).toEqual(["cn"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("cn"));
+    await flushPromises();
+    expect(fetchDetected).not.toHaveBeenCalled();
+  });
+
+  it("rememberedAnswerStillClearsASavedChoiceThatEqualsIt", async () => {
+    sessionStorage.setItem(DETECTED_KEY, "cn");
+    localStorage.setItem(STORAGE_KEY, "cn");
+    await mountSetup();
+
+    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(checked()).toEqual(["cn"]);
+  });
+
+  it("definiteAnswersAreRememberedForTheSession", async () => {
+    for (const result of ["cn", "global"] as const) {
+      sessionStorage.clear();
+      const answer = holdDetection();
+      await mountSetup();
+      expect(sessionStorage.getItem(DETECTED_KEY)).toBeNull();
+
+      await answer(result);
+
+      expect(sessionStorage.getItem(DETECTED_KEY)).toBe(result);
+      wrapper!.unmount();
+      wrapper = undefined;
+    }
+  });
+
+  it("unknownAnswerIsNotRemembered", async () => {
+    fetchDetected.mockResolvedValue(null);
+    await mountSetup();
+
+    expect(sessionStorage.getItem(DETECTED_KEY)).toBeNull();
+  });
+
+  it("invalidRememberedAnswerIsIgnored", async () => {
+    sessionStorage.setItem(DETECTED_KEY, "intl");
+    holdDetection();
+    await mountSetup();
+
+    expect(fetchDetected).toHaveBeenCalledOnce();
+    expect(veil().exists()).toBe(true);
+    expect(order()).toEqual(["global", "intl", "cn"]);
+  });
+
+  it("storageThrowingOnReadAndWriteStillDetectsAndWorks", async () => {
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    const answer = holdDetection();
+    await mountSetup();
+    expect(veil().exists()).toBe(true);
+
+    await answer("cn");
+
+    expect(veil().exists()).toBe(false);
+    expect(order()).toEqual(["cn", "intl", "global"]);
+    expect(checked()).toEqual(["cn"]);
+    await choose("intl");
+    expect(checked()).toEqual(["intl"]);
+    expect(downloadHrefs()).toEqual(hrefsFor("intl"));
   });
 });

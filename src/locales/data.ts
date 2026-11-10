@@ -717,13 +717,13 @@ const data = {
     components_launchersetup: {
       label: "Источник загрузки",
       recommended: "Рекомендуем вам",
+      detecting: "Подбираем лучший вариант загрузки…",
       global_name: "Стандартная загрузка",
       global_desc: "Самый быстрый вариант для большинства игроков.",
       intl_name: "Резервная загрузка",
       intl_desc: "Размещено W3Champions. Попробуйте, если стандартная загрузка идёт медленно или не начинается.",
       cn_name: "Материковый Китай",
       cn_desc: "Оптимизировано для загрузки в материковом Китае.",
-      detected_notice: "Похоже, вы находитесь в материковом Китае, поэтому мы выбрали загрузку, оптимизированную для материкового Китая.",
       hint_try: "Загрузка не начинается или идёт медленно? Попробуйте: {source}",
     },
     views_home: {
@@ -1261,13 +1261,13 @@ const data = {
     components_launchersetup: {
       label: "다운로드 경로",
       recommended: "추천",
+      detecting: "가장 적합한 다운로드를 찾는 중…",
       global_name: "기본 다운로드",
       global_desc: "전 세계 대부분의 플레이어에게 가장 빠릅니다.",
       intl_name: "백업 다운로드",
       intl_desc: "W3Champions에서 제공합니다. 기본 다운로드가 느리거나 시작되지 않으면 사용해 보세요.",
       cn_name: "중국 본토",
       cn_desc: "중국 본토에서의 다운로드에 최적화되어 있습니다.",
-      detected_notice: "중국 본토에 계신 것으로 보여 중국 본토에 최적화된 다운로드를 선택했습니다.",
       hint_try: "다운로드가 시작되지 않거나 느린가요? {source}을(를) 사용해 보세요",
     },
     views_home: {
@@ -1730,13 +1730,13 @@ const data = {
     components_launchersetup: {
       label: "下载线路",
       recommended: "为您推荐",
+      detecting: "正在为您选择最佳下载…",
       global_name: "标准下载",
       global_desc: "全球大多数玩家的最快选择。",
       intl_name: "备用下载",
       intl_desc: "由 W3Champions 提供。标准下载很慢或无法开始时可以试试。",
       cn_name: "中国大陆线路",
       cn_desc: "专为中国大陆下载优化",
-      detected_notice: "检测到您在中国大陆，已自动选择专为中国大陆优化的下载。",
       hint_try: "下载没反应或很慢？试试{source}",
     },
     views_home: {
@@ -2288,13 +2288,13 @@ const data = {
     components_launchersetup: {
       label: "Download-Quelle",
       recommended: "Für dich empfohlen",
+      detecting: "Wir suchen den besten Download für dich…",
       global_name: "Standard-Download",
       global_desc: "Für die meisten Spieler weltweit am schnellsten.",
       intl_name: "Ersatz-Download",
       intl_desc: "Von W3Champions bereitgestellt. Probiere ihn, wenn der Standard-Download langsam ist oder nicht startet.",
       cn_name: "Festland-China",
       cn_desc: "Optimiert für Downloads in Festland-China.",
-      detected_notice: "Du scheinst in Festland-China zu sein, daher haben wir den für Festland-China optimierten Download ausgewählt.",
       hint_try: "Download startet nicht oder ist langsam? Probiere {source}",
     },
     views_home: {
@@ -2791,13 +2791,13 @@ const data = {
     components_launchersetup: {
       label: "Źródło pobierania",
       recommended: "Polecane dla Ciebie",
+      detecting: "Szukamy najlepszego pobierania dla Ciebie…",
       global_name: "Pobieranie standardowe",
       global_desc: "Najszybsze dla większości graczy na świecie.",
       intl_name: "Pobieranie zapasowe",
       intl_desc: "Udostępniane przez W3Champions. Wypróbuj, jeśli pobieranie standardowe jest wolne lub się nie rozpoczyna.",
       cn_name: "Chiny kontynentalne",
       cn_desc: "Zoptymalizowane do pobierania w Chinach kontynentalnych.",
-      detected_notice: "Wygląda na to, że jesteś w Chinach kontynentalnych, więc wybraliśmy pobieranie zoptymalizowane dla Chin kontynentalnych.",
       hint_try: "Pobieranie się nie rozpoczyna lub jest wolne? Wypróbuj: {source}",
     },
     views_home: {
@@ -3366,13 +3366,13 @@ const data = {
     components_launchersetup: {
       label: "Джерело завантаження",
       recommended: "Рекомендуємо вам",
+      detecting: "Підбираємо найкращий варіант завантаження…",
       global_name: "Стандартне завантаження",
       global_desc: "Найшвидший варіант для більшості гравців у світі.",
       intl_name: "Резервне завантаження",
       intl_desc: "Розміщено W3Champions. Спробуйте, якщо стандартне завантаження повільне або не починається.",
       cn_name: "Материковий Китай",
       cn_desc: "Оптимізовано для завантаження в материковому Китаї.",
-      detected_notice: "Схоже, ви перебуваєте в материковому Китаї, тому ми вибрали завантаження, оптимізоване для материкового Китаю.",
       hint_try: "Завантаження не починається або повільне? Спробуйте: {source}",
     },
     views_home: {
@@ -3917,13 +3917,13 @@ const data = {
     components_launchersetup: {
       label: "Fonte de download",
       recommended: "Recomendado para você",
+      detecting: "Procurando o melhor download para você…",
       global_name: "Download padrão",
       global_desc: "O mais rápido para a maioria dos jogadores no mundo.",
       intl_name: "Download alternativo",
       intl_desc: "Hospedado pela W3Champions. Experimente se o download padrão estiver lento ou não começar.",
       cn_name: "China continental",
       cn_desc: "Otimizado para downloads na China continental.",
-      detected_notice: "Parece que você está na China continental, então selecionamos o download otimizado para a China continental.",
       hint_try: "O download não começa ou está lento? Experimente: {source}",
     },
     views_home: {
@@ -4468,13 +4468,13 @@ const data = {
     components_launchersetup: {
       label: "Source de téléchargement",
       recommended: "Recommandé pour vous",
+      detecting: "Recherche du meilleur téléchargement pour vous…",
       global_name: "Téléchargement standard",
       global_desc: "Le plus rapide pour la plupart des joueurs dans le monde.",
       intl_name: "Téléchargement de secours",
       intl_desc: "Hébergé par W3Champions. Essayez-le si le téléchargement standard est lent ou ne démarre pas.",
       cn_name: "Chine continentale",
       cn_desc: "Optimisé pour les téléchargements en Chine continentale.",
-      detected_notice: "Vous semblez être en Chine continentale, nous avons donc choisi le téléchargement optimisé pour la Chine continentale.",
       hint_try: "Le téléchargement ne démarre pas ou est lent ? Essayez : {source}",
     },
     views_home: {
@@ -5037,13 +5037,13 @@ const data = {
     components_launchersetup: {
       label: "Izvor preuzimanja",
       recommended: "Preporučeno za vas",
+      detecting: "Tražimo najbolje preuzimanje za vas…",
       global_name: "Standardno preuzimanje",
       global_desc: "Najbrže za većinu igrača širom sveta.",
       intl_name: "Rezervno preuzimanje",
       intl_desc: "Hostuje W3Champions. Probajte ako je standardno preuzimanje sporo ili ne počinje.",
       cn_name: "Kontinentalna Kina",
       cn_desc: "Optimizovano za preuzimanje u kontinentalnoj Kini.",
-      detected_notice: "Izgleda da ste u kontinentalnoj Kini, pa smo izabrali preuzimanje optimizovano za kontinentalnu Kinu.",
       hint_try: "Preuzimanje ne počinje ili je sporo? Probajte: {source}",
     },
     views_home: {

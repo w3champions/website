@@ -16,6 +16,13 @@ describe("launcher setup copy", () => {
     }
   });
 
+  it("everyLanguageHasTheDetectingTextAndNoChinaNotice", () => {
+    for (const lang of activeLanguages) {
+      expect(blockOf(lang).detecting?.trim(), lang).toBeTruthy();
+      expect(blockOf(lang), lang).not.toHaveProperty("detected_notice");
+    }
+  });
+
   it("hintTryKeepsTheSourcePlaceholderInEveryLanguage", () => {
     for (const lang of activeLanguages) expect(blockOf(lang).hint_try, lang).toContain("{source}");
   });
