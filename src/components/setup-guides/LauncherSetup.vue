@@ -31,26 +31,47 @@
                 <v-card-text class="pt-0 px-3">
                   <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
-                  <v-card-text ref="downloadArea" class="pa-0">
-                    <!-- State 1: the notice goes above the buttons. -->
-                    <div aria-live="polite" class="source-controls source-notice text-body-2 text-high-emphasis" :class="{ 'mb-4': mode === 'detected-cn' }">
-                      <template v-if="mode === 'detected-cn'">
-                        <span :id="noticeTextId">
-                          <span lang="zh-CN">{{ ZH.detectedNotice }}</span>
-                          <template v-if="showEnglish">
-                            <br />
-                            <span>{{ $t("components_launchersetup.detected_notice") }}</span>
-                          </template>
-                        </span>
-                        <br />
-                        <button type="button" class="source-switch" @click="choose('global', true)">
-                          <span lang="zh-CN">{{ ZH.useGlobal }}</span>
-                          <template v-if="showEnglish">
-                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.global_name") }}
-                          </template>
-                        </button>
-                      </template>
+                  <v-card-text ref="downloadArea" class="download-area pa-0">
+                    <!-- Detected mainland China and nothing saved: say why that row is checked. -->
+                    <div aria-live="polite" class="source-notice text-body-2 text-high-emphasis">
+                      <p v-if="notice" class="source-notice-text">
+                        {{ notice.text }}
+                        <template v-if="notice.zh">
+                          <br />
+                          <span lang="zh-CN">{{ notice.zh }}</span>
+                        </template>
+                      </p>
                     </div>
+
+                    <fieldset class="source-list">
+                      <legend class="source-legend text-body-2">{{ $t("components_launchersetup.label") }}</legend>
+                      <div class="source-options">
+                        <label
+                          v-for="option in options"
+                          :key="option.key"
+                          class="source-option"
+                          :class="{ 'source-option--checked': option.checked }"
+                          :data-source="option.key"
+                        >
+                          <input
+                            type="radio"
+                            name="launcher-download-source"
+                            :value="option.key"
+                            :checked="option.checked"
+                            @change="choose(option.key)"
+                          />
+                          <span class="source-text">
+                            <span :id="option.nameId" class="source-name">
+                              {{ option.name }}<template v-if="option.nameZh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ option.nameZh }}</span></template>
+                            </span>
+                            <span class="source-desc text-medium-emphasis">
+                              {{ option.desc }}<template v-if="option.descZh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ option.descZh }}</span></template>
+                            </span>
+                          </span>
+                          <span v-if="option.recommended" class="source-badge">{{ $t("components_launchersetup.recommended") }}</span>
+                        </label>
+                      </div>
+                    </fieldset>
 
                     <div class="download-buttons">
                       <v-btn
@@ -68,49 +89,10 @@
                       </v-btn>
                     </div>
 
-                    <p class="source-controls source-status text-body-2 text-high-emphasis mt-4 mb-1">
-                      <template v-if="mode === 'unknown'">
-                        <button type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
-                          {{ ZH.useChina }}
-                        </button>
-                      </template>
-                      <template v-else-if="mode !== 'detected-cn'">
-                        <span :id="statusTextId" :lang="showEnglish ? undefined : 'zh-CN'">{{ statusLabel }}</span>
-                        <span aria-hidden="true"> · </span>
-                        <template v-if="mode === 'chosen'">
-                          <template v-if="showEnglish">
-                            <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}
-                          </template>
-                          <span v-if="showEnglish">({{ $t("components_launchersetup.recommended") }})</span>
-                          <span v-else lang="zh-CN">{{ ZH.chosenByYou }}</span>
-                          <span aria-hidden="true"> · </span>
-                        </template>
-                        <button
-                          v-if="source === 'cn'"
-                          type="button"
-                          class="source-switch"
-                          @click="choose('global', true)"
-                        >
-                          <span lang="zh-CN">{{ ZH.useGlobal }}</span>
-                          <template v-if="showEnglish">
-                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.global_name") }}
-                          </template>
-                        </button>
-                        <button v-else type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
-                          {{ ZH.useChina }}
-                        </button>
-                      </template>
-                    </p>
-
                     <div aria-live="polite" class="source-hint text-body-2 text-high-emphasis">
-                      <div v-for="option in hints" :key="option.target">
-                        <button type="button" class="source-switch" @click="onHintClick(option.target)">
-                          <span lang="zh-CN">{{ option.zh }}</span>
-                          <template v-if="option.showEnglish">
-                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.hint_try", { source: $t("components_launchersetup.global_name") }) }}
-                          </template>
-                        </button>
-                      </div>
+                      <button v-if="hint" type="button" class="source-hint-button" @click="onHintClick(hint.target)">
+                        {{ hint.text }}<template v-if="hint.zh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ hint.zh }}</span></template>
+                      </button>
                     </div>
                   </v-card-text>
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
@@ -183,27 +165,18 @@ import { mdiDownload } from "@mdi/js";
 import { useRoute, useRouter } from "vue-router";
 import LauncherDownloadSourceService from "@/services/LauncherDownloadSourceService";
 import {
+  chineseSupplement,
   type DownloadSource,
   effectiveSource,
+  fallbackSource,
   installerUrl,
   type InstallerPlatform,
   type LinkSource,
   nextSaved,
+  orderedSources,
+  SUPPLEMENT_LOCALE,
 } from "./launcherDownloadSource";
 import { readSavedSource, writeSavedSource } from "./launcherDownloadSourceStorage";
-
-// Interim Chinese strings until the picker rewrite replaces this block.
-const ZH = {
-  label: "下载线路",
-  global: "标准下载",
-  china: "中国大陆线路",
-  detectedNotice: "检测到您在中国大陆，已自动选择专为中国大陆优化的下载。",
-  chosenByYou: "（你的选择）",
-  useChina: "中国大陆用户：使用中国大陆线路",
-  useGlobal: "改用标准下载",
-  hintGlobalSource: (platformName: string) => `下载没反应或很慢？用中国大陆线路重新下载 ${platformName} 版`,
-  hintChinaSource: "下载没反应或很慢？试试标准下载",
-} as const;
 
 interface PlatformEntry {
   id: InstallerPlatform;
@@ -216,9 +189,12 @@ const PLATFORMS: PlatformEntry[] = [
   { id: "mac-x64", label: "macOS (Intel)" },
 ];
 
-// The short sentence the download buttons are described by (never the switch links).
-const NOTICE_TEXT_ID = "launcher-download-source-notice-text";
-const STATUS_TEXT_ID = "launcher-download-source-status-text";
+const KEY_PREFIX = "components_launchersetup.";
+
+/** The element the download buttons are described by: the checked source's name. */
+function sourceNameId(source: DownloadSource): string {
+  return `launcher-source-name-${source}`;
+}
 
 export default defineComponent({
   name: "LauncherSetup",
@@ -228,7 +204,7 @@ export default defineComponent({
     const ingameAddonLink = ref<string>(LAUNCHER_UPDATE_URL + "ingame-addon");
     const route = useRoute();
     const router = useRouter();
-    const { locale, t } = useI18n();
+    const { t } = useI18n();
     const downloadArea = ref<{ $el: HTMLElement } | null>(null);
     const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
 
@@ -237,71 +213,78 @@ export default defineComponent({
     // The last download the visitor started, and the source it came from.
     const lastClick = ref<{ platform: PlatformEntry; source: LinkSource } | null>(null);
 
-    function isSwitchFocused(): boolean {
-      const active = document.activeElement;
-      return !!active?.classList.contains("source-switch") && !!active.closest(".source-controls");
+    /** The site-language text, plus its Chinese rendering when that is different text. */
+    function bilingual(key: string, named: Record<string, string> = {}, namedZh: Record<string, string> = named) {
+      const text = t(KEY_PREFIX + key, named);
+      return { text, zh: chineseSupplement(text, t(KEY_PREFIX + key, namedZh, { locale: SUPPLEMENT_LOCALE })) };
     }
 
-    async function focusSwitch() {
-      await nextTick();
-      downloadArea.value?.$el.querySelector<HTMLElement>(".source-controls .source-switch")?.focus();
+    function focusedSourceRadio(): DownloadSource | null {
+      const active = document.activeElement;
+      if (!(active instanceof HTMLInputElement) || active.name !== "launcher-download-source") return null;
+      return active.value as DownloadSource;
     }
 
     onMounted(async () => {
       const answer = await LauncherDownloadSourceService.fetchDetected();
-      // The answer can replace the switch the visitor is on; focus must follow it.
-      const hadFocus = isSwitchFocused();
+      // The answer can reorder the list, which moves the focused radio; focus must stay on it.
+      const focused = focusedSourceRadio();
       detected.value = answer;
       // A saved choice that equals what detection picks is no longer a choice.
       if (detected.value !== null && saved.value === detected.value) {
         saved.value = nextSaved(detected.value, saved.value);
         writeSavedSource(saved.value);
       }
-      if (hadFocus) await focusSwitch();
+      if (focused === null) return;
+      await nextTick();
+      downloadArea.value?.$el.querySelector<HTMLInputElement>(`input[name="launcher-download-source"][value="${focused}"]`)?.focus();
     });
 
     const linkSource = computed(() => effectiveSource(detected.value, saved.value));
-    // The source named in the status line; while detection is unknown nothing is claimed.
-    const source = computed<DownloadSource>(() => (linkSource.value === "cn" ? "cn" : "global"));
-    const mode = computed(() => {
-      if (saved.value !== null) return "chosen";
-      if (detected.value === "cn") return "detected-cn";
-      return detected.value === null ? "unknown" : "global";
-    });
-    const showEnglish = computed(() => !locale.value.startsWith("zh"));
-    // "Download source: Global (GitHub)", in Chinese for the Chinese site language.
-    const statusLabel = computed(() =>
-      showEnglish.value
-        ? `${t("components_launchersetup.label")}: ${t(`components_launchersetup.${source.value}_name`)}`
-        : `${ZH.label}：${source.value === "cn" ? ZH.china : ZH.global}`
+
+    const options = computed(() =>
+      orderedSources(detected.value).map((key) => {
+        const name = key === "cn" ? bilingual("cn_name") : { text: t(`${KEY_PREFIX}${key}_name`), zh: null };
+        const desc = key === "cn" ? bilingual("cn_desc") : { text: t(`${KEY_PREFIX}${key}_desc`), zh: null };
+        return {
+          key,
+          nameId: sourceNameId(key),
+          name: name.text,
+          nameZh: name.zh,
+          desc: desc.text,
+          descZh: desc.zh,
+          checked: linkSource.value === key,
+          recommended: detected.value === key,
+        };
+      })
     );
 
-    const describedBy = computed(() => {
-      if (mode.value === "detected-cn") return NOTICE_TEXT_ID;
-      return mode.value === "unknown" ? undefined : STATUS_TEXT_ID;
-    });
+    const notice = computed(() => (detected.value === "cn" && saved.value === null ? bilingual("detected_notice") : null));
+
+    const describedBy = computed(() => (linkSource.value === "auto" ? undefined : sourceNameId(linkSource.value)));
 
     const platforms = computed(() =>
       PLATFORMS.map((p) => ({ ...p, url: installerUrl(LAUNCHER_UPDATE_URL, p.id, linkSource.value) }))
     );
 
-    // Offers the source(s) the last download did not use. After an "auto" download
-    // either source may have served it (detection timed out), so both are offered.
-    const hints = computed(() => {
+    // After a download click: one suggestion, the next source in list order.
+    const hint = computed(() => {
       const click = lastClick.value;
-      if (!click) return [];
-      const toChina = { target: "cn" as const, zh: ZH.hintGlobalSource(click.platform.label), showEnglish: false };
-      const toGlobal = { target: "global" as const, zh: ZH.hintChinaSource, showEnglish: showEnglish.value };
-      if (click.source === "auto") return [toChina, toGlobal];
-      return click.source === "cn" ? [toGlobal] : [toChina];
+      if (!click) return null;
+      const target = fallbackSource(click.source, detected.value);
+      const nameKey = `${KEY_PREFIX}${target}_name`;
+      const { text, zh } = bilingual(
+        "hint_try",
+        { source: t(nameKey) },
+        { source: t(nameKey, {}, { locale: SUPPLEMENT_LOCALE }) },
+      );
+      const addChinese = detected.value === "cn" || target === "cn";
+      return { target, text, zh: addChinese ? zh : null };
     });
 
-    // The switch the visitor activated is replaced by its counterpart, so focus
-    // would fall to <body>; move it to the new one when asked to.
-    async function choose(chosen: DownloadSource, keepFocus = false) {
+    function choose(chosen: DownloadSource) {
       saved.value = nextSaved(detected.value, chosen);
       writeSavedSource(saved.value);
-      if (keepFocus) await focusSwitch();
     }
 
     function onDownloadClick(platform: PlatformEntry) {
@@ -332,17 +315,12 @@ export default defineComponent({
       ingameAddonLink,
       alertMessage,
       mdiDownload,
-      noticeTextId: NOTICE_TEXT_ID,
-      statusTextId: STATUS_TEXT_ID,
       describedBy,
       downloadArea,
-      statusLabel,
-      ZH,
+      options,
+      notice,
       platforms,
-      mode,
-      source,
-      showEnglish,
-      hints,
+      hint,
       choose,
       onDownloadClick,
       onHintClick
@@ -365,25 +343,121 @@ export default defineComponent({
   }
 }
 
-// Reserved so the section does not jump when detection answers.
-.source-status {
-  min-height: 3em;
+.source-notice-text {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  background: rgba(var(--v-theme-on-surface), 0.05);
+  border-left: 4px solid rgb(var(--v-theme-primary));
+}
+
+.source-list {
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.source-legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-weight: 600;
+}
+
+.source-options {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+// Radio, text, badge; on narrow screens the badge drops below the text.
+.source-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 6px 12px;
+  min-height: 44px;
+  padding: 10px 14px;
+  cursor: pointer;
+
+  & + & {
+    border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  }
+
+  &:hover {
+    background: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));
+  }
+
+  &:has(input:focus-visible) {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: -2px;
+  }
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    accent-color: rgb(var(--v-theme-primary));
+    cursor: pointer;
+  }
+
+  @media (max-width: 599.98px) {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    .source-badge {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+}
+
+.source-option--checked {
+  background: rgba(var(--v-theme-on-surface), var(--v-selected-opacity));
+  box-shadow: inset 4px 0 0 rgb(var(--v-theme-primary));
+}
+
+.source-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-wrap: anywhere;
+}
+
+.source-name {
+  font-weight: 600;
+}
+
+.source-desc {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.source-badge {
+  max-width: 100%;
+  padding: 2px 10px;
+  border-radius: 11px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  // The plain success green is too light for white 12 px text (2.8:1); this shade is 5.6:1.
+  background: rgb(var(--v-theme-success-darken-2));
+  color: rgb(var(--v-theme-on-success-darken-2));
 }
 
 .source-hint {
-  min-height: 1.5em;
+  margin-top: 8px;
 }
 
-.source-switch {
+.source-hint-button {
+  min-height: 44px;
+  padding-block: 10px;
   color: inherit;
-  text-decoration: underline;
   text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
   cursor: pointer;
-  // A 44 px tall target made of real padding: it takes up layout space, so it can
-  // never overlap the text or controls around it (an absolutely positioned
-  // pseudo-element did, and a stray tap could start a download).
-  display: inline-block;
-  padding-block: 12px;
 
   &:focus-visible {
     outline: 2px solid currentColor;
