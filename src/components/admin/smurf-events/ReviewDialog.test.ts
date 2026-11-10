@@ -51,9 +51,10 @@ test("choosing deny lists the links it would bring back before it can be saved",
   expect(wrapper.text()).toContain("Denying brings back 2 links");
   expect(wrapper.text()).toContain("Anchor#1001");
   expect(wrapper.text()).toContain("Anchor#1002");
-  expect(button("Save review").element.disabled).toBe(false);
+  expect(button("Save review").element.disabled).toBe(true);
 
   await wrapper.find("textarea").setValue("not an event");
+  expect(button("Save review").element.disabled).toBe(false);
   await button("Save review").trigger("click");
   await flushPromises();
 
@@ -68,6 +69,17 @@ test("a deny that brings nothing back says so", async () => {
   await flushPromises();
 
   expect(wrapper.text()).toContain("No links come back.");
+});
+
+test("Save stays disabled for a deny until a reason is entered", async () => {
+  service.denyPreview.mockResolvedValue({ links: [] });
+  await button("Deny").trigger("click");
+  await flushPromises();
+
+  expect(button("Save review").element.disabled).toBe(true);
+  await wrapper.find("textarea").setValue("   ");
+  expect(button("Save review").element.disabled).toBe(true);
+  await wrapper.find("textarea").setValue("same household, not an event");
   expect(button("Save review").element.disabled).toBe(false);
 });
 

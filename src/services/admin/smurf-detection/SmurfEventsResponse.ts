@@ -1,5 +1,5 @@
 // Shapes of the smurf events admin routes (matchmaking-service, proxied unchanged by website-backend
-// under api/admin/smurf-detection/events). Networks and machines are hash8 values, never raw ones.
+// under api/admin/smurf-detection/events), mirroring matchmaking's smurf-events.contract.ts. Networks and machines are hash8 values, never raw ones.
 // Dates arrive as ISO strings.
 
 import type { HardwareLinkSource } from "./HardwareSmurfResponse";

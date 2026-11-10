@@ -1,5 +1,5 @@
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
-import type { SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { key, type Translate } from "./translate";
 
 const ORIGINS: ReadonlySet<string> = new Set<SmurfEventOrigin>(["detected", "historical", "manual", "carried-over"]);
@@ -38,11 +38,6 @@ export function refusalLabel(refusal: SmurfEventPreviewRefusal, t: Translate): s
 
 export function exclusionLabel(reason: SmurfEventExclusion, t: Translate): string {
   return known(EXCLUSIONS, "excluded", reason, t);
-}
-
-/** Unreviewed events first; otherwise the server's order. Returns a new array. */
-export function orderEvents<T extends Pick<SmurfEventSummary, "review">>(events: readonly T[]): T[] {
-  return [...events.filter((e) => e.review === "unreviewed"), ...events.filter((e) => e.review !== "unreviewed")];
 }
 
 /** The server's message for a failed request, else a generic text. */

@@ -50,7 +50,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="store.orderedEvents"
+      :items="store.events"
       :loading="store.listLoading"
       :items-per-page="-1"
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"

@@ -69,13 +69,13 @@ beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
-test("loadList sends the filters with the page size and lists unreviewed events first", async () => {
+test("loadList sends the filters with the page size and keeps the server order", async () => {
   const store = useSmurfEventsStore();
 
   await store.setFilters({ origin: "manual", review: null });
 
   expect(service.list).toHaveBeenCalledWith("tok", { origin: "manual", limit: SMURF_EVENTS_PAGE_SIZE });
-  expect(store.orderedEvents.map((e) => e.id)).toEqual(["2", "1", "3"]);
+  expect(store.events.map((e) => e.id)).toEqual(["1", "2", "3"]);
   expect(store.next).toBe("c1");
 });
 
@@ -194,6 +194,17 @@ test("deleteEvent sends the reason, drops the shown event and reloads the list",
   expect(service.remove).toHaveBeenCalledWith("tok", "1", "duplicate");
   expect(store.detail).toBeNull();
   expect(service.list).toHaveBeenCalledTimes(1);
+});
+
+test("deny and delete are not sent without a reason", async () => {
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+
+  expect(await store.review("1", "denied", "   ")).toBe(false);
+  expect(await store.deleteEvent("1", "")).toBe(false);
+
+  expect(service.review).not.toHaveBeenCalled();
+  expect(service.remove).not.toHaveBeenCalled();
 });
 
 test("review sends the decision, omits an empty reason and shows the answer", async () => {

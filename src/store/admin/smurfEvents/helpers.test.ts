@@ -2,9 +2,9 @@ import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventPreview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { reviewDecisions, smurfEventActions } from "./actions";
+import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions";
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { errorText, exclusionLabel, orderEvents, originLabel, refusalLabel, reviewColor, reviewLabel } from "./labels";
+import { errorText, exclusionLabel, originLabel, refusalLabel, reviewColor, reviewLabel } from "./labels";
 import { translateEn as t } from "./translate.testing";
 
 const DRAFT: SmurfEventDraft = { name: "LAN party", from: "2026-10-01T00:00", to: "2026-10-03T00:00", anchors: ["Anchor#1001", "Anchor#1002"], reason: "" };
@@ -97,11 +97,10 @@ test("the review decisions offered are the ones other than the current review", 
   assert.deepEqual(reviewDecisions("denied"), ["confirmed", "unreviewed"]);
 });
 
-test("orderEvents lists unreviewed events first and keeps the server order otherwise", () => {
-  const events = [summary("a", "confirmed"), summary("b", "unreviewed"), summary("c", "denied"), summary("d", "unreviewed")];
-
-  assert.deepEqual(orderEvents(events).map((e) => e.id), ["b", "d", "a", "c"]);
-  assert.deepEqual(events.map((e) => e.id), ["a", "b", "c", "d"]);
+test("a deny needs a reason; confirm and unreview do not", () => {
+  assert.equal(reviewNeedsReason("denied"), true);
+  assert.equal(reviewNeedsReason("confirmed"), false);
+  assert.equal(reviewNeedsReason("unreviewed"), false);
 });
 
 test("origins, reviews, refusals and exclusions have labels; unknown values show as sent", () => {

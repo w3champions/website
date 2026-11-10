@@ -22,3 +22,8 @@ const DECISIONS: readonly SmurfEventReview[] = ["confirmed", "denied", "unreview
 export function reviewDecisions(current: SmurfEventReview): SmurfEventReview[] {
   return DECISIONS.filter((d) => d !== current);
 }
+
+/** A deny goes to the audit log with its reason, as hardware overrides do; confirm and unreview need none. */
+export function reviewNeedsReason(decision: SmurfEventReview): boolean {
+  return decision === "denied";
+}

@@ -808,11 +808,11 @@ const en = {
       deny_links: "Denying brings back {count} links",
       deny_none: "No links come back.",
       review_reason: "Reason (optional)",
+      reason_required: "Reason (required)",
       save_review: "Save review",
       // Delete dialog
       delete_title: "Delete {name}",
       delete_body: "Delete this manual event. You are recorded as the moderator who deleted it.",
-      delete_reason: "Reason (optional)",
       delete_confirm: "Delete event",
       // Notices
       saved: "Event saved.",

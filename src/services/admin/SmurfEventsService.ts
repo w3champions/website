@@ -77,9 +77,10 @@ export class SmurfEventsService {
     return await this.call("PUT", `/${segment(id)}`, token, request);
   }
 
-  async remove(token: string, id: string, reason?: string): Promise<void> {
+  /** The reason is required by the page (it goes to the audit log). */
+  async remove(token: string, id: string, reason: string): Promise<void> {
     try {
-      await this.client.requestVoid("DELETE", `${BASE}/${segment(id)}`, token, reason === undefined ? {} : { reason });
+      await this.client.requestVoid("DELETE", `${BASE}/${segment(id)}`, token, { reason });
     } catch (e) {
       throw asApiError(e);
     }

@@ -41,7 +41,7 @@
 
         <v-textarea
           v-model="reason"
-          :label="t(key('review_reason'))"
+          :label="t(key(decision && reviewNeedsReason(decision) ? 'reason_required' : 'review_reason'))"
           auto-grow
           rows="2"
           variant="filled"
@@ -72,7 +72,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
-import { reviewDecisions } from "@/store/admin/smurfEvents/actions";
+import { reviewDecisions, reviewNeedsReason } from "@/store/admin/smurfEvents/actions";
 import { errorText } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
@@ -97,9 +97,10 @@ const decision = ref<SmurfEventReview | null>(null);
 const reason = ref("");
 const title = computed(() => t(key("review_title"), { name: props.event?.name ?? "" }));
 
-// A deny is offered only once the moderator has seen which links it brings back.
+// A deny is offered only once the moderator has seen which links it brings back and gave a reason.
 const canSave = computed(() => {
   if (decision.value === null || store.acting) return false;
+  if (reviewNeedsReason(decision.value) && reason.value.trim() === "") return false;
   return decision.value !== "denied" || (store.denyLinks !== null && !store.denyLoading);
 });
 

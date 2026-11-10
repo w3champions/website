@@ -4,7 +4,7 @@ import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventLinkRef, SmurfEventOrigin, SmurfEventPreview, SmurfEventReview, SmurfEventsQuery, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { orderEvents } from "./labels";
+import { reviewNeedsReason } from "./actions";
 import { smurfEventsService } from "./service";
 
 export const SMURF_EVENTS_PAGE_SIZE = 50;
@@ -16,7 +16,7 @@ export interface SmurfEventFilters {
 
 interface SmurfEventsState {
   filters: SmurfEventFilters;
-  /** Server order, every page loaded so far. */
+  /** Server order (unreviewed first), every page loaded so far. */
   events: SmurfEventSummary[];
   /** The cursor of the next page; null once the last page is shown. */
   next: string | null;
@@ -90,11 +90,6 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     acting: false,
     actionError: null,
   }),
-
-  getters: {
-    /** Unreviewed events first. */
-    orderedEvents: (state): SmurfEventSummary[] => orderEvents(state.events),
-  },
 
   actions: {
     async setFilters(filters: SmurfEventFilters): Promise<boolean> {
@@ -220,12 +215,14 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       }
     },
 
+    /** Deletes a manual event; the reason is required (it goes to the audit log). */
     async deleteEvent(id: string, reason: string): Promise<boolean> {
-      if (this.acting) return false;
+      const trimmed = reason.trim();
+      if (this.acting || trimmed === "") return false;
       this.acting = true;
       this.actionError = null;
       try {
-        await smurfEventsService().remove(token(), id, trimmedOrUndefined(reason));
+        await smurfEventsService().remove(token(), id, trimmed);
         if (this.detail?.id === id) this.closeDetail();
         void this.loadList();
         return true;
@@ -238,11 +235,12 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       }
     },
 
+    /** A deny needs a reason; confirm and unreview send one only when given. */
     async review(id: string, decision: SmurfEventReview, reason: string): Promise<boolean> {
-      if (this.acting) return false;
+      const trimmed = trimmedOrUndefined(reason);
+      if (this.acting || (reviewNeedsReason(decision) && trimmed === undefined)) return false;
       this.acting = true;
       this.actionError = null;
-      const trimmed = trimmedOrUndefined(reason);
       try {
         const reviewed = await smurfEventsService().review(token(), id, trimmed === undefined ? { decision } : { decision, reason: trimmed });
         if (this.detail?.id === id) {

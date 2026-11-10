@@ -15,7 +15,7 @@
         <div class="text-body-2 mb-3">{{ t(key("delete_body")) }}</div>
         <v-textarea
           v-model="reason"
-          :label="t(key('delete_reason'))"
+          :label="t(key('reason_required'))"
           auto-grow
           rows="2"
           variant="filled"
@@ -32,7 +32,7 @@
         <v-btn variant="text" :disabled="store.acting" @click="emit('update:modelValue', false)">
           {{ t("views_admin.cancel") }}
         </v-btn>
-        <v-btn color="error" variant="flat" :loading="store.acting" @click="remove">
+        <v-btn color="error" variant="flat" :disabled="!canDelete" :loading="store.acting" @click="remove">
           {{ t(key("delete_confirm")) }}
         </v-btn>
       </v-card-actions>
@@ -65,10 +65,12 @@ const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 const reason = ref("");
 const title = computed(() => t(key("delete_title"), { name: props.event?.name ?? "" }));
+// The reason goes to the audit log, as for hardware overrides.
+const canDelete = computed(() => !store.acting && reason.value.trim() !== "");
 
 async function remove(): Promise<void> {
   const event = props.event;
-  if (event === null || store.acting) return;
+  if (event === null || !canDelete.value) return;
   if (!(await store.deleteEvent(event.id, reason.value))) return;
   emit("deleted");
   emit("update:modelValue", false);
