@@ -691,6 +691,16 @@ const en = {
     },
   },
 
+  components_launchersetup: {
+    label: "Download source",
+    global: "Global (GitHub)",
+    cn: "China mainland",
+    chosen_by_you: "chosen by you",
+    detected_notice: "You appear to be in mainland China, so downloads use our China mainland source.",
+    use_global: "Use Global (GitHub)",
+    hint_try_global: "Not starting? Try Global (GitHub)",
+  },
+
   views_sso_continue: {
     submitting: "Signing you in to the W3Champions feedback portal...",
     error_title: "Sign-In Error",

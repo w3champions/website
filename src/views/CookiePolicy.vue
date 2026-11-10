@@ -48,6 +48,7 @@
                 <tr><td>theme</td><td>localStorage</td><td>Necessary</td><td>Functional preference: interface theme</td><td>Persistent</td></tr>
                 <tr><td>w3c-locale</td><td>localStorage</td><td>Necessary</td><td>Functional preference: language</td><td>Persistent</td></tr>
                 <tr><td>w3c-gateway</td><td>localStorage</td><td>Necessary</td><td>Functional preference: gateway</td><td>Persistent</td></tr>
+                <tr><td>w3c-launcher-download-source</td><td>localStorage</td><td>Necessary</td><td>Functional preference: launcher download source</td><td>Persistent</td></tr>
                 <tr><td>spoilerFree settings</td><td>localStorage</td><td>Necessary</td><td>Functional preference: spoiler-free mode</td><td>Persistent</td></tr>
                 <tr><td>patreon_oauth_state</td><td>localStorage</td><td>Necessary</td><td>OAuth security (CSRF protection)</td><td>Transient</td></tr>
                 <tr><td>stcm.consent.*</td><td>localStorage</td><td>Necessary</td><td>Stores your cookie choices</td><td>Persistent</td></tr>
