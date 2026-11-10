@@ -25,11 +25,6 @@ export function nextSaved(
   return chosen === detected ? null : chosen;
 }
 
-/** The other source of the two. */
-export function otherSource(source: LinkSource): DownloadSource {
-  return source === "cn" ? "global" : "cn";
-}
-
 export function installerUrl(base: string, platform: InstallerPlatform, source: LinkSource): string {
   return `${base}launcher-e/${platform}?source=${source}`;
 }

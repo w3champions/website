@@ -46,7 +46,7 @@
                         <button type="button" class="source-switch" @click="choose('global', true)">
                           <span lang="zh-CN">{{ ZH.useGlobal }}</span>
                           <template v-if="showEnglish">
-                            · {{ $t("components_launchersetup.use_global") }}
+                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.use_global") }}
                           </template>
                         </button>
                       </template>
@@ -76,14 +76,14 @@
                       </template>
                       <template v-else-if="mode !== 'detected-cn'">
                         <span :id="statusTextId" :lang="showEnglish ? undefined : 'zh-CN'">{{ statusLabel }}</span>
-                        ·
+                        <span aria-hidden="true"> · </span>
                         <template v-if="mode === 'chosen'">
                           <template v-if="showEnglish">
                             <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}
                           </template>
                           <span v-if="showEnglish">({{ $t("components_launchersetup.chosen_by_you") }})</span>
                           <span v-else lang="zh-CN">{{ ZH.chosenByYou }}</span>
-                          ·
+                          <span aria-hidden="true"> · </span>
                         </template>
                         <button
                           v-if="source === 'cn'"
@@ -93,7 +93,7 @@
                         >
                           <span lang="zh-CN">{{ ZH.useGlobal }}</span>
                           <template v-if="showEnglish">
-                            · {{ $t("components_launchersetup.use_global") }}
+                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.use_global") }}
                           </template>
                         </button>
                         <button v-else type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
@@ -103,17 +103,14 @@
                     </p>
 
                     <div aria-live="polite" class="source-hint text-body-2 text-high-emphasis">
-                      <button
-                        v-if="hint"
-                        type="button"
-                        class="source-switch"
-                        @click="onHintClick"
-                      >
-                        <span lang="zh-CN">{{ hint.zh }}</span>
-                        <template v-if="hint.showEnglish">
-                          · {{ $t("components_launchersetup.hint_try_global") }}
-                        </template>
-                      </button>
+                      <div v-for="option in hints" :key="option.target">
+                        <button type="button" class="source-switch" @click="onHintClick(option.target)">
+                          <span lang="zh-CN">{{ option.zh }}</span>
+                          <template v-if="option.showEnglish">
+                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.hint_try_global") }}
+                          </template>
+                        </button>
+                      </div>
                     </div>
                   </v-card-text>
                   <h3>{{ $t("views_gettingstarted.launchertitle") }}</h3>
@@ -190,8 +187,8 @@ import {
   effectiveSource,
   installerUrl,
   type InstallerPlatform,
+  type LinkSource,
   nextSaved,
-  otherSource,
   ZH,
 } from "./launcherDownloadSource";
 import { readSavedSource, writeSavedSource } from "./launcherDownloadSourceStorage";
@@ -226,7 +223,7 @@ export default defineComponent({
     const detected = ref<DownloadSource | null>(null);
     const saved = ref<DownloadSource | null>(readSavedSource());
     // The last download the visitor started, and the source it came from.
-    const lastClick = ref<{ platform: PlatformEntry; source: DownloadSource } | null>(null);
+    const lastClick = ref<{ platform: PlatformEntry; source: LinkSource } | null>(null);
 
     function isSwitchFocused(): boolean {
       const active = document.activeElement;
@@ -276,12 +273,15 @@ export default defineComponent({
       PLATFORMS.map((p) => ({ ...p, url: installerUrl(LAUNCHER_UPDATE_URL, p.id, linkSource.value) }))
     );
 
-    const hint = computed(() => {
+    // Offers the source(s) the last download did not use. After an "auto" download
+    // either source may have served it (detection timed out), so both are offered.
+    const hints = computed(() => {
       const click = lastClick.value;
-      if (!click) return null;
-      return click.source === "cn"
-        ? { zh: ZH.hintChinaSource, showEnglish: showEnglish.value }
-        : { zh: ZH.hintGlobalSource(click.platform.label), showEnglish: false };
+      if (!click) return [];
+      const toChina = { target: "cn" as const, zh: ZH.hintGlobalSource(click.platform.label), showEnglish: false };
+      const toGlobal = { target: "global" as const, zh: ZH.hintChinaSource, showEnglish: showEnglish.value };
+      if (click.source === "auto") return [toChina, toGlobal];
+      return click.source === "cn" ? [toGlobal] : [toChina];
     });
 
     // The switch the visitor activated is replaced by its counterpart, so focus
@@ -293,13 +293,12 @@ export default defineComponent({
     }
 
     function onDownloadClick(platform: PlatformEntry) {
-      lastClick.value = { platform, source: source.value };
+      lastClick.value = { platform, source: linkSource.value };
     }
 
-    function onHintClick() {
+    function onHintClick(target: DownloadSource) {
       const click = lastClick.value;
       if (!click) return;
-      const target = otherSource(click.source);
       choose(target);
       lastClick.value = { platform: click.platform, source: target };
       window.open(installerUrl(LAUNCHER_UPDATE_URL, click.platform.id, target), "_blank", "noopener");
@@ -331,7 +330,7 @@ export default defineComponent({
       mode,
       source,
       showEnglish,
-      hint,
+      hints,
       choose,
       onDownloadClick,
       onHintClick
@@ -368,15 +367,11 @@ export default defineComponent({
   text-decoration: underline;
   text-align: left;
   cursor: pointer;
-  position: relative;
-  min-height: 24px;
-
-  // Extends the hit area to about 44 px without changing how it looks.
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -10px -4px;
-  }
+  // A 44 px tall target made of real padding: it takes up layout space, so it can
+  // never overlap the text or controls around it (an absolutely positioned
+  // pseudo-element did, and a stray tap could start a download).
+  display: inline-block;
+  padding-block: 12px;
 
   &:focus-visible {
     outline: 2px solid currentColor;

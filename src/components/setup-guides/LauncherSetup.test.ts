@@ -96,6 +96,33 @@ describe("LauncherSetup download source", () => {
     expect(downloadHrefs()[0]).toBe("https://x/api/launcher-e/windows?source=auto");
   });
 
+  it("hintAfterAutoDownloadOffersBothSourcesBecauseEitherMayHaveBeenUsed", async () => {
+    fetchDetected.mockResolvedValue(null);
+    await mountSetup();
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    const buttons = wrapper!.findAll(".source-hint button").map((b) => b.text());
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]).toContain("下载没反应或很慢？用中国大陆线路重新下载 Windows 版");
+    expect(buttons[1]).toContain("下载没反应或很慢？试试国际线路（GitHub）");
+
+    await wrapper!.findAll(".source-hint button")[1].trigger("click");
+    expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/windows?source=global", "_blank", "noopener");
+  });
+
+  it("separatorsAreHiddenFromScreenReaders", async () => {
+    fetchDetected.mockResolvedValue("global");
+    await mountSetup();
+    await switchButton("中国大陆用户")!.trigger("click");
+
+    const text = wrapper!.get(".source-status").element.textContent ?? "";
+    const dots = text.split("·").length - 1;
+    expect(dots).toBeGreaterThan(0);
+    const hidden = wrapper!.findAll(".source-controls [aria-hidden=\"true\"]").filter((e) => e.text() === "·");
+    expect(hidden).toHaveLength(dots);
+  });
+
   it("manualSwitchPersistsAndRelabels", async () => {
     fetchDetected.mockResolvedValue("global");
     await mountSetup();

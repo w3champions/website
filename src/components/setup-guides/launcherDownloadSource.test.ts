@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { effectiveSource, installerUrl, nextSaved, otherSource, parseSavedSource } from "./launcherDownloadSource";
+import { effectiveSource, installerUrl, nextSaved, parseSavedSource } from "./launcherDownloadSource";
 
 describe("launcherDownloadSource", () => {
   it("savedChoiceWinsOverDetection", () => {
@@ -28,12 +28,6 @@ describe("launcherDownloadSource", () => {
   it("installerUrlAppendsPlatformAndSource", () => {
     expect(installerUrl("https://x/api/", "mac-arm64", "cn")).toBe("https://x/api/launcher-e/mac-arm64?source=cn");
     expect(installerUrl("https://x/api/", "windows", "auto")).toBe("https://x/api/launcher-e/windows?source=auto");
-  });
-
-  it("otherSourceFlipsCnAndTreatsAutoAsGlobal", () => {
-    expect(otherSource("cn")).toBe("global");
-    expect(otherSource("global")).toBe("cn");
-    expect(otherSource("auto")).toBe("cn");
   });
 
   it("parseSavedSourceRejectsUnknownValues", () => {

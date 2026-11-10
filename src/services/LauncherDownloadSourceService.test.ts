@@ -25,6 +25,11 @@ describe("LauncherDownloadSourceService.fetchDetected", () => {
     expect(await LauncherDownloadSourceService.fetchDetected()).toBeNull();
   });
 
+  it("returnsNullWhenAnOkAnswerHasAnUnreadableBody", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: () => Promise.reject(new SyntaxError("bad json")) }));
+    expect(await LauncherDownloadSourceService.fetchDetected()).toBeNull();
+  });
+
   it("returnsNullWhenTheRequestFails", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
     expect(await LauncherDownloadSourceService.fetchDetected()).toBeNull();
