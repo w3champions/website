@@ -47,11 +47,17 @@ describe("LauncherSetup download source", () => {
   const order = () => radios().map((r) => r.element.value);
   const checked = () => radios().filter((r) => r.element.checked).map((r) => r.element.value);
   const row = (source: string) => wrapper!.get(`[data-source=${source}]`);
-  // Rows showing the badge; the first row also holds a hidden one while nothing is recommended.
-  const badged = () => wrapper!.findAll(".source-badge:not(.source-badge--reserved)").map((b) => b.element.closest("[data-source]")!.getAttribute("data-source"));
-  const badgeRows = () => wrapper!.findAll(".source-badge").map((b) => b.element.closest("[data-source]")!.getAttribute("data-source"));
+  // Every row holds a badge; these are the rows that show it.
+  const rowOf = (el: Element) => el.closest("[data-source]")!.getAttribute("data-source");
+  const badged = () => wrapper!.findAll(".source-badge:not(.source-badge--hidden)").map((b) => rowOf(b.element));
+  const badgeRows = () => wrapper!.findAll(".source-badge").map((b) => rowOf(b.element));
+  // Rows whose badge space collapses on narrow screens.
+  const spacerRows = () => wrapper!.findAll(".source-badge--spacer").map((b) => rowOf(b.element));
+  const hiddenBadgesAriaHidden = () => wrapper!.findAll(".source-badge--hidden").every((b) => b.attributes("aria-hidden") === "true");
   const firstBadge = () => wrapper!.get("[data-source]:first-child .source-badge");
   const veil = () => wrapper!.find(".source-veil");
+  const status = () => wrapper!.get(".source-detecting-status");
+  const hintZh = () => hintButtons()[0].find("[lang='zh-CN']");
   const optionsBox = () => wrapper!.get(".source-options");
   const noNotice = () => expect(wrapper!.find(".source-notice").exists()).toBe(false);
   const hintButtons = () => wrapper!.findAll(".source-hint button");
@@ -322,8 +328,12 @@ describe("LauncherSetup download source", () => {
     await mountSetup();
 
     expect(veil().exists()).toBe(true);
-    expect(veil().attributes("role")).toBe("status");
     expect(veil().text()).toBe("Finding the best download for you…");
+    // Announced once, by the status region; the veil is visual only.
+    expect(veil().attributes("aria-hidden")).toBe("true");
+    expect(veil().find("[role=status]").exists()).toBe(false);
+    expect(status().attributes("role")).toBe("status");
+    expect(status().text()).toBe("Finding the best download for you…");
     expect(optionsBox().attributes("inert")).toBeDefined();
     expect(optionsBox().attributes("aria-busy")).toBe("true");
     // Laid out as it will be without an answer.
@@ -336,6 +346,40 @@ describe("LauncherSetup download source", () => {
     expect(veil().exists()).toBe(false);
     expect(optionsBox().attributes("inert")).toBeUndefined();
     expect(optionsBox().attributes("aria-busy")).toBeUndefined();
+    expect(status().text()).toBe("");
+  });
+
+  it("statusRegionIsPresentAndEmptyOnTheFirstFrame", async () => {
+    holdDetection();
+    await mountSetup("en", { settle: false });
+    // Rendered before the text arrives, so screen readers see a change to announce.
+    const region = wrapper!.find("[role=status]");
+    expect(region.exists()).toBe(true);
+    expect(wrapper!.findAll("[role=status]")).toHaveLength(1);
+
+    await flushPromises();
+
+    expect(status().text()).toBe("Finding the best download for you…");
+  });
+
+  it("hintFromAClickDuringDetectionDoesNotChangeWhenItAnswers", async () => {
+    for (const savedSource of [null, "cn"] as const) {
+      sessionStorage.clear();
+      localStorage.clear();
+      if (savedSource) localStorage.setItem(STORAGE_KEY, savedSource);
+      const answer = holdDetection();
+      await mountSetup();
+      await wrapper!.findAll("a.join-button")[0].trigger("click");
+      const before = { text: hintButtons()[0].text(), zh: hintZh().exists() ? hintZh().text() : null };
+
+      await answer("cn");
+
+      expect(hintButtons(), String(savedSource)).toHaveLength(1);
+      expect(hintButtons()[0].text(), String(savedSource)).toBe(before.text);
+      expect(hintZh().exists() ? hintZh().text() : null, String(savedSource)).toBe(before.zh);
+      wrapper!.unmount();
+      wrapper = undefined;
+    }
   });
 
   it("pendingButtonsFollowTheSavedChoice", async () => {
@@ -362,7 +406,7 @@ describe("LauncherSetup download source", () => {
     expect(veil().exists()).toBe(false);
     expect(order()).toEqual(["cn", "intl", "global"]);
     expect(checked()).toEqual(["cn"]);
-    expect(firstBadge().classes()).not.toContain("source-badge--reserved");
+    expect(firstBadge().classes()).not.toContain("source-badge--hidden");
     expect(firstBadge().attributes("aria-hidden")).toBeUndefined();
     expect(badged()).toEqual(["cn"]);
     noNotice();
@@ -389,23 +433,30 @@ describe("LauncherSetup download source", () => {
 
     expect(veil().exists()).toBe(false);
     expect(order()).toEqual(["global", "intl", "cn"]);
-    expect(firstBadge().classes()).toContain("source-badge--reserved");
+    expect(firstBadge().classes()).toContain("source-badge--hidden");
     expect(firstBadge().attributes("aria-hidden")).toBe("true");
     expect(firstBadge().text()).toBe("Recommended for you");
     expect(badged()).toEqual([]);
   });
 
-  it("onlyTheFirstRowEverHoldsTheBadge", async () => {
+  it("onlyTheFirstRowShowsTheBadgeAndOnlyAfterADefiniteAnswer", async () => {
     for (const result of ["cn", "global", null] as const) {
       sessionStorage.clear();
       const answer = holdDetection();
       await mountSetup();
-      expect(badgeRows(), "pending").toEqual(["global"]);
-      expect(firstBadge().attributes("aria-hidden"), "pending").toBe("true");
+      // Every row holds the badge's space; none shows it; only the first keeps it on narrow screens.
+      expect(badgeRows(), "pending").toEqual(order());
+      expect(badged(), "pending").toEqual([]);
+      expect(hiddenBadgesAriaHidden(), "pending").toBe(true);
+      expect(spacerRows(), "pending").toEqual(order().slice(1));
 
       await answer(result);
 
-      expect(badgeRows(), String(result)).toEqual([order()[0]]);
+      const label = String(result);
+      expect(badgeRows(), label).toEqual(order());
+      expect(badged(), label).toEqual(result === null ? [] : [order()[0]]);
+      expect(hiddenBadgesAriaHidden(), label).toBe(true);
+      expect(spacerRows(), label).toEqual(order().slice(1));
       wrapper!.unmount();
       wrapper = undefined;
     }
@@ -416,6 +467,7 @@ describe("LauncherSetup download source", () => {
     await mountSetup("en", { settle: false });
 
     expect(veil().exists()).toBe(false);
+    expect(status().text()).toBe("");
     expect(optionsBox().attributes("inert")).toBeUndefined();
     expect(order()).toEqual(["cn", "intl", "global"]);
     expect(checked()).toEqual(["cn"]);
@@ -450,10 +502,16 @@ describe("LauncherSetup download source", () => {
   });
 
   it("unknownAnswerIsNotRemembered", async () => {
-    fetchDetected.mockResolvedValue(null);
+    const answer = holdDetection();
     await mountSetup();
-
     expect(sessionStorage.getItem(DETECTED_KEY)).toBeNull();
+    expect(sessionStorage).toHaveLength(0);
+
+    await answer(null);
+
+    expect(veil().exists()).toBe(false);
+    expect(sessionStorage.getItem(DETECTED_KEY)).toBeNull();
+    expect(sessionStorage).toHaveLength(0);
   });
 
   it("invalidRememberedAnswerIsIgnored", async () => {

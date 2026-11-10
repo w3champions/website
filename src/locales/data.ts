@@ -2791,7 +2791,7 @@ const data = {
     components_launchersetup: {
       label: "Źródło pobierania",
       recommended: "Polecane dla Ciebie",
-      detecting: "Szukamy najlepszego pobierania dla Ciebie…",
+      detecting: "Szukamy najlepszego źródła pobierania dla Ciebie…",
       global_name: "Pobieranie standardowe",
       global_desc: "Najszybsze dla większości graczy na świecie.",
       intl_name: "Pobieranie zapasowe",

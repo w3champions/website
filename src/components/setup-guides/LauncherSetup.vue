@@ -64,21 +64,27 @@
                                 {{ option.desc }}<template v-if="option.descZh">{{ " " }}<span lang="zh-CN">{{ option.descZh }}</span></template>
                               </span>
                             </span>
-                            <!-- The recommended source is always first, so the first row always holds the badge's space. -->
+                            <!--
+                              Every row holds the badge's space, so every row's text wraps the same and swapping rows
+                              keeps the height. Only the recommended source (always first) shows it. On narrow screens
+                              the badge has its own line, which only the first row keeps.
+                            -->
                             <span
-                              v-if="index === 0"
                               class="source-badge"
-                              :class="{ 'source-badge--reserved': !option.recommended }"
+                              :class="{ 'source-badge--hidden': !option.recommended, 'source-badge--spacer': index > 0 }"
                               :aria-hidden="option.recommended ? undefined : 'true'"
                             >{{ $t("components_launchersetup.recommended") }}</span>
                           </label>
                         </div>
+                        <!-- The status line below announces it; the veil itself is for sighted visitors. -->
                         <Transition name="source-veil">
-                          <div v-if="detecting" class="source-veil text-body-2" role="status">
-                            <v-progress-circular indeterminate size="20" width="2" color="primary" aria-hidden="true" />
+                          <div v-if="detecting" class="source-veil text-body-2" aria-hidden="true">
+                            <v-progress-circular class="source-veil-spinner" indeterminate size="20" width="2" color="primary" />
                             <span>{{ $t("components_launchersetup.detecting") }}</span>
                           </div>
                         </Transition>
+                        <!-- Present from the first frame and filled after mount, so screen readers announce the change. -->
+                        <span class="source-detecting-status d-sr-only" role="status">{{ status }}</span>
                       </div>
                     </fieldset>
 
@@ -223,8 +229,12 @@ export default defineComponent({
     const detecting = ref(remembered === null);
     const detected = ref<DetectedSource | null>(null);
     const saved = ref<DownloadSource | null>(readSavedSource());
-    // The last download the visitor started, and the source it came from.
-    const lastClick = ref<{ platform: PlatformEntry; source: LinkSource } | null>(null);
+    // The polite status region starts empty and gets the detecting text after mount, so it is announced.
+    const announcing = ref(false);
+    const status = computed(() => (announcing.value && detecting.value ? t(`${KEY_PREFIX}detecting`) : ""));
+    // The last download the visitor started, the source it came from and detection's answer at that
+    // moment. The hint follows that snapshot, so a later answer does not change it.
+    const lastClick = ref<{ platform: PlatformEntry; source: LinkSource; detected: DetectedSource | null } | null>(null);
 
     /** The site-language text, plus its Chinese rendering when that is different text. */
     function bilingual(key: string, named: Record<string, string> = {}, namedZh: Record<string, string> = named) {
@@ -246,6 +256,7 @@ export default defineComponent({
     // The options are inert while detecting, so the reorder below can never move a focused radio.
     onMounted(async () => {
       if (!detecting.value) return;
+      announcing.value = true;
       const answer = await LauncherDownloadSourceService.fetchDetected();
       if (answer !== null) writeDetectedSource(answer);
       applyDetected(answer);
@@ -282,14 +293,14 @@ export default defineComponent({
     const hint = computed(() => {
       const click = lastClick.value;
       if (!click) return null;
-      const target = fallbackSource(click.source, detected.value);
+      const target = fallbackSource(click.source, click.detected);
       const nameKey = `${KEY_PREFIX}${target}_name`;
       const { text, zh } = bilingual(
         "hint_try",
         { source: t(nameKey) },
         { source: t(nameKey, {}, { locale: SUPPLEMENT_LOCALE }) },
       );
-      const addChinese = detected.value === "cn" || target === "cn";
+      const addChinese = click.detected === "cn" || target === "cn";
       return { target, text, zh: addChinese ? zh : null };
     });
 
@@ -299,14 +310,14 @@ export default defineComponent({
     }
 
     function onDownloadClick(platform: PlatformEntry) {
-      lastClick.value = { platform, source: linkSource.value };
+      lastClick.value = { platform, source: linkSource.value, detected: detected.value };
     }
 
     function onHintClick(target: DownloadSource) {
       const click = lastClick.value;
       if (!click) return;
       choose(target);
-      lastClick.value = { platform: click.platform, source: target };
+      lastClick.value = { platform: click.platform, source: target, detected: detected.value };
       window.open(installerUrl(LAUNCHER_UPDATE_URL, click.platform.id, target), "_blank", "noopener");
     }
 
@@ -328,6 +339,7 @@ export default defineComponent({
       mdiDownload,
       describedBy,
       detecting,
+      status,
       options,
       platforms,
       hint,
@@ -370,21 +382,12 @@ export default defineComponent({
   position: relative;
 }
 
-// The rows share one set of columns (subgrid), so a source's text wraps the same in
-// every row and swapping rows never changes the list's height.
 .source-options {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  column-gap: 12px;
+  display: flex;
+  flex-direction: column;
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 4px;
   overflow: hidden;
-}
-
-@media (max-width: 599.98px) {
-  .source-options {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
 }
 
 // Laid out as normal so the box keeps its final height; only the veil shows.
@@ -409,6 +412,8 @@ export default defineComponent({
 
 .source-veil-leave-active {
   transition: opacity 200ms ease-out;
+  // The list under the fading veil is already live.
+  pointer-events: none;
 }
 
 .source-veil-leave-to {
@@ -419,13 +424,19 @@ export default defineComponent({
   .source-veil-leave-active {
     transition: none;
   }
+
+  // A still arc instead of a spinning one.
+  .source-veil-spinner,
+  .source-veil-spinner :deep(svg),
+  .source-veil-spinner :deep(.v-progress-circular__overlay) {
+    animation: none;
+  }
 }
 
 // Radio, text, badge; on narrow screens the badge drops below the text.
 .source-option {
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
   gap: 6px 12px;
   min-height: 44px;
@@ -454,20 +465,11 @@ export default defineComponent({
   }
 
   @media (max-width: 599.98px) {
+    grid-template-columns: auto minmax(0, 1fr);
+
     .source-badge {
       grid-column: 2;
       justify-self: start;
-    }
-  }
-}
-
-// Browsers without subgrid keep the per-row columns (rows can then wrap differently when they swap).
-@supports not (grid-template-columns: subgrid) {
-  .source-option {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-
-    @media (max-width: 599.98px) {
-      grid-template-columns: auto minmax(0, 1fr);
     }
   }
 }
@@ -506,9 +508,16 @@ export default defineComponent({
   color: rgb(var(--v-theme-on-success-darken-2));
 }
 
-// Holds the badge's space in the first row while there is no recommendation.
-.source-badge--reserved {
+// Holds the badge's space without showing it (see the template).
+.source-badge--hidden {
   visibility: hidden;
+}
+
+// On narrow screens the badge takes its own line, which only the first row keeps.
+@media (max-width: 599.98px) {
+  .source-badge--spacer {
+    display: none;
+  }
 }
 
 .source-hint {
