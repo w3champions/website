@@ -694,13 +694,13 @@ const en = {
   components_launchersetup: {
     label: "Download source",
     recommended: "Recommended for you",
+    detecting: "Finding the best download for you…",
     global_name: "Standard download",
     global_desc: "Fastest for most players worldwide.",
     intl_name: "Backup download",
     intl_desc: "Hosted by W3Champions. Try it if the standard download is slow or does not start.",
     cn_name: "Mainland China",
     cn_desc: "Optimized for downloading in mainland China.",
-    detected_notice: "You appear to be in mainland China, so we selected the download optimized for mainland China.",
     hint_try: "Download not starting or slow? Try {source}",
   },
 

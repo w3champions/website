@@ -60,3 +60,10 @@ export const SAVED_SOURCE_STORAGE_KEY = "w3c-launcher-download-source";
 export function parseSavedSource(raw: string | null): DownloadSource | null {
   return raw === "global" || raw === "intl" || raw === "cn" ? raw : null;
 }
+
+/** Remembers detection's answer for the browser session (sessionStorage). */
+export const DETECTED_SOURCE_STORAGE_KEY = "w3c-launcher-detected-source";
+
+export function parseDetectedSource(raw: string | null): DetectedSource | null {
+  return raw === "global" || raw === "cn" ? raw : null;
+}

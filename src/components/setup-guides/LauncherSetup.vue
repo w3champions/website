@@ -31,45 +31,60 @@
                 <v-card-text class="pt-0 px-3">
                   <h3>{{ $t("views_gettingstarted.downloadw3ctitle") }}</h3>
                   <br />
-                  <v-card-text ref="downloadArea" class="download-area pa-0">
-                    <!-- Detected mainland China and nothing saved: say why that row is checked. -->
-                    <div aria-live="polite" class="source-notice text-body-2 text-high-emphasis">
-                      <p v-if="notice" class="source-notice-text">
-                        {{ notice.text }}
-                        <template v-if="notice.zh">
-                          <br />
-                          <span lang="zh-CN">{{ notice.zh }}</span>
-                        </template>
-                      </p>
-                    </div>
-
+                  <v-card-text class="download-area pa-0">
                     <fieldset class="source-list">
                       <legend class="source-legend text-body-2">{{ $t("components_launchersetup.label") }}</legend>
-                      <div class="source-options">
-                        <label
-                          v-for="option in options"
-                          :key="option.key"
-                          class="source-option"
-                          :class="{ 'source-option--checked': option.checked }"
-                          :data-source="option.key"
+                      <!-- While detection answers, a veil covers the laid-out list so nothing moves when it lifts. -->
+                      <div class="source-box">
+                        <div
+                          class="source-options"
+                          :class="{ 'source-options--pending': detecting }"
+                          :inert="detecting || undefined"
+                          :aria-busy="detecting ? 'true' : undefined"
                         >
-                          <input
-                            type="radio"
-                            name="launcher-download-source"
-                            :value="option.key"
-                            :checked="option.checked"
-                            @change="choose(option.key)"
-                          />
-                          <span class="source-text">
-                            <span :id="option.nameId" class="source-name">
-                              {{ option.name }}<template v-if="option.nameZh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ option.nameZh }}</span></template>
+                          <label
+                            v-for="(option, index) in options"
+                            :key="option.key"
+                            class="source-option"
+                            :class="{ 'source-option--checked': option.checked }"
+                            :data-source="option.key"
+                          >
+                            <input
+                              type="radio"
+                              name="launcher-download-source"
+                              :value="option.key"
+                              :checked="option.checked"
+                              @change="choose(option.key)"
+                            />
+                            <span class="source-text">
+                              <span :id="option.nameId" class="source-name">
+                                {{ option.name }}<template v-if="option.nameZh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ option.nameZh }}</span></template>
+                              </span>
+                              <span class="source-desc text-medium-emphasis">
+                                {{ option.desc }}<template v-if="option.descZh">{{ " " }}<span lang="zh-CN">{{ option.descZh }}</span></template>
+                              </span>
                             </span>
-                            <span class="source-desc text-medium-emphasis">
-                              {{ option.desc }}<template v-if="option.descZh">{{ " " }}<span lang="zh-CN">{{ option.descZh }}</span></template>
-                            </span>
-                          </span>
-                          <span v-if="option.recommended" class="source-badge">{{ $t("components_launchersetup.recommended") }}</span>
-                        </label>
+                            <!--
+                              Every row holds the badge's space, so every row's text wraps the same and swapping rows
+                              keeps the height. Only the recommended source (always first) shows it. On narrow screens
+                              the badge has its own line, which only the first row keeps.
+                            -->
+                            <span
+                              class="source-badge"
+                              :class="{ 'source-badge--hidden': !option.recommended, 'source-badge--spacer': index > 0 }"
+                              :aria-hidden="option.recommended ? undefined : 'true'"
+                            >{{ $t("components_launchersetup.recommended") }}</span>
+                          </label>
+                        </div>
+                        <!-- The status line below announces it; the veil itself is for sighted visitors. -->
+                        <Transition name="source-veil">
+                          <div v-if="detecting" class="source-veil text-body-2" aria-hidden="true">
+                            <v-progress-circular class="source-veil-spinner" indeterminate size="20" width="2" color="primary" />
+                            <span>{{ $t("components_launchersetup.detecting") }}</span>
+                          </div>
+                        </Transition>
+                        <!-- Present from the first frame and filled after mount, so screen readers announce the change. -->
+                        <span class="source-detecting-status d-sr-only" role="status">{{ status }}</span>
                       </div>
                     </fieldset>
 
@@ -158,7 +173,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { LAUNCHER_UPDATE_URL } from "@/config/env";
 import { mdiDownload } from "@mdi/js";
@@ -177,7 +192,7 @@ import {
   orderedSources,
   SUPPLEMENT_LOCALE,
 } from "./launcherDownloadSource";
-import { readSavedSource, writeSavedSource } from "./launcherDownloadSourceStorage";
+import { readDetectedSource, readSavedSource, writeDetectedSource, writeSavedSource } from "./launcherDownloadSourceStorage";
 
 interface PlatformEntry {
   id: InstallerPlatform;
@@ -206,13 +221,22 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const { t } = useI18n();
-    const downloadArea = ref<{ $el: HTMLElement } | null>(null);
     const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
 
+    // An answer from earlier in this browser session applies before the first render: no veil, no request.
+    const remembered = readDetectedSource();
+    // True until detection answers; `detected === null` afterwards means it could not tell.
+    const detecting = ref(remembered === null);
     const detected = ref<DetectedSource | null>(null);
     const saved = ref<DownloadSource | null>(readSavedSource());
-    // The last download the visitor started, and the source it came from.
-    const lastClick = ref<{ platform: PlatformEntry; source: LinkSource } | null>(null);
+    // The polite status region starts empty and gets the detecting text a frame after mount: text
+    // added in the same task as the region is not reliably announced.
+    const announcing = ref(false);
+    let announceFrame: number | null = null;
+    const status = computed(() => (announcing.value && detecting.value ? t(`${KEY_PREFIX}detecting`) : ""));
+    // The last download the visitor started, the source it came from and detection's answer at that
+    // moment. The hint follows that snapshot, so a later answer does not change it.
+    const lastClick = ref<{ platform: PlatformEntry; source: LinkSource; detected: DetectedSource | null } | null>(null);
 
     /** The site-language text, plus its Chinese rendering when that is different text. */
     function bilingual(key: string, named: Record<string, string> = {}, namedZh: Record<string, string> = named) {
@@ -220,25 +244,33 @@ export default defineComponent({
       return { text, zh: chineseSupplement(text, t(KEY_PREFIX + key, namedZh, { locale: SUPPLEMENT_LOCALE })) };
     }
 
-    function focusedSourceRadio(): DownloadSource | null {
-      const active = document.activeElement;
-      if (!(active instanceof HTMLInputElement) || active.name !== "launcher-download-source") return null;
-      return active.value as DownloadSource;
-    }
-
-    onMounted(async () => {
-      const answer = await LauncherDownloadSourceService.fetchDetected();
-      // The answer can reorder the list, which moves the focused radio; focus must stay on it.
-      const focused = focusedSourceRadio();
+    function applyDetected(answer: DetectedSource | null) {
       detected.value = answer;
       // A saved choice that equals what detection picks is no longer a choice.
-      if (detected.value !== null && saved.value === detected.value) {
-        saved.value = nextSaved(detected.value, saved.value);
+      if (answer !== null && saved.value === answer) {
+        saved.value = nextSaved(answer, saved.value);
         writeSavedSource(saved.value);
       }
-      if (focused === null) return;
-      await nextTick();
-      downloadArea.value?.$el.querySelector<HTMLInputElement>(`input[name="launcher-download-source"][value="${focused}"]`)?.focus();
+    }
+
+    if (remembered !== null) applyDetected(remembered);
+
+    // The options are inert while detecting, so the reorder below can never move a focused radio.
+    onMounted(async () => {
+      if (!detecting.value) return;
+      announceFrame = requestAnimationFrame(() => {
+        announceFrame = null;
+        // `status` stays empty if detection answered first.
+        announcing.value = true;
+      });
+      const answer = await LauncherDownloadSourceService.fetchDetected();
+      if (answer !== null) writeDetectedSource(answer);
+      applyDetected(answer);
+      detecting.value = false;
+    });
+
+    onBeforeUnmount(() => {
+      if (announceFrame !== null) cancelAnimationFrame(announceFrame);
     });
 
     const linkSource = computed(() => effectiveSource(detected.value, saved.value));
@@ -261,8 +293,6 @@ export default defineComponent({
       })
     );
 
-    const notice = computed(() => (detected.value === "cn" && saved.value === null ? bilingual("detected_notice") : null));
-
     const describedBy = computed(() => (linkSource.value === "auto" ? undefined : sourceNameId(linkSource.value)));
 
     const platforms = computed(() =>
@@ -273,14 +303,15 @@ export default defineComponent({
     const hint = computed(() => {
       const click = lastClick.value;
       if (!click) return null;
-      const target = fallbackSource(click.source, detected.value);
+      const target = fallbackSource(click.source, click.detected);
       const nameKey = `${KEY_PREFIX}${target}_name`;
       const { text, zh } = bilingual(
         "hint_try",
         { source: t(nameKey) },
         { source: t(nameKey, {}, { locale: SUPPLEMENT_LOCALE }) },
       );
-      const addChinese = detected.value === "cn" || target === "cn";
+      // Unless detection had said "global" at the click, the visitor may be in mainland China.
+      const addChinese = click.detected !== "global" || target === "cn";
       return { target, text, zh: addChinese ? zh : null };
     });
 
@@ -290,14 +321,14 @@ export default defineComponent({
     }
 
     function onDownloadClick(platform: PlatformEntry) {
-      lastClick.value = { platform, source: linkSource.value };
+      lastClick.value = { platform, source: linkSource.value, detected: detected.value };
     }
 
     function onHintClick(target: DownloadSource) {
       const click = lastClick.value;
       if (!click) return;
       choose(target);
-      lastClick.value = { platform: click.platform, source: target };
+      lastClick.value = { platform: click.platform, source: target, detected: detected.value };
       window.open(installerUrl(LAUNCHER_UPDATE_URL, click.platform.id, target), "_blank", "noopener");
     }
 
@@ -318,9 +349,9 @@ export default defineComponent({
       alertMessage,
       mdiDownload,
       describedBy,
-      downloadArea,
+      detecting,
+      status,
       options,
-      notice,
       platforms,
       hint,
       choose,
@@ -345,13 +376,6 @@ export default defineComponent({
   }
 }
 
-.source-notice-text {
-  margin: 0 0 16px;
-  padding: 10px 14px;
-  background: rgba(var(--v-theme-on-surface), 0.05);
-  border-left: 4px solid rgb(var(--v-theme-primary));
-}
-
 .source-list {
   margin: 0 0 20px;
   padding: 0;
@@ -365,12 +389,59 @@ export default defineComponent({
   font-weight: 600;
 }
 
+.source-box {
+  position: relative;
+}
+
 .source-options {
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 4px;
   overflow: hidden;
+}
+
+// Laid out as normal so the box keeps its final height; only the veil shows.
+.source-options--pending > * {
+  visibility: hidden;
+}
+
+.source-veil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 4px;
+  background: rgb(var(--v-theme-surface));
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+  text-align: center;
+}
+
+.source-veil-leave-active {
+  transition: opacity 200ms ease-out;
+  // The list under the fading veil is already live.
+  pointer-events: none;
+}
+
+.source-veil-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .source-veil-leave-active {
+    transition: none;
+  }
+
+  // A still arc instead of a spinning one.
+  .source-veil-spinner,
+  .source-veil-spinner :deep(svg),
+  .source-veil-spinner :deep(.v-progress-circular__overlay) {
+    animation: none;
+  }
 }
 
 // Radio, text, badge; on narrow screens the badge drops below the text.
@@ -446,6 +517,18 @@ export default defineComponent({
   // The plain success green is too light for white 12 px text (2.8:1); this shade is 5.6:1.
   background: rgb(var(--v-theme-success-darken-2));
   color: rgb(var(--v-theme-on-success-darken-2));
+}
+
+// Holds the badge's space without showing it (see the template).
+.source-badge--hidden {
+  visibility: hidden;
+}
+
+// On narrow screens the badge takes its own line, which only the first row keeps.
+@media (max-width: 599.98px) {
+  .source-badge--spacer {
+    display: none;
+  }
 }
 
 .source-hint {
