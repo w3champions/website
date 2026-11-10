@@ -48,8 +48,10 @@ const selected = computed<string>(() => {
 });
 
 const maps = computed<MapSelectMap[]>(() => {
-  const maps = mapInfo
-    .map((map) => ({ mapName: (map.mapName ?? map.map), key: map.map }))
+  // The value sent as the filter is the map name; one option per name.
+  const names = [...new Set(mapInfo.map((map) => map.mapName ?? map.map))];
+  const maps = names
+    .map((name) => ({ mapName: name, key: name }))
     .sort((mapA, mapB) => {
       const nameA = mapA.mapName.toString().toUpperCase();
       const nameB = mapB.mapName.toString().toUpperCase();

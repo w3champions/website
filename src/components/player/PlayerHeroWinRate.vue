@@ -74,6 +74,7 @@ import { PlayerStatsHeroOnMapVersusRace, PlayerHeroWinRateForStatisticsTab, Race
 import { ERaceEnum } from "@/store/types";
 import { defaultStatsTab } from "@/helpers/profile";
 import { racesWithTotal } from "@/helpers/general";
+import { winLossesForMapGroup } from "@/helpers/mapGrouping";
 import { usePlayerStore } from "@/store/player/store";
 import { mdiMenuLeft, mdiMenuRight } from "@mdi/js";
 
@@ -164,9 +165,10 @@ export default defineComponent({
       }
       let hasData = false;
       heroStatsItemList.forEach((item) => {
-        const filteredByMap = item.stats
-          .filter((byRace) => byRace.race == selectedRace.value)[0]
-          .winLossesOnMap.filter((byMap) => byMap.map == props.selectedMap)[0];
+        const filteredByMap = winLossesForMapGroup(
+          item.stats.filter((byRace) => byRace.race == selectedRace.value)[0].winLossesOnMap,
+          props.selectedMap,
+        );
         hasData = hasData || Boolean(filteredByMap);
       });
       if (!hasData) {
@@ -197,15 +199,14 @@ export default defineComponent({
           [ERaceEnum.RANDOM]: "",
           [ERaceEnum.STARTER]: "",
         };
-        const filtered = item.stats
-          .filter((byRace) => byRace.race == selectedRace.value)[0]
-          .winLossesOnMap
-          .filter((byMap) => byMap.map == props.selectedMap)[0];
+        const filtered = winLossesForMapGroup(
+          item.stats.filter((byRace) => byRace.race == selectedRace.value)[0].winLossesOnMap,
+          props.selectedMap,
+        );
         if (!filtered) {
           return;
         }
         filtered
-          .winLosses
           .map((winLoss) => {
             playerWinRate.numbers_by_race[winLoss.race] = {
               number: winLoss.wins,

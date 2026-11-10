@@ -28,7 +28,8 @@ import { useI18n } from "vue-i18n";
 import { getAsset } from "@/helpers/url-functions";
 import RaceIcon from "@/components/player/RaceIcon.vue";
 import PlayerHeroStatisticsTable from "@/components/player/PlayerHeroStatisticsTable.vue";
-import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, WinLossesOnMap, RaceStat, PlayerHeroStatistic, PlayerHeroTotals } from "@/store/player/types";
+import { PlayerStatsHeroOnMapVersusRace, RaceWinsOnMap, RaceStat, PlayerHeroStatistic, PlayerHeroTotals } from "@/store/player/types";
+import { winLossesForMapGroup } from "@/helpers/mapGrouping";
 import { ERaceEnum } from "@/store/types";
 import { defaultStatsTab } from "@/helpers/profile";
 import { racesWithTotal } from "@/helpers/general";
@@ -89,13 +90,11 @@ export default defineComponent({
         playerHeroStats.stats
           .filter((raceWinOnMap: RaceWinsOnMap) => raceWinOnMap.race === selectedRace.value)
           .map((raceWinOnMap: RaceWinsOnMap) => {
-            const raceWinOnMapOverallFiltered = raceWinOnMap.winLossesOnMap.filter(
-              (winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map === props.selectedMap
-            );
+            const winLossesOnSelectedMap = winLossesForMapGroup(raceWinOnMap.winLossesOnMap, props.selectedMap);
 
-            if (raceWinOnMapOverallFiltered.length === 0) return raceWinOnMap;
-            raceWinOnMapOverallFiltered[0].winLosses.map((currentValue) => gamesSum += currentValue.games);
-            raceWinOnMapOverallFiltered[0].winLosses.map((raceStat) => {
+            if (!winLossesOnSelectedMap) return raceWinOnMap;
+            winLossesOnSelectedMap.map((currentValue) => gamesSum += currentValue.games);
+            winLossesOnSelectedMap.map((raceStat) => {
               if (raceStat.race === ERaceEnum.HUMAN) rowObject.hu += raceStat.games;
               else if (raceStat.race === ERaceEnum.ORC) rowObject.orc += raceStat.games;
               else if (raceStat.race === ERaceEnum.NIGHT_ELF) rowObject.ne += raceStat.games;
@@ -140,12 +139,13 @@ export default defineComponent({
 
       if (isEmpty(heroStatsData)) return tableData;
 
-      const winLossesOnMap = playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All
-        .filter((obj: RaceWinsOnMap) => obj.race == selectedRace.value)[0]
-        .winLossesOnMap
-        .filter((winLossesOnMap: WinLossesOnMap) => winLossesOnMap.map == props.selectedMap)[0];
+      const raceWinsOnMap = playerStore.playerStatsRaceVersusRaceOnMap.raceWinsOnMapByPatch?.All
+        .filter((obj: RaceWinsOnMap) => obj.race == selectedRace.value)[0];
+      const winLossesOnMap = raceWinsOnMap
+        ? winLossesForMapGroup(raceWinsOnMap.winLossesOnMap, props.selectedMap)
+        : undefined;
       if (winLossesOnMap) {
-        winLossesOnMap.winLosses
+        winLossesOnMap
           .map((raceStat: RaceStat) => {
             totals[raceStat.race] += raceStat.games;
             totals[ERaceEnum.TOTAL] += raceStat.games;
