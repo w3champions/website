@@ -165,9 +165,8 @@ Development environment variables are in `/public/env.js`:
 - `INGAME_STATIC_RESOURCES_URL` - CDN for game resources
 
 ### Localization
-- Translations managed via Google Sheets (see README)
-- Generated with `npm run generate-locales`
-- Locale files in `/src/locales/`
+- Translations are edited by hand in `/src/locales/`: English in `en.ts`, every other language in its block of `data.ts` (see README)
+- The build's `generate-locales` step needs a Google API key that the CI build does not have, so it leaves `data.ts` unchanged; never run `npm run generate-locales` with a key, it would overwrite the hand edits
 - Use `$t()` or `$i18n.t()` for translations
 
 ### Important Notes
