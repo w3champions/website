@@ -72,7 +72,13 @@
         <template v-slot:[`item.other`]="{ item }">
           <a href="#" @click.prevent="emit('openAccount', otherOf(item))">{{ otherOf(item) }}</a>
         </template>
-        <template v-slot:[`item.reason`]="{ item }">{{ tombstoneReasonLabel(item.invalidReason, tr) }}</template>
+        <template v-slot:[`item.reason`]="{ item }">
+          {{ tombstoneReasonLabel(item.invalidReason, tr) }}
+          <template v-for="(ended, i) in endedByEvents(item)" :key="ended.id">
+            <span class="text-medium-emphasis">{{ i === 0 ? " · " : ", " }}</span>
+            <router-link :to="{ name: EAdminRouteName.SMURF_EVENTS, query: { event: ended.id } }">{{ ended.name }}</router-link>
+          </template>
+        </template>
         <template v-slot:[`item.invalidatedAt`]="{ item }">{{ formatUtc(item.invalidatedAt) }}</template>
         <template v-slot:[`item.verdict`]="{ item }">
           <verdict-cell :link="item" />
@@ -91,10 +97,11 @@ import { useI18n } from "vue-i18n";
 import { mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
+import { EAdminRouteName } from "@/router/types";
 import type { HardwareLink } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
 import { type ActionOption, pairActions, type PairAction } from "@/store/admin/hardwareSmurfs/actions";
 import { errorText } from "@/store/admin/hardwareSmurfs/errors";
-import { reportStatusLabel, sourceLabel, tombstoneReasonLabel } from "@/store/admin/hardwareSmurfs/labels";
+import { endedByEvents, reportStatusLabel, sourceLabel, tombstoneReasonLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { useHardwareSmurfsStore } from "@/store/admin/hardwareSmurfs/store";
 import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
 import ActionButtons from "./ActionButtons.vue";

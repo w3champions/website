@@ -75,11 +75,9 @@
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiAlertOutline } from "@mdi/js";
+import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
 import type { DialogCopy } from "@/store/admin/hardwareSmurfs/dialogCopy";
 import { key } from "@/store/admin/hardwareSmurfs/translate";
-
-/** The server refuses longer reasons. */
-const REASON_MAX_LENGTH = 1000;
 
 const props = defineProps<{
   modelValue: boolean;

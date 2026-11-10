@@ -49,6 +49,8 @@ export interface HardwareLink {
   lastConfirmedAt: string;
   invalidatedAt?: string;
   invalidReason?: string;
+  /** Set when `invalidReason` is `event` or `venue`: the smurf events that ended the link. */
+  endedBy?: Array<{ id: string; name: string }>;
   reportedAt?: string;
   reportPending?: true;
   verdict?: HardwareLinkVerdict;

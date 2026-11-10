@@ -14,6 +14,9 @@ export interface ActionOption<A extends OverrideAction = OverrideAction> {
   replaces: Replaced | null;
 }
 
+/** The server refuses longer moderator reasons (hardware overrides and smurf events alike). */
+export const REASON_MAX_LENGTH = 1000;
+
 const REASON_ACTIONS: ReadonlySet<OverrideAction> = new Set<OverrideAction>(["smurf", "not-smurf", "trust", "ignore"]);
 const ITEM_ACTIONS: ReadonlySet<OverrideAction> = new Set<OverrideAction>(["trust", "revoke-trust", "ignore", "revoke-ignore"]);
 const WIDE_IMPACT: ReadonlySet<OverrideAction> = new Set<OverrideAction>(["trust", "ignore"]);

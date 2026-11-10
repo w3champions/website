@@ -1,7 +1,7 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
 import { translateEn as t } from "./translate.testing";
-import { itemFlagLabels, reportStatusLabel, sourceLabel, tombstoneReasonLabel, verdictKindOf } from "./labels";
+import { endedByEvents, itemFlagLabels, reportStatusLabel, sourceLabel, tombstoneReasonLabel, verdictKindOf } from "./labels";
 import { itemActions, pairActions } from "./actions";
 import { actionDialogCopy, holdersText } from "./dialogCopy";
 import { actionResultLines } from "./result";
@@ -27,12 +27,22 @@ function link(overrides: Partial<HardwareLink> = {}): HardwareLink {
 
 test("tombstone reasons map to plain-language labels", () => {
   assert.equal(tombstoneReasonLabel("location-veto", t), "Ruled out: seen in different places at the same time");
-  assert.equal(tombstoneReasonLabel("venue", t), "Shared location (venue)");
+  assert.equal(tombstoneReasonLabel("event", t), "Ended: same event");
+  assert.equal(tombstoneReasonLabel("venue", t), "Ended: same event");
   assert.equal(tombstoneReasonLabel("rule-no-longer-met", t), "Evidence no longer sufficient");
   assert.equal(tombstoneReasonLabel("over-cap", t), "Paused, comes back automatically");
   assert.equal(tombstoneReasonLabel("not-smurf", t), "Marked not a smurf by a moderator");
   assert.equal(tombstoneReasonLabel("verdict-revoked", t), "Moderator confirmation revoked");
   assert.equal(tombstoneReasonLabel("no-shared-internal", t), "Ruled out: different hardware");
+});
+
+test("a link ended by an event names its events; other reasons name none", () => {
+  const endedBy = [{ id: "ev1", name: "LAN party" }];
+
+  assert.deepEqual(endedByEvents({ invalidReason: "event", endedBy }), endedBy);
+  assert.deepEqual(endedByEvents({ invalidReason: "venue", endedBy }), endedBy);
+  assert.deepEqual(endedByEvents({ invalidReason: "venue" }), []);
+  assert.deepEqual(endedByEvents({ invalidReason: "over-cap", endedBy }), []);
 });
 
 test("an unknown or missing tombstone reason shows as Ended", () => {
