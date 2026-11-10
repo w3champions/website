@@ -173,7 +173,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { LAUNCHER_UPDATE_URL } from "@/config/env";
 import { mdiDownload } from "@mdi/js";
@@ -229,8 +229,10 @@ export default defineComponent({
     const detecting = ref(remembered === null);
     const detected = ref<DetectedSource | null>(null);
     const saved = ref<DownloadSource | null>(readSavedSource());
-    // The polite status region starts empty and gets the detecting text after mount, so it is announced.
+    // The polite status region starts empty and gets the detecting text a frame after mount: text
+    // added in the same task as the region is not reliably announced.
     const announcing = ref(false);
+    let announceFrame: number | null = null;
     const status = computed(() => (announcing.value && detecting.value ? t(`${KEY_PREFIX}detecting`) : ""));
     // The last download the visitor started, the source it came from and detection's answer at that
     // moment. The hint follows that snapshot, so a later answer does not change it.
@@ -256,11 +258,19 @@ export default defineComponent({
     // The options are inert while detecting, so the reorder below can never move a focused radio.
     onMounted(async () => {
       if (!detecting.value) return;
-      announcing.value = true;
+      announceFrame = requestAnimationFrame(() => {
+        announceFrame = null;
+        // `status` stays empty if detection answered first.
+        announcing.value = true;
+      });
       const answer = await LauncherDownloadSourceService.fetchDetected();
       if (answer !== null) writeDetectedSource(answer);
       applyDetected(answer);
       detecting.value = false;
+    });
+
+    onBeforeUnmount(() => {
+      if (announceFrame !== null) cancelAnimationFrame(announceFrame);
     });
 
     const linkSource = computed(() => effectiveSource(detected.value, saved.value));
@@ -300,7 +310,8 @@ export default defineComponent({
         { source: t(nameKey) },
         { source: t(nameKey, {}, { locale: SUPPLEMENT_LOCALE }) },
       );
-      const addChinese = click.detected === "cn" || target === "cn";
+      // Unless detection had said "global" at the click, the visitor may be in mainland China.
+      const addChinese = click.detected !== "global" || target === "cn";
       return { target, text, zh: addChinese ? zh : null };
     });
 

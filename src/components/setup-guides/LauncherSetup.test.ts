@@ -84,12 +84,30 @@ describe("LauncherSetup download source", () => {
     return (value: "cn" | "global" | null) => answer(value);
   }
 
+  // Animation frames run only when a test says so.
+  let frames: Map<number, FrameRequestCallback>;
+  let cancelFrame: ReturnType<typeof vi.fn>;
+  async function runFrames() {
+    const due = [...frames.values()];
+    frames.clear();
+    for (const callback of due) callback(0);
+    await flushPromises();
+  }
+
   beforeEach(() => {
     localStorage.clear();
     sessionStorage.clear();
     fetchDetected.mockReset();
     open = vi.fn();
     vi.stubGlobal("open", open);
+    frames = new Map();
+    let lastFrame = 0;
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      frames.set(++lastFrame, callback);
+      return lastFrame;
+    });
+    cancelFrame = vi.fn((id: number) => frames.delete(id));
+    vi.stubGlobal("cancelAnimationFrame", cancelFrame);
   });
 
   afterEach(() => {
@@ -251,15 +269,16 @@ describe("LauncherSetup download source", () => {
     expect(hintButtons()[0].text()).toContain("Try Standard download");
   });
 
-  it("hintAfterAutoDownloadOffersBackup", async () => {
+  it("hintAfterAutoDownloadOffersBackupWithChinese", async () => {
     fetchDetected.mockResolvedValue(null);
     await mountSetup();
 
     await wrapper!.findAll("a.join-button")[1].trigger("click");
 
     expect(hintButtons()).toHaveLength(1);
-    expect(hintButtons()[0].text()).toBe("Download not starting or slow? Try Backup download");
-    expect(hintButtons()[0].text()).not.toMatch(CJK);
+    expect(hintButtons()[0].text()).toContain("Download not starting or slow? Try Backup download");
+    // Detection could not tell, so the visitor may be in mainland China.
+    expect(hintZh().text()).toBe("下载没反应或很慢？试试备用下载");
 
     await hintButtons()[0].trigger("click");
     expect(open).toHaveBeenCalledWith("https://x/api/launcher-e/mac-arm64?source=intl", "_blank", "noopener");
@@ -333,6 +352,8 @@ describe("LauncherSetup download source", () => {
     expect(veil().attributes("aria-hidden")).toBe("true");
     expect(veil().find("[role=status]").exists()).toBe(false);
     expect(status().attributes("role")).toBe("status");
+    expect(status().text()).toBe("");
+    await runFrames();
     expect(status().text()).toBe("Finding the best download for you…");
     expect(optionsBox().attributes("inert")).toBeDefined();
     expect(optionsBox().attributes("aria-busy")).toBe("true");
@@ -357,9 +378,45 @@ describe("LauncherSetup download source", () => {
     expect(region.exists()).toBe(true);
     expect(wrapper!.findAll("[role=status]")).toHaveLength(1);
 
+    // Not in the mounting task: only on the next animation frame.
     await flushPromises();
+    expect(status().text()).toBe("");
+
+    await runFrames();
 
     expect(status().text()).toBe("Finding the best download for you…");
+  });
+
+  it("statusStaysEmptyWhenDetectionAnswersBeforeTheFrame", async () => {
+    const answer = holdDetection();
+    await mountSetup();
+
+    await answer("cn");
+    await runFrames();
+
+    expect(status().text()).toBe("");
+  });
+
+  it("unmountingBeforeTheFrameCancelsTheAnnouncement", async () => {
+    holdDetection();
+    // Vuetify requests frames of its own; ours is the one that sets the status text.
+    await mountSetup();
+    const pending = [...frames.keys()];
+
+    wrapper!.unmount();
+    wrapper = undefined;
+
+    const cancelled = cancelFrame.mock.calls.map(([id]) => id as number).filter((id) => pending.includes(id));
+    expect(cancelled).toHaveLength(1);
+    expect(frames.has(cancelled[0])).toBe(false);
+  });
+
+  it("rememberedAnswerRequestsNoAnnouncementFrame", async () => {
+    sessionStorage.setItem(DETECTED_KEY, "global");
+    await mountSetup();
+    await runFrames();
+
+    expect(status().text()).toBe("");
   });
 
   it("hintFromAClickDuringDetectionDoesNotChangeWhenItAnswers", async () => {
@@ -370,16 +427,30 @@ describe("LauncherSetup download source", () => {
       const answer = holdDetection();
       await mountSetup();
       await wrapper!.findAll("a.join-button")[0].trigger("click");
-      const before = { text: hintButtons()[0].text(), zh: hintZh().exists() ? hintZh().text() : null };
+      // No answer yet, so the visitor may be in mainland China: the Chinese line is there from the start.
+      expect(hintZh().exists(), String(savedSource)).toBe(true);
+      const before = { text: hintButtons()[0].text(), zh: hintZh().text() };
 
       await answer("cn");
 
       expect(hintButtons(), String(savedSource)).toHaveLength(1);
       expect(hintButtons()[0].text(), String(savedSource)).toBe(before.text);
-      expect(hintZh().exists() ? hintZh().text() : null, String(savedSource)).toBe(before.zh);
+      expect(hintZh().text(), String(savedSource)).toBe(before.zh);
       wrapper!.unmount();
       wrapper = undefined;
     }
+  });
+
+  it("hintAfterAGlobalAnswerHasNoChineseLine", async () => {
+    const answer = holdDetection();
+    await mountSetup();
+    await answer("global");
+
+    await wrapper!.findAll("a.join-button")[0].trigger("click");
+
+    expect(hintButtons()).toHaveLength(1);
+    expect(hintButtons()[0].text()).toBe("Download not starting or slow? Try Backup download");
+    expect(hintButtons()[0].text()).not.toMatch(CJK);
   });
 
   it("pendingButtonsFollowTheSavedChoice", async () => {
