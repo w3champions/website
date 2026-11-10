@@ -16,7 +16,7 @@
         role="status"
         @click:close="notice = null"
       >
-        {{ t(key(notice)) }}
+        {{ t(key(notice.kind)) }}
       </v-alert>
 
       <event-detail
@@ -38,7 +38,7 @@
 
       <template v-if="canAdminister">
         <manual-event-dialog v-model="manualOpen" :event="editing" @saved="onSaved" />
-        <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="notice = 'reviewed'" />
+        <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="notice = { kind: 'reviewed', view: eventId }" />
         <delete-event-dialog v-model="deleteOpen" :event="store.detail" @deleted="onDeleted" />
       </template>
     </v-container>
@@ -74,7 +74,11 @@ const permissionsKnown = computed(() => permissions.value.length > 0);
 const canQuery = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const canAdminister = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerAdministration]));
 
-type Notice = "saved" | "reviewed" | "deleted";
+/** A write's success notice, shown while the view it belongs to (`view`: an event id, "" for the list) is shown. */
+interface Notice {
+  kind: "saved" | "reviewed" | "deleted";
+  view: string;
+}
 const notice = ref<Notice | null>(null);
 const manualOpen = ref(false);
 const reviewOpen = ref(false);
@@ -97,9 +101,9 @@ function filtersFromQuery(query: LocationQuery): SmurfEventFilters {
   };
 }
 
+/** Filters live in the URL (one history entry per change); the query watcher loads the list. */
 function applyFilters(filters: SmurfEventFilters): void {
-  router.replace({ query: { ...route.query, origin: filters.origin ?? undefined, review: filters.review ?? undefined } }).catch(() => null);
-  void store.setFilters(filters);
+  router.push({ query: { ...route.query, origin: filters.origin ?? undefined, review: filters.review ?? undefined } }).catch(() => null);
 }
 
 function showList(): void {
@@ -112,20 +116,28 @@ function openManual(event: SmurfEventDetail | null): void {
 }
 
 function onSaved(saved: SmurfEventDetail): void {
-  notice.value = "saved";
+  notice.value = { kind: "saved", view: saved.id };
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
 }
 
 function onDeleted(): void {
-  notice.value = "deleted";
+  notice.value = { kind: "deleted", view: "" };
   showList();
 }
 
 watch(eventId, (id, previous) => {
   if (id === previous) return;
-  notice.value = null;
-  if (id) void store.openDetail(id);
-  else store.closeDetail();
+  if (notice.value !== null && notice.value.view !== id) notice.value = null;
+  // A create already put the saved event in the store: no second load.
+  if (id && store.detail?.id !== id) void store.openDetail(id);
+  else if (!id) store.closeDetail();
+});
+
+const filterKey = computed(() => JSON.stringify(filtersFromQuery(route.query)));
+
+// Filter changes, browser back and forward included, load the list for the filters in the URL.
+watch(filterKey, () => {
+  if (canQuery.value) void store.setFilters(filtersFromQuery(route.query));
 });
 
 function loadPage(): void {

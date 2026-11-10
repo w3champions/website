@@ -201,7 +201,7 @@ watch(() => props.modelValue, (open) => {
   if (!open) return;
   draft.value = props.event ? draftFromEvent(props.event) : emptyDraft(new Date());
   store.resetPreview();
-  store.actionError = null;
+  store.clearActionError();
 }, { immediate: true });
 </script>
 

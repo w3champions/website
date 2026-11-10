@@ -233,6 +233,16 @@ test("a refused review keeps the server's error and leaves the event as shown", 
   expect(store.detail?.review).toBe("unreviewed");
 });
 
+test("clearActionError drops the last write error", async () => {
+  service.review.mockRejectedValue(new SmurfEventsApiError(409, "Changed meanwhile", null));
+  const store = useSmurfEventsStore();
+  await store.review("1", "confirmed", "");
+
+  store.clearActionError();
+
+  expect(store.actionError).toBeNull();
+});
+
 test("loadDenyPreview keeps the links a deny would bring back", async () => {
   service.denyPreview.mockResolvedValue({ links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }] });
   const store = useSmurfEventsStore();

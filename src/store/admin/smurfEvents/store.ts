@@ -270,6 +270,10 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
+    clearActionError(): void {
+      this.actionError = null;
+    },
+
     clearDenyPreview(): void {
       denyLoads.invalidate();
       this.denyLinks = null;

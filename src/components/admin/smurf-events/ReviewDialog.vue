@@ -122,7 +122,7 @@ watch(() => props.modelValue, (open) => {
   decision.value = null;
   reason.value = "";
   store.clearDenyPreview();
-  store.actionError = null;
+  store.clearActionError();
 }, { immediate: true });
 </script>
 

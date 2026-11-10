@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { type DOMWrapper, flushPromises, mount, type VueWrapper } from "@vue/test-utils";
-import { inlineDialog, manualEvent, testPlugins } from "./testing";
+import { inlineDialog, manualEvent, testPlugins } from "./setup.testing";
 
 const service = vi.hoisted(() => ({ remove: vi.fn(), list: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));

@@ -79,6 +79,6 @@ async function remove(): Promise<void> {
 watch(() => props.modelValue, (open) => {
   if (!open) return;
   reason.value = "";
-  store.actionError = null;
+  store.clearActionError();
 });
 </script>
