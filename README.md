@@ -77,8 +77,15 @@ SET_IS_ADMIN(isAdmin: boolean): void {
 ```
 
 ### Working with Localization
-Translations are edited by hand in [src/locales](https://github.com/w3champions/website/tree/master/src/locales): English strings live in `en.ts`, every other language in its own block of `data.ts`. To add a string, add it to `en.ts` and to each language block in `data.ts`, then use it in the component with `$t("section.key")`:
+Translations come from the [Localization Tables](https://docs.google.com/spreadsheets/d/1V5f4zguWDmk9nbnoXSJm9g-ZxImo83NJpSY17EUkzOc) Google Sheet: one row per string (`location`, `id`, then one column per language). `npm run generate-locales` ([script](scripts/generate-locales.ts)) downloads the sheet and rewrites [src/locales/data.ts](src/locales/data.ts). It needs a Google API key with the Sheets API enabled, in `.env` as `GOOGLE_API_KEY` (ask a dev).
+
+The CI build has no key, so the `generate-locales` step in `build:prod` does nothing and the site ships `data.ts` as committed. A change in the sheet reaches the site only after someone with a key runs the script and commits the result.
+
+To add a string:
+1. Add a row to the sheet (request edit access to the document) with the English text and every translation you have.
+2. Run `npm run generate-locales` with a key and commit `data.ts`. Without a key, add the same strings to `data.ts` by hand. The row in the sheet is still required: the script rewrites the whole file, so a string that exists only in `data.ts` is deleted by the next sync.
+3. Use it in the component with `$t("location.id")`:
 
 [example](https://github.com/w3champions/website/blob/10eb639aad5175481a6230d3ff55a18f11f831f5/src/views/Home.vue#L8)
 
-The production build runs a `generate-locales` step that would regenerate `data.ts` from a Google Sheet. It needs a Google API key, which the CI build does not have, so it leaves `data.ts` unchanged. Do not run `npm run generate-locales` locally with a key: it would overwrite the hand-edited translations.
+[src/locales/en.ts](src/locales/en.ts) is maintained by hand and the script does not touch it. It is merged over the sheet's English column (it wins for keys in both) and holds English-only strings such as map and proxy names.
