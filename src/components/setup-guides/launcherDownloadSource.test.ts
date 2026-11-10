@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chineseSupplement, effectiveSource, fallbackSource, installerUrl, nextSaved, orderedSources, parseSavedSource } from "./launcherDownloadSource";
+import { chineseSupplement, effectiveSource, fallbackSource, installerUrl, nextSaved, orderedSources, parseDetectedSource, parseSavedSource } from "./launcherDownloadSource";
 
 describe("launcherDownloadSource", () => {
   it("savedChoiceWinsOverDetection", () => {
@@ -60,6 +60,12 @@ describe("launcherDownloadSource", () => {
   it("parseSavedSourceAcceptsAllThreeSources", () => {
     for (const s of ["global", "intl", "cn"]) expect(parseSavedSource(s)).toBe(s);
     expect(parseSavedSource("mirror")).toBeNull();
+  });
+
+  it("parseDetectedSourceAcceptsOnlyDetectionAnswers", () => {
+    expect(parseDetectedSource("cn")).toBe("cn");
+    expect(parseDetectedSource("global")).toBe("global");
+    for (const raw of ["intl", "auto", "", "CN", null]) expect(parseDetectedSource(raw)).toBeNull();
   });
 
   it("installerUrlCarriesIntl", () => {
