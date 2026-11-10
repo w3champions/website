@@ -119,7 +119,7 @@ describe("LauncherSetup download source", () => {
     const text = wrapper!.get(".source-status").element.textContent ?? "";
     const dots = text.split("·").length - 1;
     expect(dots).toBeGreaterThan(0);
-    const hidden = wrapper!.findAll('.source-controls [aria-hidden="true"]').filter((e) => e.text() === "·");
+    const hidden = wrapper!.findAll(".source-controls [aria-hidden=true]").filter((e) => e.text() === "·");
     expect(hidden).toHaveLength(dots);
   });
 
