@@ -4,7 +4,7 @@ import { fetchWithTimeout } from "./http/fetchWithTimeout";
 
 const DETECT_TIMEOUT_MS = 3000;
 
-export default class LauncherDetectedSourceService {
+export default class LauncherDownloadSourceService {
   /**
    * Which download source the update service picks for this visitor. Null when it
    * cannot be told (offline, timeout, unexpected answer): the page then keeps
