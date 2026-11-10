@@ -370,12 +370,21 @@ export default defineComponent({
   position: relative;
 }
 
+// The rows share one set of columns (subgrid), so a source's text wraps the same in
+// every row and swapping rows never changes the list's height.
 .source-options {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 12px;
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 4px;
   overflow: hidden;
+}
+
+@media (max-width: 599.98px) {
+  .source-options {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
 }
 
 // Laid out as normal so the box keeps its final height; only the veil shows.
@@ -415,7 +424,8 @@ export default defineComponent({
 // Radio, text, badge; on narrow screens the badge drops below the text.
 .source-option {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: start;
   gap: 6px 12px;
   min-height: 44px;
@@ -444,11 +454,20 @@ export default defineComponent({
   }
 
   @media (max-width: 599.98px) {
-    grid-template-columns: auto minmax(0, 1fr);
-
     .source-badge {
       grid-column: 2;
       justify-self: start;
+    }
+  }
+}
+
+// Browsers without subgrid keep the per-row columns (rows can then wrap differently when they swap).
+@supports not (grid-template-columns: subgrid) {
+  .source-option {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+
+    @media (max-width: 599.98px) {
+      grid-template-columns: auto minmax(0, 1fr);
     }
   }
 }
