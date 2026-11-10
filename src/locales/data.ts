@@ -1,4 +1,5 @@
-// Hand-edited. Do not run 'npm run generate-locales' with a Google API key: it overwrites this file.
+// Generated from the Localization Tables Google Sheet by 'npm run generate-locales' (needs GOOGLE_API_KEY, ask a dev).
+// The CI build has no key and ships this file as committed. Add every new string to the sheet too: the next sync rewrites this file.
 
 const data = {
   en: {
