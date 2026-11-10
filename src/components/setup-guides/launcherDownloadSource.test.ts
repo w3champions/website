@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { effectiveSource, installerUrl, nextSaved, parseSavedSource } from "./launcherDownloadSource";
+import { chineseSupplement, effectiveSource, fallbackSource, installerUrl, nextSaved, orderedSources, parseSavedSource } from "./launcherDownloadSource";
 
 describe("launcherDownloadSource", () => {
   it("savedChoiceWinsOverDetection", () => {
@@ -35,5 +35,34 @@ describe("launcherDownloadSource", () => {
     expect(parseSavedSource("global")).toBe("global");
     expect(parseSavedSource("hk")).toBeNull();
     expect(parseSavedSource(null)).toBeNull();
+  });
+
+  it("detectedSourceComesFirstThenTheLikeliestToWork", () => {
+    expect(orderedSources("cn")).toEqual(["cn", "intl", "global"]);
+    expect(orderedSources("global")).toEqual(["global", "intl", "cn"]);
+    expect(orderedSources(null)).toEqual(["global", "intl", "cn"]);
+  });
+
+  it("fallbackIsTheNextSourceAndBackupAfterAuto", () => {
+    expect(fallbackSource("cn", "cn")).toBe("intl");
+    expect(fallbackSource("intl", "cn")).toBe("global");
+    expect(fallbackSource("global", "cn")).toBe("cn");
+    expect(fallbackSource("global", "global")).toBe("intl");
+    expect(fallbackSource("cn", "global")).toBe("global");
+    expect(fallbackSource("auto", null)).toBe("intl");
+  });
+
+  it("chineseSupplementOnlyWhenSiteTextIsNotAlreadyThatChinese", () => {
+    expect(chineseSupplement("Mainland China", "中国大陆线路")).toBe("中国大陆线路");
+    expect(chineseSupplement("中国大陆线路", "中国大陆线路")).toBeNull();
+  });
+
+  it("parseSavedSourceAcceptsAllThreeSources", () => {
+    for (const s of ["global", "intl", "cn"]) expect(parseSavedSource(s)).toBe(s);
+    expect(parseSavedSource("mirror")).toBeNull();
+  });
+
+  it("installerUrlCarriesIntl", () => {
+    expect(installerUrl("https://x/api/", "windows", "intl")).toBe("https://x/api/launcher-e/windows?source=intl");
   });
 });

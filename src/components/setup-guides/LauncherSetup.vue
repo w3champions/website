@@ -46,7 +46,7 @@
                         <button type="button" class="source-switch" @click="choose('global', true)">
                           <span lang="zh-CN">{{ ZH.useGlobal }}</span>
                           <template v-if="showEnglish">
-                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.use_global") }}
+                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.global_name") }}
                           </template>
                         </button>
                       </template>
@@ -81,7 +81,7 @@
                           <template v-if="showEnglish">
                             <span lang="zh-CN">{{ source === "cn" ? ZH.china : ZH.global }}</span>{{ " " }}
                           </template>
-                          <span v-if="showEnglish">({{ $t("components_launchersetup.chosen_by_you") }})</span>
+                          <span v-if="showEnglish">({{ $t("components_launchersetup.recommended") }})</span>
                           <span v-else lang="zh-CN">{{ ZH.chosenByYou }}</span>
                           <span aria-hidden="true"> · </span>
                         </template>
@@ -93,7 +93,7 @@
                         >
                           <span lang="zh-CN">{{ ZH.useGlobal }}</span>
                           <template v-if="showEnglish">
-                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.use_global") }}
+                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.global_name") }}
                           </template>
                         </button>
                         <button v-else type="button" class="source-switch" lang="zh-CN" @click="choose('cn', true)">
@@ -107,7 +107,7 @@
                         <button type="button" class="source-switch" @click="onHintClick(option.target)">
                           <span lang="zh-CN">{{ option.zh }}</span>
                           <template v-if="option.showEnglish">
-                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.hint_try_global") }}
+                            <span aria-hidden="true"> · </span>{{ $t("components_launchersetup.hint_try", { source: $t("components_launchersetup.global_name") }) }}
                           </template>
                         </button>
                       </div>
@@ -189,9 +189,21 @@ import {
   type InstallerPlatform,
   type LinkSource,
   nextSaved,
-  ZH,
 } from "./launcherDownloadSource";
 import { readSavedSource, writeSavedSource } from "./launcherDownloadSourceStorage";
+
+// Interim Chinese strings until the picker rewrite replaces this block.
+const ZH = {
+  label: "下载线路",
+  global: "标准下载",
+  china: "中国大陆线路",
+  detectedNotice: "检测到您在中国大陆，已自动选择专为中国大陆优化的下载。",
+  chosenByYou: "（你的选择）",
+  useChina: "中国大陆用户：使用中国大陆线路",
+  useGlobal: "改用标准下载",
+  hintGlobalSource: (platformName: string) => `下载没反应或很慢？用中国大陆线路重新下载 ${platformName} 版`,
+  hintChinaSource: "下载没反应或很慢？试试标准下载",
+} as const;
 
 interface PlatformEntry {
   id: InstallerPlatform;
@@ -260,7 +272,7 @@ export default defineComponent({
     // "Download source: Global (GitHub)", in Chinese for the Chinese site language.
     const statusLabel = computed(() =>
       showEnglish.value
-        ? `${t("components_launchersetup.label")}: ${t(`components_launchersetup.${source.value}`)}`
+        ? `${t("components_launchersetup.label")}: ${t(`components_launchersetup.${source.value}_name`)}`
         : `${ZH.label}：${source.value === "cn" ? ZH.china : ZH.global}`
     );
 
