@@ -65,7 +65,7 @@
                               {{ option.name }}<template v-if="option.nameZh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ option.nameZh }}</span></template>
                             </span>
                             <span class="source-desc text-medium-emphasis">
-                              {{ option.desc }}<template v-if="option.descZh"><span aria-hidden="true"> · </span><span lang="zh-CN">{{ option.descZh }}</span></template>
+                              {{ option.desc }}<template v-if="option.descZh">{{ " " }}<span lang="zh-CN">{{ option.descZh }}</span></template>
                             </span>
                           </span>
                           <span v-if="option.recommended" class="source-badge">{{ $t("components_launchersetup.recommended") }}</span>
@@ -166,6 +166,7 @@ import { useRoute, useRouter } from "vue-router";
 import LauncherDownloadSourceService from "@/services/LauncherDownloadSourceService";
 import {
   chineseSupplement,
+  type DetectedSource,
   type DownloadSource,
   effectiveSource,
   fallbackSource,
@@ -208,7 +209,7 @@ export default defineComponent({
     const downloadArea = ref<{ $el: HTMLElement } | null>(null);
     const tabsModel = ref({ self: (route.query.tabsModel as string) || "launcher" });
 
-    const detected = ref<DownloadSource | null>(null);
+    const detected = ref<DetectedSource | null>(null);
     const saved = ref<DownloadSource | null>(readSavedSource());
     // The last download the visitor started, and the source it came from.
     const lastClick = ref<{ platform: PlatformEntry; source: LinkSource } | null>(null);
@@ -244,6 +245,7 @@ export default defineComponent({
 
     const options = computed(() =>
       orderedSources(detected.value).map((key) => {
+        // Only the China source gets a Chinese supplement: it is the one Chinese readers need to recognise.
         const name = key === "cn" ? bilingual("cn_name") : { text: t(`${KEY_PREFIX}${key}_name`), zh: null };
         const desc = key === "cn" ? bilingual("cn_desc") : { text: t(`${KEY_PREFIX}${key}_desc`), zh: null };
         return {

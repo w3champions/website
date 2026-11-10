@@ -190,6 +190,7 @@ describe("LauncherSetup download source", () => {
     expect(row("cn").text()).toContain("Festland-China");
     expect(row("cn").text()).toContain("Optimiert für Downloads in Festland-China.");
     expect(row("cn").findAll("[lang='zh-CN']").map((e) => e.text())).toEqual(["中国大陆线路", "专为中国大陆下载优化"]);
+    expect(row("cn").get(".source-desc").text()).toBe("Optimiert für Downloads in Festland-China. 专为中国大陆下载优化");
   });
 
   it("noVisibleTextMentionsGithubServerOrMirror", async () => {

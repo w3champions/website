@@ -2,13 +2,15 @@
 // no network, so every rule is testable on its own.
 
 export type DownloadSource = "global" | "intl" | "cn";
+/** What the update service's detection can answer. */
+export type DetectedSource = "global" | "cn";
 /** What the installer links ask for: a concrete source, or "let the service decide". */
 export type LinkSource = DownloadSource | "auto";
 export type InstallerPlatform = "windows" | "mac-arm64" | "mac-x64";
 
 /** A saved choice wins over the service's detection; with neither, the service decides. */
 export function effectiveSource(
-  detected: DownloadSource | null,
+  detected: DetectedSource | null,
   saved: DownloadSource | null,
 ): LinkSource {
   return saved ?? detected ?? "auto";
@@ -19,7 +21,7 @@ export function effectiveSource(
  * choose anyway stores nothing, so the page keeps following detection.
  */
 export function nextSaved(
-  detected: DownloadSource | null,
+  detected: DetectedSource | null,
   chosen: DownloadSource,
 ): DownloadSource | null {
   return chosen === detected ? null : chosen;
@@ -30,7 +32,7 @@ export function installerUrl(base: string, platform: InstallerPlatform, source: 
 }
 
 /** The sources in display order: the detected one first, otherwise the standard download. */
-export function orderedSources(detected: DownloadSource | null): readonly DownloadSource[] {
+export function orderedSources(detected: DetectedSource | null): readonly DownloadSource[] {
   return detected === "cn" ? ["cn", "intl", "global"] : ["global", "intl", "cn"];
 }
 
@@ -39,7 +41,7 @@ export function orderedSources(detected: DownloadSource | null): readonly Downlo
  * next one in display order, wrapping around. After "auto" (the service decided)
  * the backup download is the safe suggestion.
  */
-export function fallbackSource(clicked: LinkSource, detected: DownloadSource | null): DownloadSource {
+export function fallbackSource(clicked: LinkSource, detected: DetectedSource | null): DownloadSource {
   if (clicked === "auto") return "intl";
   const order = orderedSources(detected);
   return order[(order.indexOf(clicked) + 1) % order.length];
