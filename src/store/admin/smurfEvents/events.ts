@@ -63,13 +63,12 @@ export function refusedPreviewFrom(body: unknown): SmurfEventPreview | null {
   if (!isObject(body) || !isObject(body.preview)) return null;
   const p = body.preview;
   const counts = p.counts;
-  const valid =
-    isArrayOf(p.networks, (n) => isObject(n) && isString(n.hash8) && typeof n.anchors === "number") &&
-    isArrayOf(p.excluded, (x) => isObject(x) && isString(x.hash8) && isString(x.reason)) &&
-    isArrayOf(p.endsLinks, (l) => isObject(l) && isString(l.a) && isString(l.b)) &&
-    isObject(counts) && typeof counts.machines === "number" && typeof counts.attendees === "number" &&
-    (p.span === undefined || (isObject(p.span) && isString(p.span.from) && isString(p.span.to))) &&
-    (p.refused === undefined || isString(p.refused));
+  const valid = isArrayOf(p.networks, (n) => isObject(n) && isString(n.hash8) && typeof n.anchors === "number")
+    && isArrayOf(p.excluded, (x) => isObject(x) && isString(x.hash8) && isString(x.reason))
+    && isArrayOf(p.endsLinks, (l) => isObject(l) && isString(l.a) && isString(l.b))
+    && isObject(counts) && typeof counts.machines === "number" && typeof counts.attendees === "number"
+    && (p.span === undefined || (isObject(p.span) && isString(p.span.from) && isString(p.span.to)))
+    && (p.refused === undefined || isString(p.refused));
   if (!valid) return null;
   return { ...(p as unknown as SmurfEventPreview), refused: (p.refused as SmurfEventPreview["refused"]) ?? "no-venue" };
 }

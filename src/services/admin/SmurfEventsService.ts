@@ -1,6 +1,6 @@
 import { AuthorizedClient, type AuthorizedClientDeps, HttpError } from "@/services/http/AuthorizedClient";
 import { serverMessageOf } from "./HardwareSmurfService";
-import type { ManualEventRequest, ReviewRequest, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventCreateResult, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
+import type { ManualEventRequest, ReviewRequest, SmurfEventCreateResult, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
 
 const BASE = "api/admin/smurf-detection/events";
 
