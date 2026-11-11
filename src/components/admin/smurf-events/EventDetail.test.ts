@@ -34,6 +34,15 @@ test("a cut list of ended links says so", async () => {
   expect(wrapper.text()).toContain("Showing part of the ended links.");
 });
 
+test("a cut list of ended links still counts every ended link", async () => {
+  const event = manualEvent({ endedLinksListTruncated: true });
+
+  await show({ ...event, endedLinks: event.endedLinksList.length + 7 });
+
+  const title = wrapper.findAll(".v-card-title").find((c) => c.text().startsWith("Ended links"));
+  expect(title?.find(".v-chip").text()).toBe(String(event.endedLinksList.length + 7));
+});
+
 test("a complete list of ended links carries no such note", async () => {
   await show(manualEvent());
 
