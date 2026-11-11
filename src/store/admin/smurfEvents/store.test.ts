@@ -590,3 +590,47 @@ test("an edit that sends a confirmed event back to unreviewed shows that at once
   expect(store.events[0].reviewedBy).toBeUndefined();
   reload.resolve({ events: [] });
 });
+
+// --- applies ---
+
+test("a write answered applies: false reports it and keeps the flag out of the shown event", async () => {
+  service.review.mockResolvedValue({ ...detail("1", { review: "confirmed" }), applies: false });
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+
+  const reviewed = await store.review("1", "confirmed", "");
+
+  expect(reviewed?.applies).toBe(false);
+  expect(store.detail).not.toHaveProperty("applies");
+});
+
+test("a write without the applies flag (an older server) counts as applying", async () => {
+  service.review.mockResolvedValue(detail("1", { review: "confirmed" }));
+  const store = useSmurfEventsStore();
+
+  expect((await store.review("1", "confirmed", ""))?.applies).toBe(true);
+});
+
+test("a deny preview answered applies: false is remembered; true or absent is not", async () => {
+  const store = useSmurfEventsStore();
+  expect(store.denyApplies).toBe(true);
+
+  service.denyPreview.mockResolvedValue({ applies: false, links: [], endedLinks: 0 });
+  await store.loadDenyPreview("1");
+  expect(store.denyApplies).toBe(false);
+
+  service.denyPreview.mockResolvedValue({ applies: true, links: [], endedLinks: 0 });
+  await store.loadDenyPreview("1");
+  expect(store.denyApplies).toBe(true);
+
+  service.denyPreview.mockResolvedValue({ applies: false, links: [], endedLinks: 0 });
+  await store.loadDenyPreview("1");
+  service.denyPreview.mockResolvedValue({ links: [], endedLinks: 0 });
+  await store.loadDenyPreview("1");
+  expect(store.denyApplies).toBe(true);
+
+  service.denyPreview.mockResolvedValue({ applies: false, links: [], endedLinks: 0 });
+  await store.loadDenyPreview("1");
+  store.clearDenyPreview();
+  expect(store.denyApplies).toBe(true);
+});

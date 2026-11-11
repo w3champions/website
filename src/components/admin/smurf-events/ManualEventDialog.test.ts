@@ -223,7 +223,7 @@ test("a save answered applied: false reports it", async () => {
   await button("Save").trigger("click");
   await flushPromises();
 
-  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: false, existing: false, needsReview: false });
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: false, applies: true, existing: false, needsReview: false });
 });
 
 test("a create the server answered with an existing event reports it, whatever its name", async () => {
@@ -239,7 +239,7 @@ test("a create the server answered with an existing event reports it, whatever i
   await flushPromises();
 
   expect(service.create).toHaveBeenCalledOnce();
-  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, existing: true, needsReview: false });
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, applies: true, existing: true, needsReview: false });
 });
 
 test("an untouched new event dialog shows no problem until something is entered", async () => {
@@ -318,4 +318,41 @@ test("a preview that ends no links says so and lists nothing", async () => {
   expect(wrapper.text()).toContain("Saving ends no links.");
   expect(wrapper.find(".link-list").exists()).toBe(false);
   expect(button("Save").element.disabled).toBe(false);
+});
+
+const PREVIEW_NOTICE = "Smurf events do not change links at the moment. The links listed here are what this event ends, or brings back, once they do.";
+
+test("a preview answered applies: false carries one calm notice; true or absent carries none", async () => {
+  service.preview.mockResolvedValue({ ...PREVIEW, applies: false });
+  await previewed();
+  expect(wrapper.text()).toContain(PREVIEW_NOTICE);
+  expect(wrapper.text().split(PREVIEW_NOTICE)).toHaveLength(2);
+
+  service.preview.mockResolvedValue({ ...PREVIEW, applies: true });
+  await previewed();
+  expect(wrapper.text()).not.toContain("do not change links");
+
+  service.preview.mockResolvedValue(PREVIEW);
+  await previewed();
+  expect(wrapper.text()).not.toContain("do not change links");
+});
+
+test("a refused write's preview carries the notice too", async () => {
+  service.update.mockRejectedValue(new SmurfEventsApiError(422, "Refused", { error: "Refused", preview: { ...PREVIEW, applies: false, refused: "too-long" } }));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain(PREVIEW_NOTICE);
+});
+
+test("a save answered applies: false reports it", async () => {
+  service.update.mockResolvedValue({ ...manualEvent(), applies: false });
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, applies: false, existing: false, needsReview: false });
 });

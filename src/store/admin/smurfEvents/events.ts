@@ -29,18 +29,20 @@ export function summaryOf(event: SmurfEventDetail): SmurfEventSummary {
   return summary;
 }
 
-/** A write's answer split into the event and whether its effect on the links is already in place. */
+/** A write's answer split into the event and whether its effect on the links is in place (`applied`) or events change links at all (`applies`). */
 export interface WriteOutcome {
   detail: SmurfEventDetail;
   /** False: the change is stored, but applying it to the links is left to the next stats run. */
   applied: boolean;
+  /** False: smurf events do not change links at the moment, so this write changed none. */
+  applies: boolean;
   /** A create that matched a stored event, which came back unchanged. */
   existing: boolean;
 }
 
 export function outcomeOf(response: SmurfEventWriteResponse, existing = false): WriteOutcome {
-  const { applied, ...detail } = response;
-  return { detail, applied: applied !== false, existing };
+  const { applied, applies, ...detail } = response;
+  return { detail, applied: applied !== false, applies: applies !== false, existing };
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

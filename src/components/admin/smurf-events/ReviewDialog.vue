@@ -26,6 +26,9 @@
         </v-btn-toggle>
 
         <template v-if="decision === 'denied'">
+          <v-alert v-if="store.denyLinks !== null && !store.denyApplies && !store.denyLoading && !store.denyError" type="info" variant="tonal" density="compact" class="mb-3" role="status">
+            {{ t(key("not_applying_preview")) }}
+          </v-alert>
           <div v-if="store.denyLoading" class="text-body-2 text-medium-emphasis mb-3" role="status">
             <v-progress-circular indeterminate size="16" width="2" class="mr-2" />{{ t(key("deny_loading")) }}
           </div>
@@ -98,8 +101,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  /** `applied` false: stored, but the links follow with the next stats run. */
-  (e: "reviewed", applied: boolean): void;
+  /** `applied` false: stored, but the links follow with the next stats run. `applies` false: smurf events do not change links at the moment. */
+  (e: "reviewed", applied: boolean, applies: boolean): void;
 }>();
 
 const { t } = useI18n();
@@ -125,7 +128,7 @@ async function save(): Promise<void> {
   if (!canSave.value || event === null || decision.value === null) return;
   const outcome = await store.review(event.id, decision.value, reason.value);
   if (outcome === null) return;
-  emit("reviewed", outcome.applied);
+  emit("reviewed", outcome.applied, outcome.applies);
   emit("update:modelValue", false);
 }
 

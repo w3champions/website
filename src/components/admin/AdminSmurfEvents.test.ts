@@ -330,3 +330,68 @@ test("a plain save carries no review line", async () => {
 
   expect(wrapper.text()).not.toContain("needs review again");
 });
+
+const WRITE_NOTICE = "Smurf events do not change links at the moment, so this change did not change any link.";
+
+async function saveWith(applied: boolean, applies: boolean | undefined): Promise<void> {
+  await open("/admin-smurf-events");
+  const created = manualEvent({ id: "ev-new" });
+  useSmurfEventsStore().detail = created;
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", created, { applied, applies, existing: false, needsReview: false });
+  await flushPromises();
+}
+
+test("a save that changed no link says so", async () => {
+  await saveWith(true, false);
+
+  expect(wrapper.text()).toContain("Event saved.");
+  expect(wrapper.text()).toContain(WRITE_NOTICE);
+});
+
+test("a save that changed no link and was not applied shows only the not-applying notice", async () => {
+  await saveWith(false, false);
+
+  expect(wrapper.text()).toContain("Event saved.");
+  expect(wrapper.text()).toContain(WRITE_NOTICE);
+  expect(wrapper.text()).not.toContain("follow shortly");
+});
+
+test("a save not applied while events apply shows the follow-shortly notice only", async () => {
+  await saveWith(false, true);
+
+  expect(wrapper.text()).toContain("follow shortly");
+  expect(wrapper.text()).not.toContain(WRITE_NOTICE);
+});
+
+test("a save from an older server, without the applies flag, shows no not-applying notice", async () => {
+  await saveWith(true, undefined);
+
+  expect(wrapper.text()).not.toContain(WRITE_NOTICE);
+});
+
+test("a review that changed no link says so, and that notice wins over the not-applied one", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("review");
+
+  wrapper.findComponent({ name: "ReviewDialog" }).vm.$emit("reviewed", false, false);
+  await flushPromises();
+  expect(wrapper.text()).toContain("Review saved.");
+  expect(wrapper.text()).toContain(WRITE_NOTICE);
+  expect(wrapper.text()).not.toContain("follow shortly");
+
+  wrapper.findComponent({ name: "ReviewDialog" }).vm.$emit("reviewed", true, true);
+  await flushPromises();
+  expect(wrapper.text()).not.toContain(WRITE_NOTICE);
+});
+
+test("a create that answered an existing event keeps its text and adds the notice when links do not change", async () => {
+  await open("/admin-smurf-events");
+  const existing = manualEvent({ id: "ev-old" });
+  useSmurfEventsStore().detail = existing;
+
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", existing, { applied: true, applies: false, existing: true, needsReview: false });
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("already exists, so nothing was changed");
+  expect(wrapper.text()).toContain(WRITE_NOTICE);
+});

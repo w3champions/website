@@ -162,6 +162,10 @@ test("summaryOf keeps the list-row fields only, and outcomeOf separates the appl
   assert.deepEqual(Object.keys(summaryOf(detail)).sort(), ["counts", "createdAt", "endedLinks", "from", "id", "name", "origin", "review", "reviewedBy", "to"]);
   assert.equal(outcomeOf({ ...detail, applied: false }).applied, false);
   assert.equal(outcomeOf(detail).applied, true);
+  assert.equal(outcomeOf(detail).applies, true);
+  assert.equal(outcomeOf({ ...detail, applies: true }).applies, true);
+  assert.equal(outcomeOf({ ...detail, applies: false }).applies, false);
+  assert.equal("applies" in outcomeOf({ ...detail, applies: false }).detail, false);
   assert.equal("applied" in outcomeOf({ ...detail, applied: false }).detail, false);
 });
 
@@ -179,4 +183,8 @@ test("an absent homes count reads as not computed, never as 0", () => {
   assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 3 }, t), "3");
   assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 0 }, t), "0");
   assert.equal(homesText({ networks: 1, machines: 1, attendees: 1 }, t), "Not computed");
+});
+
+test("a 422 preview keeps its applies flag", () => {
+  assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, applies: false } })?.applies, false);
 });

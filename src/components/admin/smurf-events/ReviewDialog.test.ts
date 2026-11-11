@@ -131,7 +131,7 @@ test("a review answered applied: false reports it", async () => {
   await button("Save review").trigger("click");
   await flushPromises();
 
-  expect(wrapper.emitted("reviewed")?.[0]).toEqual([false]);
+  expect(wrapper.emitted("reviewed")?.[0]).toEqual([false, true]);
 });
 
 test("the decision buttons tell which decision is chosen", async () => {
@@ -210,4 +210,29 @@ test("a busy server on a review says so calmly, keeps the dialog open and the re
   await button("Save review").trigger("click");
   await flushPromises();
   expect(wrapper.emitted("reviewed")).toHaveLength(1);
+});
+
+test("a deny preview answered applies: false carries one calm notice; true or absent carries none", async () => {
+  service.denyPreview.mockResolvedValue({ applies: false, links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }], endedLinks: 1 });
+  await button("Deny").trigger("click");
+  await flushPromises();
+  const notice = "Smurf events do not change links at the moment. The links listed here are what this event ends, or brings back, once they do.";
+  expect(wrapper.text()).toContain(notice);
+  expect(wrapper.text().split(notice)).toHaveLength(2);
+
+  service.denyPreview.mockResolvedValue({ applies: true, links: [], endedLinks: 0 });
+  await button("Confirm").trigger("click");
+  await button("Deny").trigger("click");
+  await flushPromises();
+  expect(wrapper.text()).not.toContain("do not change links");
+});
+
+test("a review answered applies: false reports it", async () => {
+  service.review.mockResolvedValue({ ...manualEvent({ review: "confirmed" }), applies: false });
+
+  await button("Confirm").trigger("click");
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("reviewed")?.[0]).toEqual([true, false]);
 });

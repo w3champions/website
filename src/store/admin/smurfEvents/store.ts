@@ -43,6 +43,8 @@ interface SmurfEventsState {
   denyLinks: SmurfEventLinkRef[] | null;
   /** How many links the event ended, as the deny preview reported it; null until loaded. */
   denyEndedLinks: number | null;
+  /** False: smurf events do not change links at the moment, so the deny preview's links are what a deny brings back once they do. */
+  denyApplies: boolean;
   /** The deny preview's list was cut: it may miss links a deny would bring back. */
   denyLinksTruncated: boolean;
   denyLoading: boolean;
@@ -93,6 +95,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     previewError: null,
     denyLinks: null,
     denyEndedLinks: null,
+    denyApplies: true,
     denyLinksTruncated: false,
     denyLoading: false,
     denyError: null,
@@ -334,6 +337,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       this.denyLinks = null;
       this.denyEndedLinks = null;
       this.denyLinksTruncated = false;
+      this.denyApplies = true;
       this.denyError = null;
       return await loadLatest(denyLoads, {
         what: "the deny preview",
@@ -343,6 +347,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
           this.denyLinks = preview.links ?? [];
           this.denyEndedLinks = typeof preview.endedLinks === "number" ? preview.endedLinks : null;
           this.denyLinksTruncated = preview.linksTruncated === true;
+          this.denyApplies = preview.applies !== false;
         },
         fail: (e) => (this.denyError = e),
       });
@@ -357,6 +362,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       this.denyLinks = null;
       this.denyEndedLinks = null;
       this.denyLinksTruncated = false;
+      this.denyApplies = true;
       this.denyError = null;
       this.denyLoading = false;
     },

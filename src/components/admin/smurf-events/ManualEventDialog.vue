@@ -99,6 +99,9 @@
             <v-alert v-if="store.preview.refused" type="error" variant="tonal" density="compact" class="mb-3">
               {{ refusalLabel(store.preview.refused, tr) }}
             </v-alert>
+            <v-alert v-if="store.preview.applies === false" type="info" variant="tonal" density="compact" class="mb-3" role="status">
+              {{ t(key("not_applying_preview")) }}
+            </v-alert>
             <div class="text-body-2">
               {{ store.preview.span ? t(key("preview_span"), { span: spanText(store.preview.span) }) : t(key("preview_no_span")) }}
             </div>
@@ -175,10 +178,11 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
   /**
-   * `applied` false: stored, but the links follow with the next stats run. `existing`: a create answered
+   * `applied` false: stored, but the links follow with the next stats run. `applies` false: smurf events do not
+   * change links at the moment, so the write changed none. `existing`: a create answered
    * an event that was already there, unchanged. `needsReview`: an edit took a confirmed event back to unreviewed.
    */
-  (e: "saved", event: SmurfEventDetail, flags: { applied: boolean; existing: boolean; needsReview: boolean }): void;
+  (e: "saved", event: SmurfEventDetail, flags: { applied: boolean; applies: boolean; existing: boolean; needsReview: boolean }): void;
 }>();
 
 const { t } = useI18n();
@@ -205,7 +209,7 @@ async function save(): Promise<void> {
   const wasConfirmed = props.event?.review === "confirmed";
   const outcome = await store.saveManual(draft.value, props.event?.id ?? null);
   if (outcome === null) return;
-  emit("saved", outcome.detail, { applied: outcome.applied, existing: outcome.existing, needsReview: wasConfirmed && outcome.detail.review === "unreviewed" });
+  emit("saved", outcome.detail, { applied: outcome.applied, applies: outcome.applies, existing: outcome.existing, needsReview: wasConfirmed && outcome.detail.review === "unreviewed" });
   emit("update:modelValue", false);
 }
 

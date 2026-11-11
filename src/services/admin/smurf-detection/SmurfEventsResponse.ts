@@ -77,6 +77,8 @@ export interface SmurfEventDetail extends SmurfEventSummary {
  * stored but applying it to the links failed (the next stats run applies it).
  */
 export interface SmurfEventWriteResponse extends SmurfEventDetail {
+  /** False: smurf events do not change links at the moment, so this write changed none. Absent (an older server): treat as true. */
+  applies?: boolean;
   applied?: boolean;
 }
 
@@ -91,6 +93,8 @@ export type SmurfEventPreviewRefusal = "no-venue" | "too-long" | "too-wide";
 export type SmurfEventExclusion = "home" | "single-anchor" | "too-wide";
 
 export interface SmurfEventPreview {
+  /** False: smurf events do not change links at the moment; `endsLinks` is what they would end once they do. Absent (an older server): treat as true. */
+  applies?: boolean;
   span?: { from: string; to: string };
   networks: Array<{ hash8: string; anchors: number; firstAt: string; lastAt: string }>;
   excluded: Array<{ hash8: string; reason: SmurfEventExclusion }>;
@@ -140,6 +144,8 @@ export interface SmurfEventsPage {
 
 /** GET /:id/deny-preview: the links a deny would bring back. */
 export interface SmurfEventDenyPreview {
+  /** False: smurf events do not change links at the moment; `links` is what a deny would bring back once they do. Absent (an older server): treat as true. */
+  applies?: boolean;
   /** Possibly a cut list (see `linksTruncated`). */
   links: SmurfEventLinkRef[];
   /** How many links the event ended: always the full count. */

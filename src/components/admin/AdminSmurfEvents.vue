@@ -18,6 +18,7 @@
       >
         {{ t(key(notice.kind)) }}
         <div v-if="notice.needsReview">{{ t(key("needs_review_again")) }}</div>
+        <div v-if="notice.notApplying">{{ t(key("not_applying_write")) }}</div>
       </v-alert>
 
       <event-detail
@@ -82,6 +83,8 @@ interface Notice {
   view: string;
   /** An edit took a confirmed event back to unreviewed. */
   needsReview?: true;
+  /** Smurf events do not change links at the moment: the write changed none. */
+  notApplying?: true;
 }
 const notice = ref<Notice | null>(null);
 // A change stored but not yet applied to the links is news, not plain success.
@@ -126,11 +129,13 @@ function openManual(event: SmurfEventDetail | null): void {
   manualOpen.value = true;
 }
 
-function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; existing: boolean; needsReview: boolean }): void {
+function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; applies?: boolean; existing: boolean; needsReview: boolean }): void {
   // A save that finishes after the moderator went to another view neither navigates nor claims that view.
   if (eventId.value !== manualOpenedFrom) return;
-  const kind: NoticeKind = !flags.applied ? "saved_pending" : flags.existing ? "existing" : "saved";
-  notice.value = flags.needsReview ? { kind, view: saved.id, needsReview: true } : { kind, view: saved.id };
+  const notApplying = flags.applies === false;
+  // Without links changing, "the effect follows shortly" would mislead: the not-applying notice wins over the not-applied one.
+  const kind: NoticeKind = !flags.applied && !notApplying ? "saved_pending" : flags.existing ? "existing" : "saved";
+  notice.value = { kind, view: saved.id, ...(flags.needsReview ? { needsReview: true as const } : {}), ...(notApplying ? { notApplying: true as const } : {}) };
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
 }
 
@@ -144,10 +149,11 @@ function openDelete(): void {
   deleteOpen.value = true;
 }
 
-function onReviewed(applied: boolean): void {
+function onReviewed(applied: boolean, applies?: boolean): void {
   // A review that finishes after the moderator went to another view says nothing there and moves nothing.
   if (eventId.value !== reviewOpenedFrom) return;
-  notice.value = { kind: applied ? "reviewed" : "reviewed_pending", view: eventId.value };
+  const notApplying = applies === false;
+  notice.value = { kind: applied || notApplying ? "reviewed" : "reviewed_pending", view: eventId.value, ...(notApplying ? { notApplying: true as const } : {}) };
 }
 
 function onDeleted(): void {

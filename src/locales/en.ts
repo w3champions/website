@@ -843,6 +843,8 @@ const en = {
       delete_body: "Delete this manual event. You are recorded as the moderator who deleted it.",
       delete_confirm: "Delete event",
       // Notices
+      not_applying_preview: "Smurf events do not change links at the moment. The links listed here are what this event ends, or brings back, once they do.",
+      not_applying_write: "Smurf events do not change links at the moment, so this change did not change any link.",
       saved: "Event saved.",
       saved_pending: "Event saved. Its effect on links will follow shortly.",
       existing: "An event with these anchors and span already exists, so nothing was changed. Rename it with Edit.",
