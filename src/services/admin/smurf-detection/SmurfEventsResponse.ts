@@ -11,7 +11,8 @@ export interface SmurfEventCounts {
   networks: number;
   machines: number;
   attendees: number;
-  homes: number;
+  /** Absent: not computed (an event whose homes were never computed). */
+  homes?: number;
 }
 
 /** A link the event ended (or, in a deny preview, would bring back). */

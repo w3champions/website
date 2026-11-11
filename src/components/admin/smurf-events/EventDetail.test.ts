@@ -56,3 +56,11 @@ test("an edited event that came back unreviewed shows no reviewer or confirmed s
   expect(wrapper.text()).not.toContain("Reviewed by");
   expect(wrapper.text()).not.toContain("Confirmed");
 });
+
+test("an event whose homes were never computed shows them as not computed", async () => {
+  await show(manualEvent({ counts: { networks: 1, machines: 3, attendees: 3 } }));
+
+  const tile = wrapper.findAll(".stat-tile").find((c) => c.text().includes("Homes"));
+  expect(tile?.text()).toContain("Not computed");
+  expect(tile?.text()).not.toMatch(/undefined|\b0\b/);
+});

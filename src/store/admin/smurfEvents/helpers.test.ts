@@ -4,7 +4,7 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventPreview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions";
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { countText, errorText, exclusionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewLabel } from "./labels";
+import { countText, homesText, errorText, exclusionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewLabel } from "./labels";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
 import { translateEn as t } from "./translate.testing";
 
@@ -167,4 +167,10 @@ test("a 422 preview is used only with the shape the dialog reads, and counts as 
   assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, counts: undefined } }), null);
   assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, refused: "too-long" } })?.refused, "too-long");
   assert.equal(refusedPreviewFrom({ preview: PREVIEW })?.refused, "no-venue");
+});
+
+test("an absent homes count reads as not computed, never as 0", () => {
+  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 3 }, t), "3");
+  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 0 }, t), "0");
+  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1 }, t), "Not computed");
 });

@@ -1,5 +1,5 @@
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
-import type { SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventCounts, SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { key, type Translate } from "./translate";
 
 const ORIGINS: ReadonlySet<string> = new Set<SmurfEventOrigin>(["detected", "historical", "manual", "carried-over"]);
@@ -66,6 +66,11 @@ export function manualEventErrorText(e: unknown, t: Translate): string {
 /** "1 link" / "N links": the `_one` or `_other` form of the text `base`, as the hardware page does. */
 export function countText(base: string, count: number, t: Translate): string {
   return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count });
+}
+
+/** The homes count of an event, or "not computed" when the server sent none (never 0). */
+export function homesText(counts: SmurfEventCounts, t: Translate): string {
+  return counts.homes === undefined ? t(key("count_homes_not_computed")) : String(counts.homes);
 }
 
 /** "N machines, M attendees" of a preview. */

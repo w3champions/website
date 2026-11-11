@@ -751,6 +751,7 @@ const en = {
       count_machines: "Machines",
       count_attendees: "Attendees",
       count_homes: "Homes",
+      count_homes_not_computed: "Not computed",
       count_ended_links: "Ended links",
       evidence: "Review evidence",
       evidence_hint: "What was observed around the event.",

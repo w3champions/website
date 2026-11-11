@@ -163,7 +163,7 @@ import { EAdminRouteName } from "@/router/types";
 import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
-import { errorText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
+import { errorText, homesText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
@@ -205,7 +205,7 @@ const stats = computed(() => {
     { label: t(key("count_networks")), value: e.counts.networks },
     { label: t(key("count_machines")), value: e.counts.machines },
     { label: t(key("count_attendees")), value: e.counts.attendees },
-    { label: t(key("count_homes")), value: e.counts.homes },
+    { label: t(key("count_homes")), value: homesText(e.counts, tr) },
     { label: t(key("count_ended_links")), value: e.endedLinks },
   ];
 });
