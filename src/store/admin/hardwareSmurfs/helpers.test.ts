@@ -1,14 +1,22 @@
 import { test } from "vitest";
 import { strict as assert } from "node:assert";
-import { translateEn as t } from "./translate.testing";
+import { translateEn as hardwareT } from "./translate.testing";
+import { translateEn as eventsT } from "../smurfEvents/translate.testing";
+import type { Translate } from "./translate";
+
+/** Both pages' texts, as the app's one vue-i18n `t` answers them. */
+const t: Translate = (k, named) => {
+  const text = hardwareT(k, named);
+  return text === k ? eventsT(k, named) : text;
+};
 import { endedByEvents, itemFlagLabels, reportStatusLabel, sourceLabel, tombstoneReasonLabel, verdictKindOf } from "./labels";
 import { itemActions, pairActions } from "./actions";
 import { actionDialogCopy, holdersText } from "./dialogCopy";
 import { actionResultLines } from "./result";
-import { appendAuditPage, auditActionLabel, auditOutcomeText, auditTargetText } from "./audit";
+import { appendAuditPage, auditActionLabel, auditEventTarget, auditOutcomeText, auditTargetText } from "./audit";
 import { errorText } from "./errors";
 import { HardwareSmurfApiError } from "@/services/admin/HardwareSmurfService";
-import type { AuditEntry, HardwareLink } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
+import type { AuditEntry, AuditTarget, HardwareLink } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
 
 function link(overrides: Partial<HardwareLink> = {}): HardwareLink {
   return {
@@ -203,6 +211,31 @@ test("audit targets read as accounts and hash8 only", () => {
   assert.equal(auditTargetText({ kind: "pair", a: "A#1", b: "B#2" }), "A#1 ↔ B#2");
   assert.equal(auditTargetText({ kind: "item", battleTag: "A#1", hash8: "0a1b2c3d", itemKind: "disk" }), "disk 0a1b2c3d (A#1)");
   assert.equal(auditTargetText({ kind: "identifier", type: "hardwareItem", valueHash8: "deadbeef" }), "hardwareItem deadbeef");
+});
+
+test("event audit actions have labels", () => {
+  const labels = ["event-create", "event-update", "event-delete", "event-confirm", "event-deny", "event-unreview"].map((a) => auditActionLabel(a, t));
+  assert.deepEqual(labels, ["Created event", "Updated event", "Deleted event", "Confirmed event", "Denied event", "Reset event review"]);
+});
+
+test("an event target shows the event name; an unknown kind shows as sent", () => {
+  const event = { kind: "event", id: "ev1", name: "LAN party" } as const;
+  assert.equal(auditTargetText(event), "LAN party");
+  assert.deepEqual(auditEventTarget(event), { id: "ev1", name: "LAN party" });
+  assert.equal(auditEventTarget({ kind: "pair", a: "A#1", b: "B#2" }), null);
+  assert.equal(auditTargetText({ kind: "brand-new" } as unknown as AuditTarget), "brand-new");
+  assert.equal(auditEventTarget({ kind: "brand-new" } as unknown as AuditTarget), null);
+});
+
+test("event audit outcomes read naturally and leave out the version", () => {
+  assert.equal(auditOutcomeText({ attendees: 8, machines: 4, networks: 1, ended: 3 }, t), "Attendees: 8 · Machines: 4 · Networks: 1 · Links ended: 3");
+  assert.equal(auditOutcomeText({ attendees: 2, machines: 1, networks: 1, ended: null }, t), "Attendees: 2 · Machines: 1 · Networks: 1");
+  assert.equal(auditOutcomeText({ review: "confirmed", previous: "unreviewed", applied: true, version: 7 }, t), "Review: Confirmed · Previous review: Unreviewed · Links changed");
+  assert.equal(auditOutcomeText({ review: "denied", previousReview: "confirmed", version: 3 }, t), "Review: Denied · Previous review: Confirmed");
+  assert.equal(auditOutcomeText({ review: "unreviewed", previousUnknown: true, applied: false, repaired: true, version: 2 }, t), "Review: Unreviewed · Previous review unknown · Repaired");
+  assert.equal(auditOutcomeText({ attendees: null, repaired: true }, t), "Repaired");
+  assert.equal(auditOutcomeText({ version: 4 }, t), "—");
+  assert.equal(auditOutcomeText({ review: "archived" }, t), "Review: archived");
 });
 
 test("audit outcome shows the set values and skips null and false", () => {

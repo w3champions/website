@@ -25,7 +25,8 @@
         <template v-slot:[`item.at`]="{ item }">{{ formatUtc(item.at) }}</template>
         <template v-slot:[`item.action`]="{ item }">{{ auditActionLabel(item.action, tr) }}</template>
         <template v-slot:[`item.target`]="{ item }">
-          <span class="font-monospace text-caption">{{ auditTargetText(item.target) }}</span>
+          <router-link v-if="eventLink(item.target)" :to="eventLink(item.target)!">{{ auditTargetText(item.target) }}</router-link>
+          <span v-else class="font-monospace text-caption">{{ auditTargetText(item.target) }}</span>
         </template>
         <template v-slot:[`item.reason`]="{ item }">{{ item.reason ?? t(key("dash")) }}</template>
         <template v-slot:[`item.outcome`]="{ item }">
@@ -45,9 +46,12 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiRefresh } from "@mdi/js";
+import type { RouteLocationRaw } from "vue-router";
 import type { DataTableHeader } from "vuetify";
+import type { AuditTarget } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
 import { formatUtc } from "@/helpers/utc-dates";
-import { auditActionLabel, auditOutcomeText, auditTargetText } from "@/store/admin/hardwareSmurfs/audit";
+import { EAdminRouteName } from "@/router/types";
+import { auditActionLabel, auditEventTarget, auditOutcomeText, auditTargetText } from "@/store/admin/hardwareSmurfs/audit";
 import { errorText } from "@/store/admin/hardwareSmurfs/errors";
 import { useHardwareSmurfsStore } from "@/store/admin/hardwareSmurfs/store";
 import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
@@ -55,6 +59,12 @@ import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useHardwareSmurfsStore();
+
+/** The smurf events page opened on the event an entry acted on; null for any other target. */
+function eventLink(target: AuditTarget): RouteLocationRaw | null {
+  const event = auditEventTarget(target);
+  return event && { name: EAdminRouteName.SMURF_EVENTS, query: { event: event.id } };
+}
 
 const headers = computed<DataTableHeader[]>(() => [
   { title: t(key("col_when")), key: "at", sortable: false },
