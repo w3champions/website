@@ -66,6 +66,12 @@ test("requests trim the name and anchors, drop duplicate anchors and send the re
   assert.equal(toManualRequest({ ...draft, reason: " known LAN " }).reason, "known LAN");
 });
 
+test("a preview request names the event it replaces only when one is given", () => {
+  assert.equal(Object.hasOwn(toPreviewRequest(DRAFT), "replacing"), false);
+  assert.equal(Object.hasOwn(toPreviewRequest(DRAFT, null), "replacing"), false);
+  assert.equal(toPreviewRequest(DRAFT, "ev1").replacing, "ev1");
+});
+
 test("the preview key follows the span and anchors, not the name, reason or anchor order", () => {
   const key = previewKey(DRAFT);
 

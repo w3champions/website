@@ -171,15 +171,15 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       this.detailLoading = false;
     },
 
-    /** Previews the draft's span and anchors; Save is offered only for this preview's draft. */
-    async runPreview(draft: SmurfEventDraft): Promise<boolean> {
+    /** Previews the draft's span and anchors (as an edit of `replacing`, a manual event's id, when given); Save is offered only for this preview's draft. */
+    async runPreview(draft: SmurfEventDraft, replacing: string | null = null): Promise<boolean> {
       const key = previewKey(draft);
       if (key === null) return false;
       this.previewError = null;
       const before = { preview: this.preview, key: this.previewKey };
       this.preview = null;
       this.previewKey = null;
-      const request = toPreviewRequest(draft);
+      const request = toPreviewRequest(draft, replacing);
       return await loadLatest(previewLoads, {
         what: "the smurf event preview",
         setLoading: (loading) => (this.previewLoading = loading),

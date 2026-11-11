@@ -117,7 +117,10 @@ export interface ReviewInput {
 
 // The website never sends `author`: website-backend sets it from the moderator's token.
 
-export type SmurfEventPreviewRequest = Omit<ManualEventInput, "author" | "reason">;
+export type SmurfEventPreviewRequest = Omit<ManualEventInput, "author" | "reason"> & {
+  /** The manual event the previewed edit would replace; absent for a new event. 404: gone, 409: not manual. */
+  replacing?: string;
+};
 export type ManualEventRequest = Omit<ManualEventInput, "author">;
 export type ReviewRequest = Omit<ReviewInput, "author">;
 

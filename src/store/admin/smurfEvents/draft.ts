@@ -64,15 +64,17 @@ function requireIso(value: string): string {
   return iso;
 }
 
-/** For a draft without problems. */
-export function toPreviewRequest(draft: SmurfEventDraft): SmurfEventPreviewRequest {
-  return { name: draft.name.trim(), from: requireIso(draft.from), to: requireIso(draft.to), anchors: anchorsOf(draft) };
+/** For a draft without problems; `replacing`: the id of the manual event the draft edits (absent for a new event). */
+export function toPreviewRequest(draft: SmurfEventDraft, replacing?: string | null): SmurfEventPreviewRequest {
+  const request = { name: draft.name.trim(), from: requireIso(draft.from), to: requireIso(draft.to), anchors: anchorsOf(draft) };
+  return replacing ? { ...request, replacing } : request;
 }
 
 /** For a draft without problems; the reason only when one was entered. */
 export function toManualRequest(draft: SmurfEventDraft): ManualEventRequest {
   const reason = draft.reason.trim();
-  return reason === "" ? toPreviewRequest(draft) : { ...toPreviewRequest(draft), reason };
+  const { name, from, to, anchors } = toPreviewRequest(draft);
+  return reason === "" ? { name, from, to, anchors } : { name, from, to, anchors, reason };
 }
 
 /**

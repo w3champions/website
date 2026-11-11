@@ -131,6 +131,19 @@ test("runPreview sends the draft's span and anchors and remembers what it previe
   expect(store.previewKey).not.toBeNull();
 });
 
+test("runPreview of an edit names the event it replaces; a failed one keeps the server's error", async () => {
+  const store = useSmurfEventsStore();
+
+  await store.runPreview(DRAFT, "1");
+  expect(service.preview).toHaveBeenCalledWith("tok", { ...REQUEST, replacing: "1" });
+
+  const gone = new SmurfEventsApiError(404, "No such smurf event", null);
+  service.preview.mockRejectedValue(gone);
+  await store.runPreview(DRAFT, "1");
+  expect(store.previewError).toBe(gone);
+  expect(store.preview).toBeNull();
+});
+
 test("saveManual creates the event after a preview, shows it and reloads the list", async () => {
   service.create.mockResolvedValue(created(detail("new")));
   const store = useSmurfEventsStore();

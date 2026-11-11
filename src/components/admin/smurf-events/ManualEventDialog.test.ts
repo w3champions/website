@@ -51,6 +51,7 @@ test("Save stays disabled until a preview of the current draft succeeds", async 
     from: "2026-10-01T00:00:00.000Z",
     to: "2026-10-03T00:00:00.000Z",
     anchors: ["Anchor#1001", "Anchor#1002"],
+    replacing: "ev1",
   });
   expect(wrapper.text()).toContain("0a1b2c3d");
   expect(button("Save").element.disabled).toBe(false);
@@ -284,4 +285,14 @@ test("an edit that keeps the review does not", async () => {
   await flushPromises();
 
   expect(wrapper.emitted("saved")?.[0]?.[1]).toMatchObject({ needsReview: false });
+});
+
+test("a preview of an event that is gone or no longer manual shows the server's text in the preview error place", async () => {
+  service.preview.mockRejectedValue(new SmurfEventsApiError(409, "Only manual events can be replaced", null));
+
+  await button("Preview").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The preview couldn't be loaded: Only manual events can be replaced");
+  expect(button("Save").element.disabled).toBe(true);
 });

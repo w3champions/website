@@ -85,7 +85,7 @@
               :prepend-icon="mdiMagnify"
               :disabled="problem !== null || store.acting"
               :loading="store.previewLoading"
-              @click="store.runPreview(draft)"
+              @click="store.runPreview(draft, event?.id ?? null)"
             >
               {{ t(key("preview")) }}
             </v-btn>
