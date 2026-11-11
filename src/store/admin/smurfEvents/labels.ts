@@ -49,7 +49,7 @@ export function errorText(e: unknown, t: Translate): string {
 /** HTTP status of "not ready yet": the data manual events need is still being prepared after a deploy. */
 const NOT_READY = 503;
 
-/** HTTP status of "busy with other previews": nothing was read or stored, retry in a moment. */
+/** HTTP status of "busy right now": nothing was read or stored, retry in a moment. */
 const TOO_BUSY = 429;
 
 /**

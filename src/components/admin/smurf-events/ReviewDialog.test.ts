@@ -202,7 +202,7 @@ test("a busy server on a review says so calmly, keeps the dialog open and the re
   await button("Save review").trigger("click");
   await flushPromises();
 
-  expect(wrapper.text()).toContain("The server is busy with another preview. Nothing was saved. Try again in a moment.");
+  expect(wrapper.text()).toContain("The server is busy right now. Nothing was saved. Try again in a moment.");
   expect(wrapper.emitted("reviewed")).toBeUndefined();
   expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   expect((wrapper.find("textarea").element as HTMLTextAreaElement).value).toBe("known LAN");
