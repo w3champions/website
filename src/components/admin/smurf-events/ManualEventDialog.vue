@@ -206,7 +206,9 @@ function spanText(span: { from: string; to: string }): string {
 
 async function save(): Promise<void> {
   if (!canSave.value) return;
-  const wasConfirmed = props.event?.review === "confirmed";
+  // The event as it is now: a reload after a conflict may have changed its review since the dialog opened.
+  const current = store.detail !== null && store.detail.id === props.event?.id ? store.detail : props.event;
+  const wasConfirmed = current?.review === "confirmed";
   const outcome = await store.saveManual(draft.value, props.event?.id ?? null);
   if (outcome === null) return;
   emit("saved", outcome.detail, { applied: outcome.applied, applies: outcome.applies, existing: outcome.existing, needsReview: wasConfirmed && outcome.detail.review === "unreviewed" });

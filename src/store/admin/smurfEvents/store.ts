@@ -10,7 +10,7 @@ import { smurfEventsService } from "./service";
 
 export const SMURF_EVENTS_PAGE_SIZE = 50;
 
-/** HTTP status of "busy with other previews, retry in a moment" (preview, create, update). */
+/** HTTP status of "busy right now, retry in a moment" (preview, create, update; a review is refused the same way). */
 const TOO_BUSY = 429;
 
 /** HTTP status of a conflict: an edit of an event that is not manual, or one that kept changing while it resolved. */
@@ -167,9 +167,14 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
         setLoading: () => undefined,
         fetch: () => smurfEventsService().get(token(), id),
         apply: (detail) => {
-          if (this.detailId === id) this.detail = detail;
+          if (this.detailId !== id) return;
+          this.detail = detail;
+          this.detailError = null;
         },
-        fail: () => undefined,
+        // The event view reports it (with a retry); the edit dialog, its draft and the 409 text are untouched.
+        fail: (e) => {
+          if (this.detailId === id) this.detailError = e;
+        },
       });
     },
 

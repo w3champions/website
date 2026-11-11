@@ -5,10 +5,11 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventPreview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { inlineDialog, manualEvent, testPlugins } from "./setup.testing";
 
-const service = vi.hoisted(() => ({ preview: vi.fn(), create: vi.fn(), update: vi.fn(), list: vi.fn() }));
+const service = vi.hoisted(() => ({ preview: vi.fn(), create: vi.fn(), update: vi.fn(), list: vi.fn(), get: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));
 vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) }));
 
+import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import ManualEventDialog from "./ManualEventDialog.vue";
 
 const PREVIEW: SmurfEventPreview = {
@@ -158,7 +159,7 @@ test("a busy server on the preview says so calmly and leaves the earlier preview
 
   await previewed();
 
-  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.text()).toContain("The server is busy right now.");
   expect(wrapper.text()).not.toContain("Busy");
   expect(wrapper.text()).toContain("0a1b2c3d");
   expect(button("Save").element.disabled).toBe(false);
@@ -169,7 +170,7 @@ test("a busy server on the first preview leaves Save off and the input intact", 
 
   await previewed();
 
-  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.text()).toContain("The server is busy right now.");
   expect(button("Save").element.disabled).toBe(true);
   expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
   expect(button("Preview").element.disabled).toBe(false);
@@ -182,7 +183,7 @@ test("a busy server on an update keeps the dialog open, the preview and the inpu
   await button("Save").trigger("click");
   await flushPromises();
 
-  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.text()).toContain("The server is busy right now.");
   expect(wrapper.emitted("saved")).toBeUndefined();
   expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
@@ -204,7 +205,7 @@ test("a busy server on a create keeps the dialog open and the preview", async ()
   await flushPromises();
 
   expect(service.create).toHaveBeenCalledOnce();
-  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.text()).toContain("The server is busy right now.");
   expect(wrapper.emitted("saved")).toBeUndefined();
   expect(button("Save").element.disabled).toBe(false);
 });
@@ -355,4 +356,51 @@ test("a save answered applies: false reports it", async () => {
   await flushPromises();
 
   expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, applies: false, existing: false, needsReview: false });
+});
+
+test("a new event's preview request has no replacing key", async () => {
+  await wrapper.setProps({ modelValue: false });
+  await wrapper.setProps({ event: null, modelValue: true });
+  Object.assign((wrapper.vm as unknown as { draft: unknown }).draft as object, { name: "LAN party", anchors: ["Anchor#1001", "Anchor#1002"] });
+  await wrapper.vm.$nextTick();
+
+  await previewed();
+
+  expect(service.preview).toHaveBeenCalledTimes(1);
+  expect(Object.hasOwn(service.preview.mock.calls[0][1] as object, "replacing")).toBe(false);
+});
+
+test("a retry after an edit that kept changing judges the review against the reloaded event", async () => {
+  const confirmed = manualEvent({ review: "confirmed" });
+  service.get.mockResolvedValueOnce(confirmed).mockResolvedValueOnce(manualEvent({ review: "unreviewed" }));
+  service.update
+    .mockRejectedValueOnce(new SmurfEventsApiError(409, "The smurf event kept changing while the edit was resolved", null))
+    .mockResolvedValueOnce(manualEvent({ review: "unreviewed" }));
+  await useSmurfEventsStore().openDetail("ev1");
+  await wrapper.setProps({ event: confirmed });
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+  expect(wrapper.emitted("saved")).toBeUndefined();
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toMatchObject({ needsReview: false });
+});
+
+test("when the reload after a conflict fails, the 409 text and the dialog stay and the page's event view reports the failure", async () => {
+  service.get.mockResolvedValueOnce(manualEvent()).mockRejectedValueOnce(new SmurfEventsApiError(500, "Reload failed", null));
+  service.update.mockRejectedValue(new SmurfEventsApiError(409, "The smurf event kept changing while the edit was resolved", null));
+  const store = useSmurfEventsStore();
+  await store.openDetail("ev1");
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The smurf event kept changing while the edit was resolved");
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
+  expect((store.detailError as SmurfEventsApiError).serverMessage).toBe("Reload failed");
 });
