@@ -165,9 +165,11 @@ Development environment variables are in `/public/env.js`:
 - `INGAME_STATIC_RESOURCES_URL` - CDN for game resources
 
 ### Localization
-- Translations managed via Google Sheets (see README)
-- Generated with `npm run generate-locales`
-- Locale files in `/src/locales/`
+- The source of truth for translations is the Localization Tables Google Sheet (link in `scripts/generate-locales.ts` and the README). `npm run generate-locales` rewrites `src/locales/data.ts` from it and needs `GOOGLE_API_KEY` in `.env`; the CI build has no key, so `data.ts` ships as committed
+- Every new or changed string needs a row in the sheet (`location`, `id`, one column per language). Editing `data.ts` by hand is fine when no key is at hand, but the same row must go into the sheet: the next sync rewrites the whole file and deletes strings that exist only in `data.ts`
+- The sheet is readable without credentials (`.../export?format=csv&gid=0` on the sheet URL) for checking which keys it has; editing it needs edit access from a maintainer
+- If a Google Sheets connector with edit access is attached to your session, add the rows yourself: only add rows (never change or delete existing ones unless asked), then compare a fresh CSV export with `data.ts` key by key. Without such a connector you cannot edit the sheet: list the rows in the PR description for the author to paste
+- `src/locales/en.ts` is hand-maintained, untouched by the script, and merged over the sheet's English (it wins for keys in both)
 - Use `$t()` or `$i18n.t()` for translations
 
 ### Important Notes
