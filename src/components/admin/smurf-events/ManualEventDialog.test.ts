@@ -309,3 +309,13 @@ test("an edit that kept changing shows the server's text and keeps the dialog op
   expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
 });
+
+test("a preview that ends no links says so and lists nothing", async () => {
+  service.preview.mockResolvedValue({ ...PREVIEW, endsLinks: [] });
+
+  await previewed();
+
+  expect(wrapper.text()).toContain("Saving ends no links.");
+  expect(wrapper.find(".link-list").exists()).toBe(false);
+  expect(button("Save").element.disabled).toBe(false);
+});
