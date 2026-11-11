@@ -13,6 +13,9 @@ export const SMURF_EVENTS_PAGE_SIZE = 50;
 /** HTTP status of "busy with other previews, retry in a moment" (preview, create, update). */
 const TOO_BUSY = 429;
 
+/** HTTP status of a conflict: an edit of an event that is not manual, or one that kept changing while it resolved. */
+const CONFLICT = 409;
+
 export interface SmurfEventFilters {
   origin: SmurfEventOrigin | null;
   review: SmurfEventReview | null;
@@ -154,6 +157,19 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
+    /** Loads the shown event again without blanking it, so an edit that lost a race starts from the current version. */
+    async refreshDetail(id: string): Promise<boolean> {
+      return await loadLatest(detailLoads, {
+        what: "the smurf event",
+        setLoading: () => undefined,
+        fetch: () => smurfEventsService().get(token(), id),
+        apply: (detail) => {
+          if (this.detailId === id) this.detail = detail;
+        },
+        fail: () => undefined,
+      });
+    },
+
     closeDetail(): void {
       detailLoads.invalidate();
       this.detailId = null;
@@ -241,6 +257,8 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
         console.error("Saving the smurf event failed:", e);
         if (!visits.isLatest(visit)) return null;
         this.actionError = e;
+        // The event kept changing while the edit resolved (or is not manual): nothing was stored, the draft stays, the event shown is read again.
+        if (id !== null && e instanceof SmurfEventsApiError && e.status === CONFLICT && this.detailId === id) void this.refreshDetail(id);
         if (e instanceof SmurfEventsApiError && e.status === 422) {
           // The server refused: show the preview it answered with. Without a valid one, the earlier
           // preview no longer holds, so Save waits for a new preview.

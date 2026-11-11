@@ -296,3 +296,16 @@ test("a preview of an event that is gone or no longer manual shows the server's 
   expect(wrapper.text()).toContain("The preview couldn't be loaded: Only manual events can be replaced");
   expect(button("Save").element.disabled).toBe(true);
 });
+
+test("an edit that kept changing shows the server's text and keeps the dialog open with the input", async () => {
+  service.update.mockRejectedValue(new SmurfEventsApiError(409, "The smurf event kept changing while the edit was resolved", null));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The smurf event kept changing while the edit was resolved");
+  expect(wrapper.emitted("saved")).toBeUndefined();
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
+});

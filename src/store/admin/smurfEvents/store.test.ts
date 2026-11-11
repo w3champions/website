@@ -168,6 +168,43 @@ test("saveManual updates an existing event by id", async () => {
   expect(service.update).toHaveBeenCalledWith("tok", "1", REQUEST);
 });
 
+test("an edit refused with 409 keeps the error and the draft's preview, and reloads the event shown", async () => {
+  const kept = new SmurfEventsApiError(409, "The event kept changing", null);
+  service.update.mockRejectedValue(kept);
+  service.get.mockResolvedValue(detail("1", { name: "Newer name" }));
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+  await store.runPreview(DRAFT, "1");
+  service.get.mockClear();
+
+  const saved = await store.saveManual(DRAFT, "1");
+  await flushPromises();
+
+  expect(saved).toBeNull();
+  expect(store.actionError).toBe(kept);
+  expect(store.preview).toEqual(PREVIEW);
+  expect(service.get).toHaveBeenCalledWith("tok", "1");
+  expect(store.detail?.name).toBe("Newer name");
+  expect(store.acting).toBe(false);
+});
+
+test("an edit refused with 409 does not reload an event that is no longer shown, nor does a create or another status", async () => {
+  const store = useSmurfEventsStore();
+  await store.openDetail("2");
+  await store.runPreview(DRAFT, "1");
+  service.get.mockClear();
+
+  service.update.mockRejectedValue(new SmurfEventsApiError(409, "kept changing", null));
+  await store.saveManual(DRAFT, "1");
+  service.update.mockRejectedValue(new SmurfEventsApiError(500, "boom", null));
+  await store.saveManual(DRAFT, "2");
+  service.create.mockRejectedValue(new SmurfEventsApiError(409, "other", null));
+  await store.saveManual(DRAFT, null);
+  await flushPromises();
+
+  expect(service.get).not.toHaveBeenCalled();
+});
+
 test("saveManual sends nothing without a preview of the current draft, or after a refused one", async () => {
   const store = useSmurfEventsStore();
 
