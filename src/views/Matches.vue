@@ -153,7 +153,9 @@ export default defineComponent({
       const mapsByMode = new Map<EGameMode, MapCount[]>();
       for (const matchesOnMapPerSeason of overallStatsStore.matchesOnMapPerSeason.filter(filterSeasons)) {
         for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-          mapsByMode.set(modes.gameMode, [...(mapsByMode.get(modes.gameMode) ?? []), ...modes.maps]);
+          const maps = mapsByMode.get(modes.gameMode) ?? [];
+          maps.push(...modes.maps);
+          mapsByMode.set(modes.gameMode, maps);
         }
       }
 

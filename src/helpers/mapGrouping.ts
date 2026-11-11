@@ -63,11 +63,12 @@ export function mergeRaceStats<T extends RaceCounts>(lists: T[][]): T[] {
   }));
 }
 
-/** One entry per map name with the summed count, sorted by name. */
+/** One entry per map name with the summed count, sorted by name; entries without map or name are left out. */
 export function groupMapCounts(maps: MapCount[]): MapCount[] {
   const counts = new Map<string, number>();
   for (const entry of maps) {
     const key = mapGroupKey(entry);
+    if (key === "") continue;
     counts.set(key, (counts.get(key) ?? 0) + entry.count);
   }
   return Array.from(counts.entries())
@@ -89,11 +90,12 @@ export function withoutRareMaps(groups: MapCount[], minShare = RARE_MAP_SHARE): 
   return groups.filter((entry) => entry.map === OVERALL_MAP || entry.count / total >= minShare);
 }
 
-/** One entry per map name with the wins and losses merged by race; the all-maps entry first. */
+/** One entry per map name with the wins and losses merged by race; the all-maps entry first, entries without map or name left out. */
 export function groupWinLossesOnMap(list: WinLossesOnMap[]): WinLossesOnMap[] {
   const groups = new Map<string, RaceStat[][]>();
   for (const entry of list) {
     const key = mapGroupKey(entry);
+    if (key === "") continue;
     const group = groups.get(key);
     if (group) {
       group.push(entry.winLosses);
@@ -112,6 +114,11 @@ export function groupWinLossesOnMap(list: WinLossesOnMap[]): WinLossesOnMap[] {
   ];
 }
 
+/** Whether any entry of the list belongs to the given group. */
+export function hasMapGroup(list: WinLossesOnMap[], key: string): boolean {
+  return list.some((entry) => mapGroupKey(entry) === key);
+}
+
 /** The merged wins and losses of every entry in the given group, or undefined when there is none. */
 export function winLossesForMapGroup(list: WinLossesOnMap[], key: string): RaceStat[] | undefined {
   const matching = list.filter((entry) => mapGroupKey(entry) === key);
@@ -124,7 +131,36 @@ export function mapGroupKeys(entries: MapEntry[]): string[] {
   return [...new Set(entries.map(mapGroupKey))].filter((key) => key !== "").sort(compareMapGroupKeys);
 }
 
-/** One map select option per map name; the value is the name, used as the matches filter. */
+/**
+ * One map select option per map name, labelled with the name without colour codes. The value
+ * is the name as stored (with its colour codes, as the backend compares it), or the file name
+ * when there is no name; when several stored spellings share a label, the first one is used.
+ */
 export function mapGroupInfos(entries: MapEntry[]): MapInfo[] {
-  return mapGroupKeys(entries).map((key) => ({ map: key, mapName: key }));
+  const values = new Map<string, string>();
+  for (const entry of entries) {
+    const key = mapGroupKey(entry);
+    if (key !== "" && !values.has(key)) {
+      values.set(key, key === OVERALL_MAP ? OVERALL_MAP : entry.mapName || entry.map || key);
+    }
+  }
+  return [...values.keys()].sort(compareMapGroupKeys).map((key) => ({ map: values.get(key) as string, mapName: key }));
+}
+
+/**
+ * Options of the matches map filter, sorted by label, without the all-maps entry. The value is
+ * `map`, sent to the backend as it is; the label is the name without colour codes. One option
+ * per label: the first value wins.
+ */
+export function mapSelectOptions(mapInfo: MapInfo[]): { label: string; value: string }[] {
+  const valuesByLabel = new Map<string, string>();
+  for (const info of mapInfo) {
+    const label = stripWc3Text(info.mapName ?? undefined) || info.map;
+    if (label && label !== OVERALL_MAP && !valuesByLabel.has(label)) {
+      valuesByLabel.set(label, info.map);
+    }
+  }
+  return [...valuesByLabel.entries()]
+    .sort(([a], [b]) => compareMapGroupKeys(a, b))
+    .map(([label, value]) => ({ label, value }));
 }

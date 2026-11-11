@@ -1,17 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  compareMapGroupKeys,
-  groupMapCounts,
-  groupWinLossesOnMap,
-  mapGroupInfos,
-  mapGroupKey,
-  mapGroupKeys,
-  mergeRaceStats,
-  OVERALL_MAP,
-  RARE_MAP_SHARE,
-  winLossesForMapGroup,
-  withoutRareMaps,
-} from "./mapGrouping";
+import { compareMapGroupKeys, groupMapCounts, groupWinLossesOnMap, hasMapGroup, mapGroupInfos, mapGroupKey, mapGroupKeys, mapSelectOptions, mergeRaceStats, OVERALL_MAP, RARE_MAP_SHARE, winLossesForMapGroup, withoutRareMaps } from "./mapGrouping";
 import type { MapCount } from "@/store/overallStats/types";
 import type { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import { ERaceEnum } from "@/store/types";
@@ -172,11 +160,60 @@ describe("mapGroupKeys and mapGroupInfos", () => {
     expect(mapGroupKeys(entries)).toEqual([OVERALL_MAP, "Echo Isles v2", "Twisted Meadows"]);
   });
 
-  it("uses the name as both value and label", () => {
+  it("labels each name once and keeps the stored name as the value", () => {
     expect(mapGroupInfos(entries.slice(2))).toEqual([
       { map: "Echo Isles v2", mapName: "Echo Isles v2" },
       { map: "Twisted Meadows", mapName: "Twisted Meadows" },
     ]);
+  });
+
+  it("keeps colour codes in the value, which the backend compares, and strips them from the label", () => {
+    expect(mapGroupInfos([
+      { map: "Legion_TD_10.1a.w3x", mapName: "Legion TD 10.1a W3C |cffFFcc00TeamOZE|r" },
+      { map: "x.w3x" },
+    ])).toEqual([
+      { map: "Legion TD 10.1a W3C |cffFFcc00TeamOZE|r", mapName: "Legion TD 10.1a W3C TeamOZE" },
+      { map: "x.w3x", mapName: "x.w3x" },
+    ]);
+  });
+});
+
+describe("mapSelectOptions", () => {
+  it("sends the stored name and shows it without colour codes, sorted by label", () => {
+    expect(mapSelectOptions([
+      { map: "|cffff0000Uther Party|r Reforged 1.4", mapName: "|cffff0000Uther Party|r Reforged 1.4" },
+      { map: "Echo Isles v2", mapName: "Echo Isles v2" },
+    ])).toEqual([
+      { label: "Echo Isles v2", value: "Echo Isles v2" },
+      { label: "Uther Party Reforged 1.4", value: "|cffff0000Uther Party|r Reforged 1.4" },
+    ]);
+  });
+
+  it("lists a label once, leaves out the all-maps entry and empty names", () => {
+    expect(mapSelectOptions([
+      { map: OVERALL_MAP, mapName: OVERALL_MAP },
+      { map: "Castle Fight", mapName: "Castle Fight" },
+      { map: "Castle Fight", mapName: "Castle Fight" },
+      { map: "", mapName: "" },
+    ])).toEqual([{ label: "Castle Fight", value: "Castle Fight" }]);
+  });
+});
+
+describe("hasMapGroup", () => {
+  const list = [onMap(ECHO_ISLES_FILES[0], "Echo Isles v2", []), onMap(OVERALL_MAP, null, [])];
+
+  it("finds a group by its key", () => {
+    expect(hasMapGroup(list, "Echo Isles v2")).toBe(true);
+    expect(hasMapGroup(list, OVERALL_MAP)).toBe(true);
+    expect(hasMapGroup(list, "Twisted Meadows")).toBe(false);
+  });
+});
+
+describe("entries without map or name", () => {
+  it("are left out of the grouped counts and win/loss rows", () => {
+    expect(groupMapCounts([{ map: "", mapName: null, count: 3 }, { map: "a.w3x", mapName: "A", count: 1 }]))
+      .toEqual([{ map: "A", mapName: "A", count: 1 }]);
+    expect(groupWinLossesOnMap([onMap("", null, [raceStat(ERaceEnum.ORC, 1, 0)])])).toEqual([]);
   });
 });
 

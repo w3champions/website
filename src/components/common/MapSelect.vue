@@ -24,6 +24,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { MapInfo } from "@/store/common/types";
+import { mapSelectOptions, OVERALL_MAP } from "@/helpers/mapGrouping";
 import { mdiMap } from "@mdi/js";
 
 type MapSelectMap = {
@@ -47,24 +48,10 @@ const selected = computed<string>(() => {
   return match ? match.mapName : "Overall";
 });
 
-const maps = computed<MapSelectMap[]>(() => {
-  // The value sent as the filter is the map name; one option per name.
-  const names = [...new Set(mapInfo.map((map) => map.mapName ?? map.map))];
-  const maps = names
-    .map((name) => ({ mapName: name, key: name }))
-    .sort((mapA, mapB) => {
-      const nameA = mapA.mapName.toString().toUpperCase();
-      const nameB = mapB.mapName.toString().toUpperCase();
-      if (nameA < nameB) {
-        return -1;
-      }
-      if (nameA > nameB) {
-        return 1;
-      }
-      return 0;
-    });
-  return [{ mapName: t("mapNames.Overall"), key: "Overall" }, ...maps];
-});
+const maps = computed<MapSelectMap[]>(() => [
+  { mapName: t("mapNames.Overall"), key: OVERALL_MAP },
+  ...mapSelectOptions(mapInfo).map((option) => ({ mapName: option.label, key: option.value })),
+]);
 
 function selectMap(map: string): void {
   emit("mapChanged", map);
