@@ -204,7 +204,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { GameDay, GameDayPerMode, GameLength, MapCount, MmrRangeValues, PopularHours } from "@/store/overallStats/types";
-import { groupMapCounts } from "@/helpers/mapGrouping";
+import { groupMapCounts, withoutRareMaps } from "@/helpers/mapGrouping";
 import { activeGameModes, activeGameModesWithAll, loadActiveGameModes } from "@/composables/GameModesMixin";
 import GameLengthChart from "@/components/overall-statistics/GameLengthChart.vue";
 import MatchupLengthBarChart from "@/components/overall-statistics/MatchupLengthBarChart.vue";
@@ -356,10 +356,12 @@ export default defineComponent({
               : parseInt(selectedSeasonForMaps.value))
         )[0];
       if (!selectedSeasonMaps) return [];
-      return groupMapCounts(
-        selectedSeasonMaps?.matchesOnMapPerModes?.filter(
-          (m) => m.gameMode === selectedModeForMaps.value
-        )[0]?.maps ?? []
+      return withoutRareMaps(
+        groupMapCounts(
+          selectedSeasonMaps?.matchesOnMapPerModes?.filter(
+            (m) => m.gameMode === selectedModeForMaps.value
+          )[0]?.maps ?? []
+        )
       );
     }
 

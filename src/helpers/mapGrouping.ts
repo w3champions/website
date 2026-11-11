@@ -75,6 +75,20 @@ export function groupMapCounts(maps: MapCount[]): MapCount[] {
     .map(([key, count]) => ({ map: key, mapName: key, count }));
 }
 
+/** Smallest share of a mode's games a map needs to get its own bar in the played-maps chart. */
+export const RARE_MAP_SHARE = 0.001;
+
+/**
+ * Drops entries with less than `minShare` of the total count, keeping the order and the
+ * all-maps entry. A few games played while a map pool was being switched would otherwise
+ * show as bars close to zero.
+ */
+export function withoutRareMaps(groups: MapCount[], minShare = RARE_MAP_SHARE): MapCount[] {
+  const total = groups.reduce((sum, entry) => sum + entry.count, 0);
+  if (total === 0) return groups;
+  return groups.filter((entry) => entry.map === OVERALL_MAP || entry.count / total >= minShare);
+}
+
 /** One entry per map name with the wins and losses merged by race; the all-maps entry first. */
 export function groupWinLossesOnMap(list: WinLossesOnMap[]): WinLossesOnMap[] {
   const groups = new Map<string, RaceStat[][]>();

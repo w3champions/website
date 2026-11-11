@@ -8,7 +8,9 @@ import {
   mapGroupKeys,
   mergeRaceStats,
   OVERALL_MAP,
+  RARE_MAP_SHARE,
   winLossesForMapGroup,
+  withoutRareMaps,
 } from "./mapGrouping";
 import type { MapCount } from "@/store/overallStats/types";
 import type { RaceStat, WinLossesOnMap } from "@/store/player/types";
@@ -175,5 +177,68 @@ describe("mapGroupKeys and mapGroupInfos", () => {
       { map: "Echo Isles v2", mapName: "Echo Isles v2" },
       { map: "Twisted Meadows", mapName: "Twisted Meadows" },
     ]);
+  });
+});
+
+describe("withoutRareMaps", () => {
+  function counts(entries: [string, number][]): MapCount[] {
+    return entries.map(([map, count]) => ({ map, mapName: map, count }));
+  }
+
+  it("hides a map under the threshold and keeps one exactly at it", () => {
+    const groups = counts([
+      ["A", 998],
+      ["B", 1],
+      ["C", 1],
+    ]);
+    expect(withoutRareMaps(groups, 0.001).map((entry) => entry.map)).toEqual(["A", "B", "C"]);
+    expect(withoutRareMaps(groups, 0.002).map((entry) => entry.map)).toEqual(["A"]);
+  });
+
+  it("uses 0.1% by default", () => {
+    expect(RARE_MAP_SHARE).toBe(0.001);
+    const groups = counts([
+      ["A", 9_981],
+      ["B", 10],
+      ["C", 9],
+    ]);
+    expect(withoutRareMaps(groups).map((entry) => entry.map)).toEqual(["A", "B"]);
+  });
+
+  it("hides the few games played while a map pool was switched", () => {
+    const groups = counts([
+      ["Echo Isles v2", 38_084],
+      ["Gloom Stalker", 1],
+      ["Last Refuge", 46_106],
+      ["Shattered Exile v2", 3],
+      ["Terenas Stand LV", 8],
+      ["Turtle Rock", 22_923],
+    ]);
+    expect(withoutRareMaps(groups).map((entry) => entry.map)).toEqual(["Echo Isles v2", "Last Refuge", "Turtle Rock"]);
+  });
+
+  it("keeps the order and the counts", () => {
+    const groups = counts([
+      ["Z", 500],
+      ["A", 500],
+    ]);
+    expect(withoutRareMaps(groups)).toEqual(groups);
+  });
+
+  it("always keeps the all-maps entry", () => {
+    const groups = counts([
+      [OVERALL_MAP, 0],
+      ["A", 1_000],
+    ]);
+    expect(withoutRareMaps(groups).map((entry) => entry.map)).toEqual([OVERALL_MAP, "A"]);
+  });
+
+  it("returns empty or count-less lists as they are", () => {
+    expect(withoutRareMaps([])).toEqual([]);
+    const zeros = counts([
+      ["A", 0],
+      ["B", 0],
+    ]);
+    expect(withoutRareMaps(zeros)).toEqual(zeros);
   });
 });
