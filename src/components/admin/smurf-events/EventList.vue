@@ -30,7 +30,7 @@
           />
         </v-col>
         <v-spacer />
-        <v-col cols="12" sm="auto" class="d-flex ga-2 justify-end">
+        <v-col cols="12" sm="auto" class="d-flex flex-wrap ga-2 justify-end">
           <v-btn variant="text" :prepend-icon="mdiRefresh" :disabled="store.listLoading" @click="store.loadList()">
             {{ t(key("refresh")) }}
           </v-btn>

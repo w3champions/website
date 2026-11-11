@@ -4,7 +4,8 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventPreview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions";
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { errorText, exclusionLabel, originLabel, refusalLabel, reviewColor, reviewLabel } from "./labels";
+import { countText, errorText, exclusionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewLabel } from "./labels";
+import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
 import { translateEn as t } from "./translate.testing";
 
 const DRAFT: SmurfEventDraft = { name: "LAN party", from: "2026-10-01T00:00", to: "2026-10-03T00:00", anchors: ["Anchor#1001", "Anchor#1002"], reason: "" };
@@ -118,4 +119,52 @@ test("origins, reviews, refusals and exclusions have labels; unknown values show
 test("errorText shows the server's message, else a generic text", () => {
   assert.equal(errorText(new SmurfEventsApiError(409, "Only manual events can be edited", null), t), "Only manual events can be edited");
   assert.equal(errorText(new Error("network"), t), "The request failed. Please try again.");
+});
+
+test("manual event routes show a tailored text for 503 and the usual text otherwise", () => {
+  const notReady = new SmurfEventsApiError(503, "Index still building", null);
+  assert.match(manualEventErrorText(notReady, t), /still preparing the data manual events need.*Try again later/);
+  assert.equal(errorText(notReady, t), "Index still building");
+  assert.equal(manualEventErrorText(new SmurfEventsApiError(400, "Bad anchors", null), t), "Bad anchors");
+  assert.equal(manualEventErrorText(new Error("network"), t), "The request failed. Please try again.");
+});
+
+test("counts use the singular form for one", () => {
+  assert.equal(countText("preview_ends_links", 1, t), "Saving ends 1 link");
+  assert.equal(countText("preview_ends_links", 2, t), "Saving ends 2 links");
+  assert.equal(countText("preview_anchors", 1, t), "1 anchor");
+  assert.equal(countText("deny_links", 1, t), "Denying brings back 1 link");
+  assert.equal(countText("deny_links", 0, t), "Denying brings back 0 links");
+  assert.equal(previewCountsText({ machines: 1, attendees: 3 }, t), "1 machine, 3 attendees");
+});
+
+test("mergeEvents keeps the server order and replaces a repeated event in its first place", () => {
+  const merged = mergeEvents([summary("a", "unreviewed"), summary("b", "confirmed")], [summary("c", "confirmed"), summary("a", "denied"), summary("c", "denied")]);
+  assert.deepEqual(merged.map((e) => `${e.id}:${e.review}`), ["a:denied", "b:confirmed", "c:denied"]);
+});
+
+test("summaryOf keeps the list-row fields only, and outcomeOf separates the applied flag", () => {
+  const detail: SmurfEventDetail = {
+    ...summary("a", "confirmed"),
+    reviewedBy: "Mod#1",
+    attendees: [],
+    networks: [],
+    machines: [],
+    evidence: { countries: 0, networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 },
+    endedLinksList: [],
+  };
+  assert.deepEqual(Object.keys(summaryOf(detail)).sort(), ["counts", "createdAt", "endedLinks", "from", "id", "name", "origin", "review", "reviewedBy", "to"]);
+  assert.equal(outcomeOf({ ...detail, applied: false }).applied, false);
+  assert.equal(outcomeOf(detail).applied, true);
+  assert.equal("applied" in outcomeOf({ ...detail, applied: false }).detail, false);
+});
+
+test("a 422 preview is used only with the shape the dialog reads, and counts as refused", () => {
+  assert.equal(refusedPreviewFrom(null), null);
+  assert.equal(refusedPreviewFrom({ error: "x" }), null);
+  assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, networks: "none" } }), null);
+  assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, endsLinks: [{ a: 1 }] } }), null);
+  assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, counts: undefined } }), null);
+  assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, refused: "too-long" } })?.refused, "too-long");
+  assert.equal(refusedPreviewFrom({ preview: PREVIEW })?.refused, "no-venue");
 });

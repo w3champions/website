@@ -5,6 +5,7 @@
     max-width="600px"
     :aria-label="copy?.title"
     @update:model-value="emit('update:modelValue', $event)"
+    @after-leave="restoreFocus"
   >
     <v-card v-if="copy">
       <v-form @submit.prevent="submit">
@@ -72,9 +73,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiAlertOutline } from "@mdi/js";
+import { useRestoreFocus } from "@/composables/useRestoreFocus";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
 import type { DialogCopy } from "@/store/admin/hardwareSmurfs/dialogCopy";
 import { key } from "@/store/admin/hardwareSmurfs/translate";
@@ -99,6 +101,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const reason = ref("");
+const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
 
 const canSubmit = computed(() => props.ready && !props.saving && (!props.copy?.needsReason || reason.value.trim() !== ""));
 

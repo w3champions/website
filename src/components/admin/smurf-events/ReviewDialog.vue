@@ -6,14 +6,21 @@
     scrollable
     :aria-label="title"
     @update:model-value="emit('update:modelValue', $event)"
+    @after-leave="restoreFocus"
   >
     <v-card v-if="event">
       <v-card-title class="pt-3">{{ title }}</v-card-title>
       <v-card-text>
         <div class="text-body-2 mb-3">{{ t(key("review_body")) }}</div>
 
-        <v-btn-toggle v-model="decision" class="mb-4" divided variant="outlined" density="comfortable">
-          <v-btn v-for="d in reviewDecisions(event.review)" :key="d" :value="d" :color="DECISION_COLORS[d]">
+        <v-btn-toggle v-model="decision" class="mb-4" divided variant="outlined" density="comfortable" role="group" :aria-label="t(key('decision_label'))">
+          <v-btn
+            v-for="d in reviewDecisions(event.review)"
+            :key="d"
+            :value="d"
+            :color="DECISION_COLORS[d]"
+            :aria-pressed="decision === d ? 'true' : 'false'"
+          >
             {{ t(key(`decision_${d}`)) }}
           </v-btn>
         </v-btn-toggle>
@@ -30,7 +37,7 @@
           </v-alert>
           <v-alert v-else-if="store.denyLinks !== null" type="warning" variant="tonal" density="compact" class="mb-3">
             <template v-if="store.denyLinks.length > 0">
-              <div class="font-weight-bold">{{ t(key("deny_links"), { count: store.denyLinks.length }) }}</div>
+              <div class="font-weight-bold">{{ countText("deny_links", store.denyLinks.length, tr) }}</div>
               <ul class="link-list text-body-2">
                 <li v-for="l in store.denyLinks" :key="`${l.a}|${l.b}`">{{ l.a }} – {{ l.b }}</li>
               </ul>
@@ -68,12 +75,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { useRestoreFocus } from "@/composables/useRestoreFocus";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
 import { reviewDecisions, reviewNeedsReason } from "@/store/admin/smurfEvents/actions";
-import { errorText } from "@/store/admin/smurfEvents/labels";
+import { countText, errorText } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
@@ -86,12 +94,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "reviewed"): void;
+  /** `applied` false: stored, but the links follow with the next stats run. */
+  (e: "reviewed", applied: boolean): void;
 }>();
 
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
+const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
 
 const decision = ref<SmurfEventReview | null>(null);
 const reason = ref("");
@@ -107,8 +117,9 @@ const canSave = computed(() => {
 async function save(): Promise<void> {
   const event = props.event;
   if (!canSave.value || event === null || decision.value === null) return;
-  if (!(await store.review(event.id, decision.value, reason.value))) return;
-  emit("reviewed");
+  const outcome = await store.review(event.id, decision.value, reason.value);
+  if (outcome === null) return;
+  emit("reviewed", outcome.applied);
   emit("update:modelValue", false);
 }
 

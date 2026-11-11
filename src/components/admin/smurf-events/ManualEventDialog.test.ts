@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { type DOMWrapper, flushPromises, mount, type VueWrapper } from "@vue/test-utils";
+import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventPreview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { inlineDialog, manualEvent, testPlugins } from "./setup.testing";
 
@@ -91,4 +92,102 @@ test("Save after a preview updates the event and reports it", async () => {
   });
   expect(wrapper.emitted("saved")?.[0]?.[0]).toMatchObject({ id: "ev1" });
   expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([false]);
+});
+
+async function previewed(): Promise<void> {
+  await button("Preview").trigger("click");
+  await flushPromises();
+}
+
+test("a failed save keeps the dialog open, shows the server's text and reports nothing", async () => {
+  service.update.mockRejectedValue(new SmurfEventsApiError(400, "Name is too long", null));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("Name is too long");
+  expect(wrapper.emitted("saved")).toBeUndefined();
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+});
+
+test("a refusal without a usable preview disables Save until the next preview succeeds", async () => {
+  service.update.mockRejectedValue(new SmurfEventsApiError(422, "Refused", { error: "Refused", preview: "none" }));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("Refused");
+  expect(button("Save").element.disabled).toBe(true);
+  await previewed();
+  expect(button("Save").element.disabled).toBe(false);
+});
+
+test("a refusal with a preview shows it and keeps Save disabled", async () => {
+  const refused = { ...PREVIEW, refused: "no-venue" };
+  service.update.mockRejectedValue(new SmurfEventsApiError(422, "Refused", { error: "Refused", preview: refused }));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("No shared location was found for these players in this span.");
+  expect(button("Save").element.disabled).toBe(true);
+});
+
+test("a 503 on the preview or the save says the server is still preparing, not a generic failure", async () => {
+  service.preview.mockRejectedValueOnce(new SmurfEventsApiError(503, "Index building", null));
+  await previewed();
+  expect(wrapper.text()).toContain("still preparing the data manual events need");
+  expect(wrapper.text()).not.toContain("Index building");
+
+  await previewed();
+  service.update.mockRejectedValue(new SmurfEventsApiError(503, "Index building", null));
+  await button("Save").trigger("click");
+  await flushPromises();
+  expect(wrapper.text()).toContain("Nothing was saved. Try again later.");
+});
+
+test("the link count of the preview reads in the singular for one", async () => {
+  await previewed();
+
+  expect(wrapper.text()).toContain("Saving ends 1 link");
+  expect(wrapper.text()).not.toContain("1 links");
+});
+
+test("a save answered applied: false reports it", async () => {
+  service.update.mockResolvedValue({ ...manualEvent(), applied: false });
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: false, existing: false });
+});
+
+test("a create answered with an event that already exists reports it", async () => {
+  await wrapper.setProps({ event: null });
+  await wrapper.find("input").setValue("My new LAN");
+  await wrapper.find("input[type='datetime-local']").setValue("2026-10-01T00:00");
+  await wrapper.findAll("input[type='datetime-local']")[1].setValue("2026-10-03T00:00");
+  wrapper.findComponent({ name: "VCombobox" }).vm.$emit("update:modelValue", ["Anchor#1001", "Anchor#1002"]);
+  service.create.mockResolvedValue(manualEvent({ name: "LAN party" }));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(service.create).toHaveBeenCalledOnce();
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, existing: true });
+});
+
+test("an untouched new event dialog shows no problem until something is entered", async () => {
+  await wrapper.setProps({ modelValue: false });
+  await wrapper.setProps({ event: null, modelValue: true });
+  expect(wrapper.text()).not.toContain("Enter a name.");
+
+  await wrapper.find("input").setValue("My LAN");
+
+  expect(wrapper.text()).toContain("anchor BattleTags.");
 });

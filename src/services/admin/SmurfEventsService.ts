@@ -1,6 +1,6 @@
 import { AuthorizedClient, type AuthorizedClientDeps, HttpError } from "@/services/http/AuthorizedClient";
 import { serverMessageOf } from "./HardwareSmurfService";
-import type { ManualEventRequest, ReviewRequest, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery } from "./smurf-detection/SmurfEventsResponse";
+import type { ManualEventRequest, ReviewRequest, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
 
 const BASE = "api/admin/smurf-detection/events";
 
@@ -69,11 +69,11 @@ export class SmurfEventsService {
     return await this.call("POST", "/preview", token, request);
   }
 
-  async create(token: string, request: ManualEventRequest): Promise<SmurfEventDetail> {
+  async create(token: string, request: ManualEventRequest): Promise<SmurfEventWriteResponse> {
     return await this.call("POST", "", token, request);
   }
 
-  async update(token: string, id: string, request: ManualEventRequest): Promise<SmurfEventDetail> {
+  async update(token: string, id: string, request: ManualEventRequest): Promise<SmurfEventWriteResponse> {
     return await this.call("PUT", `/${segment(id)}`, token, request);
   }
 
@@ -86,7 +86,7 @@ export class SmurfEventsService {
     }
   }
 
-  async review(token: string, id: string, request: ReviewRequest): Promise<SmurfEventDetail> {
+  async review(token: string, id: string, request: ReviewRequest): Promise<SmurfEventWriteResponse> {
     return await this.call("POST", `/${segment(id)}/review`, token, request);
   }
 }

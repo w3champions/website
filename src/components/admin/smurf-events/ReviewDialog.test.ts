@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { type DOMWrapper, flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import type { SmurfEventDenyPreview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import { inlineDialog, manualEvent, testPlugins } from "./setup.testing";
 
 const service = vi.hoisted(() => ({ denyPreview: vi.fn(), review: vi.fn(), list: vi.fn() }));
@@ -92,4 +93,47 @@ test("confirming needs no deny preview", async () => {
 
   expect(service.denyPreview).not.toHaveBeenCalled();
   expect(service.review).toHaveBeenCalledWith("tok", "ev1", { decision: "confirmed" });
+});
+
+test("a failed review keeps the dialog open, shows the server's text and reports nothing", async () => {
+  service.review.mockRejectedValue(new SmurfEventsApiError(409, "Changed meanwhile", null));
+
+  await button("Confirm").trigger("click");
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("Changed meanwhile");
+  expect(wrapper.emitted("reviewed")).toBeUndefined();
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  expect(button("Save review").element.disabled).toBe(false);
+});
+
+test("a review answered applied: false reports it", async () => {
+  service.review.mockResolvedValue({ ...manualEvent({ review: "confirmed" }), applied: false });
+
+  await button("Confirm").trigger("click");
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("reviewed")?.[0]).toEqual([false]);
+});
+
+test("the decision buttons tell which decision is chosen", async () => {
+  expect(wrapper.find("[role='group']").attributes("aria-label")).toBe("Decision");
+  expect(button("Confirm").attributes("aria-pressed")).toBe("false");
+
+  await button("Confirm").trigger("click");
+
+  expect(button("Confirm").attributes("aria-pressed")).toBe("true");
+  expect(button("Deny").attributes("aria-pressed")).toBe("false");
+});
+
+test("one link a deny brings back reads in the singular", async () => {
+  service.denyPreview.mockResolvedValue({ links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }] });
+
+  await button("Deny").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("Denying brings back 1 link");
+  expect(wrapper.text()).not.toContain("1 links");
 });

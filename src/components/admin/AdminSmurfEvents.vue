@@ -9,7 +9,7 @@
     <v-container v-else-if="canQuery" class="w3-container-width">
       <v-alert
         v-if="notice"
-        type="success"
+        :type="noticeType"
         variant="tonal"
         class="mb-4"
         closable
@@ -38,7 +38,7 @@
 
       <template v-if="canAdminister">
         <manual-event-dialog v-model="manualOpen" :event="editing" @saved="onSaved" />
-        <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="notice = { kind: 'reviewed', view: eventId }" />
+        <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="onReviewed" />
         <delete-event-dialog v-model="deleteOpen" :event="store.detail" @deleted="onDeleted" />
       </template>
     </v-container>
@@ -75,15 +75,20 @@ const canQuery = computed(() => permissions.value.includes(EPermission[EPermissi
 const canAdminister = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerAdministration]));
 
 /** A write's success notice, shown while the view it belongs to (`view`: an event id, "" for the list) is shown. */
+type NoticeKind = "saved" | "saved_pending" | "existing" | "reviewed" | "reviewed_pending" | "deleted";
 interface Notice {
-  kind: "saved" | "reviewed" | "deleted";
+  kind: NoticeKind;
   view: string;
 }
 const notice = ref<Notice | null>(null);
+// A change stored but not yet applied to the links is news, not plain success.
+const noticeType = computed(() => (notice.value?.kind.endsWith("_pending") || notice.value?.kind === "existing" ? "info" : "success"));
 const manualOpen = ref(false);
 const reviewOpen = ref(false);
 const deleteOpen = ref(false);
 const editing = ref<SmurfEventDetail | null>(null);
+// The view the manual dialog was opened from (an event id, "" for the list).
+let manualOpenedFrom = "";
 
 function queryText(value: LocationQuery[string]): string {
   return typeof value === "string" ? value : "";
@@ -112,12 +117,20 @@ function showList(): void {
 
 function openManual(event: SmurfEventDetail | null): void {
   editing.value = event;
+  manualOpenedFrom = eventId.value;
   manualOpen.value = true;
 }
 
-function onSaved(saved: SmurfEventDetail): void {
-  notice.value = { kind: "saved", view: saved.id };
+function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; existing: boolean }): void {
+  // A save that finishes after the moderator went to another view neither navigates nor claims that view.
+  if (eventId.value !== manualOpenedFrom) return;
+  const kind: NoticeKind = !flags.applied ? "saved_pending" : flags.existing ? "existing" : "saved";
+  notice.value = { kind, view: saved.id };
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
+}
+
+function onReviewed(applied: boolean): void {
+  notice.value = { kind: applied ? "reviewed" : "reviewed_pending", view: eventId.value };
 }
 
 function onDeleted(): void {

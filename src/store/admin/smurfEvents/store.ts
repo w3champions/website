@@ -5,6 +5,7 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventLinkRef, SmurfEventOrigin, SmurfEventPreview, SmurfEventReview, SmurfEventsQuery, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
 import { reviewNeedsReason } from "./actions";
+import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf, type WriteOutcome } from "./events";
 import { smurfEventsService } from "./service";
 
 export const SMURF_EVENTS_PAGE_SIZE = 50;
@@ -22,6 +23,8 @@ interface SmurfEventsState {
   next: string | null;
   listLoading: boolean;
   listError: unknown;
+  /** The event the page shows or is loading; a write that finishes later applies its answer only to this one. */
+  detailId: string | null;
   detail: SmurfEventDetail | null;
   detailLoading: boolean;
   detailError: unknown;
@@ -50,15 +53,6 @@ function queryOf(filters: SmurfEventFilters, cursor?: string): SmurfEventsQuery 
   return { ...query, limit: SMURF_EVENTS_PAGE_SIZE };
 }
 
-/** The preview inside a refused create's 422 body, if it carries one. */
-function refusedPreviewOf(e: unknown): SmurfEventPreview | null {
-  if (!(e instanceof SmurfEventsApiError) || e.status !== 422) return null;
-  const body = e.body;
-  if (typeof body !== "object" || body === null) return null;
-  const preview = (body as { preview?: unknown }).preview;
-  return typeof preview === "object" && preview !== null ? (preview as SmurfEventPreview) : null;
-}
-
 function trimmedOrUndefined(reason: string): string | undefined {
   const trimmed = reason.trim();
   return trimmed === "" ? undefined : trimmed;
@@ -69,6 +63,8 @@ const listLoads = requestSequence();
 const detailLoads = requestSequence();
 const previewLoads = requestSequence();
 const denyLoads = requestSequence();
+// One visit of the page; `clear()` ends it. A write that settles after that changes nothing.
+const visits = requestSequence();
 
 export const useSmurfEventsStore = defineStore("smurfEvents", {
   state: (): SmurfEventsState => ({
@@ -77,6 +73,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     next: null,
     listLoading: false,
     listError: null,
+    detailId: null,
     detail: null,
     detailLoading: false,
     detailError: null,
@@ -128,7 +125,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
         setLoading: (loading) => (this.listLoading = loading),
         fetch: () => smurfEventsService().list(token(), query),
         apply: (page) => {
-          this.events = [...this.events, ...(page.events ?? [])];
+          this.events = mergeEvents(this.events, page.events ?? []);
           this.next = page.next ?? null;
         },
         fail: (e) => (this.listError = e),
@@ -136,6 +133,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     },
 
     async openDetail(id: string): Promise<boolean> {
+      this.detailId = id;
       this.detail = null;
       this.detailError = null;
       return await loadLatest(detailLoads, {
@@ -149,7 +147,17 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
 
     closeDetail(): void {
       detailLoads.invalidate();
+      this.detailId = null;
       this.detail = null;
+      this.detailError = null;
+      this.detailLoading = false;
+    },
+
+    /** Shows a written event, superseding any detail load still in flight (its answer is older). */
+    showWritten(detail: SmurfEventDetail): void {
+      detailLoads.invalidate();
+      this.detailId = detail.id;
+      this.detail = detail;
       this.detailError = null;
       this.detailLoading = false;
     },
@@ -184,34 +192,45 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
 
     /**
      * Creates (`id` null) or replaces a manual event. Sends nothing unless the draft has a
-     * non-refused preview. A create the server refuses shows the preview it answered with.
-     * Resolves to the saved event, or null.
+     * non-refused preview. A create or update the server refuses shows the preview it answered with.
+     * Resolves to the saved event, or null. An answer that arrives after the store was cleared, or
+     * after the moderator moved to another event, is returned but not written into the store.
      */
-    async saveManual(draft: SmurfEventDraft, id: string | null): Promise<SmurfEventDetail | null> {
+    async saveManual(draft: SmurfEventDraft, id: string | null): Promise<WriteOutcome | null> {
       if (this.acting || saveBlocker(draft, { preview: this.preview, key: this.previewKey, loading: this.previewLoading }) !== null) return null;
       const request = toManualRequest(draft);
+      const visit = visits.current();
+      const shown = this.detailId;
       this.acting = true;
       this.actionError = null;
       try {
         const service = smurfEventsService();
-        const saved = id === null ? await service.create(token(), request) : await service.update(token(), id, request);
-        detailLoads.invalidate();
-        this.detail = saved;
-        this.resetPreview();
-        void this.loadList();
-        return saved;
+        const outcome = outcomeOf(id === null ? await service.create(token(), request) : await service.update(token(), id, request));
+        if (visits.isLatest(visit)) {
+          if (this.detailId === shown) this.showWritten(outcome.detail);
+          this.resetPreview();
+          void this.loadList();
+        }
+        return outcome;
       } catch (e) {
         console.error("Saving the smurf event failed:", e);
+        if (!visits.isLatest(visit)) return null;
         this.actionError = e;
-        const refused = refusedPreviewOf(e);
-        if (refused !== null) {
-          previewLoads.invalidate();
-          this.preview = refused;
-          this.previewKey = previewKey(draft);
+        if (e instanceof SmurfEventsApiError && e.status === 422) {
+          // The server refused: show the preview it answered with. Without a valid one, the earlier
+          // preview no longer holds, so Save waits for a new preview.
+          const refused = refusedPreviewFrom(e.body);
+          if (refused === null) {
+            this.resetPreview();
+          } else {
+            previewLoads.invalidate();
+            this.preview = refused;
+            this.previewKey = previewKey(draft);
+          }
         }
         return null;
       } finally {
-        this.acting = false;
+        if (visits.isLatest(visit)) this.acting = false;
       }
     },
 
@@ -219,42 +238,52 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     async deleteEvent(id: string, reason: string): Promise<boolean> {
       const trimmed = reason.trim();
       if (this.acting || trimmed === "") return false;
+      const visit = visits.current();
       this.acting = true;
       this.actionError = null;
       try {
         await smurfEventsService().remove(token(), id, trimmed);
-        if (this.detail?.id === id) this.closeDetail();
-        void this.loadList();
+        if (visits.isLatest(visit)) {
+          if (this.detailId === id) this.closeDetail();
+          // The row goes at once; the reload below brings the server's view.
+          this.events = this.events.filter((e) => e.id !== id);
+          void this.loadList();
+        }
         return true;
       } catch (e) {
         console.error("Deleting the smurf event failed:", e);
-        this.actionError = e;
+        if (visits.isLatest(visit)) this.actionError = e;
         return false;
       } finally {
-        this.acting = false;
+        if (visits.isLatest(visit)) this.acting = false;
       }
     },
 
-    /** A deny needs a reason; confirm and unreview send one only when given. */
-    async review(id: string, decision: SmurfEventReview, reason: string): Promise<boolean> {
+    /**
+     * A deny needs a reason; confirm and unreview send one only when given. Resolves to the
+     * reviewed event, or null; like a save, a late answer is not written into the store.
+     */
+    async review(id: string, decision: SmurfEventReview, reason: string): Promise<WriteOutcome | null> {
       const trimmed = trimmedOrUndefined(reason);
-      if (this.acting || (reviewNeedsReason(decision) && trimmed === undefined)) return false;
+      if (this.acting || (reviewNeedsReason(decision) && trimmed === undefined)) return null;
+      const visit = visits.current();
       this.acting = true;
       this.actionError = null;
       try {
-        const reviewed = await smurfEventsService().review(token(), id, trimmed === undefined ? { decision } : { decision, reason: trimmed });
-        if (this.detail?.id === id) {
-          detailLoads.invalidate();
-          this.detail = reviewed;
+        const outcome = outcomeOf(await smurfEventsService().review(token(), id, trimmed === undefined ? { decision } : { decision, reason: trimmed }));
+        if (visits.isLatest(visit)) {
+          if (this.detailId === id) this.showWritten(outcome.detail);
+          // The row shows the new review at once; the reload below brings the server's view.
+          this.events = this.events.map((e) => (e.id === id ? summaryOf(outcome.detail) : e));
+          void this.loadList();
         }
-        void this.loadList();
-        return true;
+        return outcome;
       } catch (e) {
         console.error("Reviewing the smurf event failed:", e);
-        this.actionError = e;
-        return false;
+        if (visits.isLatest(visit)) this.actionError = e;
+        return null;
       } finally {
-        this.acting = false;
+        if (visits.isLatest(visit)) this.acting = false;
       }
     },
 
@@ -282,6 +311,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     },
 
     clear(): void {
+      visits.invalidate();
       listLoads.invalidate();
       detailLoads.invalidate();
       previewLoads.invalidate();

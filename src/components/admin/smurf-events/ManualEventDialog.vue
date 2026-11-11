@@ -6,6 +6,7 @@
     scrollable
     :aria-label="title"
     @update:model-value="emit('update:modelValue', $event)"
+    @after-leave="restoreFocus"
   >
     <v-card>
       <v-card-title class="pt-3">{{ title }}</v-card-title>
@@ -71,7 +72,7 @@
           :maxlength="REASON_MAX_LENGTH"
         />
 
-        <div v-if="problem" class="text-caption text-warning mb-2" role="status">{{ t(key(problem.name), problem.named ?? {}) }}</div>
+        <div v-if="shownProblem" class="text-caption text-warning mb-2" role="status">{{ t(key(shownProblem.name), shownProblem.named ?? {}) }}</div>
 
         <section class="preview-panel" :class="{ 'preview-panel--refused': store.preview?.refused }" :aria-label="t(key('preview_title'))">
           <div class="d-flex align-center mb-2">
@@ -91,7 +92,7 @@
           </div>
 
           <v-alert v-if="store.previewError" type="error" variant="tonal" density="compact" class="mb-2">
-            {{ t(key("preview_failed")) }} {{ errorText(store.previewError, tr) }}
+            {{ t(key("preview_failed")) }} {{ manualEventErrorText(store.previewError, tr) }}
           </v-alert>
 
           <template v-if="store.preview">
@@ -101,7 +102,7 @@
             <div class="text-body-2">
               {{ store.preview.span ? t(key("preview_span"), { span: spanText(store.preview.span) }) : t(key("preview_no_span")) }}
             </div>
-            <div class="text-body-2 mb-2">{{ t(key("preview_counts"), store.preview.counts) }}</div>
+            <div class="text-body-2 mb-2">{{ previewCountsText(store.preview.counts, tr) }}</div>
 
             <div v-if="store.preview.networks.length > 0" class="mb-2">
               <div class="text-caption text-medium-emphasis">{{ t(key("preview_networks")) }}</div>
@@ -114,7 +115,7 @@
                 class="mr-1 my-1"
               >
                 <span class="font-monospace mr-2">{{ n.hash8 }}</span>
-                {{ t(key("preview_anchors"), { count: n.anchors }) }}
+                {{ countText("preview_anchors", n.anchors, tr) }}
               </v-chip>
             </div>
             <div v-if="store.preview.excluded.length > 0" class="mb-2">
@@ -125,7 +126,7 @@
               </v-chip>
             </div>
             <div class="text-caption text-medium-emphasis">
-              {{ store.preview.endsLinks.length > 0 ? t(key("preview_ends_links"), { count: store.preview.endsLinks.length }) : t(key("preview_ends_none")) }}
+              {{ store.preview.endsLinks.length > 0 ? countText("preview_ends_links", store.preview.endsLinks.length, tr) : t(key("preview_ends_none")) }}
             </div>
             <ul v-if="store.preview.endsLinks.length > 0" class="link-list text-body-2">
               <li v-for="l in store.preview.endsLinks" :key="`${l.a}|${l.b}`">{{ l.a }} – {{ l.b }}</li>
@@ -136,7 +137,7 @@
         <div v-if="blocker && blocker !== 'invalid'" class="text-caption text-medium-emphasis mt-2" role="status">{{ t(key(`blocker_${blocker}`)) }}</div>
 
         <v-alert v-if="store.actionError" type="error" variant="tonal" density="compact" class="mt-3">
-          {{ errorText(store.actionError, tr) }}
+          {{ manualEventErrorText(store.actionError, tr) }}
         </v-alert>
       </v-card-text>
       <v-card-actions>
@@ -153,14 +154,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiMagnify } from "@mdi/js";
+import { useRestoreFocus } from "@/composables/useRestoreFocus";
 import { formatUtc, localTimeHint } from "@/helpers/utc-dates";
 import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
 import { draftFromEvent, draftProblem, emptyDraft, NAME_MAX_LENGTH, saveBlocker, type SmurfEventDraft } from "@/store/admin/smurfEvents/draft";
-import { errorText, exclusionLabel, refusalLabel } from "@/store/admin/smurfEvents/labels";
+import { countText, exclusionLabel, manualEventErrorText, previewCountsText, refusalLabel } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
@@ -172,16 +174,22 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "saved", event: SmurfEventDetail): void;
+  /** `applied` false: stored, but the links follow with the next stats run. `existing`: a create answered an event that was already there, unchanged. */
+  (e: "saved", event: SmurfEventDetail, flags: { applied: boolean; existing: boolean }): void;
 }>();
 
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 
+const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
+
 const draft = ref<SmurfEventDraft>(emptyDraft(new Date()));
+// What the dialog opened with: a problem is shown only once the moderator changed something.
+const opened = ref("");
 const title = computed(() => t(key(props.event ? "edit_title" : "create_title")));
 const problem = computed(() => draftProblem(draft.value));
+const shownProblem = computed(() => (JSON.stringify(draft.value) === opened.value ? null : problem.value));
 const blocker = computed(() => saveBlocker(draft.value, { preview: store.preview, key: store.previewKey, loading: store.previewLoading }));
 const canSave = computed(() => blocker.value === null && !store.acting);
 
@@ -191,15 +199,19 @@ function spanText(span: { from: string; to: string }): string {
 
 async function save(): Promise<void> {
   if (!canSave.value) return;
-  const saved = await store.saveManual(draft.value, props.event?.id ?? null);
-  if (saved === null) return;
-  emit("saved", saved);
+  const created = props.event === null;
+  const name = draft.value.name.trim();
+  const outcome = await store.saveManual(draft.value, props.event?.id ?? null);
+  if (outcome === null) return;
+  // A create with the anchors and span of an existing event answers that event unchanged, whatever name was typed.
+  emit("saved", outcome.detail, { applied: outcome.applied, existing: created && outcome.detail.name !== name });
   emit("update:modelValue", false);
 }
 
 watch(() => props.modelValue, (open) => {
   if (!open) return;
   draft.value = props.event ? draftFromEvent(props.event) : emptyDraft(new Date());
+  opened.value = JSON.stringify(draft.value);
   store.resetPreview();
   store.clearActionError();
 }, { immediate: true });

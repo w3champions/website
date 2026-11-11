@@ -22,7 +22,7 @@
             <v-chip size="small" variant="outlined">{{ originLabel(event.origin, tr) }}</v-chip>
             <v-chip size="small" variant="tonal" :color="reviewColor(event.review)">{{ reviewLabel(event.review, tr) }}</v-chip>
             <v-spacer />
-            <div class="d-flex ga-2">
+            <div class="d-flex flex-wrap ga-2">
               <v-btn v-if="actions.review" color="primary" variant="flat" :prepend-icon="mdiGavel" @click="emit('review')">{{ t(key("action_review")) }}</v-btn>
               <v-btn v-if="actions.edit" variant="tonal" :prepend-icon="mdiPencil" @click="emit('edit')">{{ t(key("action_edit")) }}</v-btn>
               <v-btn v-if="actions.delete" variant="text" color="error" :prepend-icon="mdiDelete" @click="emit('delete')">{{ t(key("action_delete")) }}</v-btn>
@@ -77,7 +77,7 @@
                 :prepend-icon="anchors.has(tag) ? mdiAnchor : undefined"
                 :title="anchors.has(tag) ? t(key('anchor')) : undefined"
               >
-                {{ tag }}
+                <span v-if="anchors.has(tag)" class="d-sr-only">{{ t(key("anchor")) }}: </span>{{ tag }}
               </v-chip>
             </v-card-text>
           </v-card>

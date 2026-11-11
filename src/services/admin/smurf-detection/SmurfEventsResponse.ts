@@ -68,6 +68,14 @@ export interface SmurfEventDetail extends SmurfEventSummary {
   endedLinksList: SmurfEventLinkRef[];
 }
 
+/**
+ * What a create, update or review answers: the event, plus `applied: false` when the change is
+ * stored but applying it to the links failed (the next stats run applies it).
+ */
+export interface SmurfEventWriteResponse extends SmurfEventDetail {
+  applied?: boolean;
+}
+
 export type SmurfEventPreviewRefusal = "no-venue" | "too-long" | "too-wide";
 export type SmurfEventExclusion = "home" | "single-anchor" | "too-wide";
 

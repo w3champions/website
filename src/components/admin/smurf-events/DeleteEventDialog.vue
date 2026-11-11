@@ -5,6 +5,7 @@
     max-width="560px"
     :aria-label="title"
     @update:model-value="emit('update:modelValue', $event)"
+    @after-leave="restoreFocus"
   >
     <v-card v-if="event">
       <v-card-title class="pt-3 d-flex align-center">
@@ -41,10 +42,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiAlertOutline } from "@mdi/js";
 import type { SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { useRestoreFocus } from "@/composables/useRestoreFocus";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
 import { errorText } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
@@ -64,6 +66,7 @@ const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 const reason = ref("");
+const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
 const title = computed(() => t(key("delete_title"), { name: props.event?.name ?? "" }));
 // The reason goes to the audit log, as for hardware overrides.
 const canDelete = computed(() => !store.acting && reason.value.trim() !== "");

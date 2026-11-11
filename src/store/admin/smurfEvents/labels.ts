@@ -45,3 +45,25 @@ export function errorText(e: unknown, t: Translate): string {
   if (e instanceof SmurfEventsApiError && e.serverMessage) return e.serverMessage;
   return t(key("generic_error"));
 }
+
+/** HTTP status of "not ready yet": the data manual events need is still being prepared after a deploy. */
+const NOT_READY = 503;
+
+/**
+ * Like {@link errorText} for the manual event routes (preview, create, update), which answer 503
+ * while the data manual events need is still being prepared: nothing was stored, so retry later.
+ */
+export function manualEventErrorText(e: unknown, t: Translate): string {
+  if (e instanceof SmurfEventsApiError && e.status === NOT_READY) return t(key("manual_not_ready"));
+  return errorText(e, t);
+}
+
+/** "1 link" / "N links": the `_one` or `_other` form of the text `base`, as the hardware page does. */
+export function countText(base: string, count: number, t: Translate): string {
+  return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count });
+}
+
+/** "N machines, M attendees" of a preview. */
+export function previewCountsText(counts: { machines: number; attendees: number }, t: Translate): string {
+  return t(key("preview_counts"), { machines: countText("preview_machines", counts.machines, t), attendees: countText("preview_attendees", counts.attendees, t) });
+}

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { type DOMWrapper, flushPromises, mount, type VueWrapper } from "@vue/test-utils";
+import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import { inlineDialog, manualEvent, testPlugins } from "./setup.testing";
 
 const service = vi.hoisted(() => ({ remove: vi.fn(), list: vi.fn() }));
@@ -39,4 +40,18 @@ test("Delete stays disabled until a reason is entered, then sends it", async () 
 
   expect(service.remove).toHaveBeenCalledWith("tok", "ev1", "duplicate of another event");
   expect(wrapper.emitted("deleted")).toHaveLength(1);
+});
+
+test("a failed delete keeps the dialog open, shows the server's text and reports nothing", async () => {
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  service.remove.mockRejectedValue(new SmurfEventsApiError(409, "Only manual events can be deleted", null));
+  await wrapper.find("textarea").setValue("duplicate");
+
+  await button("Delete event").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("Only manual events can be deleted");
+  expect(wrapper.emitted("deleted")).toBeUndefined();
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  expect(button("Delete event").element.disabled).toBe(false);
 });
