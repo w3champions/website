@@ -46,7 +46,7 @@ test("choosing deny lists the links it would bring back before it can be saved",
   expect(service.denyPreview).toHaveBeenCalledWith("tok", "ev1");
   expect(button("Save review").element.disabled).toBe(true);
 
-  pending.resolve({ links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }, { a: "Anchor#1002", b: "Guest#1003", source: "account" }] });
+  pending.resolve({ links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }, { a: "Anchor#1002", b: "Guest#1003", source: "account" }], endedLinks: 2 });
   await flushPromises();
 
   expect(wrapper.text()).toContain("Denying brings back 2 links");
@@ -152,4 +152,44 @@ test("one link a deny brings back reads in the singular", async () => {
 
   expect(wrapper.text()).toContain("Denying brings back 1 link");
   expect(wrapper.text()).not.toContain("1 links");
+});
+
+const TRUNCATED_NOTE = "Showing part of the links a deny may bring back.";
+
+test("a cut deny preview says so and counts the ended links, not the list", async () => {
+  service.denyPreview.mockResolvedValue({
+    links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }, { a: "Anchor#1002", b: "Guest#1003", source: "account" }],
+    endedLinks: 7,
+    linksTruncated: true,
+  });
+
+  await button("Deny").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain(TRUNCATED_NOTE);
+  expect(wrapper.text()).toContain("A deny checks every link the event ended.");
+  expect(wrapper.text()).toContain("The event ended 7 links");
+  expect(wrapper.text()).not.toContain("Denying brings back");
+  expect(wrapper.text()).toContain("Anchor#1001");
+});
+
+test("a cut deny preview with one ended link reads in the singular", async () => {
+  service.denyPreview.mockResolvedValue({ links: [], endedLinks: 1, linksTruncated: true });
+
+  await button("Deny").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The event ended 1 link");
+  expect(wrapper.text()).not.toContain("1 links");
+  expect(wrapper.text()).not.toContain("No links come back.");
+});
+
+test("a whole deny preview shows no cut note and counts its list", async () => {
+  service.denyPreview.mockResolvedValue({ links: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }], endedLinks: 1 });
+
+  await button("Deny").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).not.toContain(TRUNCATED_NOTE);
+  expect(wrapper.text()).toContain("Denying brings back 1 link");
 });

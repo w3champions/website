@@ -136,5 +136,10 @@ export interface SmurfEventsPage {
 
 /** GET /:id/deny-preview: the links a deny would bring back. */
 export interface SmurfEventDenyPreview {
+  /** Possibly a cut list (see `linksTruncated`). */
   links: SmurfEventLinkRef[];
+  /** How many links the event ended: always the full count. */
+  endedLinks: number;
+  /** Present (true) when `links` was cut: it may miss links a deny would bring back; the deny itself checks every one. */
+  linksTruncated?: true;
 }

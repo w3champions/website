@@ -38,6 +38,10 @@ interface SmurfEventsState {
   previewError: unknown;
   /** The links a deny of the event would bring back; null until loaded. */
   denyLinks: SmurfEventLinkRef[] | null;
+  /** How many links the event ended, as the deny preview reported it; null until loaded. */
+  denyEndedLinks: number | null;
+  /** The deny preview's list was cut: it may miss links a deny would bring back. */
+  denyLinksTruncated: boolean;
   denyLoading: boolean;
   denyError: unknown;
   acting: boolean;
@@ -85,6 +89,8 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     previewLoading: false,
     previewError: null,
     denyLinks: null,
+    denyEndedLinks: null,
+    denyLinksTruncated: false,
     denyLoading: false,
     denyError: null,
     acting: false,
@@ -308,12 +314,18 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
 
     async loadDenyPreview(id: string): Promise<boolean> {
       this.denyLinks = null;
+      this.denyEndedLinks = null;
+      this.denyLinksTruncated = false;
       this.denyError = null;
       return await loadLatest(denyLoads, {
         what: "the deny preview",
         setLoading: (loading) => (this.denyLoading = loading),
         fetch: () => smurfEventsService().denyPreview(token(), id),
-        apply: (preview) => (this.denyLinks = preview.links ?? []),
+        apply: (preview) => {
+          this.denyLinks = preview.links ?? [];
+          this.denyEndedLinks = typeof preview.endedLinks === "number" ? preview.endedLinks : null;
+          this.denyLinksTruncated = preview.linksTruncated === true;
+        },
         fail: (e) => (this.denyError = e),
       });
     },
@@ -325,6 +337,8 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     clearDenyPreview(): void {
       denyLoads.invalidate();
       this.denyLinks = null;
+      this.denyEndedLinks = null;
+      this.denyLinksTruncated = false;
       this.denyError = null;
       this.denyLoading = false;
     },

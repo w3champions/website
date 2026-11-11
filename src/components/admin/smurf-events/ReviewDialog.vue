@@ -36,8 +36,12 @@
             </template>
           </v-alert>
           <v-alert v-else-if="store.denyLinks !== null" type="warning" variant="tonal" density="compact" class="mb-3">
-            <template v-if="store.denyLinks.length > 0">
-              <div class="font-weight-bold">{{ countText("deny_links", store.denyLinks.length, tr) }}</div>
+            <template v-if="store.denyLinks.length > 0 || store.denyLinksTruncated">
+              <div v-if="!store.denyLinksTruncated" class="font-weight-bold">{{ countText("deny_links", store.denyLinks.length, tr) }}</div>
+              <template v-else>
+                <div v-if="store.denyEndedLinks !== null" class="font-weight-bold">{{ countText("deny_ended", store.denyEndedLinks, tr) }}</div>
+                <div class="text-body-2" role="status">{{ t(key("deny_truncated")) }}</div>
+              </template>
               <ul class="link-list text-body-2">
                 <li v-for="l in store.denyLinks" :key="`${l.a}|${l.b}`">{{ l.a }} – {{ l.b }}</li>
               </ul>
