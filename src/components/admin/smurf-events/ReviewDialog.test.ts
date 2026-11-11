@@ -193,3 +193,21 @@ test("a whole deny preview shows no cut note and counts its list", async () => {
   expect(wrapper.text()).not.toContain(TRUNCATED_NOTE);
   expect(wrapper.text()).toContain("Denying brings back 1 link");
 });
+
+test("a busy server on a review says so calmly, keeps the dialog open and the reason, and allows a retry", async () => {
+  service.review.mockRejectedValueOnce(new SmurfEventsApiError(429, "Too many at once", null)).mockResolvedValueOnce(manualEvent({ review: "confirmed" }));
+
+  await button("Confirm").trigger("click");
+  await wrapper.find("textarea").setValue("known LAN");
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The server is busy with another preview. Nothing was saved. Try again in a moment.");
+  expect(wrapper.emitted("reviewed")).toBeUndefined();
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  expect((wrapper.find("textarea").element as HTMLTextAreaElement).value).toBe("known LAN");
+
+  await button("Save review").trigger("click");
+  await flushPromises();
+  expect(wrapper.emitted("reviewed")).toHaveLength(1);
+});

@@ -53,9 +53,9 @@ const NOT_READY = 503;
 const TOO_BUSY = 429;
 
 /**
- * Like {@link errorText} for the manual event routes (preview, create, update), which answer 503
- * while the data manual events need is still being prepared (nothing was stored, so retry later)
- * and 429 while the server is busy with other previews (retry in a moment).
+ * Like {@link errorText} for the routes that can be refused as busy or not ready (preview, create, update and
+ * review): 503 while the data manual events need is still being prepared (nothing was stored, so retry later)
+ * and 429 while the server is busy (retry in a moment).
  */
 export function manualEventErrorText(e: unknown, t: Translate): string {
   if (e instanceof SmurfEventsApiError && e.status === NOT_READY) return t(key("manual_not_ready"));

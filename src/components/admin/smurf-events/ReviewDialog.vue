@@ -62,7 +62,7 @@
         />
 
         <v-alert v-if="store.actionError" type="error" variant="tonal" density="compact" class="mt-3">
-          {{ errorText(store.actionError, tr) }}
+          {{ manualEventErrorText(store.actionError, tr) }}
         </v-alert>
       </v-card-text>
       <v-card-actions>
@@ -85,7 +85,7 @@ import type { SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf
 import { useRestoreFocus } from "@/composables/useRestoreFocus";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
 import { reviewDecisions, reviewNeedsReason } from "@/store/admin/smurfEvents/actions";
-import { countText, errorText } from "@/store/admin/smurfEvents/labels";
+import { countText, errorText, manualEventErrorText } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
