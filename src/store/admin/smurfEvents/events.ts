@@ -34,11 +34,13 @@ export interface WriteOutcome {
   detail: SmurfEventDetail;
   /** False: the change is stored, but applying it to the links is left to the next stats run. */
   applied: boolean;
+  /** A create that matched a stored event, which came back unchanged. */
+  existing: boolean;
 }
 
-export function outcomeOf(response: SmurfEventWriteResponse): WriteOutcome {
+export function outcomeOf(response: SmurfEventWriteResponse, existing = false): WriteOutcome {
   const { applied, ...detail } = response;
-  return { detail, applied: applied !== false };
+  return { detail, applied: applied !== false, existing };
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

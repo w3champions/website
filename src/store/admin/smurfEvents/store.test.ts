@@ -132,7 +132,7 @@ test("runPreview sends the draft's span and anchors and remembers what it previe
 });
 
 test("saveManual creates the event after a preview, shows it and reloads the list", async () => {
-  service.create.mockResolvedValue(detail("new"));
+  service.create.mockResolvedValue(created(detail("new")));
   const store = useSmurfEventsStore();
   await store.runPreview(DRAFT);
 
@@ -303,7 +303,7 @@ test("an older preview that lands after a newer one does not replace it", async 
   expect(store.preview).toEqual(newer);
   expect(store.previewLoading).toBe(false);
   // Save follows the newer draft's preview.
-  service.create.mockResolvedValue(detail("new"));
+  service.create.mockResolvedValue(created(detail("new")));
   expect(await store.saveManual(DRAFT, null)).toBeNull();
   expect(await store.saveManual(newerDraft, null)).not.toBeNull();
 });
@@ -371,7 +371,7 @@ test("a review updates the row at once and a delete removes it, before the reloa
 // --- writes that settle late ---
 
 test("a save that settles after clear() writes nothing, requests nothing and leaves no spinner", async () => {
-  const answer = deferred<SmurfEventDetail>();
+  const answer = deferred<CreateResult>();
   service.create.mockReturnValue(answer.promise);
   const store = useSmurfEventsStore();
   await store.runPreview(DRAFT);
@@ -379,7 +379,7 @@ test("a save that settles after clear() writes nothing, requests nothing and lea
   expect(store.acting).toBe(true);
 
   store.clear();
-  answer.resolve(detail("late"));
+  answer.resolve(created(detail("late")));
   const outcome = await saving;
 
   expect(outcome?.detail.id).toBe("late");
@@ -390,7 +390,7 @@ test("a save that settles after clear() writes nothing, requests nothing and lea
 });
 
 test("a failed save that settles after clear() does not put its error into the next visit", async () => {
-  const answer = deferred<SmurfEventDetail>();
+  const answer = deferred<CreateResult>();
   service.create.mockReturnValue(answer.promise);
   const store = useSmurfEventsStore();
   await store.runPreview(DRAFT);
@@ -405,7 +405,7 @@ test("a failed save that settles after clear() does not put its error into the n
 });
 
 test("a late write never ends the spinner of a write of the next visit", async () => {
-  const first = deferred<SmurfEventDetail>();
+  const first = deferred<CreateResult>();
   service.create.mockReturnValueOnce(first.promise);
   const store = useSmurfEventsStore();
   await store.runPreview(DRAFT);
@@ -415,7 +415,7 @@ test("a late write never ends the spinner of a write of the next visit", async (
   service.review.mockReturnValue(second.promise);
   const reviewing = store.review("1", "confirmed", "");
 
-  first.resolve(detail("late"));
+  first.resolve(created(detail("late")));
   await saving;
 
   expect(store.acting).toBe(true);
@@ -494,6 +494,12 @@ test("a review and a delete that settle after clear() write nothing", async () =
   expect(service.list).not.toHaveBeenCalled();
 });
 
+type CreateResult = { event: SmurfEventDetail; existing: boolean };
+
+function created(event: SmurfEventDetail, existing = false): CreateResult {
+  return { event, existing };
+}
+
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void; reject: (reason: unknown) => void } {
   let resolve!: (value: T) => void;
   let reject!: (reason: unknown) => void;
@@ -503,3 +509,34 @@ function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void; reje
   });
   return { promise, resolve, reject };
 }
+
+test("a create answered with an existing event is reported as existing", async () => {
+  service.create.mockResolvedValue(created(detail("old"), true));
+  const store = useSmurfEventsStore();
+  await store.runPreview(DRAFT);
+
+  const saved = await store.saveManual(DRAFT, null);
+
+  expect(saved?.existing).toBe(true);
+  expect(saved?.detail.id).toBe("old");
+});
+
+test("an edit that sends a confirmed event back to unreviewed shows that at once in the event and its row", async () => {
+  service.list.mockResolvedValue({ events: [summary("1", "confirmed")] });
+  service.get.mockResolvedValue(detail("1", { review: "confirmed", reviewedBy: "Mod#1", reviewedAt: "2026-10-05T00:00:00.000Z" }));
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  await store.openDetail("1");
+  await store.runPreview(DRAFT);
+  const reload = deferred<{ events: SmurfEventSummary[] }>();
+  service.list.mockReturnValue(reload.promise);
+  service.update.mockResolvedValue(detail("1", { review: "unreviewed" }));
+
+  await store.saveManual(DRAFT, "1");
+
+  expect(store.detail?.review).toBe("unreviewed");
+  expect(store.detail?.reviewedBy).toBeUndefined();
+  expect(store.events[0].review).toBe("unreviewed");
+  expect(store.events[0].reviewedBy).toBeUndefined();
+  reload.resolve({ events: [] });
+});

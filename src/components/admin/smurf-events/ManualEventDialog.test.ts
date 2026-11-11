@@ -222,23 +222,23 @@ test("a save answered applied: false reports it", async () => {
   await button("Save").trigger("click");
   await flushPromises();
 
-  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: false, existing: false });
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: false, existing: false, needsReview: false });
 });
 
-test("a create answered with an event that already exists reports it", async () => {
+test("a create the server answered with an existing event reports it, whatever its name", async () => {
   await wrapper.setProps({ event: null });
   await wrapper.find("input").setValue("My new LAN");
   await wrapper.find("input[type='datetime-local']").setValue("2026-10-01T00:00");
   await wrapper.findAll("input[type='datetime-local']")[1].setValue("2026-10-03T00:00");
   wrapper.findComponent({ name: "VCombobox" }).vm.$emit("update:modelValue", ["Anchor#1001", "Anchor#1002"]);
-  service.create.mockResolvedValue(manualEvent({ name: "LAN party" }));
+  service.create.mockResolvedValue({ event: manualEvent({ name: "LAN party" }), existing: true });
   await previewed();
 
   await button("Save").trigger("click");
   await flushPromises();
 
   expect(service.create).toHaveBeenCalledOnce();
-  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, existing: true });
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toEqual({ applied: true, existing: true, needsReview: false });
 });
 
 test("an untouched new event dialog shows no problem until something is entered", async () => {
@@ -249,4 +249,39 @@ test("an untouched new event dialog shows no problem until something is entered"
   await wrapper.find("input").setValue("My LAN");
 
   expect(wrapper.text()).toContain("anchor BattleTags.");
+});
+
+test("a create answered as new is not reported as existing, even when the saved name differs from the typed one", async () => {
+  await wrapper.setProps({ event: null });
+  await wrapper.find("input").setValue("  My new LAN  ");
+  wrapper.findComponent({ name: "VCombobox" }).vm.$emit("update:modelValue", ["Anchor#1001", "Anchor#1002"]);
+  service.create.mockResolvedValue({ event: manualEvent({ name: "Something else" }), existing: false });
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toMatchObject({ existing: false });
+});
+
+test("an edit that takes a confirmed event back to unreviewed says it needs review", async () => {
+  await wrapper.setProps({ event: manualEvent({ review: "confirmed" }) });
+  service.update.mockResolvedValue(manualEvent({ review: "unreviewed" }));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toMatchObject({ needsReview: true });
+});
+
+test("an edit that keeps the review does not", async () => {
+  await wrapper.setProps({ event: manualEvent({ review: "confirmed" }) });
+  service.update.mockResolvedValue(manualEvent({ review: "confirmed" }));
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.emitted("saved")?.[0]?.[1]).toMatchObject({ needsReview: false });
 });

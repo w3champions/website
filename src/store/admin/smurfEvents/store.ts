@@ -216,9 +216,17 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       this.actionError = null;
       try {
         const service = smurfEventsService();
-        const outcome = outcomeOf(id === null ? await service.create(token(), request) : await service.update(token(), id, request));
+        let outcome: WriteOutcome;
+        if (id === null) {
+          const created = await service.create(token(), request);
+          outcome = outcomeOf(created.event, created.existing);
+        } else {
+          outcome = outcomeOf(await service.update(token(), id, request));
+        }
         if (visits.isLatest(visit)) {
           if (this.detailId === shown) this.showWritten(outcome.detail);
+          // The row shows what the server answered (an edit may have reset the review) until the reload lands.
+          this.events = this.events.map((e) => (e.id === outcome.detail.id ? summaryOf(outcome.detail) : e));
           this.resetPreview();
           void this.loadList();
         }

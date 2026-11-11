@@ -102,3 +102,17 @@ test("an error body that is not JSON leaves the message and body null", async ()
   assert.equal(error.serverMessage, null);
   assert.equal(error.body, null);
 });
+
+test("a create tells a new event (201) from an existing one (200)", async () => {
+  const created = serviceWith({ status: 201, body: { id: "ev1" } });
+  const existing = serviceWith({ status: 200, body: { id: "ev1" } });
+
+  assert.deepEqual(await created.service.create("tok", REQUEST), { event: { id: "ev1" }, existing: false });
+  assert.deepEqual(await existing.service.create("tok", REQUEST), { event: { id: "ev1" }, existing: true });
+});
+
+test("a delete answered 204 succeeds", async () => {
+  const { service } = serviceWith({ status: 204 });
+
+  await service.remove("tok", "ev1", "duplicate");
+});

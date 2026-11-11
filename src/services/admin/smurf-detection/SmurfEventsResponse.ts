@@ -65,7 +65,10 @@ export interface SmurfEventDetail extends SmurfEventSummary {
   networks: SmurfEventNetwork[];
   machines: SmurfEventMachine[];
   evidence: SmurfEventReviewEvidence;
+  /** The links the event ended: all of them, unless `endedLinksListTruncated`. */
   endedLinksList: SmurfEventLinkRef[];
+  /** Present (true) when `endedLinksList` is cut and does not hold every ended link. */
+  endedLinksListTruncated?: true;
 }
 
 /**
@@ -74,6 +77,13 @@ export interface SmurfEventDetail extends SmurfEventSummary {
  */
 export interface SmurfEventWriteResponse extends SmurfEventDetail {
   applied?: boolean;
+}
+
+/** What a create answered: the event, and whether it was already there (200) rather than created (201). */
+export interface SmurfEventCreateResult {
+  event: SmurfEventWriteResponse;
+  /** True: the anchors and span matched a stored event, which came back unchanged. */
+  existing: boolean;
 }
 
 export type SmurfEventPreviewRefusal = "no-venue" | "too-long" | "too-wide";

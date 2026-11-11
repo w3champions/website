@@ -128,6 +128,7 @@
           {{ t(key("ended_links")) }}
           <v-chip size="small" class="ml-2" variant="tonal">{{ event.endedLinksList.length }}</v-chip>
         </v-card-title>
+        <v-card-text v-if="event.endedLinksListTruncated" class="pt-0 pb-2 text-body-2 text-medium-emphasis" role="status">{{ t(key("ended_links_truncated")) }}</v-card-text>
         <v-data-table
           :headers="linkHeaders"
           :items="event.endedLinksList"

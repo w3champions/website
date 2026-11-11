@@ -174,8 +174,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  /** `applied` false: stored, but the links follow with the next stats run. `existing`: a create answered an event that was already there, unchanged. */
-  (e: "saved", event: SmurfEventDetail, flags: { applied: boolean; existing: boolean }): void;
+  /**
+   * `applied` false: stored, but the links follow with the next stats run. `existing`: a create answered
+   * an event that was already there, unchanged. `needsReview`: an edit took a confirmed event back to unreviewed.
+   */
+  (e: "saved", event: SmurfEventDetail, flags: { applied: boolean; existing: boolean; needsReview: boolean }): void;
 }>();
 
 const { t } = useI18n();
@@ -199,12 +202,10 @@ function spanText(span: { from: string; to: string }): string {
 
 async function save(): Promise<void> {
   if (!canSave.value) return;
-  const created = props.event === null;
-  const name = draft.value.name.trim();
+  const wasConfirmed = props.event?.review === "confirmed";
   const outcome = await store.saveManual(draft.value, props.event?.id ?? null);
   if (outcome === null) return;
-  // A create with the anchors and span of an existing event answers that event unchanged, whatever name was typed.
-  emit("saved", outcome.detail, { applied: outcome.applied, existing: created && outcome.detail.name !== name });
+  emit("saved", outcome.detail, { applied: outcome.applied, existing: outcome.existing, needsReview: wasConfirmed && outcome.detail.review === "unreviewed" });
   emit("update:modelValue", false);
 }
 

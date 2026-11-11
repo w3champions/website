@@ -58,7 +58,7 @@ test("a create shows the new event with its notice and loads it only once", asyn
   // As saveManual does: the saved event is already in the store when the dialog reports it.
   useSmurfEventsStore().detail = created;
 
-  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", created, { applied: true, existing: false });
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", created, { applied: true, existing: false, needsReview: false });
   await flushPromises();
 
   expect(router.currentRoute.value.query.event).toBe("ev-new");
@@ -119,7 +119,7 @@ test("a save not yet applied to the links says the effect follows shortly", asyn
   const created = manualEvent({ id: "ev-new" });
   useSmurfEventsStore().detail = created;
 
-  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", created, { applied: false, existing: false });
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", created, { applied: false, existing: false, needsReview: false });
   await flushPromises();
 
   expect(wrapper.text()).toContain("Event saved. Its effect on links will follow shortly.");
@@ -130,7 +130,7 @@ test("a create that answered an existing event says nothing was changed", async 
   const existing = manualEvent({ id: "ev-old" });
   useSmurfEventsStore().detail = existing;
 
-  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", existing, { applied: true, existing: true });
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", existing, { applied: true, existing: true, needsReview: false });
   await flushPromises();
 
   expect(wrapper.text()).toContain("already exists, so nothing was changed");
@@ -157,7 +157,7 @@ test("a save that finishes after the moderator went to another event does not na
   await router.push("/admin-smurf-events?event=ev2");
   await flushPromises();
 
-  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent({ id: "ev1" }), { applied: true, existing: false });
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent({ id: "ev1" }), { applied: true, existing: false, needsReview: false });
   await flushPromises();
 
   expect(router.currentRoute.value.query.event).toBe("ev2");
@@ -310,4 +310,23 @@ test("a review or delete that finishes on the event it was started on reports as
   await flushPromises();
   expect(router.currentRoute.value.query.event).toBeUndefined();
   expect(wrapper.text()).toContain("Event deleted.");
+});
+
+test("a save that took a confirmed event back to unreviewed says it needs review again", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("edit");
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent(), { applied: true, existing: false, needsReview: true });
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("Event saved.");
+  expect(wrapper.text()).toContain("needs review again");
+});
+
+test("a plain save carries no review line", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("edit");
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent(), { applied: true, existing: false, needsReview: false });
+  await flushPromises();
+
+  expect(wrapper.text()).not.toContain("needs review again");
 });

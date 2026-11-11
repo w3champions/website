@@ -1,6 +1,6 @@
 import { AuthorizedClient, type AuthorizedClientDeps, HttpError } from "@/services/http/AuthorizedClient";
 import { serverMessageOf } from "./HardwareSmurfService";
-import type { ManualEventRequest, ReviewRequest, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
+import type { ManualEventRequest, ReviewRequest, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventCreateResult, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
 
 const BASE = "api/admin/smurf-detection/events";
 
@@ -29,6 +29,9 @@ function parsedOrNull(body: string): unknown {
     return null;
   }
 }
+
+/** A create that matched an existing event answers 200 instead of 201. */
+const EXISTING_STATUS = 200;
 
 const segment = encodeURIComponent;
 
@@ -69,8 +72,14 @@ export class SmurfEventsService {
     return await this.call("POST", "/preview", token, request);
   }
 
-  async create(token: string, request: ManualEventRequest): Promise<SmurfEventWriteResponse> {
-    return await this.call("POST", "", token, request);
+  /** 201: created. 200: the same anchors and span were already stored, and that event came back unchanged. */
+  async create(token: string, request: ManualEventRequest): Promise<SmurfEventCreateResult> {
+    try {
+      const { body, status } = await this.client.requestJsonWithStatus<SmurfEventWriteResponse>("POST", BASE, token, request);
+      return { event: body, existing: status === EXISTING_STATUS };
+    } catch (e) {
+      throw asApiError(e);
+    }
   }
 
   async update(token: string, id: string, request: ManualEventRequest): Promise<SmurfEventWriteResponse> {

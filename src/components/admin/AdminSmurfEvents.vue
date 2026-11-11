@@ -17,6 +17,7 @@
         @click:close="notice = null"
       >
         {{ t(key(notice.kind)) }}
+        <div v-if="notice.needsReview">{{ t(key("needs_review_again")) }}</div>
       </v-alert>
 
       <event-detail
@@ -79,6 +80,8 @@ type NoticeKind = "saved" | "saved_pending" | "existing" | "reviewed" | "reviewe
 interface Notice {
   kind: NoticeKind;
   view: string;
+  /** An edit took a confirmed event back to unreviewed. */
+  needsReview?: true;
 }
 const notice = ref<Notice | null>(null);
 // A change stored but not yet applied to the links is news, not plain success.
@@ -123,11 +126,11 @@ function openManual(event: SmurfEventDetail | null): void {
   manualOpen.value = true;
 }
 
-function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; existing: boolean }): void {
+function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; existing: boolean; needsReview: boolean }): void {
   // A save that finishes after the moderator went to another view neither navigates nor claims that view.
   if (eventId.value !== manualOpenedFrom) return;
   const kind: NoticeKind = !flags.applied ? "saved_pending" : flags.existing ? "existing" : "saved";
-  notice.value = { kind, view: saved.id };
+  notice.value = flags.needsReview ? { kind, view: saved.id, needsReview: true } : { kind, view: saved.id };
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
 }
 
