@@ -24,9 +24,9 @@
         :event-id="eventId"
         :can-administer="canAdminister"
         @back="showList"
-        @review="reviewOpen = true"
+        @review="openReview"
         @edit="openManual(store.detail)"
-        @delete="deleteOpen = true"
+        @delete="openDelete"
       />
       <event-list
         v-else
@@ -89,6 +89,8 @@ const deleteOpen = ref(false);
 const editing = ref<SmurfEventDetail | null>(null);
 // The view the manual dialog was opened from (an event id, "" for the list).
 let manualOpenedFrom = "";
+let reviewOpenedFrom = "";
+let deleteOpenedFrom = "";
 
 function queryText(value: LocationQuery[string]): string {
   return typeof value === "string" ? value : "";
@@ -129,11 +131,24 @@ function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; existing: b
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
 }
 
+function openReview(): void {
+  reviewOpenedFrom = eventId.value;
+  reviewOpen.value = true;
+}
+
+function openDelete(): void {
+  deleteOpenedFrom = eventId.value;
+  deleteOpen.value = true;
+}
+
 function onReviewed(applied: boolean): void {
+  // A review that finishes after the moderator went to another view says nothing there and moves nothing.
+  if (eventId.value !== reviewOpenedFrom) return;
   notice.value = { kind: applied ? "reviewed" : "reviewed_pending", view: eventId.value };
 }
 
 function onDeleted(): void {
+  if (eventId.value !== deleteOpenedFrom) return;
   notice.value = { kind: "deleted", view: "" };
   showList();
 }

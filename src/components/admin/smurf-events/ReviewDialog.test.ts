@@ -108,6 +108,22 @@ test("a failed review keeps the dialog open, shows the server's text and reports
   expect(button("Save review").element.disabled).toBe(false);
 });
 
+test("the dialog keeps the event it was opened for when the page's event goes away mid-write, then closes", async () => {
+  const pending = deferred<ReturnType<typeof manualEvent>>();
+  service.review.mockReturnValue(pending.promise);
+  await button("Confirm").trigger("click");
+  await button("Save review").trigger("click");
+
+  await wrapper.setProps({ event: null });
+  expect(wrapper.text()).toContain("Review LAN party");
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+
+  pending.resolve(manualEvent({ review: "confirmed" }));
+  await flushPromises();
+  expect(wrapper.emitted("reviewed")).toHaveLength(1);
+  expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([false]);
+});
+
 test("a review answered applied: false reports it", async () => {
   service.review.mockResolvedValue({ ...manualEvent({ review: "confirmed" }), applied: false });
 

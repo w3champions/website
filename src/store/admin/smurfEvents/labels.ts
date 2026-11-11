@@ -49,12 +49,17 @@ export function errorText(e: unknown, t: Translate): string {
 /** HTTP status of "not ready yet": the data manual events need is still being prepared after a deploy. */
 const NOT_READY = 503;
 
+/** HTTP status of "busy with other previews": nothing was read or stored, retry in a moment. */
+const TOO_BUSY = 429;
+
 /**
  * Like {@link errorText} for the manual event routes (preview, create, update), which answer 503
- * while the data manual events need is still being prepared: nothing was stored, so retry later.
+ * while the data manual events need is still being prepared (nothing was stored, so retry later)
+ * and 429 while the server is busy with other previews (retry in a moment).
  */
 export function manualEventErrorText(e: unknown, t: Translate): string {
   if (e instanceof SmurfEventsApiError && e.status === NOT_READY) return t(key("manual_not_ready"));
+  if (e instanceof SmurfEventsApiError && e.status === TOO_BUSY) return t(key("manual_busy"));
   return errorText(e, t);
 }
 

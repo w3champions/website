@@ -7,7 +7,7 @@
     @update:model-value="emit('update:modelValue', $event)"
     @after-leave="restoreFocus"
   >
-    <v-card v-if="event">
+    <v-card v-if="shown">
       <v-card-title class="pt-3 d-flex align-center">
         <v-icon color="error" class="mr-2" :icon="mdiAlertOutline" />
         {{ title }}
@@ -67,12 +67,14 @@ const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 const reason = ref("");
 const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
-const title = computed(() => t(key("delete_title"), { name: props.event?.name ?? "" }));
+// The event the dialog was opened for: it stays while a write is pending, even if the page moves on.
+const shown = ref<SmurfEventSummary | null>(props.event);
+const title = computed(() => t(key("delete_title"), { name: shown.value?.name ?? "" }));
 // The reason goes to the audit log, as for hardware overrides.
 const canDelete = computed(() => !store.acting && reason.value.trim() !== "");
 
 async function remove(): Promise<void> {
-  const event = props.event;
+  const event = shown.value;
   if (event === null || !canDelete.value) return;
   if (!(await store.deleteEvent(event.id, reason.value))) return;
   emit("deleted");
@@ -81,6 +83,7 @@ async function remove(): Promise<void> {
 
 watch(() => props.modelValue, (open) => {
   if (!open) return;
+  shown.value = props.event;
   reason.value = "";
   store.clearActionError();
 });

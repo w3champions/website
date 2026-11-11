@@ -8,14 +8,14 @@
     @update:model-value="emit('update:modelValue', $event)"
     @after-leave="restoreFocus"
   >
-    <v-card v-if="event">
+    <v-card v-if="shown">
       <v-card-title class="pt-3">{{ title }}</v-card-title>
       <v-card-text>
         <div class="text-body-2 mb-3">{{ t(key("review_body")) }}</div>
 
         <v-btn-toggle v-model="decision" class="mb-4" divided variant="outlined" density="comfortable" role="group" :aria-label="t(key('decision_label'))">
           <v-btn
-            v-for="d in reviewDecisions(event.review)"
+            v-for="d in reviewDecisions(shown.review)"
             :key="d"
             :value="d"
             :color="DECISION_COLORS[d]"
@@ -32,7 +32,7 @@
           <v-alert v-else-if="store.denyError" type="error" variant="tonal" density="compact" class="mb-3">
             {{ t(key("deny_failed")) }} {{ errorText(store.denyError, tr) }}
             <template v-slot:append>
-              <v-btn variant="text" size="small" @click="store.loadDenyPreview(event.id)">{{ t(key("retry")) }}</v-btn>
+              <v-btn variant="text" size="small" @click="store.loadDenyPreview(shown.id)">{{ t(key("retry")) }}</v-btn>
             </template>
           </v-alert>
           <v-alert v-else-if="store.denyLinks !== null" type="warning" variant="tonal" density="compact" class="mb-3">
@@ -105,7 +105,9 @@ const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
 
 const decision = ref<SmurfEventReview | null>(null);
 const reason = ref("");
-const title = computed(() => t(key("review_title"), { name: props.event?.name ?? "" }));
+// The event the dialog was opened for: it stays while a write is pending, even if the page moves on.
+const shown = ref<SmurfEventSummary | null>(props.event);
+const title = computed(() => t(key("review_title"), { name: shown.value?.name ?? "" }));
 
 // A deny is offered only once the moderator has seen which links it brings back and gave a reason.
 const canSave = computed(() => {
@@ -115,7 +117,7 @@ const canSave = computed(() => {
 });
 
 async function save(): Promise<void> {
-  const event = props.event;
+  const event = shown.value;
   if (!canSave.value || event === null || decision.value === null) return;
   const outcome = await store.review(event.id, decision.value, reason.value);
   if (outcome === null) return;
@@ -124,12 +126,13 @@ async function save(): Promise<void> {
 }
 
 watch(decision, (next) => {
-  if (next === "denied" && props.event) void store.loadDenyPreview(props.event.id);
+  if (next === "denied" && shown.value) void store.loadDenyPreview(shown.value.id);
   else store.clearDenyPreview();
 });
 
 watch(() => props.modelValue, (open) => {
   if (!open) return;
+  shown.value = props.event;
   decision.value = null;
   reason.value = "";
   store.clearDenyPreview();

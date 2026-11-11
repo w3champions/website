@@ -42,6 +42,22 @@ test("Delete stays disabled until a reason is entered, then sends it", async () 
   expect(wrapper.emitted("deleted")).toHaveLength(1);
 });
 
+test("the dialog keeps the event it was opened for when the page's event goes away mid-write, then closes", async () => {
+  let finish!: () => void;
+  service.remove.mockReturnValue(new Promise<void>((resolve) => (finish = resolve)));
+  await wrapper.find("textarea").setValue("duplicate");
+  await button("Delete event").trigger("click");
+
+  await wrapper.setProps({ event: null });
+  expect(wrapper.text()).toContain("Delete LAN party");
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+
+  finish();
+  await flushPromises();
+  expect(wrapper.emitted("deleted")).toHaveLength(1);
+  expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([false]);
+});
+
 test("a failed delete keeps the dialog open, shows the server's text and reports nothing", async () => {
   vi.spyOn(console, "error").mockImplementation(() => undefined);
   service.remove.mockRejectedValue(new SmurfEventsApiError(409, "Only manual events can be deleted", null));

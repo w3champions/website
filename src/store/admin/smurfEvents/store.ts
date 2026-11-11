@@ -10,6 +10,9 @@ import { smurfEventsService } from "./service";
 
 export const SMURF_EVENTS_PAGE_SIZE = 50;
 
+/** HTTP status of "busy with other previews, retry in a moment" (preview, create, update). */
+const TOO_BUSY = 429;
+
 export interface SmurfEventFilters {
   origin: SmurfEventOrigin | null;
   review: SmurfEventReview | null;
@@ -167,6 +170,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       const key = previewKey(draft);
       if (key === null) return false;
       this.previewError = null;
+      const before = { preview: this.preview, key: this.previewKey };
       this.preview = null;
       this.previewKey = null;
       const request = toPreviewRequest(draft);
@@ -178,7 +182,14 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
           this.preview = preview;
           this.previewKey = key;
         },
-        fail: (e) => (this.previewError = e),
+        fail: (e) => {
+          this.previewError = e;
+          // A busy server refused nothing: the preview shown before stays as it was.
+          if (e instanceof SmurfEventsApiError && e.status === TOO_BUSY) {
+            this.preview = before.preview;
+            this.previewKey = before.key;
+          }
+        },
       });
     },
 

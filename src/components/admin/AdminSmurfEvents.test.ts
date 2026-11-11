@@ -1,12 +1,13 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
+import type { Component } from "vue";
 import { createMemoryHistory, createRouter, type Router } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
-import { manualEvent, testPlugins } from "./smurf-events/setup.testing";
+import { inlineDialog, manualEvent, testPlugins } from "./smurf-events/setup.testing";
 
-const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn() }));
+const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));
 const oauth = vi.hoisted(() => ({ token: "tok", permissions: [] as string[] }));
 vi.mock("@/store/oauth/store", async () => {
@@ -27,7 +28,7 @@ function dialogCount(): number {
 let wrapper: VueWrapper;
 let router: Router;
 
-async function open(path: string): Promise<void> {
+async function open(path: string, stubs: Record<string, Component | boolean> = STUBS): Promise<void> {
   router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -37,7 +38,7 @@ async function open(path: string): Promise<void> {
   });
   await router.push(path);
   await router.isReady();
-  wrapper = mount(AdminSmurfEvents, { global: { plugins: [...testPlugins(), router], stubs: STUBS } });
+  wrapper = mount(AdminSmurfEvents, { global: { plugins: [...testPlugins(), router], stubs } });
   await flushPromises();
 }
 
@@ -70,6 +71,7 @@ test("a delete returns to the list and shows its notice", async () => {
   await open("/admin-smurf-events?event=ev1");
   expect(service.get).toHaveBeenCalledWith("tok", "ev1");
 
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("delete");
   wrapper.findComponent({ name: "DeleteEventDialog" }).vm.$emit("deleted");
   await flushPromises();
 
@@ -79,7 +81,10 @@ test("a delete returns to the list and shows its notice", async () => {
 
 test("a notice ends once the moderator opens another view", async () => {
   await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("delete");
   wrapper.findComponent({ name: "DeleteEventDialog" }).vm.$emit("deleted");
+  await flushPromises();
+  expect(wrapper.text()).toContain("Event deleted.");
   await flushPromises();
 
   await router.push("/admin-smurf-events?event=ev2");
@@ -134,6 +139,7 @@ test("a create that answered an existing event says nothing was changed", async 
 
 test("a review shows its notice, and the pending one when the links are not yet updated", async () => {
   await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("review");
 
   wrapper.findComponent({ name: "ReviewDialog" }).vm.$emit("reviewed", true);
   await flushPromises();
@@ -196,4 +202,112 @@ test("permissions that arrive after the page mounted start the load", async () =
   await flushPromises();
 
   expect(service.list).toHaveBeenCalledTimes(1);
+});
+
+// The real review and delete dialogs, driven through their buttons.
+const REAL_DIALOGS = { EventList: true, EventDetail: true, ManualEventDialog: true, VDialog: inlineDialog };
+
+function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => (resolve = res));
+  return { promise, resolve };
+}
+
+function button(label: string): HTMLButtonElement {
+  const found = wrapper.findAll("button").find((b) => b.text().trim() === label);
+  if (!found) throw new Error(`No button "${label}"`);
+  return found.element;
+}
+
+async function startReview(): Promise<ReturnType<typeof deferred<ReturnType<typeof manualEvent>>>> {
+  const answer = deferred<ReturnType<typeof manualEvent>>();
+  service.review.mockReturnValue(answer.promise);
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("review");
+  await flushPromises();
+  button("Confirm").click();
+  await flushPromises();
+  button("Save review").click();
+  await flushPromises();
+  return answer;
+}
+
+async function startDelete(): Promise<ReturnType<typeof deferred<void>>> {
+  const answer = deferred<void>();
+  service.remove.mockReturnValue(answer.promise);
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("delete");
+  await flushPromises();
+  await wrapper.find("textarea").setValue("duplicate");
+  button("Delete event").click();
+  await flushPromises();
+  return answer;
+}
+
+test("a review that finishes after the moderator opened another event shows no notice there", async () => {
+  await open("/admin-smurf-events?event=ev1", REAL_DIALOGS);
+  const review = await startReview();
+  // Another event is being loaded: the store has no detail meanwhile.
+  const slow = deferred<ReturnType<typeof manualEvent>>();
+  service.get.mockReturnValueOnce(slow.promise);
+  await router.push("/admin-smurf-events?event=ev2");
+  await flushPromises();
+  // The dialog keeps its own event, so no empty overlay stays.
+  expect(wrapper.text()).toContain("Review LAN party");
+
+  review.resolve(manualEvent({ review: "confirmed" }));
+  await flushPromises();
+
+  expect(wrapper.text()).not.toContain("Review saved");
+  expect(wrapper.findComponent({ name: "ReviewDialog" }).props("modelValue")).toBe(false);
+  expect(router.currentRoute.value.query.event).toBe("ev2");
+  slow.resolve(manualEvent({ id: "ev2" }));
+});
+
+test("a delete that finishes after the moderator opened another event neither navigates nor reports there", async () => {
+  await open("/admin-smurf-events?event=ev1", REAL_DIALOGS);
+  const removal = await startDelete();
+  await router.push("/admin-smurf-events?event=ev2");
+  await flushPromises();
+
+  removal.resolve();
+  await flushPromises();
+
+  expect(router.currentRoute.value.query.event).toBe("ev2");
+  expect(wrapper.text()).not.toContain("Event deleted.");
+  expect(wrapper.findComponent({ name: "DeleteEventDialog" }).props("modelValue")).toBe(false);
+});
+
+test("a review and a delete that finish after the moderator left the page change nothing", async () => {
+  await open("/admin-smurf-events?event=ev1", REAL_DIALOGS);
+  const review = await startReview();
+  // Unmounting the app resets the router's route, so watch for navigation instead.
+  const push = vi.spyOn(router, "push");
+  wrapper.unmount();
+  review.resolve(manualEvent({ review: "confirmed" }));
+  await flushPromises();
+  expect(useSmurfEventsStore().detail).toBeNull();
+  expect(useSmurfEventsStore().acting).toBe(false);
+
+  await open("/admin-smurf-events?event=ev1", REAL_DIALOGS);
+  const removal = await startDelete();
+  const pushAgain = vi.spyOn(router, "push");
+  wrapper.unmount();
+  removal.resolve();
+  await flushPromises();
+  expect(useSmurfEventsStore().acting).toBe(false);
+  expect(push).not.toHaveBeenCalled();
+  expect(pushAgain).not.toHaveBeenCalled();
+});
+
+test("a review or delete that finishes on the event it was started on reports as before", async () => {
+  await open("/admin-smurf-events?event=ev1", REAL_DIALOGS);
+  const review = await startReview();
+  review.resolve(manualEvent({ review: "confirmed" }));
+  await flushPromises();
+  expect(wrapper.text()).toContain("Review saved.");
+
+  const removal = await startDelete();
+  removal.resolve();
+  await flushPromises();
+  expect(router.currentRoute.value.query.event).toBeUndefined();
+  expect(wrapper.text()).toContain("Event deleted.");
 });

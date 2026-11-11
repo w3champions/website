@@ -694,6 +694,7 @@ const en = {
       title: "Smurf Events",
       no_permission: "You don't have the SmurfCheckerQuery permission.",
       generic_error: "The request failed. Please try again.",
+      manual_busy: "The server is busy with another preview. Nothing was saved. Try again in a moment.",
       manual_not_ready: "The server is still preparing the data manual events need. Nothing was saved. Try again later.",
       refresh: "Refresh",
       retry: "Try again",

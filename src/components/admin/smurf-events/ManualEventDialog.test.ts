@@ -149,6 +149,65 @@ test("a 503 on the preview or the save says the server is still preparing, not a
   expect(wrapper.text()).toContain("Nothing was saved. Try again later.");
 });
 
+const BUSY = (): SmurfEventsApiError => new SmurfEventsApiError(429, "Busy", { error: "Busy" });
+
+test("a busy server on the preview says so calmly and leaves the earlier preview and Save as they were", async () => {
+  await previewed();
+  service.preview.mockRejectedValueOnce(BUSY());
+
+  await previewed();
+
+  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.text()).not.toContain("Busy");
+  expect(wrapper.text()).toContain("0a1b2c3d");
+  expect(button("Save").element.disabled).toBe(false);
+});
+
+test("a busy server on the first preview leaves Save off and the input intact", async () => {
+  service.preview.mockRejectedValueOnce(BUSY());
+
+  await previewed();
+
+  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(button("Save").element.disabled).toBe(true);
+  expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
+  expect(button("Preview").element.disabled).toBe(false);
+});
+
+test("a busy server on an update keeps the dialog open, the preview and the input, and allows a retry", async () => {
+  service.update.mockRejectedValueOnce(BUSY()).mockResolvedValueOnce(manualEvent());
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.emitted("saved")).toBeUndefined();
+  expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  expect((wrapper.find("input").element as HTMLInputElement).value).toBe("LAN party");
+  expect(button("Save").element.disabled).toBe(false);
+
+  await button("Save").trigger("click");
+  await flushPromises();
+  expect(wrapper.emitted("saved")).toHaveLength(1);
+});
+
+test("a busy server on a create keeps the dialog open and the preview", async () => {
+  service.create.mockRejectedValue(BUSY());
+  await wrapper.setProps({ event: null });
+  await wrapper.find("input").setValue("My new LAN");
+  wrapper.findComponent({ name: "VCombobox" }).vm.$emit("update:modelValue", ["Anchor#1001", "Anchor#1002"]);
+  await previewed();
+
+  await button("Save").trigger("click");
+  await flushPromises();
+
+  expect(service.create).toHaveBeenCalledOnce();
+  expect(wrapper.text()).toContain("The server is busy with another preview.");
+  expect(wrapper.emitted("saved")).toBeUndefined();
+  expect(button("Save").element.disabled).toBe(false);
+});
+
 test("the link count of the preview reads in the singular for one", async () => {
   await previewed();
 
