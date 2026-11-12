@@ -85,3 +85,8 @@ ul, ol {
     color: rgb(var(--v-theme-primary));
   }
 }
+
+/* Hash values (hash8) and other identifiers; Vuetify has no monospace utility. */
+.font-monospace {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

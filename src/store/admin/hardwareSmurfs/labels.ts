@@ -3,10 +3,18 @@ import type { HardwareItemStat, HardwareLink, HardwareLinkVerdict, VerdictKind }
 import { key, type Translate } from "./translate";
 
 /** The tombstone reasons the page has a plain-language label for; any other shows as "Ended". */
-const TOMBSTONE_REASONS: ReadonlySet<string> = new Set(["location-veto", "venue", "rule-no-longer-met", "over-cap", "not-smurf", "verdict-revoked", "no-shared-internal"]);
+const TOMBSTONE_REASONS: ReadonlySet<string> = new Set(["location-veto", "event", "venue", "rule-no-longer-met", "over-cap", "not-smurf", "verdict-revoked", "no-shared-internal"]);
 
 export function tombstoneReasonLabel(reason: string | undefined, t: Translate): string {
   return t(key(reason !== undefined && TOMBSTONE_REASONS.has(reason) ? `reason_${reason}` : "reason_unknown"));
+}
+
+/** The reasons that name the smurf events which ended a link (both read "Ended: same event"). */
+const EVENT_REASONS: ReadonlySet<string> = new Set(["event", "venue"]);
+
+/** The smurf events that ended the link; none for any other reason. */
+export function endedByEvents(link: Pick<HardwareLink, "invalidReason" | "endedBy">): Array<{ id: string; name: string }> {
+  return link.invalidReason !== undefined && EVENT_REASONS.has(link.invalidReason) ? (link.endedBy ?? []) : [];
 }
 
 const SOURCES: ReadonlySet<string> = new Set(["account", "hardware", "legacy-machineguid", "moderator"]);

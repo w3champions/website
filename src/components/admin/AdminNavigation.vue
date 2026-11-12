@@ -58,7 +58,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { AdminNavigationItem } from "@/store/admin/types";
-import { mdiAccountSearch, mdiAccountTie, mdiFileLinkOutline, mdiFormatAlignCenter, mdiLanConnect } from "@mdi/js";
+import { mdiAccountSearch, mdiAccountTie, mdiCalendarAccount, mdiFileLinkOutline, mdiFormatAlignCenter, mdiLanConnect } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRouter, useRoute } from "vue-router";
@@ -306,6 +306,13 @@ export default defineComponent({
             permission: EPermission.SmurfCheckerQuery,
             component: "admin-hardware-smurfs",
             routeName: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS,
+          },
+          {
+            title: "Smurf Events",
+            icon: mdiCalendarAccount,
+            permission: EPermission.SmurfCheckerQuery,
+            component: "admin-smurf-events",
+            routeName: EAdminRouteName.SMURF_EVENTS,
           },
           {
             title: "Manage Identifiers",

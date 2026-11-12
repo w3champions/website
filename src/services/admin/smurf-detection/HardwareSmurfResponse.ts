@@ -49,6 +49,8 @@ export interface HardwareLink {
   lastConfirmedAt: string;
   invalidatedAt?: string;
   invalidReason?: string;
+  /** Set when `invalidReason` is `event`: the smurf events that ended the link (a `venue` tombstone carries none). */
+  endedBy?: Array<{ id: string; name: string }>;
   reportedAt?: string;
   reportPending?: true;
   verdict?: HardwareLinkVerdict;
@@ -106,12 +108,13 @@ export interface HardwareItemDetail {
   ignored: boolean;
 }
 
-export type AuditAction = "trust-add" | "trust-revoke" | "ignore-add" | "ignore-revoke" | "verdict-smurf" | "verdict-not-smurf" | "verdict-revoke";
+export type AuditAction = "trust-add" | "trust-revoke" | "ignore-add" | "ignore-revoke" | "verdict-smurf" | "verdict-not-smurf" | "verdict-revoke" | "event-create" | "event-update" | "event-delete" | "event-confirm" | "event-deny" | "event-unreview";
 
 export type AuditTarget =
   | { kind: "item"; battleTag: string; hash8: string; itemKind: string }
   | { kind: "pair"; a: string; b: string }
-  | { kind: "identifier"; type: string; valueHash8: string };
+  | { kind: "identifier"; type: string; valueHash8: string }
+  | { kind: "event"; id: string; name: string };
 
 export interface AuditEntry {
   id: string;

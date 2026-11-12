@@ -176,3 +176,23 @@ test("getJsonWithHeaders throws HttpError on a non-OK status", async () => {
   assert.ok(error instanceof HttpError);
   assert.equal(error.status, 503);
 });
+
+test("requestJsonWithStatus returns the parsed body together with the success status", async () => {
+  const { client, calls } = clientWith([{ status: 201, body: { id: "a" } }, { status: 200, body: { id: "a" } }]);
+
+  const created = await client.requestJsonWithStatus<{ id: string }>("POST", "api/thing", "tok", { name: "x" });
+  const existing = await client.requestJsonWithStatus<{ id: string }>("POST", "api/thing", "tok", { name: "x" });
+
+  assert.deepEqual(created, { body: { id: "a" }, status: 201 });
+  assert.deepEqual(existing, { body: { id: "a" }, status: 200 });
+  assert.equal(calls[0].init.method, "POST");
+});
+
+test("requestJsonWithStatus throws HttpError on a non-OK status", async () => {
+  const { client } = clientWith([{ status: 429, body: { error: "busy" } }]);
+
+  const error = await client.requestJsonWithStatus("POST", "api/thing", "tok", {}).then(() => null, (e: unknown) => e);
+
+  assert.ok(error instanceof HttpError);
+  assert.equal(error.status, 429);
+});

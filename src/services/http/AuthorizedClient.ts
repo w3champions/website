@@ -92,6 +92,13 @@ export class AuthorizedClient {
     await this.assertOk(response, method, path);
   }
 
+  /** As {@link requestJson}, for the caller whose meaning depends on which success status answered. */
+  async requestJsonWithStatus<T>(method: string, path: string, token: string, body?: unknown): Promise<{ body: T; status: number }> {
+    const response = await this.request(method, path, token, body);
+    await this.assertOk(response, method, path);
+    return { body: await response.json() as T, status: response.status };
+  }
+
   async getJson<T>(path: string, token: string): Promise<T> {
     return await this.requestJson<T>("GET", path, token);
   }
