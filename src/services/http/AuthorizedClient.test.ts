@@ -188,6 +188,20 @@ test("requestJsonWithStatus returns the parsed body together with the success st
   assert.equal(calls[0].init.method, "POST");
 });
 
+test("an HttpError carries the Retry-After header, null when absent", async () => {
+  const withHeader = (headers?: Record<string, string>) => {
+    const impl: typeof globalThis.fetch = () => Promise.resolve(new Response("{}", { status: 429, headers }));
+    return new AuthorizedClient({ endpoint: "https://api.example.com/", fetch: impl });
+  };
+
+  const present = await withHeader({ "Retry-After": "7" }).requestJson("GET", "api/thing", "tok").then(() => null, (e: unknown) => e);
+  const absent = await withHeader().requestJson("GET", "api/thing", "tok").then(() => null, (e: unknown) => e);
+
+  assert.ok(present instanceof HttpError && absent instanceof HttpError);
+  assert.equal(present.retryAfter, "7");
+  assert.equal(absent.retryAfter, null);
+});
+
 test("requestJsonWithStatus throws HttpError on a non-OK status", async () => {
   const { client } = clientWith([{ status: 429, body: { error: "busy" } }]);
 

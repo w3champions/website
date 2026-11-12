@@ -165,6 +165,14 @@ test("a busy server on the preview says so calmly and leaves the earlier preview
   expect(button("Save").element.disabled).toBe(false);
 });
 
+test("a busy server on the preview that carries a wait says how long to wait", async () => {
+  service.preview.mockRejectedValueOnce(new SmurfEventsApiError(429, "Busy", null, 20));
+
+  await previewed();
+
+  expect(wrapper.text()).toContain("The server is busy right now. Nothing was saved. Try again in 20 seconds.");
+});
+
 test("a busy server on the first preview leaves Save off and the input intact", async () => {
   service.preview.mockRejectedValueOnce(BUSY());
 

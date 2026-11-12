@@ -135,6 +135,14 @@ test("manual event routes show a tailored text for 503 and the usual text otherw
   assert.equal(manualEventErrorText(new Error("network"), t), "The request failed. Please try again.");
 });
 
+test("a busy answer says how long to wait when the server gave a wait, else the usual text", () => {
+  const usual = "The server is busy right now. Nothing was saved. Try again in a moment.";
+  assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null), t), usual);
+  assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null, null), t), usual);
+  assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null, 30), t), "The server is busy right now. Nothing was saved. Try again in 30 seconds.");
+  assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null, 1), t), "The server is busy right now. Nothing was saved. Try again in 1 second.");
+});
+
 test("counts use the singular form for one", () => {
   assert.equal(countText("preview_ends_links", 1, t), "Saving ends 1 link");
   assert.equal(countText("preview_ends_links", 2, t), "Saving ends 2 links");

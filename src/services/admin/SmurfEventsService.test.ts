@@ -116,3 +116,28 @@ test("a delete answered 204 succeeds", async () => {
 
   await service.remove("tok", "ev1", "duplicate");
 });
+
+const NOW = Date.parse("2026-11-10T12:00:00Z");
+
+async function retryAfterOf(header: string | null): Promise<number | null> {
+  const impl: typeof globalThis.fetch = () => Promise.resolve(new Response("{}", { status: 429, headers: header === null ? undefined : { "Retry-After": header } }));
+  const service = new SmurfEventsService({ endpoint: "https://api.example.com/", fetch: impl }, () => NOW);
+  const error = await service.get("tok", "ev1").catch((e: unknown) => e);
+  assert.ok(error instanceof SmurfEventsApiError);
+  return error.retryAfterSeconds;
+}
+
+test("a Retry-After in seconds lands on the error", async () => {
+  assert.equal(await retryAfterOf("30"), 30);
+});
+
+test("a Retry-After HTTP date is converted with the injected clock, rounded up to whole seconds", async () => {
+  assert.equal(await retryAfterOf("Tue, 10 Nov 2026 12:00:45 GMT"), 45);
+  assert.equal(await retryAfterOf(new Date(NOW + 1500).toUTCString()), 1);
+});
+
+test("an absent, malformed or not positive Retry-After leaves the error without a wait", async () => {
+  for (const header of [null, "", "soon", "-5", "0", "1.5", "12 seconds", "Mon, 09 Nov 2026 12:00:00 GMT", "Tue, 10 Nov 2026 12:00:00 GMT"]) {
+    assert.equal(await retryAfterOf(header), null, `header ${String(header)}`);
+  }
+});
