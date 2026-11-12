@@ -7,14 +7,17 @@ export class HttpError extends Error {
   readonly url: string;
   /** Response body, truncated — useful context when a call fails in the wild. */
   readonly responseBody: string;
+  /** Raw `Retry-After` response header, null when absent or not exposed to the page. */
+  readonly retryAfter: string | null;
 
-  constructor(status: number, method: string, url: string, responseBody: string) {
+  constructor(status: number, method: string, url: string, responseBody: string, retryAfter: string | null = null) {
     super(`HTTP ${status} for ${method} ${url}`);
     this.name = "HttpError";
     this.status = status;
     this.method = method;
     this.url = url;
     this.responseBody = responseBody;
+    this.retryAfter = retryAfter;
   }
 
   /** The body cut to a length that is safe to display or log. */
@@ -62,7 +65,7 @@ export class AuthorizedClient {
   /** Throws {@link HttpError} when the response status is not OK. */
   private async assertOk(response: Response, method: string, path: string): Promise<void> {
     if (!response.ok) {
-      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response));
+      throw new HttpError(response.status, method, this.resolve(path), await readErrorBody(response), response.headers.get("Retry-After"));
     }
   }
 

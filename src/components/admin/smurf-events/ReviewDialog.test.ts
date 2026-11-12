@@ -248,3 +248,14 @@ test("a review answered applies: false reports it", async () => {
 
   expect(wrapper.emitted("reviewed")?.[0]).toEqual([true, false]);
 });
+
+test("a busy review that carries a wait says how long to wait", async () => {
+  service.review.mockRejectedValueOnce(new SmurfEventsApiError(429, null, null, 12));
+
+  await button("Confirm").trigger("click");
+  await wrapper.find("textarea").setValue("known LAN");
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(wrapper.text()).toContain("The server is busy right now. Nothing was saved. Try again in 12 seconds.");
+});

@@ -710,6 +710,8 @@ const en = {
       no_permission: "You don't have the SmurfCheckerQuery permission.",
       generic_error: "The request failed. Please try again.",
       manual_busy: "The server is busy right now. Nothing was saved. Try again in a moment.",
+      manual_busy_wait_one: "The server is busy right now. Nothing was saved. Try again in {seconds} second.",
+      manual_busy_wait_other: "The server is busy right now. Nothing was saved. Try again in {seconds} seconds.",
       manual_not_ready: "The server is still preparing the data manual events need. Nothing was saved. Try again later.",
       refresh: "Refresh",
       retry: "Try again",

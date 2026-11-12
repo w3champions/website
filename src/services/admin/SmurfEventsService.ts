@@ -7,19 +7,35 @@ const BASE = "api/admin/smurf-detection/events";
 /**
  * A refused or failed request. `serverMessage`: the text the server sent, null when it sent none we can read.
  * `body`: the parsed error body (a refused create carries its `preview`), null when it is not JSON.
+ * `retryAfterSeconds`: how long the server asked to wait (a `Retry-After` header), whole seconds of at least 1, null when none.
  */
 export class SmurfEventsApiError extends Error {
   readonly status: number;
   readonly serverMessage: string | null;
   readonly body: unknown;
+  readonly retryAfterSeconds: number | null;
 
-  constructor(status: number, serverMessage: string | null, body: unknown) {
+  constructor(status: number, serverMessage: string | null, body: unknown, retryAfterSeconds: number | null = null) {
     super(serverMessage ?? `HTTP ${status}`);
     this.name = "SmurfEventsApiError";
     this.status = status;
     this.serverMessage = serverMessage;
     this.body = body;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
+}
+
+const MS_PER_SECOND = 1000;
+
+/**
+ * A `Retry-After` header as whole seconds of at least 1: delay-seconds, or an HTTP date measured from `nowMs`.
+ * Null when absent, malformed or not in the future.
+ */
+export function retryAfterSecondsOf(header: string | null, nowMs: number): number | null {
+  const text = header?.trim();
+  if (!text) return null;
+  const seconds = /^\d+$/.test(text) ? Number(text) : Math.ceil((Date.parse(text) - nowMs) / MS_PER_SECOND);
+  return Number.isSafeInteger(seconds) && seconds >= 1 ? seconds : null;
 }
 
 function parsedOrNull(body: string): unknown {
@@ -42,7 +58,8 @@ const segment = encodeURIComponent;
 export class SmurfEventsService {
   private readonly client: AuthorizedClient;
 
-  constructor(deps: AuthorizedClientDeps) {
+  /** `now`: the clock for an HTTP-date `Retry-After`, injectable for tests. */
+  constructor(deps: AuthorizedClientDeps, private readonly now: () => number = Date.now) {
     this.client = new AuthorizedClient(deps);
   }
 
@@ -50,7 +67,7 @@ export class SmurfEventsService {
     try {
       return await this.client.requestJson<T>(method, `${BASE}${path}`, token, body);
     } catch (e) {
-      throw asApiError(e);
+      throw asApiError(e, this.now());
     }
   }
 
@@ -78,7 +95,7 @@ export class SmurfEventsService {
       const { body, status } = await this.client.requestJsonWithStatus<SmurfEventWriteResponse>("POST", BASE, token, request);
       return { event: body, existing: status === EXISTING_STATUS };
     } catch (e) {
-      throw asApiError(e);
+      throw asApiError(e, this.now());
     }
   }
 
@@ -91,7 +108,7 @@ export class SmurfEventsService {
     try {
       await this.client.requestVoid("DELETE", `${BASE}/${segment(id)}`, token, { reason });
     } catch (e) {
-      throw asApiError(e);
+      throw asApiError(e, this.now());
     }
   }
 
@@ -100,7 +117,9 @@ export class SmurfEventsService {
   }
 }
 
-function asApiError(e: unknown): unknown {
-  if (e instanceof HttpError) return new SmurfEventsApiError(e.status, serverMessageOf(e.responseBody), parsedOrNull(e.responseBody));
+function asApiError(e: unknown, nowMs: number): unknown {
+  if (e instanceof HttpError) {
+    return new SmurfEventsApiError(e.status, serverMessageOf(e.responseBody), parsedOrNull(e.responseBody), retryAfterSecondsOf(e.retryAfter, nowMs));
+  }
   return e;
 }
