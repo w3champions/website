@@ -95,6 +95,18 @@ test("confirming needs no deny preview", async () => {
   expect(service.review).toHaveBeenCalledWith("tok", "ev1", { decision: "confirmed" });
 });
 
+test("clicking the chosen decision again clears it, and nothing can be saved", async () => {
+  await button("Confirm").trigger("click");
+  await button("Confirm").trigger("click");
+
+  expect(button("Confirm").attributes("aria-pressed")).toBe("false");
+  expect(button("Save review").element.disabled).toBe(true);
+
+  await button("Save review").trigger("click");
+  await flushPromises();
+  expect(service.review).not.toHaveBeenCalled();
+});
+
 test("a failed review keeps the dialog open, shows the server's text and reports nothing", async () => {
   service.review.mockRejectedValue(new SmurfEventsApiError(409, "Changed meanwhile", null));
 

@@ -110,7 +110,8 @@ const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
 
-const decision = ref<SmurfEventReview | null>(null);
+// Clicking the chosen decision again clears the toggle, which then emits undefined: both mean "none chosen".
+const decision = ref<SmurfEventReview | null | undefined>(null);
 const reason = ref("");
 // The event the dialog was opened for: it stays while a write is pending, even if the page moves on.
 const shown = ref<SmurfEventSummary | null>(props.event);
@@ -118,14 +119,14 @@ const title = computed(() => t(key("review_title"), { name: shown.value?.name ??
 
 // A deny is offered only once the moderator has seen which links it brings back and gave a reason.
 const canSave = computed(() => {
-  if (decision.value === null || store.acting) return false;
+  if (!decision.value || store.acting) return false;
   if (reviewNeedsReason(decision.value) && reason.value.trim() === "") return false;
   return decision.value !== "denied" || (store.denyLinks !== null && !store.denyLoading);
 });
 
 async function save(): Promise<void> {
   const event = shown.value;
-  if (!canSave.value || event === null || decision.value === null) return;
+  if (!canSave.value || event === null || !decision.value) return;
   const outcome = await store.review(event.id, decision.value, reason.value);
   if (outcome === null) return;
   emit("reviewed", outcome.applied, outcome.applies);
