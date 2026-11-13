@@ -63,7 +63,6 @@ import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
 import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import ActionButtons from "./ActionButtons.vue";
 
-
 const emit = defineEmits<{
   (e: "action", option: ActionOption<ItemAction>, item: HardwareProfileItemView): void;
 }>();

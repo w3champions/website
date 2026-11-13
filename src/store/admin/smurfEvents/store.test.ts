@@ -309,6 +309,22 @@ test("a review that carried a name and failed reads the event and its record aga
   expect(store.actionError).toBe(failure);
 });
 
+test("when the refresh after a failed named review fails too, the review's error stays and nothing is thrown", async () => {
+  const failure = new SmurfEventsApiError(429, "Busy", null);
+  service.review.mockRejectedValue(failure);
+  service.history.mockRejectedValue(new Error("history down"));
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+  service.get.mockRejectedValue(new Error("detail down"));
+
+  const reviewed = await store.review("1", "confirmed", "", "Renamed by the review");
+  await flushPromises();
+
+  expect(reviewed).toBeNull();
+  expect(store.actionError).toBe(failure);
+  expect(store.detail?.id).toBe("1");
+});
+
 test("a review without a name that failed reads nothing again", async () => {
   service.review.mockRejectedValue(new SmurfEventsApiError(429, "Busy", null));
   const store = useSmurfEventsStore();

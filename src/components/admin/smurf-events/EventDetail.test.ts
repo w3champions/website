@@ -145,7 +145,8 @@ async function showAmong(open: ReturnType<typeof listed>, list: Array<ReturnType
 
 test("previous and next unreviewed follow the queue order of the unreviewed events", async () => {
   const [a, b, c, d, e] = [listed("a", "unreviewed", 1), listed("b", "confirmed", 2), listed("c", "confirmed", 3), listed("d", "confirmed", 4), listed("e", "unreviewed", 5)];
-  await showAmong(c, [e, d, c, b, a]);
+  // As the server lists them: the unreviewed events first, then the reviewed ones, each group newest first. The open event (c) is reviewed.
+  await showAmong(c, [e, a, d, c, b]);
 
   await navButton("Previous unreviewed").trigger("click");
   await navButton("Next unreviewed").trigger("click");
@@ -154,9 +155,9 @@ test("previous and next unreviewed follow the queue order of the unreviewed even
 });
 
 test("right after a review the next unreviewed event is still offered", async () => {
-  // The reloaded list holds the reviewed event among the others, in the server's order.
+  // The reloaded list as the server sends it: the unreviewed events first, the event just reviewed (b) after all of them.
   const [a, b, c] = [listed("a", "unreviewed", 1), listed("b", "confirmed", 2), listed("c", "unreviewed", 3)];
-  await showAmong(b, [c, b, a]);
+  await showAmong(b, [c, a, b]);
 
   await navButton("Next unreviewed").trigger("click");
   await navButton("Previous unreviewed").trigger("click");

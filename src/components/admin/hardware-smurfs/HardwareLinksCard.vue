@@ -100,7 +100,6 @@ import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import ActionButtons from "./ActionButtons.vue";
 import VerdictCell from "./VerdictCell.vue";
 
-
 const emit = defineEmits<{
   (e: "action", option: ActionOption<PairAction>, other: string): void;
   (e: "openAccount", battleTag: string): void;
