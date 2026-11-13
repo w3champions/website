@@ -198,7 +198,7 @@ const consequence = computed(() => {
     // The read ran out of time: nothing is known this time, whatever the stored facts counted earlier.
     if (e?.liveLinksTimedOut === true) return t(key("consequence_timed_out"));
     if (stored === undefined) return null;
-    return stored === 0 ? t(key("consequence_none")) : t(key("consequence_live_count"), { count: factText(stored, e?.facts?.liveLinksCapped, tr), at: formatUtc(e?.facts?.at) });
+    return t(key("consequence_live_count"), { count: factText(stored, e?.facts?.liveLinksCapped, tr), at: formatUtc(e?.facts?.at) });
   }
   if (live.links.length === 0 && live.truncated !== true) return t(key("consequence_none"));
   const links = linkNames(live.links);

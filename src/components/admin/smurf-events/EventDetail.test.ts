@@ -97,6 +97,18 @@ test("without a live list the stored count stands alone, as a count", async () =
   expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: at least 11, as of 2026-10-05 00:00 UTC.");
 });
 
+test("a stored zero with no live list reads as a stored count with its time, not as no live link", async () => {
+  await show(manualEvent({ facts: { ...FACTS, liveLinks: 0 } }));
+
+  expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: 0, as of 2026-10-05 00:00 UTC.");
+});
+
+test("a complete empty live list says no link is live", async () => {
+  await show(manualEvent({ liveLinks: { links: [] }, facts: { ...FACTS, liveLinks: 0 } }));
+
+  expect(wrapper.find(".consequence").text()).toBe("No link among the attendees is live.");
+});
+
 test("facts that timed out with no live list say so even when the facts hold no count", async () => {
   await show(manualEvent({ liveLinksTimedOut: true }));
 
