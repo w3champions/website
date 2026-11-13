@@ -90,8 +90,9 @@ test("the header carries no state colour and the stat tiles and evidence card ar
   expect(wrapper.text()).not.toContain("Review evidence");
 });
 
-function listed(id: string, review: "unreviewed" | "confirmed") {
-  return { ...manualEvent({ id, review }) };
+/** A list row; `day` is the day of October the event started, as the server's queue orders them (newest first). */
+function listed(id: string, review: "unreviewed" | "confirmed", day: number) {
+  return { ...manualEvent({ id, review, from: `2026-10-${String(day).padStart(2, "0")}T06:00:00.000Z` }) };
 }
 
 function navButton(label: string) {
@@ -100,28 +101,51 @@ function navButton(label: string) {
   return found;
 }
 
-async function showAmong(current: string, list: Array<ReturnType<typeof listed>>): Promise<void> {
+async function showAmong(open: ReturnType<typeof listed>, list: Array<ReturnType<typeof listed>>): Promise<void> {
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/hardware", name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, component: { template: "<div />" } }] });
   await router.push("/hardware");
   const plugins = testPlugins();
   const store = useSmurfEventsStore();
   store.events = list;
-  store.detail = list.find((e) => e.id === current) ?? manualEvent({ id: current });
-  wrapper = mount(EventDetail, { props: { eventId: current }, global: { plugins: [...plugins, router] } });
+  store.detail = open;
+  wrapper = mount(EventDetail, { props: { eventId: open.id }, global: { plugins: [...plugins, router] } });
   await flushPromises();
 }
 
-test("previous and next unreviewed open the neighbouring unreviewed events of the list", async () => {
-  await showAmong("c", [listed("a", "unreviewed"), listed("b", "confirmed"), listed("c", "confirmed"), listed("d", "confirmed"), listed("e", "unreviewed")]);
+test("previous and next unreviewed follow the queue order of the unreviewed events", async () => {
+  const [a, b, c, d, e] = [listed("a", "unreviewed", 1), listed("b", "confirmed", 2), listed("c", "confirmed", 3), listed("d", "confirmed", 4), listed("e", "unreviewed", 5)];
+  await showAmong(c, [e, d, c, b, a]);
 
   await navButton("Previous unreviewed").trigger("click");
   await navButton("Next unreviewed").trigger("click");
 
-  expect(wrapper.emitted("open-event")).toEqual([["a"], ["e"]]);
+  expect(wrapper.emitted("open-event")).toEqual([["e"], ["a"]]);
 });
 
-test("previous and next unreviewed are disabled at the ends of the unreviewed events", async () => {
-  await showAmong("a", [listed("a", "unreviewed"), listed("b", "confirmed")]);
+test("right after a review the next unreviewed event is still offered", async () => {
+  // The reloaded list holds the reviewed event among the others, in the server's order.
+  const [a, b, c] = [listed("a", "unreviewed", 1), listed("b", "confirmed", 2), listed("c", "unreviewed", 3)];
+  await showAmong(b, [c, b, a]);
+
+  await navButton("Next unreviewed").trigger("click");
+  await navButton("Previous unreviewed").trigger("click");
+
+  expect(wrapper.emitted("open-event")).toEqual([["a"], ["c"]]);
+});
+
+test("under the unreviewed filter the open event is not in the list and both neighbours are still offered", async () => {
+  const [a, c] = [listed("a", "unreviewed", 1), listed("c", "unreviewed", 3)];
+  await showAmong(listed("b", "confirmed", 2), [c, a]);
+
+  await navButton("Next unreviewed").trigger("click");
+  await navButton("Previous unreviewed").trigger("click");
+
+  expect(wrapper.emitted("open-event")).toEqual([["a"], ["c"]]);
+});
+
+test("previous and next unreviewed are disabled when no unreviewed event lies on that side", async () => {
+  const [a, b] = [listed("a", "unreviewed", 1), listed("b", "confirmed", 2)];
+  await showAmong(a, [b, a]);
 
   expect(navButton("Previous unreviewed").element.disabled).toBe(true);
   expect(navButton("Next unreviewed").element.disabled).toBe(true);
@@ -161,20 +185,21 @@ test("a failed event load can be retried through open-event", async () => {
   expect(wrapper.emitted("open-event")).toEqual([["ev1"]]);
 });
 
-test("previous and next unreviewed are disabled when the open event is not in the loaded list", async () => {
-  await showAmong("z", [listed("a", "unreviewed"), listed("b", "unreviewed")]);
+test("an event with an empty list around it has no neighbours", async () => {
+  await showAmong(listed("z", "unreviewed", 9), []);
 
   expect(navButton("Previous unreviewed").element.disabled).toBe(true);
   expect(navButton("Next unreviewed").element.disabled).toBe(true);
 });
 
 test("an unreviewed event skips itself when it looks for its neighbours", async () => {
-  await showAmong("b", [listed("a", "unreviewed"), listed("b", "unreviewed"), listed("c", "unreviewed")]);
+  const [a, b, c] = [listed("a", "unreviewed", 1), listed("b", "unreviewed", 2), listed("c", "unreviewed", 3)];
+  await showAmong(b, [c, b, a]);
 
   await navButton("Previous unreviewed").trigger("click");
   await navButton("Next unreviewed").trigger("click");
 
-  expect(wrapper.emitted("open-event")).toEqual([["a"], ["c"]]);
+  expect(wrapper.emitted("open-event")).toEqual([["c"], ["a"]]);
 });
 
 test("a failed record can be loaded again through retry-history", async () => {

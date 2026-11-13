@@ -133,10 +133,11 @@ import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil } from "@mdi/js
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import { EAdminRouteName } from "@/router/types";
-import type { SmurfEventLinkRef, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
 import { errorText } from "@/store/admin/smurfEvents/labels";
+import { unreviewedNeighbours } from "@/store/admin/smurfEvents/neighbours";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 import EventBadge from "./EventBadge.vue";
@@ -177,17 +178,8 @@ function hardwareLink(battleTag: string) {
   return { name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, query: { player: battleTag } };
 }
 
-/** The unreviewed events before and after this one in the list as loaded; none when the event is not in it. */
-const neighbours = computed<{ previous: string | null; next: string | null }>(() => {
-  const events: SmurfEventSummary[] = store.events;
-  const at = events.findIndex((e) => e.id === props.eventId);
-  if (at < 0) return { previous: null, next: null };
-  const unreviewed = (e: SmurfEventSummary) => e.review === "unreviewed";
-  return {
-    previous: events.slice(0, at).reverse().find(unreviewed)?.id ?? null,
-    next: events.slice(at + 1).find(unreviewed)?.id ?? null,
-  };
-});
+/** The unreviewed events before and after this one in the server's queue order, placed by this event's own date and id. */
+const neighbours = computed(() => (event.value ? unreviewedNeighbours(store.events, event.value) : { previous: null, next: null }));
 
 function openNeighbour(id: string | null): void {
   if (id !== null) emit("open-event", id);
