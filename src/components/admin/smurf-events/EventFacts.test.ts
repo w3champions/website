@@ -116,16 +116,48 @@ test("live links whose count ran out of time say they could not be counted this 
   expect(rows()[3][1]).toBe("4 ended, the live links could not be counted this time");
 });
 
-test("live links that were not counted for another reason show only the ended count", () => {
-  show({ facts: { ...FACTS, liveLinks: undefined } });
-
-  expect(rows()[3][1]).toBe("4");
-});
-
 test("a live timeout on the detail alone reads the same", () => {
   show({ facts: { ...FACTS, liveLinks: undefined }, liveLinksTimedOut: true });
 
   expect(rows()[3][1]).toBe("4 ended, the live links could not be counted this time");
+});
+
+test("the not-counted row counts the live list, with or without stored facts", () => {
+  show({ facts: { ...FACTS, notCounted: 9 } });
+  expect(rows()[4][1]).toContain("2");
+  expect(rows()[4][1]).not.toContain("9");
+  wrapper.unmount();
+
+  show({ facts: undefined, notCounted: ["Home#2001"] });
+  expect(rows()[4][1]).toContain("1");
+});
+
+test("live links not counted for this event, with no timeout, say so without a number", () => {
+  show({ facts: { ...FACTS, liveLinks: undefined } });
+
+  expect(rows()[3][1]).toBe("4 ended, live links are not counted for this event");
+});
+
+test("with no stored facts a live timeout on the detail leaves the dash", () => {
+  show({ facts: undefined, liveLinksTimedOut: true });
+
+  expect(rows()[3][1]).toBe("\u2014");
+});
+
+test("the facts say when they were computed, in UTC", () => {
+  show();
+
+  expect(wrapper.text()).toContain("Computed as of 2026-10-05 00:00 UTC");
+  wrapper.unmount();
+
+  show({ facts: undefined });
+  expect(wrapper.text()).not.toContain("Computed as of");
+});
+
+test("a truncated table with no identifiers says they could not be listed completely, not at least 0", () => {
+  show({ facts: { ...FACTS, identifiers: 0, maxAccountsEver: undefined, identifiersTruncated: true } });
+
+  expect(rows()[1][1]).toBe("could not be listed completely");
 });
 
 test("accounts not counted are listed by name", () => {
@@ -139,7 +171,7 @@ test("accounts not counted are listed by name", () => {
 test("facts that were never computed show a dash in every row they feed, never 0", () => {
   show({ facts: undefined, notCounted: [], counts: { networks: 1, machines: 3, attendees: 3 }, endedLinks: 5 });
 
-  expect(rows().slice(0, 5).map(([, value]) => value)).toEqual(["\u2014", "\u2014", "3 accounts, separate homes: \u2014", "\u2014", "\u2014"]);
+  expect(rows().slice(0, 4).map(([, value]) => value)).toEqual(["\u2014", "\u2014", "3 accounts, separate homes: \u2014", "\u2014"]);
 });
 
 test("real zeros in the facts show as zeros", () => {

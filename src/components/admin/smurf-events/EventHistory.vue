@@ -22,7 +22,11 @@
           <div>
             <span class="text-no-wrap">{{ formatUtc(entry.at) }}</span> · {{ entry.author }} ·
             <span class="font-weight-bold">{{ historyActionLabel(entry.action, tr) }}</span>
-            <span v-if="entry.outcome.repaired === true" class="repaired text-medium-emphasis ml-2 px-1" tabindex="0" :title="t(key('history_repaired_hint'))">{{ t(key("history_repaired")) }}</span>
+            <v-tooltip v-if="entry.outcome.repaired === true" :text="t(key('history_repaired_hint'))" location="bottom">
+              <template v-slot:activator="{ props: activator }">
+                <span v-bind="activator" class="repaired text-medium-emphasis ml-2 px-1" tabindex="0">{{ t(key("history_repaired")) }}</span>
+              </template>
+            </v-tooltip>
           </div>
           <div v-if="entry.reason" class="text-medium-emphasis">{{ t(key("history_reason"), { reason: entry.reason }) }}</div>
           <div class="text-medium-emphasis">{{ nameText(entry) }}</div>

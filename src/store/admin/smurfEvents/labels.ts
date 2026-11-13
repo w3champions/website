@@ -109,6 +109,7 @@ export function reviewFactsText(outcome: Record<string, string | number | boolea
     if (typeof value !== "number") return fact === "liveLinks" && flag("factsLiveLinksTimedOut") ? [`${factLabel(fact, t)} ${t(key("history_live_timed_out"))}`] : [];
     // The truncated-table flag makes the identifier count and most accounts ever lower bounds; the other facts carry their own flag.
     const capped = fact === "identifiers" ? flag("factsIdentifiersTruncated") : fact === "maxAccountsEver" ? flag("factsMaxAccountsEverCapped") ?? flag("factsIdentifiersTruncated") : flag(`${field}Capped`);
+    if (fact === "identifiers" && value === 0 && capped === true) return [`${factLabel(fact, t)} ${t(key("history_identifiers_incomplete"))}`];
     return [`${factLabel(fact, t)} ${factText(value, capped, t)}`];
   });
   return parts.length === 0 ? null : parts.join(", ");

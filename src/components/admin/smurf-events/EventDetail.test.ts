@@ -75,20 +75,32 @@ test("a cut list of live links reads at least N from the list", async () => {
   expect(wrapper.find(".consequence").text()).toContain("At least 2 links among the attendees are still live");
 });
 
-test("with the facts' live count the consequence line uses it and says how many the list shows", async () => {
-  const links = [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" as const }, { a: "Anchor#1002", b: "Guest#1003", source: "account" as const }];
-  await show(manualEvent({ liveLinks: { links, truncated: true }, facts: { ...FACTS, liveLinks: 11, liveLinksCapped: true } }));
+test("a complete live list wins over the stored count: after a review that ended the links the line follows the live data", async () => {
+  await show(manualEvent({ liveLinks: { links: [] }, facts: { ...FACTS, liveLinks: 4 } }));
 
-  const line = wrapper.find(".consequence").text();
-  expect(line).toContain("Links among the attendees that are still live: at least 11.");
-  expect(line).toContain("Showing 2 of them: Anchor#1001 \u2013 Guest#1003, Anchor#1002 \u2013 Guest#1003");
+  expect(wrapper.find(".consequence").text()).toBe("No link among the attendees is live.");
 });
 
-test("with the facts' live count and a complete list the line says all of them are shown", async () => {
-  const links = [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" as const }];
-  await show(manualEvent({ liveLinks: { links }, facts: { ...FACTS, liveLinks: 1 } }));
+test("a cut live list reads at least the larger of the stored count and the links shown", async () => {
+  const links = [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" as const }, { a: "Anchor#1002", b: "Guest#1003", source: "account" as const }];
+  await show(manualEvent({ liveLinks: { links, truncated: true }, facts: { ...FACTS, liveLinks: 11 } }));
+  expect(wrapper.find(".consequence").text()).toContain("At least 11 links among the attendees are still live");
+  wrapper.unmount();
 
-  expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: 1. All of them: Anchor#1001 \u2013 Guest#1003");
+  await show(manualEvent({ liveLinks: { links, truncated: true }, facts: { ...FACTS, liveLinks: 1 } }));
+  expect(wrapper.find(".consequence").text()).toContain("At least 2 links among the attendees are still live");
+});
+
+test("without a live list the stored count stands alone, as a count", async () => {
+  await show(manualEvent({ facts: { ...FACTS, liveLinks: 11, liveLinksCapped: true } }));
+
+  expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: at least 11.");
+});
+
+test("facts that timed out with no live list say so even when the facts hold no count", async () => {
+  await show(manualEvent({ liveLinksTimedOut: true }));
+
+  expect(wrapper.find(".consequence").text()).toBe("The live links among the attendees could not be counted this time.");
 });
 
 test("live links that ran out of time say they could not be counted this time", async () => {
@@ -97,17 +109,11 @@ test("live links that ran out of time say they could not be counted this time", 
   expect(wrapper.find(".consequence").text()).toBe("The live links among the attendees could not be counted this time.");
 });
 
-test("a live count of zero in the facts says no link is live", async () => {
-  await show(manualEvent({ liveLinks: { links: [] }, facts: { ...FACTS, liveLinks: 0 } }));
-
-  expect(wrapper.find(".consequence").text()).toBe("No link among the attendees is live.");
-});
-
-test("the ended-links chip counts the same links as the facts row", async () => {
+test("the ended-links chip follows the live count, not the stored fact", async () => {
   await show(manualEvent({ endedLinks: 3, facts: { ...FACTS, endedLinks: 8 } }));
 
   const title = wrapper.findAll(".v-card-title").find((c) => c.text().startsWith("Ended links"));
-  expect(title?.find(".v-chip").text()).toBe("8");
+  expect(title?.find(".v-chip").text()).toBe("3");
 });
 
 test("no live links says so, and an event that did not count them has no consequence line", async () => {

@@ -38,8 +38,11 @@
                 <div v-if="entry.row.usernames && entry.row.usernames.length > 0" class="text-body-2 text-medium-emphasis">{{ t(key("usernames"), { names: entry.row.usernames.join(", ") }) }}</div>
               </td>
               <td class="text-no-wrap">
-                <div>{{ accountsText(entry.row) }}</div>
-                <accounts-dumbbell :during="entry.row.accountsDuring" :ever="entry.row.accountsEver" :scale="scale" />
+                <span v-if="isNotRecorded(entry.row)" class="not-recorded text-medium-emphasis">{{ t(key("facts_not_recorded")) }}</span>
+                <template v-else>
+                  <div>{{ accountsText(entry.row) }}</div>
+                  <accounts-dumbbell :during="entry.row.accountsDuring ?? 0" :ever="entry.row.accountsEver" :scale="scale" />
+                </template>
               </td>
               <td class="text-no-wrap">
                 <template v-if="entry.row.accountsEver">{{ daysOutsideText(entry.row) }}</template>
@@ -137,12 +140,17 @@ const entries = computed<Entry[]>(() => [
   ...(expanded.value ? eventOnly.value.map(rowEntry) : []),
 ]);
 
-/** One axis for every row, from 1 to the largest count in the data. */
-const scale = computed(() => logAxis(rows.value.flatMap((r) => [r.accountsDuring, r.accountsEver?.count ?? r.accountsDuring])));
+/** A network stored as an IP hash with no `span` was not recorded: its count (absent, or 0 from an older server) says nothing. */
+function isNotRecorded(r: SmurfEventIdentifierRow): boolean {
+  return r.kind === "ip" && r.span === undefined;
+}
+
+/** One axis for every row, from 1 to the largest count in the data; a row that was not recorded has none. */
+const scale = computed(() => logAxis(rows.value.filter((r) => !isNotRecorded(r)).flatMap((r) => [r.accountsDuring ?? 0, r.accountsEver?.count ?? r.accountsDuring ?? 0])));
 
 /** A capped "ever" count means the server read only part of the accounts: the count during is a lower bound too. */
 function accountsText(r: SmurfEventIdentifierRow): string {
-  const during = factText(r.accountsDuring, r.accountsEver?.capped, tr);
+  const during = factText(r.accountsDuring ?? 0, r.accountsEver?.capped, tr);
   if (!r.accountsEver) return during;
   return t(key("accounts_range"), { during, ever: factText(r.accountsEver.count, r.accountsEver.capped, tr) });
 }
@@ -156,7 +164,7 @@ function daysOutsideText(r: SmurfEventIdentifierRow): string {
 /** "3 identifiers used during the event only (2 with 3 accounts, 1 with 5 accounts)". */
 const foldText = computed(() => {
   const counts = new Map<number, number>();
-  for (const r of eventOnly.value) counts.set(r.accountsDuring, (counts.get(r.accountsDuring) ?? 0) + 1);
+  for (const r of eventOnly.value) counts.set(r.accountsDuring ?? 0, (counts.get(r.accountsDuring ?? 0) ?? 0) + 1);
   const groups = [...counts.entries()]
     .sort(([a], [b]) => a - b)
     .map(([accounts, count]) => t(key(`fold_group_${accounts === 1 ? "one" : "other"}`), { count, accounts }));
@@ -164,3 +172,12 @@ const foldText = computed(() => {
   return `${t(key(`fold_summary_${total === 1 ? "one" : "other"}`), { count: total })} (${groups.join(", ")})`;
 });
 </script>
+
+<style scoped>
+.not-recorded {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(135deg, transparent 0 4px, rgba(var(--v-theme-on-surface), 0.12) 4px 6px);
+}
+</style>

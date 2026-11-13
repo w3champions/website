@@ -17,6 +17,12 @@ export function maxAccountsCapped(facts: Pick<SmurfEventFacts, "maxAccountsEverC
   return facts?.maxAccountsEverCapped === true || facts?.identifiersTruncated === true ? true : undefined;
 }
 
+/** The identifier count of facts as text; a truncated table with no rows has no number to give, only that it is incomplete (`incompleteKey`). */
+export function identifiersText(facts: SmurfEventFacts | undefined, tr: Translate, incompleteKey = "fact_incomplete"): string {
+  if (facts?.identifiersTruncated === true && facts.identifiers === 0) return tr(key(incompleteKey));
+  return factText(facts?.identifiers, identifiersCapped(facts), tr);
+}
+
 /** Ascending order of fact values; an unknown value comes after every number. */
 export function factSort(a: number | undefined, b: number | undefined): number {
   if (a === undefined || b === undefined) return a === b ? 0 : a === undefined ? 1 : -1;

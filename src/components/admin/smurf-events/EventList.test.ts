@@ -167,3 +167,31 @@ test("a truncated identifier table makes the identifiers and most-accounts colum
   expect(cells(1)[4]).toBe("14");
   expect(cells(1)[5]).toBe("9");
 });
+
+test("a live-links column that ran out of time shows a short text with its tooltip, not the not-computed mark", async () => {
+  await show([row("a", { liveLinks: undefined, liveLinksTimedOut: true }), row("b", { liveLinks: undefined })]);
+
+  expect(cells(0)[8]).toBe("Not counted");
+  expect(wrapper.findAllComponents({ name: "VTooltip" }).some((t) => t.props("text") === "The live links could not be counted this time.")).toBe(true);
+  expect(cells(1)[8]).toBe("\u2014");
+});
+
+test("the fact column headers say the numbers are refreshed periodically", async () => {
+  await show([row("a", {})]);
+
+  expect(wrapper.findAllComponents({ name: "VTooltip" }).some((t) => String(t.props("text")).startsWith("Refreshed periodically"))).toBe(true);
+});
+
+test("the truncated flag does not change how the identifiers column sorts", async () => {
+  await show([row("none"), row("a", { identifiers: 5, identifiersTruncated: true }), row("b", { identifiers: 40 }), row("c", { identifiers: 1, identifiersTruncated: true })]);
+
+  await clickHeader("Identifiers");
+
+  expect(names()).toEqual(["Event b", "Event a", "Event c", "Event none"]);
+});
+
+test("a truncated table with no identifiers reads incomplete, not at least 0", async () => {
+  await show([row("a", { identifiers: 0, maxAccountsEver: undefined, identifiersTruncated: true })]);
+
+  expect(cells(0)[4]).toBe("Incomplete");
+});

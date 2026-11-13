@@ -24,7 +24,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { factText, identifiersCapped, maxAccountsCapped } from "@/store/admin/smurfEvents/facts";
+import { factText, identifiersText, maxAccountsCapped } from "@/store/admin/smurfEvents/facts";
 import { countText } from "@/store/admin/smurfEvents/labels";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
@@ -50,7 +50,11 @@ const rows = computed<FactRow[]>(() => {
   const max = facts?.maxAccountsEver === undefined
     ? (facts === undefined || facts.identifiersTruncated === true ? factText(undefined, undefined, tr) : t(key("facts_no_day_history")))
     : factText(facts.maxAccountsEver, maxAccountsCapped(facts), tr);
-  const identifiers = facts === undefined ? factText(undefined, undefined, tr) : t(key("facts_identifiers_value"), { identifiers: factText(facts.identifiers, identifiersCapped(facts), tr), max });
+  const identifiers = facts === undefined
+    ? factText(undefined, undefined, tr)
+    : facts.identifiersTruncated === true && facts.identifiers === 0
+      ? t(key("facts_identifiers_incomplete"))
+      : t(key("facts_identifiers_value"), { identifiers: identifiersText(facts, tr), max });
   const accounts = countText("facts_accounts", facts?.attendees ?? e.counts.attendees, tr);
   const homes = e.counts.homes === undefined
     ? t(key("facts_homes_unknown"), { accounts, unknown: factText(undefined, undefined, tr) })
@@ -60,7 +64,9 @@ const rows = computed<FactRow[]>(() => {
     ? t(key("facts_links_with_live"), { ended: facts.endedLinks, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) })
     : facts !== undefined && timedOut
       ? t(key("facts_links_live_timed_out"), { ended: facts.endedLinks })
-      : factText(facts?.endedLinks, undefined, tr);
+      : facts !== undefined
+        ? t(key("facts_links_live_not_counted"), { ended: facts.endedLinks })
+        : factText(undefined, undefined, tr);
   // The rows above are fed by the facts: a 0 is a fact and absent facts are a dash. The evidence rows always render: when the evidence was not recorded for the event they read "Not recorded".
   const evidence = (label: string, value: number): FactRow => ({ label, value: String(value), notRecorded: !e.evidenceRecorded });
   return [
@@ -68,7 +74,7 @@ const rows = computed<FactRow[]>(() => {
     { label: t(key("facts_identifiers")), value: identifiers },
     { label: t(key("facts_homes")), value: homes },
     { label: t(key("facts_links")), value: links },
-    { label: t(key("facts_not_counted")), value: factText(facts?.notCounted, undefined, tr), names: e.notCounted },
+    { label: t(key("facts_not_counted")), value: String(e.notCounted.length), names: e.notCounted },
     evidence(t(key("evidence_days_before")), e.evidence.networkDaysBefore),
     evidence(t(key("evidence_days_after")), e.evidence.networkDaysAfter),
     evidence(t(key("evidence_returning")), e.evidence.returningAttendees),
@@ -76,9 +82,11 @@ const rows = computed<FactRow[]>(() => {
 });
 
 const recordedLines = computed(() => {
+  const asOf = props.event.facts === undefined ? [] : [t(key("facts_as_of"), { at: formatUtc(props.event.facts.at) })];
   // A server that sends no `recorded` block records nothing to report.
   const { hardwareKeysSince, deviceMemorySince } = props.event.recorded ?? {};
   return [
+    ...asOf,
     ...(hardwareKeysSince ? [t(key("facts_recorded_keys"), { date: formatUtc(hardwareKeysSince) })] : []),
     ...(deviceMemorySince ? [t(key("facts_recorded_memory"), { date: formatUtc(deviceMemorySince) })] : []),
   ];

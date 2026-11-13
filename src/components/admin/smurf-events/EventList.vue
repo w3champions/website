@@ -73,11 +73,25 @@
         <span class="text-no-wrap">{{ formatUtc(item.from) }}</span><br /><span class="text-no-wrap text-medium-emphasis">{{ formatUtc(item.to) }}</span>
       </template>
       <template v-slot:[`item.facts.networks`]="{ item }">{{ factText(item.facts?.networks, undefined, tr) }}</template>
-      <template v-slot:[`item.facts.identifiers`]="{ item }">{{ factText(item.facts?.identifiers, identifiersCapped(item.facts), tr) }}</template>
+      <template v-slot:[`item.facts.identifiers`]="{ item }">{{ identifiersText(item.facts, tr) }}</template>
       <template v-slot:[`item.facts.maxAccountsEver`]="{ item }">{{ factText(item.facts?.maxAccountsEver, maxAccountsCapped(item.facts), tr) }}</template>
       <template v-slot:[`item.facts.attendees`]="{ item }">{{ factText(item.facts?.attendees, undefined, tr) }}</template>
       <template v-slot:[`item.facts.endedLinks`]="{ item }">{{ factText(item.facts?.endedLinks, undefined, tr) }}</template>
-      <template v-slot:[`item.facts.liveLinks`]="{ item }">{{ factText(item.facts?.liveLinks, item.facts?.liveLinksCapped, tr) }}</template>
+      <template v-slot:[`item.facts.liveLinks`]="{ item }">
+        <v-tooltip v-if="item.facts?.liveLinks === undefined && item.facts?.liveLinksTimedOut === true" :text="t(key('fact_live_timed_out_hint'))" location="bottom">
+          <template v-slot:activator="{ props: activator }">
+            <span v-bind="activator" tabindex="0" class="text-medium-emphasis">{{ t(key("fact_live_timed_out")) }}</span>
+          </template>
+        </v-tooltip>
+        <template v-else>{{ factText(item.facts?.liveLinks, item.facts?.liveLinksCapped, tr) }}</template>
+      </template>
+      <template v-for="column in factColumns" :key="column" v-slot:[`header.${column}`]="{ column: header }">
+        <v-tooltip :text="t(key('facts_refreshed_hint'))" location="bottom">
+          <template v-slot:activator="{ props: activator }">
+            <span v-bind="activator" tabindex="0">{{ header.title }}</span>
+          </template>
+        </v-tooltip>
+      </template>
     </v-data-table>
 
     <div v-if="store.next !== null" class="text-caption text-medium-emphasis px-4 pb-1">{{ t(key("sort_loaded_only")) }}</div>
@@ -96,7 +110,7 @@ import { mdiPlus, mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventOrigin, SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { factSort, factSortSwapped, factText, identifiersCapped, maxAccountsCapped, type SortOrder, sortFromQuery, sortToQuery } from "@/store/admin/smurfEvents/facts";
+import { factSort, factSortSwapped, factText, identifiersText, maxAccountsCapped, type SortOrder, sortFromQuery, sortToQuery } from "@/store/admin/smurfEvents/facts";
 import { errorText, ORIGINS, originLabel, REVIEWS, reviewLabel } from "@/store/admin/smurfEvents/labels";
 import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
@@ -128,6 +142,8 @@ function detailLink(id: string) {
 function rowProps({ item }: { item: SmurfEventSummary }) {
   return { class: item.review === "unreviewed" ? "row-unreviewed" : "" };
 }
+
+const factColumns = ["facts.networks", "facts.identifiers", "facts.maxAccountsEver", "facts.attendees", "facts.endedLinks", "facts.liveLinks"];
 
 // Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
 function sortFacts(a: number | undefined, b: number | undefined): number {

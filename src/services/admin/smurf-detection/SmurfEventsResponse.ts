@@ -129,8 +129,11 @@ export interface SmurfEventIdentifierRow {
   roles: Array<"machine" | "network" | "shared" | "attendee-key">;
   /** Stored keys merged into this row. */
   keys: number;
-  /** Accounts that used it on a day of the event (a capped row: exact for the attendees, a lower bound in all). */
-  accountsDuring: number;
+  /**
+   * Accounts that used it on a day of the event (a capped row: exact for the attendees, a lower bound in all).
+   * Absent: not recorded for this network (a network stored as an IP hash that was not observed). An older server sends 0 with no `span`.
+   */
+  accountsDuring?: number;
   /** Absent: no day history exists for this kind. `capped`: at least `count`, and the row's day figures are lower bounds. */
   accountsEver?: { count: number; capped?: true };
   daysOutside?: { before: number; after: number; capped?: true };
@@ -190,7 +193,7 @@ export interface SmurfEventFactChange {
   then: number;
   /** The number now (as of the stored facts' `at`). Absent: no longer known (for example live links that can no longer be counted). */
   now?: number;
-  /** `then` is a lower bound ("at least"). Absent: exact. */
+  /** `then` is a lower bound ("at least"): `maxAccountsEver` capped or from a truncated table, `identifiers` of a truncated table, `liveLinks` capped. Absent: exact. */
   thenCapped?: true;
   /** The same for `now`; never set when `now` is absent. */
   nowCapped?: true;

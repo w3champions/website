@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, expect, test } from "vitest";
 import { mount, type VueWrapper } from "@vue/test-utils";
+import { VTooltip } from "vuetify/components";
 import type { SmurfEventHistory } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { testPlugins } from "./setup.testing";
 import EventHistory from "./EventHistory.vue";
@@ -106,6 +107,19 @@ test("a fact no longer known reads then, no longer known", () => {
   expect(block).toContain("Attendees: 3 then, no longer known");
 });
 
+test("a changed fact capped now reads at least N on the now side only", () => {
+  show({ ...HISTORY, changedSinceReview: [{ fact: "identifiers", then: 14, now: 19, nowCapped: true }] });
+
+  expect(wrapper.find(".history-changed").text()).toContain("Identifiers: 14 \u2192 at least 19");
+});
+
+test("a review entry of a truncated table with no identifiers says so instead of at least 0", () => {
+  show({ entries: [{ ...HISTORY.entries[0], outcome: { factsIdentifiers: 0, factsIdentifiersTruncated: true } }] });
+
+  expect(lines()[0]).toContain("Identifiers could not be listed completely");
+  expect(lines()[0]).not.toContain("at least 0");
+});
+
 test("a cut record says that older entries are not shown", () => {
   show({ ...HISTORY, truncated: true });
   expect(wrapper.text()).toContain("Older entries are not shown.");
@@ -121,7 +135,8 @@ test("a repaired entry carries a neutral note that it was recorded later, with i
   const notes = wrapper.findAll(".repaired");
   expect(notes).toHaveLength(1);
   expect(notes[0].text()).toBe("Recorded later");
-  expect(notes[0].attributes("title")).toBe("It stands for an act whose own entry could not be written at the time.");
+  expect(notes[0].attributes("tabindex")).toBe("0");
+  expect(wrapper.findComponent(VTooltip).props("text")).toBe("It stands for an act whose own entry could not be written at the time.");
   expect(notes[0].classes().join(" ")).not.toMatch(/error|success|warning/);
 });
 

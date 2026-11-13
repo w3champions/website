@@ -299,3 +299,38 @@ test("a window the server sent inverted gives an empty chart that still has its 
   expect(lane.html()).not.toContain("NaN");
   expect(lane.findAll("rect").every((r) => !r.html().includes("Infinity"))).toBe(true);
 });
+
+function accountsCell(index: number): string {
+  return wrapper.findAll(".identifier-row")[index].findAll("td")[1].text();
+}
+
+test("a network stored as an IP hash that was not recorded reads Not recorded, whether the count is absent or 0", () => {
+  show([
+    row({ hash8: "bbbb0001", kind: "ip", accountsEver: undefined, daysOutside: undefined, days: undefined, observed: undefined, accountsDuring: undefined }),
+    row({ hash8: "bbbb0002", kind: "ip", accountsEver: undefined, daysOutside: undefined, days: undefined, observed: undefined, accountsDuring: 0 }),
+  ]);
+
+  expect(accountsCell(0)).toBe("Not recorded");
+  expect(accountsCell(1)).toBe("Not recorded");
+  expect(wrapper.findAll(".identifier-row svg.dumbbell")).toHaveLength(0);
+});
+
+test("an IP-hash network with a span keeps its count, even 0, and an ordinary row is unchanged", () => {
+  const span = { firstAt: "2026-10-06T08:00:00.000Z", lastAt: "2026-10-06T20:00:00.000Z" };
+  show([
+    row({ hash8: "bbbb0003", kind: "ip", accountsEver: undefined, daysOutside: undefined, days: undefined, observed: undefined, accountsDuring: 4, span }),
+    row({ hash8: "bbbb0004", accountsDuring: 3, accountsEver: { count: 3 }, observed: ["after"] }),
+  ]);
+
+  expect(wrapper.findAll(".identifier-row")[0].findAll("td")[1].find("div").text()).toBe("4");
+  expect(accountsCell(1)).toContain("3 \u2192 3");
+});
+
+test("a row that was not recorded stays out of the chart scale", () => {
+  show([
+    row({ hash8: "bbbb0005", kind: "ip", accountsEver: undefined, daysOutside: undefined, days: undefined, observed: undefined, accountsDuring: 0 }),
+    row({ hash8: "bbbb0006", accountsDuring: 1, accountsEver: { count: 1 }, observed: ["after"] }),
+  ]);
+
+  expect(wrapper.findAll(".identifier-row svg.dumbbell")).toHaveLength(1);
+});
