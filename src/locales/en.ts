@@ -562,7 +562,7 @@ const en = {
   views_admin: {
     hardware_smurfs: {
       title: "Hardware Links",
-      no_permission: "You don't have the SmurfCheckerQuery permission.",
+      no_permission: "You don't have the SmurfCheckerAdministration permission.",
       search: "Search",
       search_hint: "Search a BattleTag to see its hardware links, items and override history.",
       refresh: "Refresh",
@@ -707,7 +707,7 @@ const en = {
     },
     smurf_events: {
       title: "Smurf Events",
-      no_permission: "You don't have the SmurfCheckerQuery permission.",
+      no_permission: "You don't have the SmurfCheckerAdministration permission.",
       generic_error: "The request failed. Please try again.",
       manual_busy: "The server is busy right now. Nothing was saved. Try again in a moment.",
       manual_busy_wait_one: "The server is busy right now. Nothing was saved. Try again in {seconds} second.",

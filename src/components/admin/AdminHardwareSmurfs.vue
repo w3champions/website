@@ -3,10 +3,10 @@
     <v-card-title class="pt-3">
       {{ t(key("title")) }}
     </v-card-title>
-    <v-container v-if="permissionsKnown && !canQuery" class="w3-container-width">
+    <v-container v-if="permissionsKnown && !canAdminister" class="w3-container-width">
       <v-alert type="warning" variant="tonal">{{ t(key("no_permission")) }}</v-alert>
     </v-container>
-    <v-container v-else-if="canQuery" class="w3-container-width">
+    <v-container v-else-if="canAdminister" class="w3-container-width">
       <v-card class="mb-4">
         <v-card-text>
           <v-row class="align-center">
@@ -103,7 +103,6 @@ const store = useHardwareSmurfsStore();
 
 const permissions = computed<string[]>(() => oauthStore.permissions);
 const permissionsKnown = computed(() => permissions.value.length > 0);
-const canQuery = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const canAdminister = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerAdministration]));
 
 type PlayerSearchType = InstanceType<typeof PlayerSearch>;
@@ -195,12 +194,21 @@ watch(dialogOpen, (open) => {
   }
 });
 
-onMounted(async () => {
+async function openPlayerFromUrl(): Promise<void> {
   const player = typeof route.query.player === "string" ? route.query.player : "";
   if (!player) return;
   selectedPlayer.value = player;
   if (playerSearchRef.value) playerSearchRef.value.selected = player;
   await store.open(player);
+}
+
+onMounted(async () => {
+  if (canAdminister.value) await openPlayerFromUrl();
+});
+
+// Permissions can arrive after the page mounted (a direct load): open the player once they do.
+watch(canAdminister, (can, could) => {
+  if (can && !could) void openPlayerFromUrl();
 });
 
 onBeforeUnmount(() => store.clear());

@@ -3,10 +3,10 @@
     <v-card-title class="pt-3">
       {{ t(key("title")) }}
     </v-card-title>
-    <v-container v-if="permissionsKnown && !canQuery" class="w3-container-width">
+    <v-container v-if="permissionsKnown && !canAdminister" class="w3-container-width">
       <v-alert type="warning" variant="tonal">{{ t(key("no_permission")) }}</v-alert>
     </v-container>
-    <v-container v-else-if="canQuery" class="w3-container-width">
+    <v-container v-else-if="canAdminister" class="w3-container-width">
       <v-alert
         v-if="notice"
         :type="noticeType"
@@ -73,7 +73,6 @@ const store = useSmurfEventsStore();
 
 const permissions = computed<string[]>(() => oauthStore.permissions);
 const permissionsKnown = computed(() => permissions.value.length > 0);
-const canQuery = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const canAdminister = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerAdministration]));
 
 /** A write's success notice, shown while the view it belongs to (`view`: an event id, "" for the list) is shown. */
@@ -174,7 +173,7 @@ const filterKey = computed(() => JSON.stringify(filtersFromQuery(route.query)));
 
 // Filter changes, browser back and forward included, load the list for the filters in the URL.
 watch(filterKey, () => {
-  if (canQuery.value) void store.setFilters(filtersFromQuery(route.query));
+  if (canAdminister.value) void store.setFilters(filtersFromQuery(route.query));
 });
 
 function loadPage(): void {
@@ -183,11 +182,11 @@ function loadPage(): void {
 }
 
 onMounted(() => {
-  if (canQuery.value) loadPage();
+  if (canAdminister.value) loadPage();
 });
 
 // Permissions can arrive after the page mounted (a direct load): load once they do.
-watch(canQuery, (can, could) => {
+watch(canAdminister, (can, could) => {
   if (can && !could) loadPage();
 });
 

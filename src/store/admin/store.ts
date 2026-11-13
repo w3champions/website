@@ -86,10 +86,6 @@ export const useAdminStore = defineStore("admin", {
         this.SET_SEARCHED_PROXIES_FOR_BATTLETAG(proxies);
       }
     },
-    async getAltsForPlayer(btag: string): Promise<string[]> {
-      const oauthStore = useOauthStore();
-      return await AdminService.getAltsForBattletag(btag, oauthStore.token);
-    },
     async querySmurfsForIdentifier(identifierType: string, identifier: string, iterationDepth: number, generateExplanation: boolean): Promise<SmurfDetectionResult> {
       if (identifierType != "battleTag") {
         throw new Error("Unsupported identifier type");

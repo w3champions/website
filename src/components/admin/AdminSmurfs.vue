@@ -272,7 +272,11 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      availableIdentifierTypes.value = await adminStore.getSmurfIdentifierTypes();
+      try {
+        availableIdentifierTypes.value = await adminStore.getSmurfIdentifierTypes();
+      } catch {
+        // Keep the default list: the search must still work when the type list is refused.
+      }
 
       const playerParam = route.query.player as string | undefined;
       const depthParam = route.query.depth as string | undefined;

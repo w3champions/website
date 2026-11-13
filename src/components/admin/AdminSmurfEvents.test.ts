@@ -164,25 +164,15 @@ test("a save that finishes after the moderator went to another event does not na
   expect(wrapper.text()).not.toContain("Event saved.");
 });
 
-test("without the SmurfCheckerQuery permission the page says so and requests nothing", async () => {
+test("without the SmurfCheckerAdministration permission the page says so and requests nothing", async () => {
   oauth.permissions = ["Moderation"];
 
   await open("/admin-smurf-events?event=ev1");
 
-  expect(wrapper.text()).toContain("You don't have the SmurfCheckerQuery permission.");
+  expect(wrapper.text()).toContain("You don't have the SmurfCheckerAdministration permission.");
   expect(service.list).not.toHaveBeenCalled();
   expect(service.get).not.toHaveBeenCalled();
   expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(false);
-});
-
-test("with Query only, the list is shown without write controls or dialogs", async () => {
-  oauth.permissions = ["SmurfCheckerQuery"];
-
-  await open("/admin-smurf-events");
-
-  expect(service.list).toHaveBeenCalledTimes(1);
-  expect(wrapper.findComponent({ name: "EventList" }).props("canAdminister")).toBe(false);
-  expect(dialogCount()).toBe(0);
 });
 
 test("with Administration, the dialogs are there", async () => {
@@ -198,7 +188,7 @@ test("permissions that arrive after the page mounted start the load", async () =
   expect(service.list).not.toHaveBeenCalled();
 
   // As the oauth store does when its permissions land: a new array.
-  (await import("@/store/oauth/store")).useOauthStore().permissions = ["SmurfCheckerQuery"];
+  (await import("@/store/oauth/store")).useOauthStore().permissions = ["SmurfCheckerAdministration"];
   await flushPromises();
 
   expect(service.list).toHaveBeenCalledTimes(1);
@@ -394,4 +384,22 @@ test("a create that answered an existing event keeps its text and adds the notic
 
   expect(wrapper.text()).toContain("already exists, so nothing was changed");
   expect(wrapper.text()).toContain(WRITE_NOTICE);
+});
+
+test("a moderator with SmurfCheckerQuery only sees the no_permission alert and no service call is made", async () => {
+  oauth.permissions = ["SmurfCheckerQuery"];
+  await open("/admin-smurf-events?event=ev1");
+
+  expect(wrapper.text()).toContain("SmurfCheckerAdministration");
+  expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(false);
+  expect(service.list).not.toHaveBeenCalled();
+  expect(service.get).not.toHaveBeenCalled();
+});
+
+test("a holder of SmurfCheckerAdministration alone loads the page", async () => {
+  oauth.permissions = ["SmurfCheckerAdministration"];
+  await open("/admin-smurf-events");
+
+  expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(true);
+  expect(service.list).toHaveBeenCalled();
 });
