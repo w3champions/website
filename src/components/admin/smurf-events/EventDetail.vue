@@ -193,6 +193,8 @@ const consequence = computed(() => {
   const e = event.value;
   const live = e?.liveLinks;
   const total = e?.facts?.liveLinks;
+  // The read ran out of time: nothing is known about the live links this time, whatever the stored facts counted earlier.
+  if (!live && e?.liveLinksTimedOut === true) return t(key("consequence_timed_out"));
   if (total === undefined) return liveFromList(live);
   if (total === 0) return t(key("consequence_none"));
   const count = t(key("consequence_live_count"), { count: factText(total, e?.facts?.liveLinksCapped, tr) });

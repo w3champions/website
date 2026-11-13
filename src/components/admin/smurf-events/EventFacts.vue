@@ -24,7 +24,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { factText } from "@/store/admin/smurfEvents/facts";
+import { factText, identifiersCapped, maxAccountsCapped } from "@/store/admin/smurfEvents/facts";
 import { countText } from "@/store/admin/smurfEvents/labels";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
@@ -46,16 +46,21 @@ interface FactRow {
 const rows = computed<FactRow[]>(() => {
   const e = props.event;
   const facts = e.facts;
-  // Computed facts without the figure: no identifier has a day history. Facts not computed: unknown.
-  const max = facts?.maxAccountsEver === undefined ? t(key("facts_no_day_history")) : factText(facts.maxAccountsEver, facts.maxAccountsEverCapped, tr);
-  const identifiers = facts === undefined ? factText(undefined, undefined, tr) : t(key("facts_identifiers_value"), { identifiers: facts.identifiers, max });
+  // Computed facts without the figure: no identifier has a day history, unless the table was cut (a row with a history may be missing): then unknown, as when facts are not computed.
+  const max = facts?.maxAccountsEver === undefined
+    ? (facts === undefined || facts.identifiersTruncated === true ? factText(undefined, undefined, tr) : t(key("facts_no_day_history")))
+    : factText(facts.maxAccountsEver, maxAccountsCapped(facts), tr);
+  const identifiers = facts === undefined ? factText(undefined, undefined, tr) : t(key("facts_identifiers_value"), { identifiers: factText(facts.identifiers, identifiersCapped(facts), tr), max });
   const accounts = countText("facts_accounts", facts?.attendees ?? e.counts.attendees, tr);
   const homes = e.counts.homes === undefined
     ? t(key("facts_homes_unknown"), { accounts, unknown: factText(undefined, undefined, tr) })
     : t(key("facts_homes_value"), { accounts, homes: countText("facts_separate_homes", e.counts.homes, tr) });
-  const links = facts?.liveLinks === undefined
-    ? factText(facts?.endedLinks, undefined, tr)
-    : t(key("facts_links_with_live"), { ended: facts.endedLinks, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) });
+  const timedOut = facts?.liveLinksTimedOut === true || e.liveLinksTimedOut === true;
+  const links = facts?.liveLinks !== undefined
+    ? t(key("facts_links_with_live"), { ended: facts.endedLinks, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) })
+    : facts !== undefined && timedOut
+      ? t(key("facts_links_live_timed_out"), { ended: facts.endedLinks })
+      : factText(facts?.endedLinks, undefined, tr);
   // The rows above are fed by the facts: a 0 is a fact and absent facts are a dash. The evidence rows always render: when the evidence was not recorded for the event they read "Not recorded".
   const evidence = (label: string, value: number): FactRow => ({ label, value: String(value), notRecorded: !e.evidenceRecorded });
   return [

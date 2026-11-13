@@ -100,12 +100,16 @@ export function factLabel(fact: string, t: Translate): string {
   return known(new Set<string>(FACTS), "fact_label", fact, t);
 }
 
-/** "Networks 2, Identifiers 14": the facts a review entry recorded (`facts*` outcome fields, a `facts*Capped` flag next to a capped one), none when it recorded none. */
+/** "Networks 2, Identifiers 14": the facts a review entry recorded (`facts*` outcome fields with their lower-bound flags), none when it recorded none. */
 export function reviewFactsText(outcome: Record<string, string | number | boolean | null>, t: Translate): string | null {
+  const flag = (name: string): true | undefined => (outcome[name] === true ? true : undefined);
   const parts = FACTS.flatMap((fact) => {
     const field = `facts${fact[0].toUpperCase()}${fact.slice(1)}`;
     const value = outcome[field];
-    return typeof value === "number" ? [`${factLabel(fact, t)} ${factText(value, outcome[`${field}Capped`] === true ? true : undefined, t)}`] : [];
+    if (typeof value !== "number") return fact === "liveLinks" && flag("factsLiveLinksTimedOut") ? [`${factLabel(fact, t)} ${t(key("history_live_timed_out"))}`] : [];
+    // The truncated-table flag makes the identifier count and most accounts ever lower bounds; the other facts carry their own flag.
+    const capped = fact === "identifiers" ? flag("factsIdentifiersTruncated") : fact === "maxAccountsEver" ? flag("factsMaxAccountsEverCapped") ?? flag("factsIdentifiersTruncated") : flag(`${field}Capped`);
+    return [`${factLabel(fact, t)} ${factText(value, capped, t)}`];
   });
   return parts.length === 0 ? null : parts.join(", ");
 }

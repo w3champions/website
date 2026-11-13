@@ -214,6 +214,12 @@ test("a review entry's fact numbers read through the same factText as the list: 
   assert.equal(reviewFactsText({ factsMaxAccountsEver: 31, factsMaxAccountsEverCapped: false }, t), "Most accounts ever on one identifier 31");
 });
 
+test("a review entry's truncated-table flag makes identifiers and most accounts read at least N, a timeout says so, and a number wins over the timeout flag", () => {
+  assert.equal(reviewFactsText({ factsIdentifiers: 14, factsMaxAccountsEver: 9, factsIdentifiersTruncated: true }, t), "Identifiers at least 14, Most accounts ever on one identifier at least 9");
+  assert.equal(reviewFactsText({ factsNetworks: 2, factsLiveLinksTimedOut: true }, t), "Networks 2, Links among attendees still live could not be counted");
+  assert.equal(reviewFactsText({ factsLiveLinks: 3, factsLiveLinksTimedOut: true }, t), "Links among attendees still live 3");
+});
+
 test("a 422 preview keeps its applies flag", () => {
   assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, applies: false } })?.applies, false);
 });

@@ -73,8 +73,8 @@
         <span class="text-no-wrap">{{ formatUtc(item.from) }}</span><br /><span class="text-no-wrap text-medium-emphasis">{{ formatUtc(item.to) }}</span>
       </template>
       <template v-slot:[`item.facts.networks`]="{ item }">{{ factText(item.facts?.networks, undefined, tr) }}</template>
-      <template v-slot:[`item.facts.identifiers`]="{ item }">{{ factText(item.facts?.identifiers, undefined, tr) }}</template>
-      <template v-slot:[`item.facts.maxAccountsEver`]="{ item }">{{ factText(item.facts?.maxAccountsEver, item.facts?.maxAccountsEverCapped, tr) }}</template>
+      <template v-slot:[`item.facts.identifiers`]="{ item }">{{ factText(item.facts?.identifiers, identifiersCapped(item.facts), tr) }}</template>
+      <template v-slot:[`item.facts.maxAccountsEver`]="{ item }">{{ factText(item.facts?.maxAccountsEver, maxAccountsCapped(item.facts), tr) }}</template>
       <template v-slot:[`item.facts.attendees`]="{ item }">{{ factText(item.facts?.attendees, undefined, tr) }}</template>
       <template v-slot:[`item.facts.endedLinks`]="{ item }">{{ factText(item.facts?.endedLinks, undefined, tr) }}</template>
       <template v-slot:[`item.facts.liveLinks`]="{ item }">{{ factText(item.facts?.liveLinks, item.facts?.liveLinksCapped, tr) }}</template>
@@ -96,7 +96,7 @@ import { mdiPlus, mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventOrigin, SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { factSort, factSortSwapped, factText, type SortOrder, sortFromQuery, sortToQuery } from "@/store/admin/smurfEvents/facts";
+import { factSort, factSortSwapped, factText, identifiersCapped, maxAccountsCapped, type SortOrder, sortFromQuery, sortToQuery } from "@/store/admin/smurfEvents/facts";
 import { errorText, ORIGINS, originLabel, REVIEWS, reviewLabel } from "@/store/admin/smurfEvents/labels";
 import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";

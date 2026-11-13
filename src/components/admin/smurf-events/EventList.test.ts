@@ -158,3 +158,12 @@ test("an unreviewed row's review chip carries the diamond mark", async () => {
   expect(cells(0)[2]).toContain("\u25C6");
   expect(cells(1)[2]).not.toContain("\u25C6");
 });
+
+test("a truncated identifier table makes the identifiers and most-accounts columns read at least N", async () => {
+  await show([row("a", { identifiers: 14, maxAccountsEver: 9, identifiersTruncated: true }), row("b", { identifiers: 14, maxAccountsEver: 9 })]);
+
+  expect(cells(0)[4]).toBe("at least 14");
+  expect(cells(0)[5]).toBe("at least 9");
+  expect(cells(1)[4]).toBe("14");
+  expect(cells(1)[5]).toBe("9");
+});

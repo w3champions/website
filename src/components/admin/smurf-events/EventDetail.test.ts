@@ -91,6 +91,12 @@ test("with the facts' live count and a complete list the line says all of them a
   expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: 1. All of them: Anchor#1001 \u2013 Guest#1003");
 });
 
+test("live links that ran out of time say they could not be counted this time", async () => {
+  await show(manualEvent({ liveLinksTimedOut: true, facts: { ...FACTS, liveLinksTimedOut: true } }));
+
+  expect(wrapper.find(".consequence").text()).toBe("The live links among the attendees could not be counted this time.");
+});
+
 test("a live count of zero in the facts says no link is live", async () => {
   await show(manualEvent({ liveLinks: { links: [] }, facts: { ...FACTS, liveLinks: 0 } }));
 

@@ -98,6 +98,36 @@ test("an event from a server that sends no recorded block still renders", () => 
   expect(wrapper.text()).not.toContain("recorded since");
 });
 
+test("a truncated identifier table makes the identifier numbers read at least N", () => {
+  show({ facts: { ...FACTS, identifiersTruncated: true } });
+
+  expect(rows()[1][1]).toBe("at least 14, most accounts ever on one: at least 9");
+});
+
+test("a truncated table with no figure for the most accounts ever shows the unknown mark, not the words", () => {
+  show({ facts: { ...FACTS, maxAccountsEver: undefined, identifiersTruncated: true } });
+
+  expect(rows()[1][1]).toBe("at least 14, most accounts ever on one: \u2014");
+});
+
+test("live links whose count ran out of time say they could not be counted this time", () => {
+  show({ facts: { ...FACTS, liveLinks: undefined, liveLinksTimedOut: true } });
+
+  expect(rows()[3][1]).toBe("4 ended, the live links could not be counted this time");
+});
+
+test("live links that were not counted for another reason show only the ended count", () => {
+  show({ facts: { ...FACTS, liveLinks: undefined } });
+
+  expect(rows()[3][1]).toBe("4");
+});
+
+test("a live timeout on the detail alone reads the same", () => {
+  show({ facts: { ...FACTS, liveLinks: undefined }, liveLinksTimedOut: true });
+
+  expect(rows()[3][1]).toBe("4 ended, the live links could not be counted this time");
+});
+
 test("accounts not counted are listed by name", () => {
   show();
 

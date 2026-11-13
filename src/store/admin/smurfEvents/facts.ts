@@ -1,9 +1,20 @@
+import type { SmurfEventFacts } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { key, type Translate } from "./translate";
 
 /** The text of a fact column: a dash when the value is unknown, "at least N" when the server counted only up to N, else the number. */
 export function factText(value: number | undefined, capped: true | undefined, tr: Translate): string {
   if (value === undefined) return tr(key("fact_unknown"));
   return capped === true ? tr(key("fact_at_least"), { count: value }) : String(value);
+}
+
+/** The identifier count of facts is a lower bound when the identifier table was truncated. */
+export function identifiersCapped(facts: Pick<SmurfEventFacts, "identifiersTruncated"> | undefined): true | undefined {
+  return facts?.identifiersTruncated === true ? true : undefined;
+}
+
+/** "Most accounts ever" is a lower bound when more holders exist than the server reads, or the identifier table was truncated. */
+export function maxAccountsCapped(facts: Pick<SmurfEventFacts, "maxAccountsEverCapped" | "identifiersTruncated"> | undefined): true | undefined {
+  return facts?.maxAccountsEverCapped === true || facts?.identifiersTruncated === true ? true : undefined;
 }
 
 /** Ascending order of fact values; an unknown value comes after every number. */

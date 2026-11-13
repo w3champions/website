@@ -13,7 +13,7 @@
         <div class="font-weight-bold">{{ t(key("history_changed_title")) }}</div>
         <div v-for="change in history.changedSinceReview" :key="change.fact" class="text-warning">
           <span aria-hidden="true">&#9670;</span>
-          {{ t(key("history_changed"), { fact: factLabel(change.fact, tr), then: factText(change.then, change.thenCapped, tr), now: factText(change.now, change.nowCapped, tr) }) }}
+          {{ changeText(change) }}
         </div>
       </div>
       <div v-if="history.entries.length === 0" class="text-medium-emphasis">{{ t(key("history_none")) }}</div>
@@ -22,12 +22,14 @@
           <div>
             <span class="text-no-wrap">{{ formatUtc(entry.at) }}</span> · {{ entry.author }} ·
             <span class="font-weight-bold">{{ historyActionLabel(entry.action, tr) }}</span>
+            <span v-if="entry.outcome.repaired === true" class="repaired text-medium-emphasis ml-2 px-1" tabindex="0" :title="t(key('history_repaired_hint'))">{{ t(key("history_repaired")) }}</span>
           </div>
           <div v-if="entry.reason" class="text-medium-emphasis">{{ t(key("history_reason"), { reason: entry.reason }) }}</div>
           <div class="text-medium-emphasis">{{ nameText(entry) }}</div>
           <div v-if="reviewFactsText(entry.outcome, tr)" class="text-medium-emphasis">{{ t(key("history_facts"), { facts: reviewFactsText(entry.outcome, tr) }) }}</div>
         </li>
       </ul>
+      <div v-if="history.truncated" class="text-body-2 text-medium-emphasis" role="status">{{ t(key("history_truncated")) }}</div>
     </v-card-text>
   </v-card>
 </template>
@@ -35,7 +37,7 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { formatUtc } from "@/helpers/utc-dates";
-import type { SmurfEventHistory, SmurfEventHistoryEntry } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventFactChange, SmurfEventHistory, SmurfEventHistoryEntry } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { factText } from "@/store/admin/smurfEvents/facts";
 import { factLabel, historyActionLabel, reviewFactsText } from "@/store/admin/smurfEvents/labels";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
@@ -53,6 +55,13 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 
+/** "Attendees: 3 → 5", or "Attendees: 3 then, no longer known" when the fact can no longer be counted. */
+function changeText(change: SmurfEventFactChange): string {
+  const fact = factLabel(change.fact, tr);
+  const then = factText(change.then, change.thenCapped, tr);
+  return change.now === undefined ? t(key("history_changed_unknown"), { fact, then }) : t(key("history_changed"), { fact, then, now: factText(change.now, change.nowCapped, tr) });
+}
+
 /** A rename reads "Renamed from X to Y" when the previous name is on the entry; every other entry shows the name it was made under. */
 function nameText(entry: SmurfEventHistoryEntry): string {
   const previous = entry.outcome.previousName;
@@ -62,6 +71,12 @@ function nameText(entry: SmurfEventHistoryEntry): string {
 </script>
 
 <style scoped>
+.repaired {
+  border: 1px dashed currentcolor;
+  border-radius: 2px;
+  font-size: 0.8125rem;
+}
+
 .history-list {
   list-style: none;
   margin: 0;

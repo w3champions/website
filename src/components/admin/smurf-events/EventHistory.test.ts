@@ -98,6 +98,53 @@ test("a rename entry names the previous and the new name; without a previous nam
   expect(lines()[0]).not.toContain("Renamed from");
 });
 
+test("a fact no longer known reads then, no longer known", () => {
+  show({ ...HISTORY, changedSinceReview: [{ fact: "liveLinks", then: 12, thenCapped: true }, { fact: "attendees", then: 3 }] });
+
+  const block = wrapper.find(".history-changed").text();
+  expect(block).toContain("Links among attendees still live: at least 12 then, no longer known");
+  expect(block).toContain("Attendees: 3 then, no longer known");
+});
+
+test("a cut record says that older entries are not shown", () => {
+  show({ ...HISTORY, truncated: true });
+  expect(wrapper.text()).toContain("Older entries are not shown.");
+  wrapper.unmount();
+
+  show(HISTORY);
+  expect(wrapper.text()).not.toContain("Older entries");
+});
+
+test("a repaired entry carries a neutral note that it was recorded later, with its explanation", () => {
+  show({ entries: [{ ...HISTORY.entries[0], outcome: { ...HISTORY.entries[0].outcome, repaired: true } }, HISTORY.entries[1]] });
+
+  const notes = wrapper.findAll(".repaired");
+  expect(notes).toHaveLength(1);
+  expect(notes[0].text()).toBe("Recorded later");
+  expect(notes[0].attributes("title")).toBe("It stands for an act whose own entry could not be written at the time.");
+  expect(notes[0].classes().join(" ")).not.toMatch(/error|success|warning/);
+});
+
+test("without the flag an entry carries no such note", () => {
+  show(HISTORY);
+
+  expect(wrapper.find(".repaired").exists()).toBe(false);
+});
+
+test("a review entry reads the lower-bound flags and the timeout of the facts it recorded", () => {
+  show({ entries: [{ ...HISTORY.entries[0], outcome: { factsIdentifiers: 14, factsMaxAccountsEver: 9, factsIdentifiersTruncated: true, factsLiveLinksTimedOut: true } }] });
+
+  expect(lines()[0]).toContain("Identifiers at least 14");
+  expect(lines()[0]).toContain("Most accounts ever on one identifier at least 9");
+  expect(lines()[0]).toContain("Links among attendees still live could not be counted");
+});
+
+test("without the flags the recorded numbers read as exact", () => {
+  show({ entries: [{ ...HISTORY.entries[0], outcome: { factsIdentifiers: 14, factsMaxAccountsEver: 9, factsLiveLinks: 3 } }] });
+
+  expect(lines()[0]).toContain("Identifiers 14, Most accounts ever on one identifier 9, Links among attendees still live 3");
+});
+
 test("without changes since the review no such line is shown", () => {
   show(HISTORY);
 
