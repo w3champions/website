@@ -37,7 +37,7 @@ test("the rows come in the order a moderator reads them", () => {
   expect(rows().map(([label]) => label)).toEqual([
     "Networks",
     "Identifiers",
-    "Accounts with a usual home",
+    "Accounts and usual homes",
     "Links ended",
     "Accounts not counted as attendee",
     "Days on these networks before the event",
@@ -46,7 +46,7 @@ test("the rows come in the order a moderator reads them", () => {
   ]);
   expect(rows()[0][1]).toBe("2");
   expect(rows()[1][1]).toBe("14, most accounts ever on one: 9");
-  expect(rows()[2][1]).toBe("2");
+  expect(rows()[2][1]).toBe("3 accounts from 2 separate homes");
   expect(rows()[3][1]).toBe("4 ended, 1 still live");
   expect(rows()[5][1]).toBe("1");
   expect(rows()[6][1]).toBe("2");
@@ -66,10 +66,36 @@ test("a capped count reads at least N from the data", () => {
   expect(rows()[3][1]).toBe("4 ended, at least 12 still live");
 });
 
-test("no identifier with a day history shows a dash for the most accounts ever", () => {
+test("no identifier with a day history says so in words for the most accounts ever", () => {
   show({ facts: { ...FACTS, maxAccountsEver: undefined } });
 
-  expect(rows()[1][1]).toBe("14, most accounts ever on one: \u2013");
+  expect(rows()[1][1]).toBe("14, most accounts ever on one: no day history");
+});
+
+test("accounts and homes take the attendees from the facts and use singular forms for one", () => {
+  show({ facts: { ...FACTS, attendees: 7 }, counts: { networks: 1, machines: 3, attendees: 3, homes: 4 } });
+  expect(rows()[2][1]).toBe("7 accounts from 4 separate homes");
+  wrapper.unmount();
+
+  show({ facts: { ...FACTS, attendees: 1 }, counts: { networks: 1, machines: 1, attendees: 1, homes: 1 } });
+  expect(rows()[2][1]).toBe("1 account from 1 separate home");
+  wrapper.unmount();
+
+  show({ facts: undefined, counts: { networks: 1, machines: 3, attendees: 3, homes: 2 } });
+  expect(rows()[2][1]).toBe("3 accounts from 2 separate homes");
+});
+
+test("accounts without a computed home count show the accounts and the unknown mark for the homes", () => {
+  show({ counts: { networks: 1, machines: 3, attendees: 3 } });
+
+  expect(rows()[2][1]).toBe("3 accounts, separate homes: \u2014");
+});
+
+test("an event from a server that sends no recorded block still renders", () => {
+  show({ recorded: undefined as unknown as SmurfEventDetail["recorded"] });
+
+  expect(rows()).toHaveLength(8);
+  expect(wrapper.text()).not.toContain("recorded since");
 });
 
 test("accounts not counted are listed by name", () => {
@@ -83,7 +109,7 @@ test("accounts not counted are listed by name", () => {
 test("facts that were never computed show a dash in every row they feed, never 0", () => {
   show({ facts: undefined, notCounted: [], counts: { networks: 1, machines: 3, attendees: 3 }, endedLinks: 5 });
 
-  expect(rows().slice(0, 5).map(([, value]) => value)).toEqual(["\u2013", "\u2013", "\u2013", "\u2013", "\u2013"]);
+  expect(rows().slice(0, 5).map(([, value]) => value)).toEqual(["\u2014", "\u2014", "3 accounts, separate homes: \u2014", "\u2014", "\u2014"]);
 });
 
 test("real zeros in the facts show as zeros", () => {
@@ -91,7 +117,7 @@ test("real zeros in the facts show as zeros", () => {
   show({ facts: zero, notCounted: [], counts: { networks: 1, machines: 3, attendees: 3, homes: 0 } });
 
   expect(rows()[1][1]).toBe("0, most accounts ever on one: 0");
-  expect(rows()[2][1]).toBe("0");
+  expect(rows()[2][1]).toBe("0 accounts from 0 separate homes");
   expect(rows()[3][1]).toBe("0 ended, 0 still live");
   expect(rows()[4][1]).toBe("0");
 });

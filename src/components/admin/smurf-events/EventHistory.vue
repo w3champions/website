@@ -12,7 +12,8 @@
       <div v-if="history.changedSinceReview && history.changedSinceReview.length > 0" class="history-changed mb-3 text-body-2">
         <div class="font-weight-bold">{{ t(key("history_changed_title")) }}</div>
         <div v-for="change in history.changedSinceReview" :key="change.fact" class="text-warning">
-          <span aria-hidden="true">&#9670;</span> {{ t(key("history_changed"), { fact: factLabel(change.fact, tr), then: change.then, now: change.now }) }}
+          <span aria-hidden="true">&#9670;</span>
+          {{ t(key("history_changed"), { fact: factLabel(change.fact, tr), then: factText(change.then, change.thenCapped, tr), now: factText(change.now, change.nowCapped, tr) }) }}
         </div>
       </div>
       <div v-if="history.entries.length === 0" class="text-medium-emphasis">{{ t(key("history_none")) }}</div>
@@ -23,7 +24,7 @@
             <span class="font-weight-bold">{{ historyActionLabel(entry.action, tr) }}</span>
           </div>
           <div v-if="entry.reason" class="text-medium-emphasis">{{ t(key("history_reason"), { reason: entry.reason }) }}</div>
-          <div class="text-medium-emphasis">{{ t(key("history_name"), { name: entry.name }) }}</div>
+          <div class="text-medium-emphasis">{{ nameText(entry) }}</div>
           <div v-if="reviewFactsText(entry.outcome, tr)" class="text-medium-emphasis">{{ t(key("history_facts"), { facts: reviewFactsText(entry.outcome, tr) }) }}</div>
         </li>
       </ul>
@@ -34,7 +35,8 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { formatUtc } from "@/helpers/utc-dates";
-import type { SmurfEventHistory } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventHistory, SmurfEventHistoryEntry } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { factText } from "@/store/admin/smurfEvents/facts";
 import { factLabel, historyActionLabel, reviewFactsText } from "@/store/admin/smurfEvents/labels";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
@@ -50,6 +52,13 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
+
+/** A rename reads "Renamed from X to Y" when the previous name is on the entry; every other entry shows the name it was made under. */
+function nameText(entry: SmurfEventHistoryEntry): string {
+  const previous = entry.outcome.previousName;
+  if (entry.action === "event-rename" && typeof previous === "string") return t(key("history_renamed"), { previous, name: entry.name });
+  return t(key("history_name"), { name: entry.name });
+}
 </script>
 
 <style scoped>

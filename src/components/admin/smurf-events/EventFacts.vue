@@ -25,6 +25,7 @@ import { useI18n } from "vue-i18n";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { factText } from "@/store/admin/smurfEvents/facts";
+import { countText } from "@/store/admin/smurfEvents/labels";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
 const props = defineProps<{
@@ -45,10 +46,13 @@ interface FactRow {
 const rows = computed<FactRow[]>(() => {
   const e = props.event;
   const facts = e.facts;
-  const identifiers =
-    facts === undefined
-      ? factText(undefined, undefined, tr)
-      : t(key("facts_identifiers_value"), { identifiers: facts.identifiers, max: factText(facts.maxAccountsEver, facts.maxAccountsEverCapped, tr) });
+  // Computed facts without the figure: no identifier has a day history. Facts not computed: unknown.
+  const max = facts?.maxAccountsEver === undefined ? t(key("facts_no_day_history")) : factText(facts.maxAccountsEver, facts.maxAccountsEverCapped, tr);
+  const identifiers = facts === undefined ? factText(undefined, undefined, tr) : t(key("facts_identifiers_value"), { identifiers: facts.identifiers, max });
+  const accounts = countText("facts_accounts", facts?.attendees ?? e.counts.attendees, tr);
+  const homes = e.counts.homes === undefined
+    ? t(key("facts_homes_unknown"), { accounts, unknown: factText(undefined, undefined, tr) })
+    : t(key("facts_homes_value"), { accounts, homes: countText("facts_separate_homes", e.counts.homes, tr) });
   const links = facts?.liveLinks === undefined
     ? factText(facts?.endedLinks, undefined, tr)
     : t(key("facts_links_with_live"), { ended: facts.endedLinks, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) });
@@ -57,7 +61,7 @@ const rows = computed<FactRow[]>(() => {
   return [
     { label: t(key("facts_networks")), value: facts?.networks === 0 ? t(key("facts_no_network")) : factText(facts?.networks, undefined, tr) },
     { label: t(key("facts_identifiers")), value: identifiers },
-    { label: t(key("facts_homes")), value: factText(e.counts.homes, undefined, tr) },
+    { label: t(key("facts_homes")), value: homes },
     { label: t(key("facts_links")), value: links },
     { label: t(key("facts_not_counted")), value: factText(facts?.notCounted, undefined, tr), names: e.notCounted },
     evidence(t(key("evidence_days_before")), e.evidence.networkDaysBefore),
@@ -67,7 +71,8 @@ const rows = computed<FactRow[]>(() => {
 });
 
 const recordedLines = computed(() => {
-  const { hardwareKeysSince, deviceMemorySince } = props.event.recorded;
+  // A server that sends no `recorded` block records nothing to report.
+  const { hardwareKeysSince, deviceMemorySince } = props.event.recorded ?? {};
   return [
     ...(hardwareKeysSince ? [t(key("facts_recorded_keys"), { date: formatUtc(hardwareKeysSince) })] : []),
     ...(deviceMemorySince ? [t(key("facts_recorded_memory"), { date: formatUtc(deviceMemorySince) })] : []),

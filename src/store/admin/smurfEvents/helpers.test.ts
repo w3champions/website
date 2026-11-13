@@ -206,16 +206,24 @@ test("a review entry's facts read in a fixed order and an entry without facts re
   assert.equal(reviewFactsText({ previousName: "A" }, t), null);
 });
 
+test("a review entry's fact numbers read through the same factText as the list: at least N when capped", () => {
+  assert.equal(
+    reviewFactsText({ factsNetworks: 2, factsMaxAccountsEver: 31, factsMaxAccountsEverCapped: true, factsLiveLinks: 12, factsLiveLinksCapped: true, factsEndedLinks: 4 }, t),
+    "Networks 2, Most accounts ever on one identifier at least 31, Links ended 4, Links among attendees still live at least 12",
+  );
+  assert.equal(reviewFactsText({ factsMaxAccountsEver: 31, factsMaxAccountsEverCapped: false }, t), "Most accounts ever on one identifier 31");
+});
+
 test("a 422 preview keeps its applies flag", () => {
   assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, applies: false } })?.applies, false);
 });
 
 test("factText shows a dash for an unknown value, the number, or the capped number as at least N", () => {
-  assert.equal(factText(undefined, undefined, t), "\u2013");
+  assert.equal(factText(undefined, undefined, t), "\u2014");
   assert.equal(factText(12, undefined, t), "12");
   assert.equal(factText(0, undefined, t), "0");
   assert.equal(factText(7, true, t), "at least 7");
-  assert.equal(factText(undefined, true, t), "\u2013");
+  assert.equal(factText(undefined, true, t), "\u2014");
 });
 
 test("factSort puts an unknown value after every number", () => {

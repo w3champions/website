@@ -66,6 +66,38 @@ test("changes since the review show fact, then and now, marked in the warning co
   expect(block.find(".text-warning").exists()).toBe(true);
 });
 
+test("a changed fact that was capped then or now reads at least N", () => {
+  show({
+    ...HISTORY,
+    changedSinceReview: [
+      { fact: "liveLinks", then: 12, thenCapped: true, now: 15 },
+      { fact: "maxAccountsEver", then: 9, now: 31, nowCapped: true },
+      { fact: "attendees", then: 3, now: 5 },
+    ],
+  });
+
+  const block = wrapper.find(".history-changed").text();
+  expect(block).toContain("Links among attendees still live: at least 12 \u2192 15");
+  expect(block).toContain("Most accounts ever on one identifier: 9 \u2192 at least 31");
+  expect(block).toContain("Attendees: 3 \u2192 5");
+});
+
+test("a review entry that recorded capped facts reads them as at least N", () => {
+  show({ entries: [{ ...HISTORY.entries[0], outcome: { factsNetworks: 2, factsMaxAccountsEver: 31, factsMaxAccountsEverCapped: true } }] });
+
+  expect(lines()[0]).toContain("Most accounts ever on one identifier at least 31");
+});
+
+test("a rename entry names the previous and the new name; without a previous name it shows the name", () => {
+  show(HISTORY);
+  expect(lines()[1]).toContain("Renamed from Auto name to Sofia LAN");
+  wrapper.unmount();
+
+  show({ entries: [{ ...HISTORY.entries[1], outcome: {} }] });
+  expect(lines()[0]).toContain("Name: Sofia LAN");
+  expect(lines()[0]).not.toContain("Renamed from");
+});
+
 test("without changes since the review no such line is shown", () => {
   show(HISTORY);
 

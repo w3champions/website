@@ -78,7 +78,7 @@ test("a row shows its facts; a row without facts shows a dash in every fact colu
   await show([row("a", { maxAccountsEver: 12, liveLinks: 3 }), row("b")]);
 
   expect(cells(0).slice(3)).toEqual(["2", "5", "12", "9", "4", "3"]);
-  expect(cells(1).slice(3)).toEqual(["–", "–", "–", "–", "–", "–"]);
+  expect(cells(1).slice(3)).toEqual(["—", "—", "—", "—", "—", "—"]);
 });
 
 test("a capped value reads at least N with N from the row", async () => {

@@ -3,7 +3,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
-import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventDetail, SmurfEventFacts } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { manualEvent, testPlugins } from "./setup.testing";
 
@@ -13,6 +13,8 @@ vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) 
 import EventDetail from "./EventDetail.vue";
 
 let wrapper: VueWrapper;
+
+const FACTS: SmurfEventFacts = { at: "2026-10-05T00:00:00.000Z", networks: 1, identifiers: 4, attendees: 3, notCounted: 0, endedLinks: 1 };
 
 afterEach(() => wrapper.unmount());
 
@@ -71,6 +73,35 @@ test("a cut list of live links reads at least N from the list", async () => {
   await show(manualEvent({ liveLinks: { links, truncated: true } }));
 
   expect(wrapper.find(".consequence").text()).toContain("At least 2 links among the attendees are still live");
+});
+
+test("with the facts' live count the consequence line uses it and says how many the list shows", async () => {
+  const links = [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" as const }, { a: "Anchor#1002", b: "Guest#1003", source: "account" as const }];
+  await show(manualEvent({ liveLinks: { links, truncated: true }, facts: { ...FACTS, liveLinks: 11, liveLinksCapped: true } }));
+
+  const line = wrapper.find(".consequence").text();
+  expect(line).toContain("Links among the attendees that are still live: at least 11.");
+  expect(line).toContain("Showing 2 of them: Anchor#1001 \u2013 Guest#1003, Anchor#1002 \u2013 Guest#1003");
+});
+
+test("with the facts' live count and a complete list the line says all of them are shown", async () => {
+  const links = [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" as const }];
+  await show(manualEvent({ liveLinks: { links }, facts: { ...FACTS, liveLinks: 1 } }));
+
+  expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: 1. All of them: Anchor#1001 \u2013 Guest#1003");
+});
+
+test("a live count of zero in the facts says no link is live", async () => {
+  await show(manualEvent({ liveLinks: { links: [] }, facts: { ...FACTS, liveLinks: 0 } }));
+
+  expect(wrapper.find(".consequence").text()).toBe("No link among the attendees is live.");
+});
+
+test("the ended-links chip counts the same links as the facts row", async () => {
+  await show(manualEvent({ endedLinks: 3, facts: { ...FACTS, endedLinks: 8 } }));
+
+  const title = wrapper.findAll(".v-card-title").find((c) => c.text().startsWith("Ended links"));
+  expect(title?.find(".v-chip").text()).toBe("8");
 });
 
 test("no live links says so, and an event that did not count them has no consequence line", async () => {

@@ -112,15 +112,19 @@ export interface SmurfEventIdentifierRow {
   roles: Array<"machine" | "network" | "shared" | "attendee-key">;
   /** Stored keys merged into this row. */
   keys: number;
+  /** Accounts that used it on a day of the event (a capped row: exact for the attendees, a lower bound in all). */
   accountsDuring: number;
-  /** Absent: no day history exists for this kind. */
+  /** Absent: no day history exists for this kind. `capped`: at least `count`, and the row's day figures are lower bounds. */
   accountsEver?: { count: number; capped?: true };
   daysOutside?: { before: number; after: number; capped?: true };
-  /** UTC day numbers inside the window and the accounts that day; days with use only. */
+  /** UTC day numbers inside the window, days with use only, with the accounts of that day (a capped row: lower bounds). */
   days?: Array<[day: number, accounts: number]>;
-  /** An empty list: seen during the event only. Absent with `accountsEver`. */
+  /**
+   * Sides with use outside the event. An empty list: the event only. Absent without `accountsEver`, and on a
+   * capped row when none was seen among what the server read (unknown); a capped row lists only the sides seen.
+   */
   observed?: Array<"before" | "after">;
-  /** IP-hash networks: first and last use inside the event. */
+  /** Networks stored as an IP hash, when observed: first and last use inside the event (absent: not observed). */
   span?: { firstAt: string; lastAt: string };
   alsoIn: Array<{ id: string; name: string }>;
   /** Only when the server reveals them to the caller. */
@@ -149,7 +153,7 @@ export interface SmurfEventHistory {
   /** Newest first. */
   entries: SmurfEventHistoryEntry[];
   /** Facts that differ from the latest review's; absent when unreviewed or reviewed before facts existed. */
-  changedSinceReview?: Array<{ fact: string; then: number; now: number }>;
+  changedSinceReview?: Array<{ fact: string; then: number; thenCapped?: true; now: number; nowCapped?: true }>;
 }
 
 /**

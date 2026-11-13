@@ -1,5 +1,6 @@
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { factText } from "./facts";
 import { key, type Translate } from "./translate";
 
 const ORIGINS: ReadonlySet<string> = new Set<SmurfEventOrigin>(["detected", "historical", "manual", "carried-over"]);
@@ -88,11 +89,12 @@ export function factLabel(fact: string, t: Translate): string {
   return known(new Set<string>(FACTS), "fact_label", fact, t);
 }
 
-/** "Networks 2, Identifiers 14": the facts a review entry recorded (`facts*` outcome fields), none when it recorded none. */
+/** "Networks 2, Identifiers 14": the facts a review entry recorded (`facts*` outcome fields, a `facts*Capped` flag next to a capped one), none when it recorded none. */
 export function reviewFactsText(outcome: Record<string, string | number | boolean | null>, t: Translate): string | null {
   const parts = FACTS.flatMap((fact) => {
-    const value = outcome[`facts${fact[0].toUpperCase()}${fact.slice(1)}`];
-    return typeof value === "number" ? [`${factLabel(fact, t)} ${value}`] : [];
+    const field = `facts${fact[0].toUpperCase()}${fact.slice(1)}`;
+    const value = outcome[field];
+    return typeof value === "number" ? [`${factLabel(fact, t)} ${factText(value, outcome[`${field}Capped`] === true ? true : undefined, t)}`] : [];
   });
   return parts.length === 0 ? null : parts.join(", ");
 }

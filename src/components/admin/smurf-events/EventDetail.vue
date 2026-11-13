@@ -99,7 +99,7 @@
       <v-card class="mb-4">
         <v-card-title class="text-subtitle-1 font-weight-bold d-flex align-center">
           {{ t(key("ended_links")) }}
-          <v-chip size="small" class="ml-2" variant="tonal">{{ event.endedLinks }}</v-chip>
+          <v-chip size="small" class="ml-2" variant="tonal">{{ event.facts?.endedLinks ?? event.endedLinks }}</v-chip>
         </v-card-title>
         <v-card-text v-if="event.endedLinksListTruncated" class="pt-0 pb-2 text-body-2 text-medium-emphasis" role="status">{{ t(key("ended_links_truncated")) }}</v-card-text>
         <v-data-table
@@ -133,8 +133,9 @@ import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil } from "@mdi/js
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import { EAdminRouteName } from "@/router/types";
-import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventDetail, SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
+import { factText } from "@/store/admin/smurfEvents/facts";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
 import { errorText } from "@/store/admin/smurfEvents/labels";
 import { unreviewedNeighbours } from "@/store/admin/smurfEvents/neighbours";
@@ -185,15 +186,35 @@ function openNeighbour(id: string | null): void {
   if (id !== null) emit("open-event", id);
 }
 
-/** The live links among the attendees: what the event's effect on links comes down to; absent when the server did not count them. */
+/**
+ * The live links among the attendees: what the event's effect on links comes down to. The count is the facts' when
+ * they have one (capped as they say), the list is the first of them and says how many it shows; absent when the server did not count them.
+ */
 const consequence = computed(() => {
-  const live = event.value?.liveLinks;
+  const e = event.value;
+  const live = e?.liveLinks;
+  const total = e?.facts?.liveLinks;
+  if (total === undefined) return liveFromList(live);
+  if (total === 0) return t(key("consequence_none"));
+  const count = t(key("consequence_live_count"), { count: factText(total, e?.facts?.liveLinksCapped, tr) });
+  if (!live || live.links.length === 0) return count;
+  const links = linkNames(live.links);
+  const complete = live.truncated !== true && e?.facts?.liveLinksCapped !== true && live.links.length === total;
+  return `${count} ${complete ? t(key("consequence_live_all"), { links }) : t(key("consequence_live_shown"), { shown: live.links.length, links })}`;
+});
+
+function linkNames(links: SmurfEventLinkRef[]): string {
+  return links.map((l) => `${l.a} \u2013 ${l.b}`).join(", ");
+}
+
+/** The line for a server that sends the list without the facts' count: the list is all there is to count. */
+function liveFromList(live: SmurfEventDetail["liveLinks"]): string | null {
   if (!live) return null;
   if (live.links.length === 0) return t(key("consequence_none"));
-  const links = live.links.map((l) => `${l.a} – ${l.b}`).join(", ");
+  const links = linkNames(live.links);
   if (live.truncated) return t(key("consequence_live_at_least"), { count: live.links.length, links });
   return t(key(`consequence_live_${live.links.length === 1 ? "one" : "other"}`), { count: live.links.length, links });
-});
+}
 
 const linkHeaders = computed<DataTableHeader[]>(() => [
   { title: t(key("col_link")), key: "link", sortable: false },
