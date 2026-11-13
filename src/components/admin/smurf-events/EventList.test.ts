@@ -171,7 +171,7 @@ test("a truncated identifier table makes the identifiers and most-accounts colum
 test("a live-links column that ran out of time shows a short text with its tooltip, not the not-computed mark", async () => {
   await show([row("a", { liveLinks: undefined, liveLinksTimedOut: true }), row("b", { liveLinks: undefined })]);
 
-  expect(cells(0)[8]).toBe("Not counted");
+  expect(cells(0)[8]).toBe("Not counted this time");
   expect(wrapper.findAllComponents({ name: "VTooltip" }).some((t) => t.props("text") === "The live links could not be counted this time.")).toBe(true);
   expect(cells(1)[8]).toBe("\u2014");
 });
@@ -194,4 +194,17 @@ test("a truncated table with no identifiers reads incomplete, not at least 0", a
   await show([row("a", { identifiers: 0, maxAccountsEver: undefined, identifiersTruncated: true })]);
 
   expect(cells(0)[4]).toBe("Incomplete");
+});
+
+test("a fact column keeps its sort icon and a single tab stop, and a click still sorts", async () => {
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })]);
+  const header = () => wrapper.findAll("th").find((h) => h.text() === "Identifiers")!;
+
+  expect(header().find(".v-data-table-header__sort-icon").exists()).toBe(true);
+  expect(header().attributes("tabindex")).toBe("0");
+  expect(header().findAll("[tabindex]")).toHaveLength(0);
+
+  await header().trigger("click");
+  expect(names()).toEqual(["Event b", "Event a"]);
+  expect(header().find(".v-data-table-header__sort-icon").classes().join(" ")).toContain("mdi-arrow-down");
 });

@@ -772,7 +772,7 @@ const en = {
       consequence_live_other: "{count} links among the attendees are still live: {links}",
       consequence_live_at_least: "At least {count} links among the attendees are still live: {links}",
       consequence_timed_out: "The live links among the attendees could not be counted this time.",
-      consequence_live_count: "Links among the attendees that are still live: {count}.",
+      consequence_live_count: "Links among the attendees that are still live: {count}, as of {at}.",
       consequence_none: "No link among the attendees is live.",
       // Facts
       facts_title: "Facts",
@@ -793,7 +793,7 @@ const en = {
       facts_as_of: "Computed as of {at}",
       facts_refreshed_hint: "Refreshed periodically. The time of each row's numbers is on the event page.",
       fact_incomplete: "Incomplete",
-      fact_live_timed_out: "Not counted",
+      fact_live_timed_out: "Not counted this time",
       fact_live_timed_out_hint: "The live links could not be counted this time.",
       history_identifiers_incomplete: "could not be listed completely",
       facts_links_live_timed_out: "{ended} ended, the live links could not be counted this time",

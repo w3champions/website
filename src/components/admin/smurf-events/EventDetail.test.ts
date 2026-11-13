@@ -94,7 +94,7 @@ test("a cut live list reads at least the larger of the stored count and the link
 test("without a live list the stored count stands alone, as a count", async () => {
   await show(manualEvent({ facts: { ...FACTS, liveLinks: 11, liveLinksCapped: true } }));
 
-  expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: at least 11.");
+  expect(wrapper.find(".consequence").text()).toBe("Links among the attendees that are still live: at least 11, as of 2026-10-05 00:00 UTC.");
 });
 
 test("facts that timed out with no live list say so even when the facts hold no count", async () => {

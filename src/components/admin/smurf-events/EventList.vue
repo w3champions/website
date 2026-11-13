@@ -85,12 +85,13 @@
         </v-tooltip>
         <template v-else>{{ factText(item.facts?.liveLinks, item.facts?.liveLinksCapped, tr) }}</template>
       </template>
-      <template v-for="column in factColumns" :key="column" v-slot:[`header.${column}`]="{ column: header }">
-        <v-tooltip :text="t(key('facts_refreshed_hint'))" location="bottom">
-          <template v-slot:activator="{ props: activator }">
-            <span v-bind="activator" tabindex="0">{{ header.title }}</span>
-          </template>
-        </v-tooltip>
+      <!-- A header slot replaces the whole cell: the default title and sort icon are drawn again, and the tooltip hangs on the cell itself (already focusable), so there is one tab stop. -->
+      <template v-for="column in factColumns" :key="column" v-slot:[`header.${column}`]="{ column: header, getSortIcon }">
+        <div class="v-data-table-header__content">
+          <span>{{ header.title }}</span>
+          <v-icon class="v-data-table-header__sort-icon" :icon="getSortIcon(header)" />
+        </div>
+        <v-tooltip activator="parent" :text="t(key('facts_refreshed_hint'))" location="bottom" />
       </template>
     </v-data-table>
 
