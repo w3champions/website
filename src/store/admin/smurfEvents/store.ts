@@ -163,7 +163,20 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
+    /** Drops the identifier table and history of the event left behind, and any answer still on its way. */
+    dropEventTables(): void {
+      identifierLoads.invalidate();
+      historyLoads.invalidate();
+      this.identifiers = null;
+      this.identifiersLoading = false;
+      this.identifiersError = null;
+      this.history = null;
+      this.historyLoading = false;
+      this.historyError = null;
+    },
+
     async openDetail(id: string): Promise<boolean> {
+      this.dropEventTables();
       this.detailId = id;
       this.detail = null;
       this.detailError = null;
@@ -195,6 +208,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     },
 
     closeDetail(): void {
+      this.dropEventTables();
       detailLoads.invalidate();
       this.detailId = null;
       this.detail = null;

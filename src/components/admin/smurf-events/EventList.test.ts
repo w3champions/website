@@ -97,8 +97,8 @@ test("sorting by identifiers keeps rows without facts last in both directions", 
   const second = names();
 
   expect([first, second].map((n) => n[n.length - 1])).toEqual(["Event none", "Event none"]);
-  expect(first.slice(0, 3)).toEqual(["Event low", "Event mid", "Event high"]);
-  expect(second.slice(0, 3)).toEqual(["Event high", "Event mid", "Event low"]);
+  expect(first.slice(0, 3)).toEqual(["Event high", "Event mid", "Event low"]);
+  expect(second.slice(0, 3)).toEqual(["Event low", "Event mid", "Event high"]);
 });
 
 test("the list is in the server's order until a header is clicked", async () => {

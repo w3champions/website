@@ -709,3 +709,58 @@ test("loadIdentifiers and loadHistory keep the answer of the newest request only
   expect(store.identifiers).toBeNull();
   expect(store.history).toBeNull();
 });
+
+test("a late identifiers answer for the event left behind is dropped when another event opens", async () => {
+  const store = useSmurfEventsStore();
+  let late!: (v: unknown) => void;
+  service.identifiers.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  service.get.mockResolvedValue(detail("2"));
+  const pending = store.loadIdentifiers("1");
+
+  await store.openDetail("2");
+  late({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [{ hash8: "ofA" }] });
+  await pending;
+
+  expect(store.identifiers).toBeNull();
+  expect(store.identifiersLoading).toBe(false);
+  expect(store.identifiersError).toBeNull();
+});
+
+test("a late history answer is dropped when the detail is closed, and the loaded state is cleared", async () => {
+  const store = useSmurfEventsStore();
+  service.identifiers.mockResolvedValue({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [] });
+  service.history.mockResolvedValueOnce({ entries: [] });
+  await store.loadIdentifiers("1");
+  await store.loadHistory("1");
+  expect(store.history).not.toBeNull();
+  let late!: (v: unknown) => void;
+  service.history.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  const pending = store.loadHistory("1");
+
+  store.closeDetail();
+  late({ entries: [{ id: "x" }] });
+  await pending;
+
+  expect(store.history).toBeNull();
+  expect(store.historyLoading).toBe(false);
+  expect(store.identifiers).toBeNull();
+});
+
+test("a late rename answer after clear() puts neither a row nor a detail back", async () => {
+  service.get.mockResolvedValue(detail("1"));
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  await store.openDetail("1");
+  let late!: (v: unknown) => void;
+  service.rename.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  const pending = store.rename("1", "Sofia LAN");
+
+  store.clear();
+  late(detail("1", { name: "Sofia LAN", named: true }));
+  await pending;
+
+  expect(store.events).toEqual([]);
+  expect(store.detail).toBeNull();
+  expect(store.detailId).toBeNull();
+  expect(store.acting).toBe(false);
+});

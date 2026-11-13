@@ -51,6 +51,7 @@
     <v-data-table
       v-model:sort-by="sortBy"
       :headers="headers"
+      initial-sort-order="desc"
       :items="store.events"
       :loading="store.listLoading"
       :items-per-page="-1"
@@ -130,7 +131,7 @@ function rowProps({ item }: { item: SmurfEventSummary }) {
   return { class: item.review === "unreviewed" ? "row-unreviewed" : "" };
 }
 
-// Empty: the server's order. Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
+// Empty: the server's order; the first click on a header sorts descending. Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
 const sortBy = ref<Array<{ key: string; order?: boolean | "asc" | "desc" }>>([]);
 const descending = computed(() => sortBy.value[0]?.order === "desc");
 const sortFacts = (a: number | undefined, b: number | undefined): number => (descending.value ? factSortSwapped(a, b) : factSort(a, b));
