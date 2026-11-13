@@ -15,6 +15,8 @@ export default class MatchService {
     duration: { min: number; max: number },
     season: number,
     heroes: number[],
+    race: ERaceEnum = ERaceEnum.TOTAL,
+    includeRandom: boolean = false,
   ): Promise<{ count: number; matches: Match[] }> {
     const offset = page * this.pageSize;
     const minMmr = mmr.min === 0 ? "" : `&minMmr=${mmr.min}`;
@@ -26,7 +28,10 @@ export default class MatchService {
     const heroQuery = Array.isArray(heroes) && heroes.length > 0
       ? heroes.filter((h) => h > 0).map((h) => `&hero=${h}`).join("")
       : "";
-    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&mapName=${mapName}${minMmr}${maxMmr}${_durationQuery}&season=${season}${heroQuery}`;
+    const raceQuery = race === ERaceEnum.TOTAL
+      ? ""
+      : `&race=${race}&includeRandom=${String(includeRandom)}`;
+    const url = `${API_URL}api/matches?offset=${offset}&gateway=${gateway}&pageSize=${this.pageSize}&gameMode=${gameMode}&mapName=${mapName}${minMmr}${maxMmr}${_durationQuery}&season=${season}${heroQuery}${raceQuery}`;
 
     const response = await fetch(url);
     return await response.json();
