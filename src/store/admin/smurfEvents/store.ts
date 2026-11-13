@@ -366,7 +366,14 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
         return outcome;
       } catch (e) {
         console.error("Reviewing the smurf event failed:", e);
-        if (visits.isLatest(visit)) this.actionError = e;
+        if (visits.isLatest(visit)) {
+          this.actionError = e;
+          // The server names the event before it reviews: a failed review may still have changed the name.
+          if (trimmedName !== undefined && this.detailId === id) {
+            void this.refreshDetail(id);
+            void this.loadHistory(id);
+          }
+        }
         return null;
       } finally {
         if (visits.isLatest(visit)) this.acting = false;

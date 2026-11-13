@@ -139,8 +139,8 @@ function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; applies?: b
   // Without links changing, "the effect follows shortly" would mislead: the not-applying notice wins over the not-applied one.
   const kind: NoticeKind = !flags.applied && !notApplying ? "saved_pending" : flags.existing ? "existing" : "saved";
   notice.value = { kind, view: saved.id, ...(flags.needsReview ? { needsReview: true as const } : {}), ...(notApplying ? { notApplying: true as const } : {}) };
-  // An edit in place changes what the record shows; a create loads it when the new event's view opens.
-  if (saved.id === eventId.value) void store.loadHistory(saved.id);
+  // An edit in place changes the record and the identifiers; a create loads them when the new event's view opens.
+  if (saved.id === eventId.value) loadEventTables(saved.id);
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
 }
 
@@ -179,14 +179,19 @@ function onDeleted(): void {
   showList();
 }
 
+/** The tables of the event page: its decision record and its identifiers. */
+function loadEventTables(id: string): void {
+  void store.loadHistory(id);
+  void store.loadIdentifiers(id);
+}
+
 /**
- * The one place an event is loaded: openDetail drops the history (and the identifiers) of the event
+ * The one place an event is fetched: openDetail drops the history and the identifiers of the event
  * before it, so what belongs to the event page is asked for here, after every openDetail.
  */
 function loadEvent(id: string): void {
   void store.openDetail(id);
-  void store.loadHistory(id);
-  void store.loadIdentifiers(id);
+  loadEventTables(id);
 }
 
 /** Shows another event; the same one is loaded again (a retry). */
@@ -198,10 +203,12 @@ function openEvent(id: string): void {
 watch(eventId, (id, previous) => {
   if (id === previous) return;
   if (notice.value !== null && notice.value.view !== id) notice.value = null;
+  // Without the permission nothing is requested, not even on back and forward between event URLs.
+  if (!canAdminister.value) return;
   if (!id) store.closeDetail();
-  // A create already put the saved event in the store: no second load of it, but its history is still to be read.
+  // A create already put the saved event in the store: no second load of it, but its tables are still to be read.
   else if (store.detail?.id !== id) loadEvent(id);
-  else void store.loadHistory(id);
+  else loadEventTables(id);
 });
 
 const filterKey = computed(() => JSON.stringify(filtersFromQuery(route.query)));

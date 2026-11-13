@@ -21,8 +21,10 @@ import AdminSmurfEvents from "./AdminSmurfEvents.vue";
 
 const STUBS = { EventList: true, EventDetail: true, ManualEventDialog: true, ReviewDialog: true, RenameDialog: true, DeleteEventDialog: true };
 
+const DIALOGS = ["ManualEventDialog", "ReviewDialog", "RenameDialog", "DeleteEventDialog"];
+
 function dialogCount(): number {
-  return ["ManualEventDialog", "ReviewDialog", "DeleteEventDialog"].filter((name) => wrapper.findComponent({ name }).exists()).length;
+  return DIALOGS.filter((name) => wrapper.findComponent({ name }).exists()).length;
 }
 
 let wrapper: VueWrapper;
@@ -67,6 +69,35 @@ test("a create shows the new event with its notice and loads it only once", asyn
   expect(wrapper.text()).toContain("Event saved.");
   expect(service.get).not.toHaveBeenCalled();
   expect(useSmurfEventsStore().detail?.id).toBe("ev-new");
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.identifiers).toHaveBeenLastCalledWith("tok", "ev-new");
+});
+
+test("a create that answered an existing event reads its identifiers once", async () => {
+  await open("/admin-smurf-events");
+  const existing = manualEvent({ id: "ev-old" });
+  useSmurfEventsStore().detail = existing;
+
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", existing, { applied: true, existing: true, needsReview: false });
+  await flushPromises();
+
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.identifiers).toHaveBeenLastCalledWith("tok", "ev-old");
+});
+
+test("an edit in place reads the record and the identifiers again", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.history).toHaveBeenCalledTimes(1);
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("edit");
+  await flushPromises();
+
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent({ id: "ev1" }), { applied: true, existing: false, needsReview: false });
+  await flushPromises();
+
+  expect(service.identifiers).toHaveBeenCalledTimes(2);
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(service.get).toHaveBeenCalledTimes(1);
 });
 
 test("the record is read after every load of an event, the same event again included", async () => {
@@ -229,14 +260,21 @@ test("without the SmurfCheckerAdministration permission the page says so and req
   expect(wrapper.text()).toContain("You don't have the SmurfCheckerAdministration permission.");
   expect(service.list).not.toHaveBeenCalled();
   expect(service.get).not.toHaveBeenCalled();
+  expect(service.history).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
   expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(false);
+
+  await router.push("/admin-smurf-events?event=ev2");
+  await flushPromises();
+  expect(service.get).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
 });
 
 test("with Administration, the dialogs are there", async () => {
   await open("/admin-smurf-events");
 
   expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(true);
-  expect(dialogCount()).toBe(3);
+  expect(dialogCount()).toBe(DIALOGS.length);
 });
 
 test("permissions that arrive after the page mounted start the load", async () => {
@@ -451,6 +489,15 @@ test("a moderator with SmurfCheckerQuery only sees the no_permission alert and n
   expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(false);
   expect(service.list).not.toHaveBeenCalled();
   expect(service.get).not.toHaveBeenCalled();
+  expect(service.history).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
+
+  // Back and forward between event URLs asks for nothing either.
+  await router.push("/admin-smurf-events?event=ev2");
+  await flushPromises();
+  expect(service.get).not.toHaveBeenCalled();
+  expect(service.history).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
 });
 
 test("a holder of SmurfCheckerAdministration alone loads the page", async () => {

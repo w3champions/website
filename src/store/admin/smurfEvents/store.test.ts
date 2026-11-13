@@ -292,6 +292,35 @@ test("a refused review keeps the server's error and leaves the event as shown", 
   expect(store.detail?.review).toBe("unreviewed");
 });
 
+test("a review that carried a name and failed reads the event and its record again, keeping the error", async () => {
+  const failure = new SmurfEventsApiError(429, "Busy", null);
+  service.review.mockRejectedValue(failure);
+  service.history.mockResolvedValue({ entries: [] });
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+  service.get.mockResolvedValue({ ...detail("1"), name: "Renamed by the review" });
+
+  await store.review("1", "confirmed", "", "Renamed by the review");
+  await flushPromises();
+
+  expect(service.get).toHaveBeenCalledTimes(2);
+  expect(service.history).toHaveBeenCalledWith("tok", "1");
+  expect(store.detail?.name).toBe("Renamed by the review");
+  expect(store.actionError).toBe(failure);
+});
+
+test("a review without a name that failed reads nothing again", async () => {
+  service.review.mockRejectedValue(new SmurfEventsApiError(429, "Busy", null));
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+
+  await store.review("1", "confirmed", "");
+  await flushPromises();
+
+  expect(service.get).toHaveBeenCalledTimes(1);
+  expect(service.history).not.toHaveBeenCalled();
+});
+
 test("clearActionError drops the last write error", async () => {
   service.review.mockRejectedValue(new SmurfEventsApiError(409, "Changed meanwhile", null));
   const store = useSmurfEventsStore();
