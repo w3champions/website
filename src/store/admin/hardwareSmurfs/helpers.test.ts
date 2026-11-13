@@ -92,17 +92,12 @@ test("item flags show only what the server marked", () => {
 
 // --- actions ---
 
-test("no actions without SmurfCheckerAdministration", () => {
-  assert.deepEqual(pairActions(link(), false), []);
-  assert.deepEqual(itemActions({ trusted: false, ignored: false }, false), []);
-});
-
 test("a pair without a verdict offers both verdicts", () => {
-  assert.deepEqual(pairActions(link(), true), [
+  assert.deepEqual(pairActions(link()), [
     { action: "smurf", replaces: null },
     { action: "not-smurf", replaces: null },
   ]);
-  assert.deepEqual(pairActions(link({ invalidatedAt: "2026-10-03T00:00:00.000Z", invalidReason: "venue" }), true), [
+  assert.deepEqual(pairActions(link({ invalidatedAt: "2026-10-03T00:00:00.000Z", invalidReason: "venue" })), [
     { action: "smurf", replaces: null },
     { action: "not-smurf", replaces: null },
   ]);
@@ -110,7 +105,7 @@ test("a pair without a verdict offers both verdicts", () => {
 
 test("a confirmed pair offers its revoke and the replacing not-smurf", () => {
   const confirmed = link({ verdict: { kind: "smurf", author: "M#1", reason: "r", at: "x" }, source: "moderator" });
-  assert.deepEqual(pairActions(confirmed, true), [
+  assert.deepEqual(pairActions(confirmed), [
     { action: "revoke-smurf", replaces: null },
     { action: "not-smurf", replaces: "smurf" },
   ]);
@@ -118,26 +113,26 @@ test("a confirmed pair offers its revoke and the replacing not-smurf", () => {
 
 test("a refuted pair (also a legacy verdict without kind) offers its revoke and the replacing confirm", () => {
   const refuted = link({ invalidatedAt: "x", invalidReason: "not-smurf", verdict: { author: "M#1", reason: "r", at: "x" } });
-  assert.deepEqual(pairActions(refuted, true), [
+  assert.deepEqual(pairActions(refuted), [
     { action: "revoke-not-smurf", replaces: null },
     { action: "smurf", replaces: "not-smurf" },
   ]);
 });
 
 test("item actions follow the trusted and ignored state", () => {
-  assert.deepEqual(itemActions({ trusted: false, ignored: false }, true), [
+  assert.deepEqual(itemActions({ trusted: false, ignored: false }), [
     { action: "trust", replaces: null },
     { action: "ignore", replaces: null },
   ]);
-  assert.deepEqual(itemActions({ trusted: true, ignored: false }, true), [
+  assert.deepEqual(itemActions({ trusted: true, ignored: false }), [
     { action: "revoke-trust", replaces: null },
     { action: "ignore", replaces: "trust" },
   ]);
-  assert.deepEqual(itemActions({ trusted: false, ignored: true }, true), [
+  assert.deepEqual(itemActions({ trusted: false, ignored: true }), [
     { action: "revoke-ignore", replaces: null },
     { action: "trust", replaces: "ignore" },
   ]);
-  assert.deepEqual(itemActions({ trusted: true, ignored: true }, true), [
+  assert.deepEqual(itemActions({ trusted: true, ignored: true }), [
     { action: "revoke-trust", replaces: null },
     { action: "revoke-ignore", replaces: null },
   ]);

@@ -4,7 +4,7 @@
       <v-chip v-bind="activator" size="small" variant="outlined" tabindex="0">{{ label }}</v-chip>
     </template>
   </v-tooltip>
-  <v-chip v-else size="small" variant="tonal" :color="reviewColor(value as SmurfEventReview)">{{ label }}</v-chip>
+  <v-chip v-else size="small" variant="tonal" :color="reviewColor(value as SmurfEventReview)"><span v-if="value === 'unreviewed'" aria-hidden="true" class="mr-1">&#9670;</span>{{ label }}</v-chip>
 </template>
 
 <script lang="ts" setup>

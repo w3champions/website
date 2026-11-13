@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, expect, test, vi } from "vitest";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
-import { createMemoryHistory, createRouter } from "vue-router";
+import { createMemoryHistory, createRouter, type Router } from "vue-router";
 import type { SmurfEventFacts, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { testPlugins } from "./setup.testing";
@@ -12,6 +12,7 @@ vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) 
 import EventList from "./EventList.vue";
 
 let wrapper: VueWrapper;
+let router: Router;
 
 afterEach(() => wrapper.unmount());
 
@@ -33,9 +34,9 @@ function row(id: string, facts?: Partial<SmurfEventFacts>, review: SmurfEventSum
   return facts === undefined ? summary : { ...summary, facts: { ...FACTS, ...facts } };
 }
 
-async function show(events: SmurfEventSummary[], next: string | null = null): Promise<void> {
-  const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/", component: { template: "<div />" } }] });
-  await router.push("/");
+async function show(events: SmurfEventSummary[], next: string | null = null, path = "/"): Promise<void> {
+  router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/", component: { template: "<div />" } }] });
+  await router.push(path);
   const plugins = testPlugins();
   const store = useSmurfEventsStore();
   store.events = events;
@@ -122,4 +123,38 @@ test("the review badge uses no success or error colour", async () => {
   const classes = bodyRows().map((r) => r.findAll(".v-chip")[0].classes().join(" "));
   expect(classes).toHaveLength(3);
   for (const c of classes) expect(c).not.toMatch(/success|error/);
+});
+
+test("a sort click puts the sort in the URL, keeping the other query values", async () => {
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })], null, "/?review=unreviewed");
+
+  await clickHeader("Identifiers");
+
+  expect(router.currentRoute.value.query).toEqual({ review: "unreviewed", sort: "facts.identifiers:desc" });
+});
+
+test("the sort in the URL is read back when the list is shown again", async () => {
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })], null, "/?sort=facts.identifiers:asc");
+
+  expect(names()).toEqual(["Event a", "Event b"]);
+  wrapper.unmount();
+
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })], null, "/?sort=facts.identifiers:desc");
+  expect(names()).toEqual(["Event b", "Event a"]);
+});
+
+test("a sort value that is missing, unparseable or names no sortable column means the server's order", async () => {
+  for (const sort of ["facts.identifiers", "facts.identifiers:sideways", "name:asc", "nothing:desc"]) {
+    await show([row("b", { identifiers: 9 }), row("a", { identifiers: 1 })], null, `/?sort=${encodeURIComponent(sort)}`);
+    expect(names()).toEqual(["Event b", "Event a"]);
+    wrapper.unmount();
+  }
+  await show([row("b", { identifiers: 9 }), row("a", { identifiers: 1 })]);
+});
+
+test("an unreviewed row's review chip carries the diamond mark", async () => {
+  await show([row("a", {}, "unreviewed"), row("b", {}, "confirmed")]);
+
+  expect(cells(0)[2]).toContain("\u25C6");
+  expect(cells(1)[2]).not.toContain("\u25C6");
 });

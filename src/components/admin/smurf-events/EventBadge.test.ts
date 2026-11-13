@@ -48,7 +48,17 @@ test("the chip can be reached with the keyboard so that the tooltip opens", () =
 test.each([["unreviewed", "Unreviewed", "warning"], ["confirmed", "Confirmed", "primary"], ["denied", "Denied", "grey"]] as const)("the %s review shows its label in a calm colour", (review, label, color) => {
   show("review", review);
 
-  expect(wrapper.text()).toBe(label);
+  expect(wrapper.text()).toContain(label);
   expect(wrapper.find(".v-chip").classes().join(" ")).toContain(color);
   expect(wrapper.findComponent(VTooltip).exists()).toBe(false);
+});
+
+test("the orange of an unreviewed event comes with the diamond mark, and no other review carries it", () => {
+  show("review", "unreviewed");
+  expect(wrapper.text()).toContain("\u25C6");
+  expect(wrapper.find(".v-chip").classes().join(" ")).toContain("warning");
+  wrapper.unmount();
+
+  show("review", "confirmed");
+  expect(wrapper.text()).not.toContain("\u25C6");
 });

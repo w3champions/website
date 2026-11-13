@@ -53,8 +53,8 @@
           {{ errorText(store.actionError, tr) }}
         </v-alert>
 
-        <hardware-links-card :can-administer="canAdminister" @action="openPairAction" @open-account="openAccount" />
-        <hardware-items-card :can-administer="canAdminister" @action="openItemAction" />
+        <hardware-links-card @action="openPairAction" @open-account="openAccount" />
+        <hardware-items-card @action="openItemAction" />
         <hardware-audit-card />
       </template>
 

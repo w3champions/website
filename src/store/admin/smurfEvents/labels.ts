@@ -3,10 +3,21 @@ import type { SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, S
 import { factText } from "./facts";
 import { key, type Translate } from "./translate";
 
-const ORIGINS: ReadonlySet<string> = new Set<SmurfEventOrigin>(["detected", "historical", "manual", "carried-over"]);
-const REVIEWS: ReadonlySet<string> = new Set<SmurfEventReview>(["unreviewed", "confirmed", "denied"]);
+/** The origins and reviews the page knows, in the order its filters list them. */
+export const ORIGINS: readonly SmurfEventOrigin[] = ["detected", "historical", "manual", "carried-over"];
+export const REVIEWS: readonly SmurfEventReview[] = ["unreviewed", "confirmed", "denied"];
+const ORIGIN_SET: ReadonlySet<string> = new Set(ORIGINS);
+const REVIEW_SET: ReadonlySet<string> = new Set(REVIEWS);
 const REFUSALS: ReadonlySet<string> = new Set<SmurfEventPreviewRefusal>(["no-venue", "too-long", "too-wide"]);
 const EXCLUSIONS: ReadonlySet<string> = new Set<SmurfEventExclusion>(["home", "single-anchor", "too-wide"]);
+
+export function isOrigin(value: string): value is SmurfEventOrigin {
+  return ORIGIN_SET.has(value);
+}
+
+export function isReview(value: string): value is SmurfEventReview {
+  return REVIEW_SET.has(value);
+}
 
 /** The label of `value` from `prefix_value`, or the value as sent when the page does not know it. */
 function known(values: ReadonlySet<string>, prefix: string, value: string, t: Translate): string {
@@ -14,11 +25,11 @@ function known(values: ReadonlySet<string>, prefix: string, value: string, t: Tr
 }
 
 export function originLabel(origin: SmurfEventOrigin, t: Translate): string {
-  return known(ORIGINS, "origin", origin, t);
+  return known(ORIGIN_SET, "origin", origin, t);
 }
 
 export function reviewLabel(review: SmurfEventReview, t: Translate): string {
-  return known(REVIEWS, "review", review, t);
+  return known(REVIEW_SET, "review", review, t);
 }
 
 /** Vuetify color of a review chip: unreviewed events wait for a moderator. */

@@ -41,7 +41,7 @@
           </v-chip>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <action-buttons :options="itemActions(item, canAdminister)" @select="(o) => emit('action', o, item)" />
+          <action-buttons :options="itemActions(item)" @select="(o) => emit('action', o, item)" />
         </template>
       </v-data-table>
     </v-card-text>
@@ -63,7 +63,6 @@ import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
 import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import ActionButtons from "./ActionButtons.vue";
 
-defineProps<{ canAdminister: boolean }>();
 
 const emit = defineEmits<{
   (e: "action", option: ActionOption<ItemAction>, item: HardwareProfileItemView): void;

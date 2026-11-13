@@ -14,7 +14,7 @@ test("laneBars puts the first day of the window at x 0 and scales heights to the
 });
 
 test("laneBars drops days outside the window and scales to what is shown", () => {
-  const bars = laneBars([[99, 50], [101, 5], [110, 50]], WINDOW, 100, 10);
+  const bars = laneBars([[99, 47], [101, 5], [110, 47]], WINDOW, 100, 10);
 
   expect(bars).toHaveLength(1);
   expect(bars[0]).toMatchObject({ day: 101, h: 10 });
@@ -40,15 +40,15 @@ test("logAxis maps the largest value to 1 and a smaller one below it", () => {
 
 test("logAxis ends at the data's largest value, whatever it is", () => {
   expect(logAxis([3, 7])(7)).toBe(1);
-  expect(logAxis([5, 1000])(1000)).toBe(1);
-  expect(logAxis([5, 1000])(500)).toBeLessThan(1);
+  expect(logAxis([19, 937])(937)).toBe(1);
+  expect(logAxis([19, 937])(413)).toBeLessThan(1);
   expect(logAxis([1])(1)).toBe(1);
   expect(logAxis([])(1)).toBe(1);
 });
 
 test("dayText is the UTC date of a day number", () => {
   expect(dayText(0)).toBe("1970-01-01");
-  expect(dayText(20_000)).toBe("2024-10-04");
+  expect(dayText(19_993)).toBe("2024-09-27");
 });
 
 const EVENT = { eventFromDay: 103, eventToDay: 105 };
@@ -75,7 +75,7 @@ test("a band whose event days lie outside the window stays inside the width", ()
   const band = bandOf({ ...WINDOW, eventFromDay: 95, eventToDay: 130 }, 100);
 
   expect(band).toEqual({ x: 0, w: 100 });
-  expect(bandOf({ ...WINDOW, eventFromDay: 200, eventToDay: 210 }, 100).w).toBe(0);
+  expect(bandOf({ ...WINDOW, eventFromDay: 211, eventToDay: 221 }, 100).w).toBe(0);
   expect(bandOf({ ...WINDOW, eventFromDay: Number.NaN, eventToDay: 105 }, 100)).toEqual({ x: 0, w: 0 });
 });
 

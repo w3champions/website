@@ -66,7 +66,7 @@
                 </div>
               </td>
               <td class="also-in">
-                <v-btn v-for="e in entry.row.alsoIn" :key="e.id" variant="text" size="small" class="px-1" @click="emit('open-event', e.id)">{{ e.name }}</v-btn>
+                <v-btn v-for="e in entry.row.alsoIn" :key="e.id" variant="text" size="small" class="px-1" :to="{ query: { ...route.query, event: e.id } }">{{ e.name }}</v-btn>
               </td>
             </tr>
           </template>
@@ -80,6 +80,7 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventIdentifierRow, SmurfEventIdentifiers } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { factText } from "@/store/admin/smurfEvents/facts";
@@ -97,10 +98,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "retry"): void;
-  (e: "open-event", id: string): void;
 }>();
 
 const { t } = useI18n();
+const route = useRoute();
 const tr: Translate = (k, named) => t(k, named ?? {});
 
 const expanded = ref(false);

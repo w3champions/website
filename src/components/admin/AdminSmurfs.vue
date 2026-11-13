@@ -274,8 +274,9 @@ export default defineComponent({
     onMounted(async () => {
       try {
         availableIdentifierTypes.value = await adminStore.getSmurfIdentifierTypes();
-      } catch {
+      } catch (e) {
         // Keep the default list: the search must still work when the type list is refused.
+        console.error("Loading the identifier types failed:", e);
       }
 
       const playerParam = route.query.player as string | undefined;

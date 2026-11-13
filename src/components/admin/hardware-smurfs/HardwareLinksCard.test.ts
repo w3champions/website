@@ -40,7 +40,7 @@ async function show(link: HardwareLink): Promise<void> {
   const store = useHardwareSmurfsStore();
   store.battleTag = "Anchor#1001";
   store.links = [link];
-  wrapper = mount(HardwareLinksCard, { props: { canAdminister: false }, global: { plugins: [...plugins, router] } });
+  wrapper = mount(HardwareLinksCard, { global: { plugins: [...plugins, router] } });
   await flushPromises();
 }
 

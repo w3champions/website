@@ -249,8 +249,6 @@ test("a failed identifiers load can be retried and shows the table in the page",
   await flushPromises();
 
   await wrapper.findComponent({ name: "IdentifierTable" }).vm.$emit("retry");
-  await wrapper.findComponent({ name: "IdentifierTable" }).vm.$emit("open-event", "ev9");
 
   expect(wrapper.emitted("retry-identifiers")).toHaveLength(1);
-  expect(wrapper.emitted("open-event")).toEqual([["ev9"]]);
 });

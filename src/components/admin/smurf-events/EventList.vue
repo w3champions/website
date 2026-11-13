@@ -67,7 +67,7 @@
         <router-link :to="detailLink(item.id)" class="event-link font-weight-medium">{{ item.name }}</router-link>
       </template>
       <template v-slot:[`item.review`]="{ item }">
-        <v-chip size="small" variant="tonal" :color="reviewColor(item.review)">{{ reviewLabel(item.review, tr) }}</v-chip>
+        <event-badge kind="review" :value="item.review" />
       </template>
       <template v-slot:[`item.span`]="{ item }">
         <span class="text-no-wrap">{{ formatUtc(item.from) }}</span><br /><span class="text-no-wrap text-medium-emphasis">{{ formatUtc(item.to) }}</span>
@@ -89,17 +89,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { mdiPlus, mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventOrigin, SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { factSort, factSortSwapped, factText } from "@/store/admin/smurfEvents/facts";
-import { errorText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
+import { factSort, factSortSwapped, factText, type SortOrder, sortFromQuery, sortToQuery } from "@/store/admin/smurfEvents/facts";
+import { errorText, ORIGINS, originLabel, REVIEWS, reviewLabel } from "@/store/admin/smurfEvents/labels";
 import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import EventBadge from "./EventBadge.vue";
 
 defineProps<{
   filters: SmurfEventFilters;
@@ -113,10 +114,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 const route = useRoute();
+const router = useRouter();
 const store = useSmurfEventsStore();
-
-const ORIGINS: SmurfEventOrigin[] = ["detected", "historical", "manual", "carried-over"];
-const REVIEWS: SmurfEventReview[] = ["unreviewed", "confirmed", "denied"];
 
 const originItems = computed(() => [{ title: t(key("filter_any")), value: null }, ...ORIGINS.map((o) => ({ title: originLabel(o, tr), value: o }))]);
 const reviewItems = computed(() => [{ title: t(key("filter_any")), value: null }, ...REVIEWS.map((r) => ({ title: reviewLabel(r, tr), value: r }))]);
@@ -130,10 +129,10 @@ function rowProps({ item }: { item: SmurfEventSummary }) {
   return { class: item.review === "unreviewed" ? "row-unreviewed" : "" };
 }
 
-// Empty: the server's order; the first click on a header sorts descending. Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
-const sortBy = ref<Array<{ key: string; order?: boolean | "asc" | "desc" }>>([]);
-const descending = computed(() => sortBy.value[0]?.order === "desc");
-const sortFacts = (a: number | undefined, b: number | undefined): number => (descending.value ? factSortSwapped(a, b) : factSort(a, b));
+// Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
+function sortFacts(a: number | undefined, b: number | undefined): number {
+  return sortBy.value[0]?.order === "desc" ? factSortSwapped(a, b) : factSort(a, b);
+}
 
 const headers = computed<DataTableHeader[]>(() => [
   { title: t(key("col_name")), key: "name", sortable: false },
@@ -147,6 +146,39 @@ const headers = computed<DataTableHeader[]>(() => [
   { title: t(key("col_live_links")), key: "facts.liveLinks", sortable: true, sort: sortFacts, align: "end" },
 ]);
 
+// Empty: the server's order; the first click on a header sorts descending.
+// The sort lives in the URL next to the filters, so it is still there when an event is closed again.
+const sortColumns = computed(() => headers.value.filter((h) => h.sortable).map((h) => h.key as string));
+type SortItems = Array<{ key: string; order?: boolean | SortOrder }>;
+
+function sortFromRoute(): SortItems {
+  const sort = sortFromQuery(route.query.sort, sortColumns.value);
+  return sort === null ? [] : [sort];
+}
+
+const sortBy = ref<SortItems>(sortFromRoute());
+
+// The table's sort goes to the URL; an order Vuetify leaves out or sets to `false` is no sort.
+watch(sortBy, (items) => {
+  const first = items[0];
+  const sort = first !== undefined && (first.order === "asc" || first.order === "desc") ? sortToQuery({ key: first.key, order: first.order }) : undefined;
+  if (sort !== queryText(route.query.sort)) void router.replace({ query: { ...route.query, sort } }).catch(() => null);
+});
+
+// Browser back and forward bring another sort in the URL.
+watch(() => route.query.sort, () => {
+  const fromRoute = sortFromRoute();
+  if (sortToText(fromRoute) !== sortToText(sortBy.value)) sortBy.value = fromRoute;
+});
+
+function sortToText(items: SortItems): string {
+  const first = items[0];
+  return first === undefined || (first.order !== "asc" && first.order !== "desc") ? "" : sortToQuery({ key: first.key, order: first.order });
+}
+
+function queryText(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
 </script>
 
 <style scoped>

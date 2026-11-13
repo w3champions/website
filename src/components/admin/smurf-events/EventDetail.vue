@@ -31,7 +31,7 @@
               :title="t(key('rename_action'))"
               @click="emit('rename')"
             >
-              <v-icon :icon="mdiPencil" />
+              <v-icon :icon="mdiRenameBox" />
             </v-btn>
             <event-badge kind="origin" :value="event.origin" />
             <event-badge kind="review" :value="event.review" />
@@ -93,7 +93,6 @@
         :loading="store.identifiersLoading"
         :error="store.identifiersError ? errorText(store.identifiersError, tr) : null"
         @retry="emit('retry-identifiers')"
-        @open-event="(id) => emit('open-event', id)"
       />
 
       <v-card class="mb-4">
@@ -129,7 +128,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil } from "@mdi/js";
+import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil, mdiRenameBox } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import { EAdminRouteName } from "@/router/types";

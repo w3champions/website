@@ -6,7 +6,7 @@ import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
 import { countText, errorText, exclusionLabel, factLabel, historyActionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewFactsText, reviewLabel } from "./labels";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
-import { factSort, factText } from "./facts";
+import { factSort, factText, sortFromQuery, sortToQuery } from "./facts";
 import { translateEn as t } from "./translate.testing";
 
 const DRAFT: SmurfEventDraft = { name: "LAN party", from: "2026-10-01T00:00", to: "2026-10-03T00:00", anchors: ["Anchor#1001", "Anchor#1002"], reason: "" };
@@ -233,4 +233,13 @@ test("factSort puts an unknown value after every number", () => {
   assert.ok(factSort(undefined, 0) > 0);
   assert.ok(factSort(0, undefined) < 0);
   assert.equal(factSort(undefined, undefined), 0);
+});
+
+test("the sort round-trips through the URL value and an unknown or malformed value means the default order", () => {
+  const columns = ["facts.identifiers", "facts.networks"];
+
+  assert.equal(sortToQuery({ key: "facts.identifiers", order: "desc" }), "facts.identifiers:desc");
+  assert.deepEqual(sortFromQuery("facts.identifiers:desc", columns), { key: "facts.identifiers", order: "desc" });
+  assert.deepEqual(sortFromQuery("facts.networks:asc", columns), { key: "facts.networks", order: "asc" });
+  for (const bad of [undefined, "", "facts.identifiers", "facts.identifiers:up", "name:asc", ":asc", ["facts.networks:asc"], null]) assert.equal(sortFromQuery(bad, columns), null);
 });

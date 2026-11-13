@@ -705,6 +705,10 @@ const en = {
       outcome_previousUnknown: "Previous review unknown",
       outcome_applied: "Links changed",
     },
+    // Texts of the parts smurf events and hardware links share.
+    smurf_detection: {
+      chip_keys: "({count} keys)",
+    },
     smurf_events: {
       title: "Smurf Events",
       no_permission: "You don't have the SmurfCheckerAdministration permission.",
@@ -847,7 +851,6 @@ const en = {
       fold_hide: "Hide",
       machine_names: "Machine names: {names}",
       usernames: "Usernames: {names}",
-      chip_keys: "({count} keys)",
       dumbbell_alt: "Accounts during the event: {during}. Accounts ever: {ever}.",
       dumbbell_alt_during: "Accounts during the event: {during}.",
       lane_alt: "Accounts per day from {from} to {to}; the event ran from {eventFrom} to {eventTo}. Days with use: {days}.",
@@ -934,7 +937,7 @@ const en = {
       not_applying_write: "Smurf events do not change links at the moment, so this change did not change any link.",
       saved: "Event saved.",
       saved_pending: "Event saved. Its effect on links will follow shortly.",
-      existing: "An event with these anchors and span already exists, so nothing was changed. Rename it with Edit.",
+      existing: "An event with these anchors and span already exists, so nothing was changed.",
       reviewed: "Review saved.",
       needs_review_again: "The edit changed what the event covers, so it needs review again.",
       reviewed_pending: "Review saved. Its effect on links will follow shortly.",

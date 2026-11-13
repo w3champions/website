@@ -1,16 +1,21 @@
 // @vitest-environment jsdom
 import { afterEach, expect, test } from "vitest";
 import { mount, type VueWrapper } from "@vue/test-utils";
+import { createMemoryHistory, createRouter } from "vue-router";
 import type { SmurfEventIdentifierRow, SmurfEventIdentifiers } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { testPlugins } from "./setup.testing";
 import IdentifierTable from "./IdentifierTable.vue";
 
 let wrapper: VueWrapper;
+const router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/", component: { template: "<div />" } }] });
 
-afterEach(() => wrapper.unmount());
+afterEach(async () => {
+  wrapper.unmount();
+  await router.push("/");
+});
 
 const FROM_DAY = Date.UTC(2026, 8, 30) / 86_400_000;
-const WINDOW = { fromDay: FROM_DAY, toDay: FROM_DAY + 20, eventFromDay: FROM_DAY + 5, eventToDay: FROM_DAY + 7 };
+const WINDOW = { fromDay: FROM_DAY, toDay: FROM_DAY + 18, eventFromDay: FROM_DAY + 5, eventToDay: FROM_DAY + 7 };
 
 function row(overrides: Partial<SmurfEventIdentifierRow>): SmurfEventIdentifierRow {
   return {
@@ -32,7 +37,7 @@ function show(rows: SmurfEventIdentifierRow[], extra: Partial<SmurfEventIdentifi
   const identifiers: SmurfEventIdentifiers = { window: WINDOW, rows, ...extra };
   wrapper = mount(IdentifierTable, {
     props: { identifiers, loading: state.loading ?? false, error: state.error ?? null },
-    global: { plugins: testPlugins() },
+    global: { plugins: [...testPlugins(), router] },
   });
 }
 
@@ -214,14 +219,16 @@ test("a complete list says nothing about being cut", () => {
   expect(wrapper.text()).not.toContain("Showing part");
 });
 
-test("the other events of a row open through open-event", async () => {
+test("the other events of a row are links that keep the page's query, so they open in a new tab too", async () => {
+  await router.push("/?review=unreviewed&sort=facts.identifiers:desc");
   show([row({ observed: ["after"], alsoIn: [{ id: "ev7", name: "Cup" }, { id: "ev8", name: "Other LAN" }] })]);
 
-  const buttons = wrapper.findAll(".identifier-row .also-in button");
-  expect(buttons.map((b) => b.text())).toEqual(["Cup", "Other LAN"]);
-  await buttons[1].trigger("click");
-
-  expect(wrapper.emitted("open-event")).toEqual([["ev8"]]);
+  const links = wrapper.findAll(".identifier-row .also-in a");
+  expect(links.map((l) => l.text())).toEqual(["Cup", "Other LAN"]);
+  expect(links.map((l) => l.attributes("href"))).toEqual([
+    "/?review=unreviewed&sort=facts.identifiers:desc&event=ev7",
+    "/?review=unreviewed&sort=facts.identifiers:desc&event=ev8",
+  ]);
 });
 
 test("every chart has a text alternative with its numbers", () => {
@@ -235,7 +242,7 @@ test("every chart has a text alternative with its numbers", () => {
 
   const lane = wrapper.find(".identifier-row svg.day-lane");
   expect(lane.attributes("role")).toBe("img");
-  expect(lane.attributes("aria-label")).toContain("2026-09-30 to 2026-10-20");
+  expect(lane.attributes("aria-label")).toContain("2026-09-30 to 2026-10-18");
   expect(lane.attributes("aria-label")).toContain("2026-09-30: 2");
   expect(lane.attributes("aria-label")).toContain("2026-10-01: 3");
   expect(lane.find("title").text()).toBe(lane.attributes("aria-label"));

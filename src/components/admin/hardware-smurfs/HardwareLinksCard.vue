@@ -39,7 +39,7 @@
           <span v-if="(item.evidence?.matched ?? []).length === 0" class="text-medium-emphasis">{{ t(key("dash")) }}</span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <action-buttons :options="pairActions(item, canAdminister)" @select="(o) => emit('action', o, otherOf(item))" />
+          <action-buttons :options="pairActions(item)" @select="(o) => emit('action', o, otherOf(item))" />
         </template>
       </v-data-table>
     </v-card-text>
@@ -76,7 +76,7 @@
           <verdict-cell :link="item" />
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <action-buttons :options="pairActions(item, canAdminister)" @select="(o) => emit('action', o, otherOf(item))" />
+          <action-buttons :options="pairActions(item)" @select="(o) => emit('action', o, otherOf(item))" />
         </template>
       </v-data-table>
     </v-card-text>
@@ -100,7 +100,6 @@ import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import ActionButtons from "./ActionButtons.vue";
 import VerdictCell from "./VerdictCell.vue";
 
-defineProps<{ canAdminister: boolean }>();
 
 const emit = defineEmits<{
   (e: "action", option: ActionOption<PairAction>, other: string): void;

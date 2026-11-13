@@ -52,7 +52,8 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { type LocationQuery, useRoute, useRouter } from "vue-router";
-import type { SmurfEventDetail, SmurfEventOrigin, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { isOrigin, isReview } from "@/store/admin/smurfEvents/labels";
 import { EPermission } from "@/store/admin/permission/types";
 import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key } from "@/store/admin/smurfEvents/translate";
@@ -63,9 +64,6 @@ import EventList from "./smurf-events/EventList.vue";
 import ManualEventDialog from "./smurf-events/ManualEventDialog.vue";
 import RenameDialog from "./smurf-events/RenameDialog.vue";
 import ReviewDialog from "./smurf-events/ReviewDialog.vue";
-
-const ORIGINS: readonly string[] = ["detected", "historical", "manual", "carried-over"];
-const REVIEWS: readonly string[] = ["unreviewed", "confirmed", "denied"];
 
 const { t } = useI18n();
 const router = useRouter();
@@ -112,8 +110,8 @@ function filtersFromQuery(query: LocationQuery): SmurfEventFilters {
   const origin = queryText(query.origin);
   const review = queryText(query.review);
   return {
-    origin: ORIGINS.includes(origin) ? (origin as SmurfEventOrigin) : null,
-    review: REVIEWS.includes(review) ? (review as SmurfEventReview) : null,
+    origin: isOrigin(origin) ? origin : null,
+    review: isReview(review) ? review : null,
   };
 }
 

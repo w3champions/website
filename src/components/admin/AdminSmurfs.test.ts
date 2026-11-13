@@ -30,11 +30,14 @@ test("the search for the player in the URL still runs when the identifier type l
   await router.isReady();
   const plugins = testPlugins();
   const store = useAdminStore();
-  vi.spyOn(store, "getSmurfIdentifierTypes").mockRejectedValue(new Error("403"));
+  const refused = new Error("403");
+  vi.spyOn(store, "getSmurfIdentifierTypes").mockRejectedValue(refused);
+  const logged = vi.spyOn(console, "error").mockImplementation(() => undefined);
   const search = vi.spyOn(store, "querySmurfsForIdentifier").mockResolvedValue({ connectedBattleTags: [] } as never);
 
   wrapper = mount(AdminSmurfs, { global: { plugins: [...plugins, router], stubs: { PlayerSearch: true } } });
   await flushPromises();
 
   expect(search).toHaveBeenCalledWith("battleTag", "Foo#1", 1, false);
+  expect(logged).toHaveBeenCalledWith("Loading the identifier types failed:", refused);
 });

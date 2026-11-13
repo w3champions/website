@@ -19,3 +19,25 @@ export function factSort(a: number | undefined, b: number | undefined): number {
 export function factSortSwapped(a: number | undefined, b: number | undefined): number {
   return a === undefined || b === undefined ? -factSort(a, b) : factSort(a, b);
 }
+
+export type SortOrder = "asc" | "desc";
+
+export interface ColumnSort {
+  key: string;
+  order: SortOrder;
+}
+
+/** "facts.identifiers:desc": the list's sort as it stands in the URL. */
+export function sortToQuery(sort: ColumnSort): string {
+  return `${sort.key}:${sort.order}`;
+}
+
+/** The sort in a URL value; absent when it is missing, malformed or names a column the table does not have (the default order then). */
+export function sortFromQuery(value: unknown, columns: readonly string[]): ColumnSort | null {
+  if (typeof value !== "string") return null;
+  const at = value.lastIndexOf(":");
+  const key = value.slice(0, at);
+  const order = value.slice(at + 1);
+  if (at < 0 || !columns.includes(key) || (order !== "asc" && order !== "desc")) return null;
+  return { key, order };
+}

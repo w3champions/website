@@ -31,10 +31,10 @@ const REQUEST = { name: "LAN party", from: "2026-10-01T00:00:00.000Z", to: "2026
 test("list sends the filters and cursor as encoded query parameters, and nothing when unset", async () => {
   const { service, calls } = serviceWith({ status: 200, body: { events: [] } });
 
-  await service.list("tok", { review: "unreviewed", origin: "manual", cursor: "a b/c", limit: 50 });
+  await service.list("tok", { review: "unreviewed", origin: "manual", cursor: "a b/c", limit: 47 });
   await service.list("tok", {});
 
-  assert.equal(calls[0].url, `${BASE}?review=unreviewed&origin=manual&cursor=a%20b%2Fc&limit=50`);
+  assert.equal(calls[0].url, `${BASE}?review=unreviewed&origin=manual&cursor=a%20b%2Fc&limit=47`);
   assert.equal(calls[0].auth, "Bearer tok");
   assert.equal(calls[1].url, BASE);
 });
