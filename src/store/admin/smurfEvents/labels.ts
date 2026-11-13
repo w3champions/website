@@ -26,7 +26,7 @@ export function reviewColor(review: SmurfEventReview): string {
     case "unreviewed":
       return "warning";
     case "confirmed":
-      return "success";
+      return "primary";
     default:
       return "grey";
   }

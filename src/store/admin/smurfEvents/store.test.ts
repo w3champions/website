@@ -14,6 +14,9 @@ const service = vi.hoisted(() => ({
   update: vi.fn(),
   remove: vi.fn(),
   review: vi.fn(),
+  rename: vi.fn(),
+  identifiers: vi.fn(),
+  history: vi.fn(),
 }));
 
 vi.mock("./service", () => ({ smurfEventsService: () => service }));
@@ -26,6 +29,7 @@ function summary(id: string, review: SmurfEventSummary["review"] = "confirmed", 
   return {
     id,
     name: `Event ${id}`,
+    named: false,
     origin,
     review,
     from: "2026-10-01T00:00:00.000Z",
@@ -44,8 +48,11 @@ function detail(id: string, overrides: Partial<SmurfEventDetail> = {}): SmurfEve
     requested: { from: "2026-10-01T00:00:00.000Z", to: "2026-10-03T00:00:00.000Z" },
     networks: [{ hash8: "0a1b2c3d", firstAt: "2026-10-01T08:00:00.000Z", lastAt: "2026-10-02T20:00:00.000Z", accounts: 12 }],
     machines: [{ hash8: "9f8e7d6c", accounts: 3 }],
-    evidence: { countries: 1, networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 2 },
+    evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 2 },
     endedLinksList: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }],
+    notCounted: [],
+    recorded: {},
+    evidenceRecorded: true,
     ...overrides,
   };
 }
@@ -633,4 +640,72 @@ test("a deny preview answered applies: false is remembered; true or absent is no
   await store.loadDenyPreview("1");
   store.clearDenyPreview();
   expect(store.denyApplies).toBe(true);
+});
+
+test("review sends name only when given", async () => {
+  service.review.mockResolvedValue(detail("1", { review: "confirmed" }));
+  const store = useSmurfEventsStore();
+
+  await store.review("1", "confirmed", "");
+  await store.review("1", "confirmed", "", "Sofia LAN");
+
+  expect(service.review).toHaveBeenNthCalledWith(1, "tok", "1", { decision: "confirmed" });
+  expect(service.review).toHaveBeenNthCalledWith(2, "tok", "1", { decision: "confirmed", name: "Sofia LAN" });
+});
+
+test("rename replaces the list row and the open detail", async () => {
+  service.list.mockResolvedValue({ events: [summary("1"), summary("2")] });
+  service.get.mockResolvedValue(detail("1"));
+  service.rename.mockResolvedValue(detail("1", { name: "Sofia LAN", named: true }));
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  await store.openDetail("1");
+
+  const outcome = await store.rename("1", " Sofia LAN ", " ");
+
+  expect(service.rename).toHaveBeenCalledWith("tok", "1", { name: "Sofia LAN" });
+  expect(outcome?.name).toBe("Sofia LAN");
+  expect(store.events.map((e) => e.name)).toEqual(["Sofia LAN", "Event 2"]);
+  expect(store.detail?.name).toBe("Sofia LAN");
+});
+
+test("rename sends a reason when given and keeps the error when refused", async () => {
+  const store = useSmurfEventsStore();
+  service.rename.mockResolvedValue(detail("1"));
+  await store.rename("1", "Sofia LAN", "venue said so");
+  expect(service.rename).toHaveBeenCalledWith("tok", "1", { name: "Sofia LAN", reason: "venue said so" });
+
+  const refused = new SmurfEventsApiError(400, "bad name", null);
+  service.rename.mockRejectedValue(refused);
+  expect(await store.rename("1", "x")).toBeNull();
+  expect(store.actionError).toBe(refused);
+});
+
+test("loadIdentifiers and loadHistory keep the answer of the newest request only", async () => {
+  const store = useSmurfEventsStore();
+  let first!: (v: unknown) => void;
+  service.identifiers.mockImplementationOnce(() => new Promise((resolve) => (first = resolve)));
+  service.identifiers.mockResolvedValueOnce({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [] });
+  const stale = store.loadIdentifiers("1");
+  await store.loadIdentifiers("2");
+  first({ window: { fromDay: 9, toDay: 9, eventFromDay: 9, eventToDay: 9 }, rows: [{ hash8: "stale" }] });
+  await stale;
+
+  expect(store.identifiers?.rows).toEqual([]);
+  expect(store.identifiersLoading).toBe(false);
+
+  service.history.mockResolvedValue({ entries: [] });
+  await store.loadHistory("2");
+  expect(service.history).toHaveBeenCalledWith("tok", "2");
+  expect(store.history).toEqual({ entries: [] });
+
+  const failure = new Error("boom");
+  service.identifiers.mockRejectedValue(failure);
+  service.history.mockRejectedValue(failure);
+  await store.loadIdentifiers("2");
+  await store.loadHistory("2");
+  expect(store.identifiersError).toBe(failure);
+  expect(store.historyError).toBe(failure);
+  expect(store.identifiers).toBeNull();
+  expect(store.history).toBeNull();
 });

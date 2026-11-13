@@ -22,8 +22,9 @@ export function mergeEvents(shown: readonly SmurfEventSummary[], incoming: reado
 
 /** The list-row fields of an event. */
 export function summaryOf(event: SmurfEventDetail): SmurfEventSummary {
-  const { id, name, origin, review, from, to, counts, endedLinks, createdAt, reviewedAt, reviewedBy } = event;
-  const summary: SmurfEventSummary = { id, name, origin, review, from, to, counts, endedLinks, createdAt };
+  const { id, name, named, origin, review, from, to, counts, endedLinks, createdAt, reviewedAt, reviewedBy, facts } = event;
+  const summary: SmurfEventSummary = { id, name, named, origin, review, from, to, counts, endedLinks, createdAt };
+  if (facts !== undefined) summary.facts = facts;
   if (reviewedAt !== undefined) summary.reviewedAt = reviewedAt;
   if (reviewedBy !== undefined) summary.reviewedBy = reviewedBy;
   return summary;

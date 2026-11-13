@@ -49,6 +49,7 @@
     </v-alert>
 
     <v-data-table
+      v-model:sort-by="sortBy"
       :headers="headers"
       :items="store.events"
       :loading="store.listLoading"
@@ -64,16 +65,21 @@
       <template v-slot:[`item.name`]="{ item }">
         <router-link :to="detailLink(item.id)" class="event-link font-weight-medium">{{ item.name }}</router-link>
       </template>
-      <template v-slot:[`item.origin`]="{ item }">
-        <v-chip size="small" variant="outlined">{{ originLabel(item.origin, tr) }}</v-chip>
-      </template>
       <template v-slot:[`item.review`]="{ item }">
         <v-chip size="small" variant="tonal" :color="reviewColor(item.review)">{{ reviewLabel(item.review, tr) }}</v-chip>
       </template>
       <template v-slot:[`item.span`]="{ item }">
         <span class="text-no-wrap">{{ formatUtc(item.from) }}</span><br /><span class="text-no-wrap text-medium-emphasis">{{ formatUtc(item.to) }}</span>
       </template>
+      <template v-slot:[`item.facts.networks`]="{ item }">{{ factText(item.facts?.networks, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.identifiers`]="{ item }">{{ factText(item.facts?.identifiers, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.maxAccountsEver`]="{ item }">{{ factText(item.facts?.maxAccountsEver, item.facts?.maxAccountsEverCapped, tr) }}</template>
+      <template v-slot:[`item.facts.attendees`]="{ item }">{{ factText(item.facts?.attendees, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.endedLinks`]="{ item }">{{ factText(item.facts?.endedLinks, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.liveLinks`]="{ item }">{{ factText(item.facts?.liveLinks, item.facts?.liveLinksCapped, tr) }}</template>
     </v-data-table>
+
+    <div v-if="store.next !== null" class="text-caption text-medium-emphasis px-4 pb-1">{{ t(key("sort_loaded_only")) }}</div>
 
     <div v-if="store.next !== null" class="d-flex justify-center pa-3">
       <v-btn variant="tonal" :loading="store.listLoading" @click="store.loadMore()">{{ t(key("load_more")) }}</v-btn>
@@ -82,13 +88,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { mdiPlus, mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventOrigin, SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { factSort, factSortSwapped, factText } from "@/store/admin/smurfEvents/facts";
 import { errorText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
 import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
@@ -123,15 +130,21 @@ function rowProps({ item }: { item: SmurfEventSummary }) {
   return { class: item.review === "unreviewed" ? "row-unreviewed" : "" };
 }
 
+// Empty: the server's order. Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
+const sortBy = ref<Array<{ key: string; order?: boolean | "asc" | "desc" }>>([]);
+const descending = computed(() => sortBy.value[0]?.order === "desc");
+const sortFacts = (a: number | undefined, b: number | undefined): number => (descending.value ? factSortSwapped(a, b) : factSort(a, b));
+
 const headers = computed<DataTableHeader[]>(() => [
   { title: t(key("col_name")), key: "name", sortable: false },
-  { title: t(key("col_origin")), key: "origin", sortable: false },
-  { title: t(key("col_review")), key: "review", sortable: false },
   { title: t(key("col_span")), key: "span", sortable: false },
-  { title: t(key("col_networks")), key: "counts.networks", sortable: false, align: "end" },
-  { title: t(key("col_machines")), key: "counts.machines", sortable: false, align: "end" },
-  { title: t(key("col_attendees")), key: "counts.attendees", sortable: false, align: "end" },
-  { title: t(key("col_ended_links")), key: "endedLinks", sortable: false, align: "end" },
+  { title: t(key("col_review")), key: "review", sortable: false },
+  { title: t(key("col_networks")), key: "facts.networks", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_identifiers")), key: "facts.identifiers", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_max_accounts_ever")), key: "facts.maxAccountsEver", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_attendees")), key: "facts.attendees", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_ended_links")), key: "facts.endedLinks", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_live_links")), key: "facts.liveLinks", sortable: true, sort: sortFacts, align: "end" },
 ]);
 
 </script>

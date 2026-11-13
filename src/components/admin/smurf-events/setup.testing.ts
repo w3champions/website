@@ -27,6 +27,7 @@ export function manualEvent(overrides: Partial<SmurfEventDetail> = {}): SmurfEve
   return {
     id: "ev1",
     name: "LAN party",
+    named: true,
     origin: "manual",
     review: "unreviewed",
     from: "2026-10-01T06:00:00.000Z",
@@ -39,8 +40,11 @@ export function manualEvent(overrides: Partial<SmurfEventDetail> = {}): SmurfEve
     requested: { from: "2026-10-01T00:00:00.000Z", to: "2026-10-03T00:00:00.000Z" },
     networks: [{ hash8: "0a1b2c3d", firstAt: "2026-10-01T08:00:00.000Z", lastAt: "2026-10-02T20:00:00.000Z", accounts: 3 }],
     machines: [{ hash8: "9f8e7d6c", accounts: 2 }],
-    evidence: { countries: 1, networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 1 },
+    evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 1 },
     endedLinksList: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }],
+    notCounted: [],
+    recorded: {},
+    evidenceRecorded: true,
     ...overrides,
   };
 }

@@ -6,6 +6,7 @@ import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
 import { countText, errorText, exclusionLabel, homesText, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewLabel } from "./labels";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
+import { factSort, factText } from "./facts";
 import { translateEn as t } from "./translate.testing";
 
 const DRAFT: SmurfEventDraft = { name: "LAN party", from: "2026-10-01T00:00", to: "2026-10-03T00:00", anchors: ["Anchor#1001", "Anchor#1002"], reason: "" };
@@ -15,6 +16,7 @@ function summary(id: string, review: SmurfEventSummary["review"]): SmurfEventSum
   return {
     id,
     name: id,
+    named: false,
     origin: "detected",
     review,
     from: "2026-10-01T00:00:00.000Z",
@@ -116,7 +118,7 @@ test("origins, reviews, refusals and exclusions have labels; unknown values show
   assert.equal(originLabel("future" as never, t), "future");
   assert.equal(reviewLabel("unreviewed", t), "Unreviewed");
   assert.equal(reviewColor("unreviewed"), "warning");
-  assert.equal(reviewColor("confirmed"), "success");
+  assert.equal(reviewColor("confirmed"), "primary");
   assert.equal(refusalLabel("no-venue", t), "No shared location was found for these players in this span.");
   assert.equal(exclusionLabel("home", t), "Home network");
   assert.equal(exclusionLabel("other" as never, t), "other");
@@ -164,10 +166,16 @@ test("summaryOf keeps the list-row fields only, and outcomeOf separates the appl
     attendees: [],
     networks: [],
     machines: [],
-    evidence: { countries: 0, networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 },
+    evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 },
     endedLinksList: [],
+    notCounted: [],
+    recorded: {},
+    evidenceRecorded: true,
   };
-  assert.deepEqual(Object.keys(summaryOf(detail)).sort(), ["counts", "createdAt", "endedLinks", "from", "id", "name", "origin", "review", "reviewedBy", "to"]);
+  assert.deepEqual(Object.keys(summaryOf(detail)).sort(), ["counts", "createdAt", "endedLinks", "from", "id", "name", "named", "origin", "review", "reviewedBy", "to"]);
+  const facts = { at: "2026-10-05T00:00:00.000Z", networks: 1, identifiers: 2, attendees: 3, notCounted: 0, endedLinks: 0 };
+  assert.deepEqual(summaryOf({ ...detail, named: true, facts }).facts, facts);
+  assert.equal(summaryOf({ ...detail, named: true }).named, true);
   assert.equal(outcomeOf({ ...detail, applied: false }).applied, false);
   assert.equal(outcomeOf(detail).applied, true);
   assert.equal(outcomeOf(detail).applies, true);
@@ -195,4 +203,21 @@ test("an absent homes count reads as not computed, never as 0", () => {
 
 test("a 422 preview keeps its applies flag", () => {
   assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, applies: false } })?.applies, false);
+});
+
+test("factText shows a dash for an unknown value, the number, or the capped number as at least N", () => {
+  assert.equal(factText(undefined, undefined, t), "\u2013");
+  assert.equal(factText(12, undefined, t), "12");
+  assert.equal(factText(0, undefined, t), "0");
+  assert.equal(factText(7, true, t), "at least 7");
+  assert.equal(factText(undefined, true, t), "\u2013");
+});
+
+test("factSort puts an unknown value after every number", () => {
+  assert.ok(factSort(1, 2) < 0);
+  assert.ok(factSort(2, 1) > 0);
+  assert.equal(factSort(3, 3), 0);
+  assert.ok(factSort(undefined, 0) > 0);
+  assert.ok(factSort(0, undefined) < 0);
+  assert.equal(factSort(undefined, undefined), 0);
 });

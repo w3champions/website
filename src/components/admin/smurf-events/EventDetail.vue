@@ -213,13 +213,11 @@ const stats = computed(() => {
 const evidenceRows = computed(() => {
   const evidence = event.value?.evidence;
   if (!evidence) return [];
-  const rows = [
-    { label: t(key("evidence_countries")), value: evidence.countries },
+  return [
     { label: t(key("evidence_days_before")), value: evidence.networkDaysBefore },
     { label: t(key("evidence_days_after")), value: evidence.networkDaysAfter },
     { label: t(key("evidence_returning")), value: evidence.returningAttendees },
   ];
-  return evidence.pingClusters === undefined ? rows : [...rows, { label: t(key("evidence_ping_clusters")), value: evidence.pingClusters }];
 });
 
 const networkHeaders = computed<DataTableHeader[]>(() => [

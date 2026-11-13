@@ -24,16 +24,38 @@ export interface SmurfEventLinkRef {
 
 /** What the server observed around the event, as numbers. */
 export interface SmurfEventReviewEvidence {
-  countries: number;
   networkDaysBefore: number;
   networkDaysAfter: number;
   returningAttendees: number;
-  pingClusters?: number;
+}
+
+/**
+ * What the server computed about an event, stored and refreshed with the stats run. A count the
+ * server read only up to its own limit comes with its `...Capped` flag: the number is then "at least".
+ */
+export interface SmurfEventFacts {
+  /** When the facts were computed. */
+  at: string;
+  networks: number;
+  /** Rows of the identifier table. */
+  identifiers: number;
+  /** Most accounts ever on one identifier; absent when no identifier has a day history. */
+  maxAccountsEver?: number;
+  maxAccountsEverCapped?: true;
+  attendees: number;
+  /** Accounts the event does not count. */
+  notCounted: number;
+  endedLinks: number;
+  /** Links among attendees that are still live; absent when the server did not count them. */
+  liveLinks?: number;
+  liveLinksCapped?: true;
 }
 
 export interface SmurfEventSummary {
   id: string;
   name: string;
+  /** True: a moderator gave the name. */
+  named: boolean;
   origin: SmurfEventOrigin;
   review: SmurfEventReview;
   from: string;
@@ -43,6 +65,8 @@ export interface SmurfEventSummary {
   createdAt: string;
   reviewedAt?: string;
   reviewedBy?: string;
+  /** Absent: not computed yet. */
+  facts?: SmurfEventFacts;
 }
 
 export interface SmurfEventNetwork {
@@ -70,6 +94,62 @@ export interface SmurfEventDetail extends SmurfEventSummary {
   endedLinksList: SmurfEventLinkRef[];
   /** Present (true) when `endedLinksList` is cut and does not hold every ended link. */
   endedLinksListTruncated?: true;
+  /** The first of the links among attendees that are still live. */
+  liveLinks?: { links: SmurfEventLinkRef[]; truncated?: true };
+  /** BattleTags the event does not count; empty when none. */
+  notCounted: string[];
+  /** Since when the server records hardware keys and device memory; a field is absent when it does not know. */
+  recorded: { hardwareKeysSince?: string; deviceMemorySince?: string };
+  /** False: no evidence is recorded for this event (manual and carried-over events). */
+  evidenceRecorded: boolean;
+}
+
+export interface SmurfEventIdentifierRow {
+  /** Of the class representative. */
+  hash8: string;
+  /** Item kind, "ip" for an IP-hash network, or the old-format field name. */
+  kind: string;
+  roles: Array<"machine" | "network" | "shared" | "attendee-key">;
+  /** Stored keys merged into this row. */
+  keys: number;
+  accountsDuring: number;
+  /** Absent: no day history exists for this kind. */
+  accountsEver?: { count: number; capped?: true };
+  daysOutside?: { before: number; after: number; capped?: true };
+  /** UTC day numbers inside the window and the accounts that day; days with use only. */
+  days?: Array<[day: number, accounts: number]>;
+  /** An empty list: seen during the event only. Absent with `accountsEver`. */
+  observed?: Array<"before" | "after">;
+  /** IP-hash networks: first and last use inside the event. */
+  span?: { firstAt: string; lastAt: string };
+  alsoIn: Array<{ id: string; name: string }>;
+  /** Only when the server reveals them to the caller. */
+  values?: string[];
+  machineNames?: string[];
+  usernames?: string[];
+}
+
+export interface SmurfEventIdentifiers {
+  window: { fromDay: number; toDay: number; eventFromDay: number; eventToDay: number };
+  rows: SmurfEventIdentifierRow[];
+  truncated?: true;
+}
+
+export interface SmurfEventHistoryEntry {
+  id: string;
+  at: string;
+  author: string;
+  action: string;
+  reason?: string;
+  name: string;
+  outcome: Record<string, string | number | boolean | null>;
+}
+
+export interface SmurfEventHistory {
+  /** Newest first. */
+  entries: SmurfEventHistoryEntry[];
+  /** Facts that differ from the latest review's; absent when unreviewed or reviewed before facts existed. */
+  changedSinceReview?: Array<{ fact: string; then: number; now: number }>;
 }
 
 /**
@@ -117,6 +197,14 @@ export interface ReviewInput {
   decision: SmurfEventReview;
   author: string;
   reason?: string;
+  /** Names the event before the review runs. */
+  name?: string;
+}
+
+export interface RenameInput {
+  name: string;
+  author: string;
+  reason?: string;
 }
 
 // The website never sends `author`: website-backend sets it from the moderator's token.
@@ -127,6 +215,7 @@ export type SmurfEventPreviewRequest = Omit<ManualEventInput, "author" | "reason
 };
 export type ManualEventRequest = Omit<ManualEventInput, "author">;
 export type ReviewRequest = Omit<ReviewInput, "author">;
+export type RenameRequest = Omit<RenameInput, "author">;
 
 export interface SmurfEventsQuery {
   review?: SmurfEventReview;

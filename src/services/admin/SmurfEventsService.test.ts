@@ -141,3 +141,27 @@ test("an absent, malformed or not positive Retry-After leaves the error without 
     assert.equal(await retryAfterOf(header), null, `header ${String(header)}`);
   }
 });
+
+test("rename, identifiers and history use their routes; identifiers never sends a reveal parameter", async () => {
+  const { service, calls } = serviceWith({ status: 200, body: {} });
+
+  await service.rename("tok", "ev/1", { name: "Sofia LAN", reason: "named by the venue" });
+  await service.identifiers("tok", "ev/1");
+  await service.history("tok", "ev/1");
+
+  assert.deepEqual(calls.map((c) => [c.method, c.url]), [
+    ["POST", `${BASE}/ev%2F1/rename`],
+    ["GET", `${BASE}/ev%2F1/identifiers`],
+    ["GET", `${BASE}/ev%2F1/history`],
+  ]);
+  assert.deepEqual(calls[0].body, { name: "Sofia LAN", reason: "named by the venue" });
+  assert.ok(!calls[1].url.includes("reveal"));
+});
+
+test("review sends the name when given", async () => {
+  const { service, calls } = serviceWith({ status: 200, body: {} });
+
+  await service.review("tok", "ev1", { decision: "confirmed", name: "Sofia LAN" });
+
+  assert.deepEqual(calls[0].body, { decision: "confirmed", name: "Sofia LAN" });
+});
