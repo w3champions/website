@@ -1,5 +1,4 @@
 import { Match } from "@/store/types";
-import { useI18n } from "vue-i18n";
 import { stripWc3Text } from "@/components/common/wc3Text";
 
 export function mapNameFromMatch(match: Match): string {
@@ -11,5 +10,6 @@ export function mapNameFromMatch(match: Match): string {
     // could only ever render as literal garbage.
     return stripWc3Text(match.mapName);
   }
-  return useI18n().t("mapNames." + match.map.replace("'", ""));
+  // Without a name, show the map file name as it is.
+  return match.map;
 }

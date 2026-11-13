@@ -65,7 +65,8 @@ import MapSelect from "@/components/common/MapSelect.vue";
 import MmrSelect from "@/components/common/MmrSelect.vue";
 import DurationSelect from "@/components/common/DurationSelect.vue";
 import SortSelect from "@/components/matches/SortSelect.vue";
-import type { MatchesOnMapPerSeason } from "@/store/overallStats/types";
+import type { MapCount, MatchesOnMapPerSeason } from "@/store/overallStats/types";
+import { mapGroupInfos } from "@/helpers/mapGrouping";
 import AppConstants from "@/constants";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import { useRankingStore } from "@/store/ranking/store";
@@ -114,10 +115,9 @@ export default defineComponent({
     const showRelativeStartTime = computed<boolean>(() => tableOptionsStore.showRelativeStartTime);
     const showHeroSelect = computed<boolean>(() => gameMode.value === EGameMode.GM_1ON1 || gameMode.value === EGameMode.GM_1ON1_TOURNAMENT);
     const maps = computed<Array<MapInfo>>(() => {
+      // Both finished and ongoing matches are filtered by map name, so the name is
+      // both the value and the label.
       if (!unfinished.value) {
-        // Ongoing matches need map AND mapName, hence this object with both properties
-        // Finished matches only need mapName, so just pass mapName as the value for both.
-        // Kind of stupid but would be complicated to fix
         return matchStore.mapNames.map((mapName) => ({ map: mapName, mapName }));
       }
 
@@ -125,8 +125,7 @@ export default defineComponent({
         return [];
       }
 
-      const maps = mapsByGameMode.value[gameMode.value] || [];
-      return Array.from(maps);
+      return mapsByGameMode.value[gameMode.value] || [];
     });
 
     const disabledGameModes = computed<Array<EGameMode>>(() => {
@@ -145,28 +144,27 @@ export default defineComponent({
       return [];
     });
 
-    const mapsByGameMode = computed<Record<EGameMode, Set<MapInfo>>>(() => {
+    const mapsByGameMode = computed<Record<EGameMode, MapInfo[]>>(() => {
       const filterSeasons =
         matchStore.status === MatchStatus.onGoing
           ? (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season === currentSeason.value.id
           : (matchesOnMapPerSeason: MatchesOnMapPerSeason) => matchesOnMapPerSeason.season >= 0;
 
-      return overallStatsStore.matchesOnMapPerSeason
-        .filter(filterSeasons)
-        .reduce<Record<EGameMode, Set<MapInfo>>>((mapsByMode, matchesOnMapPerSeason) => {
-          for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
-            // just get the map name and ignore the count
-            const mapsInfos = modes.maps.map(({ map, mapName }) => ({ map, mapName }));
+      const mapsByMode = new Map<EGameMode, MapCount[]>();
+      for (const matchesOnMapPerSeason of overallStatsStore.matchesOnMapPerSeason.filter(filterSeasons)) {
+        for (const modes of matchesOnMapPerSeason.matchesOnMapPerModes) {
+          const maps = mapsByMode.get(modes.gameMode) ?? [];
+          maps.push(...modes.maps);
+          mapsByMode.set(modes.gameMode, maps);
+        }
+      }
 
-            if (!mapsByMode[modes.gameMode]) {
-              mapsByMode[modes.gameMode] = new Set(mapsInfos);
-            } else {
-              // combine this seasons mode maps with other seasons modes maps without dupes
-              mapsByMode[modes.gameMode] = new Set([...mapsByMode[modes.gameMode], ...mapsInfos]);
-            }
-          }
-          return mapsByMode;
-        }, {} as Record<EGameMode, Set<MapInfo>>);
+      // One entry per map name: the stats list one entry per map file.
+      const mapInfosByMode = {} as Record<EGameMode, MapInfo[]>;
+      for (const [gameMode, maps] of mapsByMode) {
+        mapInfosByMode[gameMode] = mapGroupInfos(maps);
+      }
+      return mapInfosByMode;
     });
 
     async function getMatches(): Promise<void> {
