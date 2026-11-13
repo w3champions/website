@@ -45,16 +45,24 @@ interface FactRow {
 const rows = computed<FactRow[]>(() => {
   const e = props.event;
   const facts = e.facts;
-  const recorded = e.evidenceRecorded;
-  const networks = facts?.networks ?? e.counts.networks;
-  const ended = facts?.endedLinks ?? e.endedLinks;
-  const links = facts?.liveLinks === undefined ? String(ended) : t(key("facts_links_with_live"), { ended, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) });
+  const identifiers =
+    facts === undefined
+      ? factText(undefined, undefined, tr)
+      : t(key("facts_identifiers_value"), { identifiers: facts.identifiers, max: factText(facts.maxAccountsEver, facts.maxAccountsEverCapped, tr) });
+  const links = facts?.liveLinks === undefined
+    ? factText(facts?.endedLinks, undefined, tr)
+    : t(key("facts_links_with_live"), { ended: facts.endedLinks, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) });
+  // The rows above are fed by the facts: a 0 is a fact and absent facts are a dash. The evidence rows exist only for detected events.
+  const evidence = (label: string, value: number): FactRow => ({ label, value: String(value), notRecorded: !e.evidenceRecorded });
   return [
-    { label: t(key("facts_networks")), value: networks === 0 ? t(key("facts_no_network")) : String(networks), notRecorded: !recorded },
-    { label: t(key("facts_max_ever")), value: factText(facts?.maxAccountsEver, facts?.maxAccountsEverCapped, tr), notRecorded: !recorded },
-    { label: t(key("facts_homes")), value: factText(e.counts.homes, undefined, tr), notRecorded: !recorded },
+    { label: t(key("facts_networks")), value: facts?.networks === 0 ? t(key("facts_no_network")) : factText(facts?.networks, undefined, tr) },
+    { label: t(key("facts_identifiers")), value: identifiers },
+    { label: t(key("facts_homes")), value: factText(e.counts.homes, undefined, tr) },
     { label: t(key("facts_links")), value: links },
-    { label: t(key("facts_not_counted")), value: String(facts?.notCounted ?? e.notCounted.length), names: e.notCounted },
+    { label: t(key("facts_not_counted")), value: factText(facts?.notCounted, undefined, tr), names: e.notCounted },
+    evidence(t(key("evidence_days_before")), e.evidence.networkDaysBefore),
+    evidence(t(key("evidence_days_after")), e.evidence.networkDaysAfter),
+    evidence(t(key("evidence_returning")), e.evidence.returningAttendees),
   ];
 });
 

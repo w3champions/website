@@ -21,7 +21,7 @@ const FACTS: SmurfEventFacts = {
 };
 
 function show(overrides: Partial<SmurfEventDetail> = {}): void {
-  wrapper = mount(EventFacts, { props: { event: manualEvent({ facts: FACTS, notCounted: ["Home#2001", "Home#2002"], ...overrides }) }, global: { plugins: testPlugins() } });
+  wrapper = mount(EventFacts, { props: { event: manualEvent({ facts: FACTS, notCounted: ["Home#2001", "Home#2002"], evidence: { networkDaysBefore: 1, networkDaysAfter: 2, returningAttendees: 1 }, ...overrides }) }, global: { plugins: testPlugins() } });
 }
 
 function rows(): Array<[string, string]> {
@@ -36,15 +36,21 @@ test("the rows come in the order a moderator reads them", () => {
 
   expect(rows().map(([label]) => label)).toEqual([
     "Networks",
-    "Most accounts ever on one identifier",
+    "Identifiers",
     "Accounts with a usual home",
     "Links ended",
     "Accounts not counted as attendee",
+    "Days on these networks before the event",
+    "Days on these networks after the event",
+    "Attendees seen together again later",
   ]);
   expect(rows()[0][1]).toBe("2");
-  expect(rows()[1][1]).toBe("9");
+  expect(rows()[1][1]).toBe("14, most accounts ever on one: 9");
   expect(rows()[2][1]).toBe("2");
   expect(rows()[3][1]).toBe("4 ended, 1 still live");
+  expect(rows()[5][1]).toBe("1");
+  expect(rows()[6][1]).toBe("2");
+  expect(rows()[7][1]).toBe("1");
 });
 
 test("an event with no network says so rather than 0", () => {
@@ -56,8 +62,14 @@ test("an event with no network says so rather than 0", () => {
 test("a capped count reads at least N from the data", () => {
   show({ facts: { ...FACTS, maxAccountsEver: 31, maxAccountsEverCapped: true, liveLinks: 12, liveLinksCapped: true } });
 
-  expect(rows()[1][1]).toBe("at least 31");
+  expect(rows()[1][1]).toBe("14, most accounts ever on one: at least 31");
   expect(rows()[3][1]).toBe("4 ended, at least 12 still live");
+});
+
+test("no identifier with a day history shows a dash for the most accounts ever", () => {
+  show({ facts: { ...FACTS, maxAccountsEver: undefined } });
+
+  expect(rows()[1][1]).toBe("14, most accounts ever on one: \u2013");
 });
 
 test("accounts not counted are listed by name", () => {
@@ -68,21 +80,33 @@ test("accounts not counted are listed by name", () => {
   expect(rows()[4][1]).toContain("Home#2002");
 });
 
-test("facts that were never computed show a dash", () => {
-  show({ facts: undefined, notCounted: [], counts: { networks: 1, machines: 3, attendees: 3 } });
+test("facts that were never computed show a dash in every row they feed, never 0", () => {
+  show({ facts: undefined, notCounted: [], counts: { networks: 1, machines: 3, attendees: 3 }, endedLinks: 5 });
 
-  expect(rows()[1][1]).toBe("–");
-  expect(rows()[2][1]).toBe("–");
+  expect(rows().slice(0, 5).map(([, value]) => value)).toEqual(["\u2013", "\u2013", "\u2013", "\u2013", "\u2013"]);
 });
 
-test("an event without recorded evidence says so and shows no zeros", () => {
-  show({ evidenceRecorded: false, facts: { ...FACTS, networks: 0, maxAccountsEver: undefined, liveLinks: 3 } });
+test("real zeros in the facts show as zeros", () => {
+  const zero: SmurfEventFacts = { ...FACTS, identifiers: 0, maxAccountsEver: 0, attendees: 0, notCounted: 0, endedLinks: 0, liveLinks: 0 };
+  show({ facts: zero, notCounted: [], counts: { networks: 1, machines: 3, attendees: 3, homes: 0 } });
 
-  const text = wrapper.text();
-  expect(text).toContain("Not recorded");
-  expect(rows()[0][1]).toBe("Not recorded");
-  expect(rows()[1][1]).toBe("Not recorded");
-  expect(text).not.toMatch(/\b0\b/);
+  expect(rows()[1][1]).toBe("0, most accounts ever on one: 0");
+  expect(rows()[2][1]).toBe("0");
+  expect(rows()[3][1]).toBe("0 ended, 0 still live");
+  expect(rows()[4][1]).toBe("0");
+});
+
+test("an event without recorded evidence shows Not recorded in the evidence rows, never a number", () => {
+  show({ evidenceRecorded: false, evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 } });
+
+  expect(rows().slice(5).map(([, value]) => value)).toEqual(["Not recorded", "Not recorded", "Not recorded"]);
+  expect(rows().slice(0, 5).map(([, value]) => value)).not.toContain("Not recorded");
+});
+
+test("an event with recorded evidence shows real zeros in the evidence rows", () => {
+  show({ evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 } });
+
+  expect(rows().slice(5).map(([, value]) => value)).toEqual(["0", "0", "0"]);
 });
 
 test("the line on what is recorded shows the date, and is absent when nothing is recorded", () => {

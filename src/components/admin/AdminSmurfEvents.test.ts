@@ -84,6 +84,16 @@ test("the record is read after every load of an event, the same event again incl
   expect(service.history).toHaveBeenLastCalledWith("tok", "ev2");
 });
 
+test("a retry of a failed record reads only the record again", async () => {
+  await open("/admin-smurf-events?event=ev1");
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("retry-history");
+  await flushPromises();
+
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(service.get).toHaveBeenCalledTimes(1);
+});
+
 test("a rename reads the record again and says so", async () => {
   await open("/admin-smurf-events?event=ev1");
   wrapper.findComponent({ name: "EventDetail" }).vm.$emit("rename");
@@ -208,7 +218,7 @@ test("without the SmurfCheckerAdministration permission the page says so and req
 test("with Administration, the dialogs are there", async () => {
   await open("/admin-smurf-events");
 
-  expect(wrapper.findComponent({ name: "EventList" }).props("canAdminister")).toBe(true);
+  expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(true);
   expect(dialogCount()).toBe(3);
 });
 

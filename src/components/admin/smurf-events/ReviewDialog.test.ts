@@ -345,3 +345,80 @@ test("the decision buttons use no success or error colour and the body names no 
   expect(html).not.toMatch(/success|error/);
   expect(wrapper.text()).not.toContain("real event");
 });
+
+type Decision = "confirmed" | "denied" | "unreviewed";
+const DECISION_BUTTON: Record<Decision, string> = { confirmed: "Confirm", denied: "Deny", unreviewed: "Back to unreviewed" };
+const NAME_CASES = { unchanged: "Generated name", changed: "Sofia LAN", empty: "   ", "too long": "x".repeat(101) } as const;
+
+// Rules: a name is sent only when changed; it is required (and must differ) only when confirming a not yet named event;
+// an empty or too long name blocks Save whenever it is changed or required.
+const MATRIX = ([true, false] as const).flatMap((named) =>
+  (["confirmed", "denied", "unreviewed"] as const).flatMap((decision) =>
+    (Object.keys(NAME_CASES) as Array<keyof typeof NAME_CASES>).map((nameCase) => {
+      const required = decision === "confirmed" && !named;
+      const savable = nameCase === "changed" || (nameCase === "unchanged" && !required);
+      return { named, decision, nameCase, savable, sendsName: nameCase === "changed" };
+    })
+  )
+);
+
+test.each(MATRIX)("named $named, $decision, name $nameCase: Save enabled $savable", async ({ named, decision, nameCase, savable, sendsName }) => {
+  mountWith(manualEvent({ named, name: "Generated name", review: decision === "unreviewed" ? "confirmed" : "unreviewed" }));
+  service.denyPreview.mockResolvedValue({ links: [], endedLinks: 0 });
+  service.review.mockResolvedValue(manualEvent({ review: decision }));
+
+  await button(DECISION_BUTTON[decision]).trigger("click");
+  await flushPromises();
+  if (decision === "denied") await wrapper.find("textarea").setValue("a reason");
+  await nameField().setValue(NAME_CASES[nameCase]);
+
+  expect(button("Save review").element.disabled).toBe(!savable);
+  if (!savable) return;
+  await button("Save review").trigger("click");
+  await flushPromises();
+  expect(service.review).toHaveBeenCalledWith("tok", "ev1", {
+    decision,
+    ...(decision === "denied" ? { reason: "a reason" } : {}),
+    ...(sendsName ? { name: NAME_CASES.changed } : {}),
+  });
+});
+
+test("Enter in the name field saves when Save is enabled and does nothing when it is not", async () => {
+  service.review.mockResolvedValue(manualEvent({ review: "confirmed" }));
+
+  await nameField().trigger("keydown.enter");
+  expect(service.review).not.toHaveBeenCalled();
+
+  await button("Confirm").trigger("click");
+  await nameField().setValue("   ");
+  await nameField().trigger("keydown.enter");
+  expect(service.review).not.toHaveBeenCalled();
+
+  await nameField().setValue("LAN party");
+  await nameField().trigger("keydown.enter");
+  await flushPromises();
+  expect(service.review).toHaveBeenCalledTimes(1);
+});
+
+test("Escape closes the dialog", async () => {
+  wrapper.unmount();
+  wrapper = mount(ReviewDialog, { attachTo: document.body, props: { modelValue: true, event: manualEvent() }, global: { plugins: testPlugins() } });
+  await flushPromises();
+
+  document.querySelector(".v-overlay")?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  await flushPromises();
+
+  expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([false]);
+});
+
+test.each(["", "x".repeat(101)])("a stored name that is no longer valid does not block going back to unreviewed (%#)", async (stored) => {
+  mountWith(manualEvent({ named: true, name: stored, review: "confirmed" }));
+  service.review.mockResolvedValue(manualEvent({ review: "unreviewed" }));
+
+  await button("Back to unreviewed").trigger("click");
+  expect(button("Save review").element.disabled).toBe(false);
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(service.review).toHaveBeenCalledWith("tok", "ev1", { decision: "unreviewed" });
+});

@@ -34,7 +34,7 @@
           <v-btn variant="text" :prepend-icon="mdiRefresh" :disabled="store.listLoading" @click="store.loadList()">
             {{ t(key("refresh")) }}
           </v-btn>
-          <v-btn v-if="canAdminister" color="primary" variant="flat" :prepend-icon="mdiPlus" @click="emit('create')">
+          <v-btn color="primary" variant="flat" :prepend-icon="mdiPlus" @click="emit('create')">
             {{ t(key("new_manual")) }}
           </v-btn>
         </v-col>
@@ -102,7 +102,6 @@ import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurf
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 
 defineProps<{
-  canAdminister: boolean;
   filters: SmurfEventFilters;
 }>();
 

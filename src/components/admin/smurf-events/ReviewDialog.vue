@@ -62,6 +62,7 @@
           :maxlength="NAME_MAX_LENGTH"
           variant="underlined"
           color="primary"
+          @keydown.enter="save"
         />
 
         <v-textarea
@@ -132,7 +133,9 @@ const trimmedName = computed(() => name.value.trim());
 const nameChanged = computed(() => trimmedName.value !== shown.value?.name);
 // Confirming needs a name a moderator chose: the generated one does not count. A deny or going back accepts it.
 const nameRequired = computed(() => decision.value === "confirmed" && shown.value?.named === false);
+// A stored name that is no longer valid must not block a review that leaves the name alone.
 const nameProblem = computed(() => {
+  if (!nameChanged.value && !nameRequired.value) return null;
   if (trimmedName.value === "") return t(key("problem_name"));
   if (trimmedName.value.length > NAME_MAX_LENGTH) return t(key("problem_name_long"), { max: NAME_MAX_LENGTH });
   return null;

@@ -41,7 +41,7 @@ async function show(events: SmurfEventSummary[], next: string | null = null): Pr
   store.events = events;
   store.next = next;
   wrapper = mount(EventList, {
-    props: { canAdminister: true, filters: { origin: null, review: null } },
+    props: { filters: { origin: null, review: null } },
     global: { plugins: [...plugins, router] },
   });
   await flushPromises();

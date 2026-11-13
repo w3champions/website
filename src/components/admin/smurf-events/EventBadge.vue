@@ -19,14 +19,13 @@ const props = defineProps<{
   value: SmurfEventOrigin | SmurfEventReview;
 }>();
 
-const { t } = useI18n();
-const tr: Translate = (k, named) => t(k, named ?? {});
+const i18n = useI18n();
+const tr: Translate = (k, named) => i18n.t(k, named ?? {});
 
 const label = computed(() => (props.kind === "origin" ? originLabel(props.value as SmurfEventOrigin, tr) : reviewLabel(props.value as SmurfEventReview, tr)));
 // An origin the page does not know has no explanation: the tooltip then repeats the label as sent.
 const originHint = computed(() => {
   const hint = key(`origin_hint_${props.value}`);
-  const text = t(hint);
-  return text === hint ? label.value : text;
+  return i18n.te(hint) ? i18n.t(hint) : label.value;
 });
 </script>

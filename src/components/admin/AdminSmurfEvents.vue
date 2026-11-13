@@ -26,6 +26,7 @@
         :event-id="eventId"
         @back="showList"
         @open-event="openEvent"
+        @retry-history="store.loadHistory(eventId)"
         @review="openReview"
         @rename="openRename"
         @edit="openManual(store.detail)"
@@ -33,18 +34,15 @@
       />
       <event-list
         v-else
-        :can-administer="canAdminister"
         :filters="store.filters"
         @update:filters="applyFilters"
         @create="openManual(null)"
       />
 
-      <template v-if="canAdminister">
-        <manual-event-dialog v-model="manualOpen" :event="editing" @saved="onSaved" />
-        <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="onReviewed" />
-        <rename-dialog v-model="renameOpen" :event="store.detail" @renamed="onRenamed" />
-        <delete-event-dialog v-model="deleteOpen" :event="store.detail" @deleted="onDeleted" />
-      </template>
+      <manual-event-dialog v-model="manualOpen" :event="editing" @saved="onSaved" />
+      <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="onReviewed" />
+      <rename-dialog v-model="renameOpen" :event="store.detail" @renamed="onRenamed" />
+      <delete-event-dialog v-model="deleteOpen" :event="store.detail" @deleted="onDeleted" />
     </v-container>
   </div>
 </template>

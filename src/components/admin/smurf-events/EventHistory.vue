@@ -2,7 +2,12 @@
   <v-card class="mb-4">
     <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("history_title")) }}</v-card-title>
     <v-card-text v-if="loading" class="text-medium-emphasis" role="status">{{ t(key("history_loading")) }}</v-card-text>
-    <v-alert v-else-if="error" type="error" variant="tonal" density="compact" class="mx-4 mb-4">{{ t(key("history_failed")) }} {{ error }}</v-alert>
+    <v-alert v-else-if="error" type="error" variant="tonal" density="compact" class="mx-4 mb-4">
+      {{ t(key("history_failed")) }} {{ error }}
+      <template v-slot:append>
+        <v-btn variant="text" size="small" @click="emit('retry')">{{ t(key("retry")) }}</v-btn>
+      </template>
+    </v-alert>
     <v-card-text v-else-if="history !== null" class="pt-0">
       <div v-if="history.changedSinceReview && history.changedSinceReview.length > 0" class="history-changed mb-3 text-body-2">
         <div class="font-weight-bold">{{ t(key("history_changed_title")) }}</div>
@@ -37,6 +42,10 @@ defineProps<{
   history: SmurfEventHistory | null;
   loading: boolean;
   error: string | null;
+}>();
+
+const emit = defineEmits<{
+  (e: "retry"): void;
 }>();
 
 const { t } = useI18n();

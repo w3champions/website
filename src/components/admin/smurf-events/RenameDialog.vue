@@ -19,6 +19,7 @@
           variant="underlined"
           color="primary"
           autofocus
+          @keydown.enter="save"
         />
         <v-textarea
           v-model="reason"

@@ -90,3 +90,11 @@ test("loading, failure and an empty record each say so", () => {
   show({ entries: [] });
   expect(wrapper.text()).toContain("Nothing is recorded for this event yet.");
 });
+
+test("a failed load offers a retry that asks the page to load the record again", async () => {
+  show(null, { error: "Server said no" });
+
+  await wrapper.findAll("button").find((b) => b.text().trim() === "Try again")?.trigger("click");
+
+  expect(wrapper.emitted("retry")).toHaveLength(1);
+});

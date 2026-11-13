@@ -81,7 +81,12 @@
         </v-col>
       </v-row>
 
-      <event-history :history="store.history" :loading="store.historyLoading" :error="store.historyError ? errorText(store.historyError, tr) : null" />
+      <event-history
+        :history="store.history"
+        :loading="store.historyLoading"
+        :error="store.historyError ? errorText(store.historyError, tr) : null"
+        @retry="emit('retry-history')"
+      />
 
       <v-row>
         <v-col cols="12" md="7">
@@ -159,8 +164,7 @@ import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil } from "@mdi/js
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import { EAdminRouteName } from "@/router/types";
-import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import type { SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventLinkRef, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
 import { errorText } from "@/store/admin/smurfEvents/labels";
@@ -184,6 +188,7 @@ const emit = defineEmits<{
   (e: "delete"): void;
   (e: "rename"): void;
   (e: "open-event", id: string): void;
+  (e: "retry-history"): void;
 }>();
 
 const { t } = useI18n();

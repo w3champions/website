@@ -106,7 +106,7 @@ async function showAmong(current: string, list: Array<ReturnType<typeof listed>>
   const plugins = testPlugins();
   const store = useSmurfEventsStore();
   store.events = list;
-  store.detail = list.find((e) => e.id === current) ?? null;
+  store.detail = list.find((e) => e.id === current) ?? manualEvent({ id: current });
   wrapper = mount(EventDetail, { props: { eventId: current }, global: { plugins: [...plugins, router] } });
   await flushPromises();
 }
@@ -159,4 +159,30 @@ test("a failed event load can be retried through open-event", async () => {
   await wrapper.findAll("button").find((b) => b.text().trim() === "Try again")?.trigger("click");
 
   expect(wrapper.emitted("open-event")).toEqual([["ev1"]]);
+});
+
+test("previous and next unreviewed are disabled when the open event is not in the loaded list", async () => {
+  await showAmong("z", [listed("a", "unreviewed"), listed("b", "unreviewed")]);
+
+  expect(navButton("Previous unreviewed").element.disabled).toBe(true);
+  expect(navButton("Next unreviewed").element.disabled).toBe(true);
+});
+
+test("an unreviewed event skips itself when it looks for its neighbours", async () => {
+  await showAmong("b", [listed("a", "unreviewed"), listed("b", "unreviewed"), listed("c", "unreviewed")]);
+
+  await navButton("Previous unreviewed").trigger("click");
+  await navButton("Next unreviewed").trigger("click");
+
+  expect(wrapper.emitted("open-event")).toEqual([["a"], ["c"]]);
+});
+
+test("a failed record can be loaded again through retry-history", async () => {
+  await show(manualEvent());
+  useSmurfEventsStore().historyError = new Error("down");
+  await flushPromises();
+
+  await wrapper.findComponent({ name: "EventHistory" }).vm.$emit("retry");
+
+  expect(wrapper.emitted("retry-history")).toHaveLength(1);
 });

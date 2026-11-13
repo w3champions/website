@@ -25,7 +25,7 @@ beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
-afterEach(() => wrapper.unmount());
+afterEach(() => wrapper?.unmount());
 
 function save(): DOMWrapper<HTMLButtonElement> {
   const found = wrapper.findAll("button").find((b) => b.text().trim() === "Save name");
@@ -84,4 +84,32 @@ test("a failed rename keeps the dialog open and shows the server's text", async 
   expect(wrapper.text()).toContain("Event is gone");
   expect(wrapper.emitted("renamed")).toBeUndefined();
   expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+});
+
+test("Enter in the name field saves when Save is enabled and does nothing when it is not", async () => {
+  open();
+  service.rename.mockResolvedValue(manualEvent({ name: "Sofia LAN" }));
+
+  await nameInput().trigger("keydown.enter");
+  expect(service.rename).not.toHaveBeenCalled();
+
+  await nameInput().setValue("   ");
+  await nameInput().trigger("keydown.enter");
+  expect(service.rename).not.toHaveBeenCalled();
+
+  await nameInput().setValue("Sofia LAN");
+  await nameInput().trigger("keydown.enter");
+  await flushPromises();
+  expect(service.rename).toHaveBeenCalledTimes(1);
+});
+
+test("Escape closes the dialog", async () => {
+  wrapper.unmount();
+  wrapper = mount(RenameDialog, { attachTo: document.body, props: { modelValue: true, event: manualEvent({ name: "Auto name" }) }, global: { plugins: testPlugins() } });
+  await flushPromises();
+
+  document.querySelector(".v-overlay")?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  await flushPromises();
+
+  expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual([false]);
 });
