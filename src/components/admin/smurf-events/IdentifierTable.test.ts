@@ -40,6 +40,19 @@ function dataRows(): string[] {
   return wrapper.findAll("tbody tr.identifier-row").map((r) => r.text());
 }
 
+test("the column headers are the six columns, in order", () => {
+  show([row({ observed: ["after"] })]);
+
+  expect(wrapper.findAll("thead th").map((h) => h.text())).toEqual([
+    "Identifier",
+    "Accounts during the event \u2192 ever",
+    "Days outside the event (before / after)",
+    "Use per day",
+    "Observed",
+    "Also in",
+  ]);
+});
+
 test("a row used during the event only is folded into one line with a count per number of accounts", () => {
   show([
     row({ hash8: "e0000001", accountsDuring: 3, accountsEver: { count: 3 } }),
@@ -242,4 +255,40 @@ test("loading, a failed load with a retry, and an empty list each say so", async
 
   show([]);
   expect(wrapper.text()).toContain("No identifiers.");
+});
+
+test("a capped row never folds, even with an empty observed list, and does not say event only", () => {
+  show([row({ hash8: "c0000002", accountsDuring: 40, accountsEver: { count: 120, capped: true }, observed: [] })]);
+
+  expect(wrapper.find(".fold-line").exists()).toBe(false);
+  const text = dataRows()[0];
+  expect(text).toContain("c0000002");
+  expect(text).toContain("at least 40");
+  expect(text).toContain("not fully known");
+  expect(text).not.toContain("event only");
+});
+
+test("a row without an ever count never folds, even with an empty observed list", () => {
+  show([row({ hash8: "1b000002", kind: "ip", accountsEver: undefined, daysOutside: undefined, days: undefined, observed: [] })]);
+
+  expect(wrapper.find(".fold-line").exists()).toBe(false);
+  const text = dataRows()[0];
+  expect(text).toContain("1b000002");
+  expect(text).toContain("no day history is recorded for this kind");
+  expect(text).not.toContain("event only");
+});
+
+test("a row without an ever count shows no tags even if observed lists sides", () => {
+  show([row({ kind: "ip", accountsEver: undefined, daysOutside: undefined, days: undefined, observed: ["before"] })]);
+
+  expect(dataRows()[0]).not.toContain("also before");
+});
+
+test("a window the server sent inverted gives an empty chart that still has its text and no NaN", () => {
+  show([row({ observed: ["after"], days: [[FROM_DAY, 2]] })], { window: { fromDay: FROM_DAY + 5, toDay: FROM_DAY, eventFromDay: FROM_DAY, eventToDay: FROM_DAY } });
+
+  const lane = wrapper.find(".identifier-row svg.day-lane");
+  expect(lane.attributes("aria-label")).toContain("no chart can be drawn");
+  expect(lane.html()).not.toContain("NaN");
+  expect(lane.findAll("rect").every((r) => !r.html().includes("Infinity"))).toBe(true);
 });

@@ -19,7 +19,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { SmurfEventIdentifiers } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { key } from "@/store/admin/smurfEvents/translate";
-import { bandOf, dayText, isEventDay, laneBars } from "./day-lane";
+import { bandOf, dayText, isEventDay, isValidWindow, laneBars } from "./day-lane";
 
 const props = withDefaults(
   defineProps<{
@@ -41,7 +41,8 @@ const band = computed(() => bandOf(props.window, props.width));
 
 /** The chart in words: the window, the event, and the accounts of every day with use. */
 const alt = computed(() => {
-  const shown = props.days.filter(([day]) => day >= props.window.fromDay && day <= props.window.toDay);
+  if (!isValidWindow(props.window) || dayText(props.window.fromDay) === "" || dayText(props.window.toDay) === "") return t(key("lane_alt_invalid"));
+  const shown = props.days.filter(([day, accounts]) => Number.isFinite(day) && Number.isFinite(accounts) && day >= props.window.fromDay && day <= props.window.toDay);
   const named = {
     from: dayText(props.window.fromDay),
     to: dayText(props.window.toDay),

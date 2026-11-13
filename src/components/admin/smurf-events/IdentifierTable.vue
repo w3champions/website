@@ -53,15 +53,15 @@
                 />
               </td>
               <td class="observed">
-                <template v-if="!entry.row.accountsEver">
+                <template v-if="observedState(entry.row) === 'noHistory'">
                   <div>{{ t(key("no_day_history")) }}</div>
                   <div v-if="entry.row.span" class="text-body-2 text-medium-emphasis">
                     {{ t(key("span"), { from: formatUtc(entry.row.span.firstAt), to: formatUtc(entry.row.span.lastAt) }) }}
                   </div>
                 </template>
-                <div v-else-if="entry.row.observed === undefined" class="text-medium-emphasis">{{ t(key("observed_unknown")) }}</div>
-                <div v-else-if="entry.row.observed.length === 0">{{ t(key("observed_event_only")) }}</div>
-                <div v-for="side in entry.row.observed" :key="side" class="text-warning">
+                <div v-else-if="observedState(entry.row) === 'unknown'" class="text-medium-emphasis">{{ t(key("observed_unknown")) }}</div>
+                <div v-else-if="observedState(entry.row) === 'eventOnly'">{{ t(key("observed_event_only")) }}</div>
+                <div v-for="side in entry.row.observed" v-else :key="side" class="text-warning">
                   <span aria-hidden="true">&#9670;</span> {{ t(key(`observed_also_${side}`)) }}
                 </div>
               </td>
@@ -107,9 +107,23 @@ const expanded = ref(false);
 
 const rows = computed(() => props.identifiers?.rows ?? []);
 
-/** Only an empty list of tags means "during the event only"; an absent one is not known. */
-const eventOnly = computed(() => rows.value.filter((r) => r.observed !== undefined && r.observed.length === 0));
-const openRows = computed(() => rows.value.filter((r) => !(r.observed !== undefined && r.observed.length === 0)));
+/**
+ * "During the event only" is said only of a row with a day history that the server read in full and
+ * that lists no side: a capped row or one without a day history is shown on its own line.
+ */
+function isEventOnly(r: SmurfEventIdentifierRow): boolean {
+  return r.accountsEver !== undefined && r.accountsEver.capped !== true && r.observed !== undefined && r.observed.length === 0;
+}
+
+const eventOnly = computed(() => rows.value.filter(isEventOnly));
+const openRows = computed(() => rows.value.filter((r) => !isEventOnly(r)));
+
+/** What the observed cell says: the sides are known only for a row with a day history that lists some. */
+function observedState(r: SmurfEventIdentifierRow): "noHistory" | "unknown" | "eventOnly" | "tags" {
+  if (!r.accountsEver) return "noHistory";
+  if (isEventOnly(r)) return "eventOnly";
+  return r.observed !== undefined && r.observed.length > 0 ? "tags" : "unknown";
+}
 
 type Entry = { id: string; fold: true } | { id: string; fold?: undefined; row: SmurfEventIdentifierRow };
 

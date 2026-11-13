@@ -87,7 +87,7 @@ test("item flags show only what the server marked", () => {
   assert.deepEqual(all.map((f) => f.label), ["Excluded: shared", "Excluded: over the account cap", "Excluded: placeholder", "Trusted", "Ignored"]);
 
   assert.deepEqual(itemFlagLabels({ stat: null }, t).map((f) => f.label), ["No stats yet"]);
-  assert.notEqual(all.find((f) => f.id === "trusted")?.color, "error");
+  assert.equal(all.find((f) => f.id === "trusted")?.color, "grey");
 });
 
 // --- actions ---

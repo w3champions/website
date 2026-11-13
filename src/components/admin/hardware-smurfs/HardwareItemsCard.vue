@@ -23,7 +23,7 @@
         :no-data-text="store.noProfile ? t(key('no_profile')) : t(key('no_items'))"
       >
         <template v-slot:[`item.hash8`]="{ item }">
-          <identifier-chip :kind="item.kind" :hash8="item.hash8" />
+          <identifier-chip :kind="item.kind" :hash8="item.hash8" hide-kind />
         </template>
         <template v-slot:[`item.sightings`]="{ item }">
           {{ t(key("sightings"), { first: formatUtc(item.first), last: formatUtc(item.last) }) }}

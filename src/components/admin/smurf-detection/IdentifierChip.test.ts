@@ -8,7 +8,7 @@ let wrapper: VueWrapper;
 
 afterEach(() => wrapper.unmount());
 
-function show(props: { kind: string; hash8: string; values?: string[]; keys?: number }): void {
+function show(props: { kind: string; hash8: string; values?: string[]; keys?: number; hideKind?: boolean }): void {
   wrapper = mount(IdentifierChip, { props, global: { plugins: testPlugins() } });
 }
 
@@ -17,6 +17,21 @@ test("shows the kind and the hash", () => {
 
   expect(wrapper.text()).toContain("V:disk");
   expect(wrapper.text()).toContain("9f8e7d6c");
+});
+
+test("separates the kind from the hash and names the chip kind then hash", () => {
+  show({ kind: "V:disk", hash8: "9f8e7d6c" });
+
+  expect(wrapper.text()).toContain("V:disk 9f8e7d6c");
+  expect(wrapper.find(".identifier-chip").attributes("aria-label")).toBe("V:disk 9f8e7d6c");
+});
+
+test("can hide the kind, and then the name is the hash", () => {
+  show({ kind: "V:disk", hash8: "9f8e7d6c", hideKind: true });
+
+  expect(wrapper.text()).not.toContain("V:disk");
+  expect(wrapper.text()).toContain("9f8e7d6c");
+  expect(wrapper.find(".identifier-chip").attributes("aria-label")).toBe("9f8e7d6c");
 });
 
 test("shows the number of keys only when there is more than one", () => {

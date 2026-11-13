@@ -841,6 +841,7 @@ const en = {
       dumbbell_alt_during: "Accounts during the event: {during}.",
       lane_alt: "Accounts per day from {from} to {to}; the event ran from {eventFrom} to {eventTo}. Days with use: {days}.",
       lane_alt_none: "Accounts per day from {from} to {to}; the event ran from {eventFrom} to {eventTo}. No day with use.",
+      lane_alt_invalid: "Accounts per day: no chart can be drawn for this window.",
       lane_alt_lower_bound: "These numbers are lower bounds: only part of the accounts was read.",
       ended_links: "Ended links",
       ended_links_truncated: "Showing part of the ended links.",
