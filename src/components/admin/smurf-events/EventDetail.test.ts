@@ -81,10 +81,10 @@ test("a complete live list wins over the stored count: after a review that ended
   expect(wrapper.find(".consequence").text()).toBe("No link among the attendees is live.");
 });
 
-test("a cut live list reads at least the larger of the stored count and the links shown", async () => {
+test("a cut live list reads at least the links shown, whatever the stored count", async () => {
   const links = [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" as const }, { a: "Anchor#1002", b: "Guest#1003", source: "account" as const }];
   await show(manualEvent({ liveLinks: { links, truncated: true }, facts: { ...FACTS, liveLinks: 11 } }));
-  expect(wrapper.find(".consequence").text()).toContain("At least 11 links among the attendees are still live");
+  expect(wrapper.find(".consequence").text()).toContain("At least 2 links among the attendees are still live");
   wrapper.unmount();
 
   await show(manualEvent({ liveLinks: { links, truncated: true }, facts: { ...FACTS, liveLinks: 1 } }));

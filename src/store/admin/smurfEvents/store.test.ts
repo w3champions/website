@@ -701,7 +701,11 @@ test("review sends name only when given", async () => {
 test("rename replaces the list row and the open detail", async () => {
   service.list.mockResolvedValue({ events: [summary("1"), summary("2")] });
   service.get.mockResolvedValue(detail("1"));
-  service.rename.mockResolvedValue(detail("1", { name: "Sofia LAN", named: true }));
+  service.rename.mockImplementation(() => {
+    // The server has the new name from now on, so the reload that follows shows it.
+    service.list.mockResolvedValue({ events: [{ ...summary("1"), name: "Sofia LAN", named: true }, summary("2")] });
+    return Promise.resolve(detail("1", { name: "Sofia LAN", named: true }));
+  });
   const store = useSmurfEventsStore();
   await store.loadList();
   await store.openDetail("1");
@@ -712,6 +716,24 @@ test("rename replaces the list row and the open detail", async () => {
   expect(outcome?.name).toBe("Sofia LAN");
   expect(store.events.map((e) => e.name)).toEqual(["Sofia LAN", "Event 2"]);
   expect(store.detail?.name).toBe("Sofia LAN");
+});
+
+test("a list request that started before a rename does not overwrite the renamed row", async () => {
+  let answerStale: (page: { events: SmurfEventSummary[] }) => void = () => undefined;
+  service.list.mockResolvedValueOnce({ events: [summary("1")] });
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  service.list.mockReturnValueOnce(new Promise((resolve) => (answerStale = resolve)));
+  const stale = store.loadList();
+  service.list.mockResolvedValue({ events: [{ ...summary("1"), name: "Sofia LAN", named: true }] });
+  service.rename.mockResolvedValue(detail("1", { name: "Sofia LAN", named: true }));
+
+  await store.rename("1", "Sofia LAN");
+  await flushPromises();
+  answerStale({ events: [summary("1")] });
+  await stale;
+
+  expect(store.events.map((e) => e.name)).toEqual(["Sofia LAN"]);
 });
 
 test("rename sends a reason when given and keeps the error when refused", async () => {

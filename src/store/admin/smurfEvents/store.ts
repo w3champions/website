@@ -397,6 +397,8 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
         if (visits.isLatest(visit)) {
           if (this.detailId === id) this.showWritten(renamed);
           this.events = this.events.map((e) => (e.id === id ? summaryOf(renamed) : e));
+          // A list request still on its way started before the rename: a fresh load supersedes it, as after a review.
+          void this.loadList();
         }
         return renamed;
       } catch (e) {

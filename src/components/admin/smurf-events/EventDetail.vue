@@ -187,8 +187,8 @@ function openNeighbour(id: string | null): void {
 
 /**
  * The live links among the attendees, from the live list: all of them when the list is complete, "at least"
- * the larger of the stored count and the links shown when it is cut. The stored count (as of its own time) alone
- * only when the list is absent; nothing when the event is too large to count.
+ * the links shown when it is cut (the stored count may be stale, so it is not mixed in). The stored count (as of
+ * its own time) alone only when the list is absent; nothing when the event is too large to count.
  */
 const consequence = computed(() => {
   const e = event.value;
@@ -202,7 +202,7 @@ const consequence = computed(() => {
   }
   if (live.links.length === 0 && live.truncated !== true) return t(key("consequence_none"));
   const links = linkNames(live.links);
-  if (live.truncated) return t(key("consequence_live_at_least"), { count: Math.max(stored ?? 0, live.links.length), links });
+  if (live.truncated) return t(key("consequence_live_at_least"), { count: live.links.length, links });
   return t(key(`consequence_live_${live.links.length === 1 ? "one" : "other"}`), { count: live.links.length, links });
 });
 
