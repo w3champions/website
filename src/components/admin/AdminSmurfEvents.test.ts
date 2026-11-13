@@ -7,7 +7,7 @@ import { EAdminRouteName } from "@/router/types";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { inlineDialog, manualEvent, testPlugins } from "./smurf-events/setup.testing";
 
-const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn(), history: vi.fn() }));
+const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn(), history: vi.fn(), identifiers: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));
 const oauth = vi.hoisted(() => ({ token: "tok", permissions: [] as string[] }));
 vi.mock("@/store/oauth/store", async () => {
@@ -48,6 +48,7 @@ beforeEach(() => {
   service.list.mockResolvedValue({ events: [] });
   service.get.mockResolvedValue(manualEvent());
   service.history.mockResolvedValue({ entries: [] });
+  service.identifiers.mockResolvedValue({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [] });
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
@@ -92,6 +93,22 @@ test("a retry of a failed record reads only the record again", async () => {
 
   expect(service.history).toHaveBeenCalledTimes(2);
   expect(service.get).toHaveBeenCalledTimes(1);
+});
+
+test("the identifiers are read after every load of an event, and a retry reads only them", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.identifiers).toHaveBeenLastCalledWith("tok", "ev1");
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("open-event", "ev1");
+  await flushPromises();
+  expect(service.identifiers).toHaveBeenCalledTimes(2);
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("retry-identifiers");
+  await flushPromises();
+  expect(service.identifiers).toHaveBeenCalledTimes(3);
+  expect(service.get).toHaveBeenCalledTimes(2);
+  expect(service.history).toHaveBeenCalledTimes(2);
 });
 
 test("a rename reads the record again and says so", async () => {

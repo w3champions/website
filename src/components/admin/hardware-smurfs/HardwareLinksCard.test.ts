@@ -57,3 +57,11 @@ test("a link ended for another reason, or by a venue window, shows no event link
 
   expect(wrapper.findAll("a").filter((a) => a.attributes("href")?.includes("event="))).toHaveLength(0);
 });
+
+test("the shared items of a link render as identifier chips", async () => {
+  await show(tombstone({ invalidatedAt: undefined, invalidReason: undefined, evidence: { matched: [{ kind: "V:disk", tier: "strong", hash8: "9f8e7d6c" }] } as HardwareLink["evidence"] }));
+
+  const chip = wrapper.findComponent({ name: "IdentifierChip" });
+  expect(chip.exists()).toBe(true);
+  expect(chip.props()).toMatchObject({ kind: "V:disk", hash8: "9f8e7d6c" });
+});

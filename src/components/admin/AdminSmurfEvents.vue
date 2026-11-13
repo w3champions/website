@@ -27,6 +27,7 @@
         @back="showList"
         @open-event="openEvent"
         @retry-history="store.loadHistory(eventId)"
+        @retry-identifiers="store.loadIdentifiers(eventId)"
         @review="openReview"
         @rename="openRename"
         @edit="openManual(store.detail)"
@@ -185,6 +186,7 @@ function onDeleted(): void {
 function loadEvent(id: string): void {
   void store.openDetail(id);
   void store.loadHistory(id);
+  void store.loadIdentifiers(id);
 }
 
 /** Shows another event; the same one is loaded again (a retry). */

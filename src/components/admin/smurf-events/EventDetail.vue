@@ -88,44 +88,13 @@
         @retry="emit('retry-history')"
       />
 
-      <v-row>
-        <v-col cols="12" md="7">
-          <v-card class="mb-4">
-            <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("networks")) }}</v-card-title>
-            <v-data-table
-              :headers="networkHeaders"
-              :items="event.networks"
-              item-value="hash8"
-              density="compact"
-              :items-per-page="TABLE_PAGE"
-              :hide-default-footer="event.networks.length <= TABLE_PAGE"
-              :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
-              :no-data-text="t(key('no_networks'))"
-            >
-              <template v-slot:[`item.hash8`]="{ item }"><span class="font-monospace">{{ item.hash8 }}</span></template>
-              <template v-slot:[`item.firstAt`]="{ item }"><span class="text-no-wrap">{{ formatUtc(item.firstAt) }}</span></template>
-              <template v-slot:[`item.lastAt`]="{ item }"><span class="text-no-wrap">{{ formatUtc(item.lastAt) }}</span></template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-        <v-col cols="12" md="5">
-          <v-card class="mb-4">
-            <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("machines")) }}</v-card-title>
-            <v-data-table
-              :headers="machineHeaders"
-              :items="event.machines"
-              item-value="hash8"
-              density="compact"
-              :items-per-page="TABLE_PAGE"
-              :hide-default-footer="event.machines.length <= TABLE_PAGE"
-              :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
-              :no-data-text="t(key('no_machines'))"
-            >
-              <template v-slot:[`item.hash8`]="{ item }"><span class="font-monospace">{{ item.hash8 }}</span></template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-      </v-row>
+      <identifier-table
+        :identifiers="store.identifiers"
+        :loading="store.identifiersLoading"
+        :error="store.identifiersError ? errorText(store.identifiersError, tr) : null"
+        @retry="emit('retry-identifiers')"
+        @open-event="(id) => emit('open-event', id)"
+      />
 
       <v-card class="mb-4">
         <v-card-title class="text-subtitle-1 font-weight-bold d-flex align-center">
@@ -173,8 +142,8 @@ import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 import EventBadge from "./EventBadge.vue";
 import EventFacts from "./EventFacts.vue";
 import EventHistory from "./EventHistory.vue";
+import IdentifierTable from "./IdentifierTable.vue";
 
-const TABLE_PAGE = 10;
 const LINKS_PAGE = 25;
 
 const props = defineProps<{
@@ -189,6 +158,7 @@ const emit = defineEmits<{
   (e: "rename"): void;
   (e: "open-event", id: string): void;
   (e: "retry-history"): void;
+  (e: "retry-identifiers"): void;
 }>();
 
 const { t } = useI18n();
@@ -232,18 +202,6 @@ const consequence = computed(() => {
   if (live.truncated) return t(key("consequence_live_at_least"), { count: live.links.length, links });
   return t(key(`consequence_live_${live.links.length === 1 ? "one" : "other"}`), { count: live.links.length, links });
 });
-
-const networkHeaders = computed<DataTableHeader[]>(() => [
-  { title: t(key("col_hash8")), key: "hash8", sortable: false },
-  { title: t(key("col_first")), key: "firstAt", sortable: false },
-  { title: t(key("col_last")), key: "lastAt", sortable: false },
-  { title: t(key("col_accounts")), key: "accounts", sortable: false, align: "end" },
-]);
-
-const machineHeaders = computed<DataTableHeader[]>(() => [
-  { title: t(key("col_hash8")), key: "hash8", sortable: false },
-  { title: t(key("col_accounts")), key: "accounts", sortable: false, align: "end" },
-]);
 
 const linkHeaders = computed<DataTableHeader[]>(() => [
   { title: t(key("col_link")), key: "link", sortable: false },

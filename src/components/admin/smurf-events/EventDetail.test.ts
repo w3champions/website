@@ -186,3 +186,15 @@ test("a failed record can be loaded again through retry-history", async () => {
 
   expect(wrapper.emitted("retry-history")).toHaveLength(1);
 });
+
+test("a failed identifiers load can be retried and shows the table in the page", async () => {
+  await show(manualEvent());
+  useSmurfEventsStore().identifiersError = new Error("down");
+  await flushPromises();
+
+  await wrapper.findComponent({ name: "IdentifierTable" }).vm.$emit("retry");
+  await wrapper.findComponent({ name: "IdentifierTable" }).vm.$emit("open-event", "ev9");
+
+  expect(wrapper.emitted("retry-identifiers")).toHaveLength(1);
+  expect(wrapper.emitted("open-event")).toEqual([["ev9"]]);
+});

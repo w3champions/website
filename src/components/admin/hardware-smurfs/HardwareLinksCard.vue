@@ -35,15 +35,7 @@
           <verdict-cell :link="item" />
         </template>
         <template v-slot:[`item.evidence`]="{ item }">
-          <v-chip
-            v-for="m in item.evidence?.matched ?? []"
-            :key="m.hash8"
-            size="x-small"
-            class="mr-1 my-1 font-monospace"
-            variant="tonal"
-          >
-            {{ m.kind }} {{ m.hash8 }}
-          </v-chip>
+          <identifier-chip v-for="m in item.evidence?.matched ?? []" :key="m.hash8" class="mr-1 my-1" :kind="m.kind" :hash8="m.hash8" />
           <span v-if="(item.evidence?.matched ?? []).length === 0" class="text-medium-emphasis">{{ t(key("dash")) }}</span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
@@ -104,6 +96,7 @@ import { errorText } from "@/store/admin/hardwareSmurfs/errors";
 import { endedByEvents, reportStatusLabel, sourceLabel, tombstoneReasonLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { useHardwareSmurfsStore } from "@/store/admin/hardwareSmurfs/store";
 import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
+import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import ActionButtons from "./ActionButtons.vue";
 import VerdictCell from "./VerdictCell.vue";
 
