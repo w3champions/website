@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { BulkRowStatus, gatingFor, PlanRowInput, RunTally, startTally, summarizeRun, TallyRowInput, toPlanCandidates } from "./bulkUploadUi";
+import { BulkRowStatus, freshMapsOrThrow, gatingFor, PlanRowInput, RunTally, startTally, summarizeRun, TallyRowInput, toPlanCandidates } from "./bulkUploadUi";
+import type { Map } from "@/store/admin/mapsManagement/types";
 
 function row(overrides: Partial<PlanRowInput> & Pick<PlanRowInput, "key">): PlanRowInput {
   return {
@@ -40,6 +41,14 @@ describe("toPlanCandidates", () => {
     const [candidate] = toPlanCandidates([row({ key: "a", mapId: null, mapExists: false })]);
 
     expect(candidate).toMatchObject({ mapId: null, mapExists: false });
+  });
+
+  it("carries the temporary-target flag through, so the plan can name the real reason", () => {
+    const [candidate] = toPlanCandidates([
+      row({ key: "a", mapId: 5110, mapExists: false, mapTemporary: true }),
+    ]);
+
+    expect(candidate).toMatchObject({ mapId: 5110, mapExists: false, mapTemporary: true });
   });
 });
 
@@ -260,5 +269,23 @@ describe("gatingFor", () => {
       canReset: false,
       canClose: false,
     });
+  });
+});
+
+describe("freshMapsOrThrow", () => {
+  const maps: Map[] = [
+    { id: 5110, name: "Twisted Meadows", category: "1v1", maxTeams: 2, mappedForces: [], disabled: false },
+  ];
+
+  it("hands the rows on to the run when the reload left them fresh", () => {
+    expect(freshMapsOrThrow(true, maps)).toBe(maps);
+  });
+
+  it("throws when the reload resolved without leaving fresh rows, so the run reports it", () => {
+    // A load whose request failed while a newer one was in flight resolves
+    // silently - the newer load reports instead - and the store still holds the
+    // rows from before the run. selectMapFiles must take its "the maps could not
+    // be read" branch rather than build updates from those.
+    expect(() => freshMapsOrThrow(false, maps)).toThrow(/not the ones this reload read/);
   });
 });
