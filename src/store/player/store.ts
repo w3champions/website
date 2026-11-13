@@ -1,4 +1,4 @@
-import type { ModeStat, PlayerGameLengthStats, PlayerMmrRpTimeline, PlayerProfile, PlayerState, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "./types";
+import type { ModeStat, PlayerGameLengthStats, PlayerLifetimeTimeline, PlayerMmrRpTimeline, PlayerProfile, PlayerState, PlayerStatsHeroOnMapVersusRace, PlayerStatsRaceOnMapVersusRace, RaceStat } from "./types";
 import { EGameMode, ERaceEnum, type Match } from "../types";
 import type { Season } from "@/store/ranking/types";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -83,6 +83,9 @@ export const usePlayerStore = defineStore("player", {
     gameModeStats: [] as ModeStat[],
     raceStats: [] as RaceStat[],
     mmrRpTimeline: {} as PlayerMmrRpTimeline,
+    lifetimeTimeline: undefined as PlayerLifetimeTimeline | undefined,
+    loadingLifetimeTimeline: false,
+    lifetimeGameMode: EGameMode.GM_1ON1,
     playerGameLengthStats: {} as PlayerGameLengthStats | undefined,
     loadProfileError: undefined,
     playerIncludeRandom: false,
@@ -213,6 +216,22 @@ export const usePlayerStore = defineStore("player", {
       );
       this.SET_MMR_RP_TIMELINE(mmrRpTimeline);
       this.SET_LOADING_MMR_TIMELINE(false);
+    },
+    async loadPlayerLifetimeTimeline() {
+      if (!this.battleTag) return;
+      this.loadingLifetimeTimeline = true;
+      try {
+        this.lifetimeTimeline = await ProfileService.retrievePlayerLifetimeTimeline(
+          this.battleTag,
+          this.lifetimeGameMode,
+        );
+      } finally {
+        this.loadingLifetimeTimeline = false;
+      }
+    },
+    async setLifetimeGameMode(gameMode: EGameMode) {
+      this.lifetimeGameMode = gameMode;
+      await this.loadPlayerLifetimeTimeline();
     },
     async loadRecentPerformanceMatches(gameMode: EGameMode): Promise<Match[]> {
       const rootStateStore = useRootStateStore();
