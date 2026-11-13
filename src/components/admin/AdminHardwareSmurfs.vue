@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -198,6 +198,8 @@ async function openPlayerFromUrl(): Promise<void> {
   const player = typeof route.query.player === "string" ? route.query.player : "";
   if (!player) return;
   selectedPlayer.value = player;
+  // The search box only exists once the permission is known: wait for it to render.
+  await nextTick();
   if (playerSearchRef.value) playerSearchRef.value.selected = player;
   await store.open(player);
 }

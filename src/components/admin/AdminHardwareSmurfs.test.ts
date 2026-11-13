@@ -18,7 +18,9 @@ vi.mock("@/store/oauth/store", async () => {
 
 import AdminHardwareSmurfs from "./AdminHardwareSmurfs.vue";
 
-const STUBS = { PlayerSearch: true, HardwareLinksCard: true, HardwareItemsCard: true, HardwareAuditCard: true, OverrideDialog: true };
+// A stand-in with the one field the page prefills.
+const PlayerSearchStub = { name: "PlayerSearch", data: () => ({ selected: "" }), template: "<div />" };
+const STUBS = { PlayerSearch: PlayerSearchStub, HardwareLinksCard: true, HardwareItemsCard: true, HardwareAuditCard: true, OverrideDialog: true };
 
 let wrapper: VueWrapper;
 
@@ -61,4 +63,17 @@ test("a holder of SmurfCheckerAdministration alone loads the page and the player
 
   expect(wrapper.text()).not.toContain("You don't have");
   expect(service.getLinks).toHaveBeenCalled();
+});
+
+test("permissions that arrive after the page mounted open the player and prefill the search box", async () => {
+  oauth.permissions = [];
+  await open("/admin-hardware-smurfs?player=Foo%231");
+  expect(serviceCalls()).toBe(0);
+
+  // Through the reactive store, as when the oauth store's permissions land.
+  (await import("@/store/oauth/store")).useOauthStore().permissions = ["SmurfCheckerAdministration"];
+  await flushPromises();
+
+  expect(service.getLinks).toHaveBeenCalled();
+  expect(wrapper.findComponent({ name: "PlayerSearch" }).vm.$data.selected).toBe("Foo#1");
 });
