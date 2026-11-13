@@ -383,6 +383,19 @@ test.each(MATRIX)("named $named, $decision, name $nameCase: Save enabled $savabl
   });
 });
 
+test("Enter that confirms an IME composition does not save", async () => {
+  service.review.mockResolvedValue(manualEvent({ review: "confirmed" }));
+
+  await button("Confirm").trigger("click");
+  await nameField().setValue("LAN party");
+  await nameField().trigger("keydown", { key: "Enter", isComposing: true });
+  expect(service.review).not.toHaveBeenCalled();
+
+  await nameField().trigger("keydown", { key: "Enter" });
+  await flushPromises();
+  expect(service.review).toHaveBeenCalledTimes(1);
+});
+
 test("Enter in the name field saves when Save is enabled and does nothing when it is not", async () => {
   service.review.mockResolvedValue(manualEvent({ review: "confirmed" }));
 

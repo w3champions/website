@@ -52,7 +52,7 @@ const rows = computed<FactRow[]>(() => {
   const links = facts?.liveLinks === undefined
     ? factText(facts?.endedLinks, undefined, tr)
     : t(key("facts_links_with_live"), { ended: facts.endedLinks, live: factText(facts.liveLinks, facts.liveLinksCapped, tr) });
-  // The rows above are fed by the facts: a 0 is a fact and absent facts are a dash. The evidence rows exist only for detected events.
+  // The rows above are fed by the facts: a 0 is a fact and absent facts are a dash. The evidence rows always render: when the evidence was not recorded for the event they read "Not recorded".
   const evidence = (label: string, value: number): FactRow => ({ label, value: String(value), notRecorded: !e.evidenceRecorded });
   return [
     { label: t(key("facts_networks")), value: facts?.networks === 0 ? t(key("facts_no_network")) : factText(facts?.networks, undefined, tr) },

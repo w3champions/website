@@ -19,7 +19,7 @@
           variant="underlined"
           color="primary"
           autofocus
-          @keydown.enter="save"
+          @keydown.enter="onEnter"
         />
         <v-textarea
           v-model="reason"
@@ -83,6 +83,12 @@ const problemText = computed(() => {
   return null;
 });
 const canSave = computed(() => !store.acting && problemText.value === null && trimmed.value !== shown.value?.name);
+
+/** Enter that confirms an IME candidate must not submit the form. */
+function onEnter(event: KeyboardEvent): void {
+  if (event.isComposing) return;
+  void save();
+}
 
 async function save(): Promise<void> {
   const event = shown.value;

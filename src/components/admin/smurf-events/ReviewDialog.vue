@@ -62,7 +62,7 @@
           :maxlength="NAME_MAX_LENGTH"
           variant="underlined"
           color="primary"
-          @keydown.enter="save"
+          @keydown.enter="onEnter"
         />
 
         <v-textarea
@@ -148,6 +148,12 @@ const canSave = computed(() => {
   if (reviewNeedsReason(decision.value) && reason.value.trim() === "") return false;
   return decision.value !== "denied" || (store.denyLinks !== null && !store.denyLoading);
 });
+
+/** Enter that confirms an IME candidate must not submit the form. */
+function onEnter(event: KeyboardEvent): void {
+  if (event.isComposing) return;
+  void save();
+}
 
 async function save(): Promise<void> {
   const event = shown.value;

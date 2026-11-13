@@ -86,6 +86,19 @@ test("a failed rename keeps the dialog open and shows the server's text", async 
   expect(wrapper.emitted("update:modelValue")).toBeUndefined();
 });
 
+test("Enter that confirms an IME composition does not save", async () => {
+  open();
+  service.rename.mockResolvedValue(manualEvent({ name: "Sofia LAN" }));
+
+  await nameInput().setValue("Sofia LAN");
+  await nameInput().trigger("keydown", { key: "Enter", isComposing: true });
+  expect(service.rename).not.toHaveBeenCalled();
+
+  await nameInput().trigger("keydown", { key: "Enter" });
+  await flushPromises();
+  expect(service.rename).toHaveBeenCalledTimes(1);
+});
+
 test("Enter in the name field saves when Save is enabled and does nothing when it is not", async () => {
   open();
   service.rename.mockResolvedValue(manualEvent({ name: "Sofia LAN" }));
