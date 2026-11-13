@@ -204,17 +204,6 @@ export default class AdminService {
     return await authorizedFetch("PUT", url, token, JSON.stringify(proxies));
   }
 
-  /**
-   * @deprecated Use getSmurfsForBattletag instead
-   */
-  public static async getAltsForBattletag(btag: string, token: string): Promise<string[]> {
-    const url = `${API_URL}api/admin/alts/${encodeURIComponent(btag)}`;
-
-    const response = await authorizedFetch("GET", url, token);
-
-    return await response.json();
-  }
-
   public static async getSmurfIdentifierTypes(token: string): Promise<string[]> {
     const url = `${API_URL}api/admin/smurf-detection/possible-identifier-types`;
     const response = await authorizedFetch("GET", url, token);

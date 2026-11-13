@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
-import type { SmurfEventDetail, SmurfEventLinkRef, SmurfEventOrigin, SmurfEventPreview, SmurfEventReview, SmurfEventsQuery, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { RenameRequest, ReviewRequest, SmurfEventDetail, SmurfEventHistory, SmurfEventIdentifiers, SmurfEventLinkRef, SmurfEventOrigin, SmurfEventPreview, SmurfEventReview, SmurfEventsQuery, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
 import { reviewNeedsReason } from "./actions";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf, type WriteOutcome } from "./events";
@@ -49,6 +49,14 @@ interface SmurfEventsState {
   denyLinksTruncated: boolean;
   denyLoading: boolean;
   denyError: unknown;
+  /** The identifier table of the event last asked for; null until loaded. */
+  identifiers: SmurfEventIdentifiers | null;
+  identifiersLoading: boolean;
+  identifiersError: unknown;
+  /** The history of the event last asked for; null until loaded. */
+  history: SmurfEventHistory | null;
+  historyLoading: boolean;
+  historyError: unknown;
   acting: boolean;
   actionError: unknown;
 }
@@ -75,6 +83,8 @@ const listLoads = requestSequence();
 const detailLoads = requestSequence();
 const previewLoads = requestSequence();
 const denyLoads = requestSequence();
+const identifierLoads = requestSequence();
+const historyLoads = requestSequence();
 // One visit of the page; `clear()` ends it. A write that settles after that changes nothing.
 const visits = requestSequence();
 
@@ -99,6 +109,12 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     denyLinksTruncated: false,
     denyLoading: false,
     denyError: null,
+    identifiers: null,
+    identifiersLoading: false,
+    identifiersError: null,
+    history: null,
+    historyLoading: false,
+    historyError: null,
     acting: false,
     actionError: null,
   }),
@@ -147,7 +163,20 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
+    /** Drops the identifier table and history of the event left behind, and any answer still on its way. */
+    dropEventTables(): void {
+      identifierLoads.invalidate();
+      historyLoads.invalidate();
+      this.identifiers = null;
+      this.identifiersLoading = false;
+      this.identifiersError = null;
+      this.history = null;
+      this.historyLoading = false;
+      this.historyError = null;
+    },
+
     async openDetail(id: string): Promise<boolean> {
+      this.dropEventTables();
       this.detailId = id;
       this.detail = null;
       this.detailError = null;
@@ -179,6 +208,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     },
 
     closeDetail(): void {
+      this.dropEventTables();
       detailLoads.invalidate();
       this.detailId = null;
       this.detail = null;
@@ -311,17 +341,22 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     },
 
     /**
-     * A deny needs a reason; confirm and unreview send one only when given. Resolves to the
-     * reviewed event, or null; like a save, a late answer is not written into the store.
+     * A deny needs a reason; confirm and unreview send one only when given, and a name is sent only
+     * when given. Resolves to the reviewed event, or null; like a save, a late answer is not
+     * written into the store.
      */
-    async review(id: string, decision: SmurfEventReview, reason: string): Promise<WriteOutcome | null> {
+    async review(id: string, decision: SmurfEventReview, reason: string, name?: string): Promise<WriteOutcome | null> {
       const trimmed = trimmedOrUndefined(reason);
+      const trimmedName = name === undefined ? undefined : trimmedOrUndefined(name);
       if (this.acting || (reviewNeedsReason(decision) && trimmed === undefined)) return null;
       const visit = visits.current();
       this.acting = true;
       this.actionError = null;
       try {
-        const outcome = outcomeOf(await smurfEventsService().review(token(), id, trimmed === undefined ? { decision } : { decision, reason: trimmed }));
+        const request: ReviewRequest = { decision };
+        if (trimmed !== undefined) request.reason = trimmed;
+        if (trimmedName !== undefined) request.name = trimmedName;
+        const outcome = outcomeOf(await smurfEventsService().review(token(), id, request));
         if (visits.isLatest(visit)) {
           if (this.detailId === id) this.showWritten(outcome.detail);
           // The row shows the new review at once; the reload below brings the server's view.
@@ -331,11 +366,72 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
         return outcome;
       } catch (e) {
         console.error("Reviewing the smurf event failed:", e);
+        if (visits.isLatest(visit)) {
+          this.actionError = e;
+          // The server names the event before it reviews: a failed review may still have changed the name.
+          if (trimmedName !== undefined && this.detailId === id) {
+            void this.refreshDetail(id);
+            void this.loadHistory(id);
+          }
+        }
+        return null;
+      } finally {
+        if (visits.isLatest(visit)) this.acting = false;
+      }
+    },
+
+    /**
+     * Gives any event a name (the reason is optional). Resolves to the renamed event, or null; the list
+     * row and the event shown take the server's answer, a late one is not written into the store.
+     */
+    async rename(id: string, name: string, reason?: string): Promise<SmurfEventDetail | null> {
+      const trimmedName = name.trim();
+      if (this.acting || trimmedName === "") return null;
+      const trimmedReason = reason === undefined ? undefined : trimmedOrUndefined(reason);
+      const request: RenameRequest = trimmedReason === undefined ? { name: trimmedName } : { name: trimmedName, reason: trimmedReason };
+      const visit = visits.current();
+      this.acting = true;
+      this.actionError = null;
+      try {
+        const renamed = await smurfEventsService().rename(token(), id, request);
+        if (visits.isLatest(visit)) {
+          if (this.detailId === id) this.showWritten(renamed);
+          this.events = this.events.map((e) => (e.id === id ? summaryOf(renamed) : e));
+          // A list request still on its way started before the rename: a fresh load supersedes it, as after a review.
+          void this.loadList();
+        }
+        return renamed;
+      } catch (e) {
+        console.error("Renaming the smurf event failed:", e);
         if (visits.isLatest(visit)) this.actionError = e;
         return null;
       } finally {
         if (visits.isLatest(visit)) this.acting = false;
       }
+    },
+
+    async loadIdentifiers(id: string): Promise<boolean> {
+      this.identifiers = null;
+      this.identifiersError = null;
+      return await loadLatest(identifierLoads, {
+        what: "the smurf event identifiers",
+        setLoading: (loading) => (this.identifiersLoading = loading),
+        fetch: () => smurfEventsService().identifiers(token(), id),
+        apply: (identifiers) => (this.identifiers = identifiers),
+        fail: (e) => (this.identifiersError = e),
+      });
+    },
+
+    async loadHistory(id: string): Promise<boolean> {
+      this.history = null;
+      this.historyError = null;
+      return await loadLatest(historyLoads, {
+        what: "the smurf event history",
+        setLoading: (loading) => (this.historyLoading = loading),
+        fetch: () => smurfEventsService().history(token(), id),
+        apply: (history) => (this.history = history),
+        fail: (e) => (this.historyError = e),
+      });
     },
 
     async loadDenyPreview(id: string): Promise<boolean> {
@@ -378,6 +474,8 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       detailLoads.invalidate();
       previewLoads.invalidate();
       denyLoads.invalidate();
+      identifierLoads.invalidate();
+      historyLoads.invalidate();
       this.$reset();
     },
   },

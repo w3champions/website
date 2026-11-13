@@ -10,22 +10,36 @@
     <v-alert v-else-if="store.detailError" type="error" variant="tonal" class="mb-4">
       {{ errorText(store.detailError, tr) }}
       <template v-slot:append>
-        <v-btn variant="text" size="small" @click="store.openDetail(eventId)">{{ t(key("retry")) }}</v-btn>
+        <v-btn variant="text" size="small" @click="emit('open-event', eventId)">{{ t(key("retry")) }}</v-btn>
       </template>
     </v-alert>
 
     <template v-else-if="event">
-      <v-card class="mb-4 event-header" :class="`event-header--${event.review}`">
+      <v-card class="mb-4">
         <v-card-text>
-          <div class="d-flex flex-wrap align-center ga-2">
-            <h2 class="text-h5 mr-2">{{ event.name }}</h2>
-            <v-chip size="small" variant="outlined">{{ originLabel(event.origin, tr) }}</v-chip>
-            <v-chip size="small" variant="tonal" :color="reviewColor(event.review)">{{ reviewLabel(event.review, tr) }}</v-chip>
+          <div class="d-flex flex-wrap align-center ga-2 mb-2">
+            <v-btn size="small" variant="text" :disabled="neighbours.previous === null" @click="openNeighbour(neighbours.previous)">{{ t(key("nav_previous")) }}</v-btn>
+            <v-btn size="small" variant="text" :disabled="neighbours.next === null" @click="openNeighbour(neighbours.next)">{{ t(key("nav_next")) }}</v-btn>
+          </div>
+          <div class="d-flex flex-wrap align-center ga-2 event-header">
+            <h2 class="text-h5">{{ event.name }}</h2>
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :aria-label="t(key('rename_action'))"
+              :title="t(key('rename_action'))"
+              @click="emit('rename')"
+            >
+              <v-icon :icon="mdiRenameBox" />
+            </v-btn>
+            <event-badge kind="origin" :value="event.origin" />
+            <event-badge kind="review" :value="event.review" />
             <v-spacer />
             <div class="d-flex flex-wrap ga-2">
               <v-btn v-if="actions.review" color="primary" variant="flat" :prepend-icon="mdiGavel" @click="emit('review')">{{ t(key("action_review")) }}</v-btn>
               <v-btn v-if="actions.edit" variant="tonal" :prepend-icon="mdiPencil" @click="emit('edit')">{{ t(key("action_edit")) }}</v-btn>
-              <v-btn v-if="actions.delete" variant="text" color="error" :prepend-icon="mdiDelete" @click="emit('delete')">{{ t(key("action_delete")) }}</v-btn>
+              <v-btn v-if="actions.delete" variant="text" :prepend-icon="mdiDelete" @click="emit('delete')">{{ t(key("action_delete")) }}</v-btn>
             </div>
           </div>
           <div class="text-body-1 mt-2">{{ spanText(event.from, event.to) }}</div>
@@ -34,30 +48,13 @@
             {{ t(key("created_at"), { at: formatUtc(event.createdAt) }) }}
             <span v-if="event.reviewedBy && event.reviewedAt"> · {{ t(key("reviewed_by"), { author: event.reviewedBy, at: formatUtc(event.reviewedAt) }) }}</span>
           </div>
-
-          <div class="stat-grid mt-4">
-            <div v-for="stat in stats" :key="stat.label" class="stat-tile">
-              <div class="stat-value">{{ stat.value }}</div>
-              <div class="text-caption text-medium-emphasis">{{ stat.label }}</div>
-            </div>
-          </div>
+          <div v-if="consequence" class="consequence text-body-2 mt-3">{{ consequence }}</div>
         </v-card-text>
       </v-card>
 
       <v-row>
         <v-col cols="12" md="5">
-          <v-card class="mb-4 h-100">
-            <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("evidence")) }}</v-card-title>
-            <v-card-subtitle class="pb-2">{{ t(key("evidence_hint")) }}</v-card-subtitle>
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="row in evidenceRows" :key="row.label">
-                  <td>{{ row.label }}</td>
-                  <td class="text-right font-weight-bold">{{ row.value }}</td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-card>
+          <event-facts :event="event" />
         </v-col>
         <v-col cols="12" md="7">
           <v-card class="mb-4 h-100">
@@ -84,44 +81,19 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="12" md="7">
-          <v-card class="mb-4">
-            <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("networks")) }}</v-card-title>
-            <v-data-table
-              :headers="networkHeaders"
-              :items="event.networks"
-              item-value="hash8"
-              density="compact"
-              :items-per-page="TABLE_PAGE"
-              :hide-default-footer="event.networks.length <= TABLE_PAGE"
-              :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
-              :no-data-text="t(key('no_networks'))"
-            >
-              <template v-slot:[`item.hash8`]="{ item }"><span class="font-monospace">{{ item.hash8 }}</span></template>
-              <template v-slot:[`item.firstAt`]="{ item }"><span class="text-no-wrap">{{ formatUtc(item.firstAt) }}</span></template>
-              <template v-slot:[`item.lastAt`]="{ item }"><span class="text-no-wrap">{{ formatUtc(item.lastAt) }}</span></template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-        <v-col cols="12" md="5">
-          <v-card class="mb-4">
-            <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("machines")) }}</v-card-title>
-            <v-data-table
-              :headers="machineHeaders"
-              :items="event.machines"
-              item-value="hash8"
-              density="compact"
-              :items-per-page="TABLE_PAGE"
-              :hide-default-footer="event.machines.length <= TABLE_PAGE"
-              :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
-              :no-data-text="t(key('no_machines'))"
-            >
-              <template v-slot:[`item.hash8`]="{ item }"><span class="font-monospace">{{ item.hash8 }}</span></template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-      </v-row>
+      <event-history
+        :history="store.history"
+        :loading="store.historyLoading"
+        :error="store.historyError ? errorText(store.historyError, tr) : null"
+        @retry="emit('retry-history')"
+      />
+
+      <identifier-table
+        :identifiers="store.identifiers"
+        :loading="store.identifiersLoading"
+        :error="store.identifiersError ? errorText(store.identifiersError, tr) : null"
+        @retry="emit('retry-identifiers')"
+      />
 
       <v-card class="mb-4">
         <v-card-title class="text-subtitle-1 font-weight-bold d-flex align-center">
@@ -156,23 +128,27 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil } from "@mdi/js";
+import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil, mdiRenameBox } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import { EAdminRouteName } from "@/router/types";
 import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
+import { factText } from "@/store/admin/smurfEvents/facts";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
-import { errorText, homesText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
+import { errorText } from "@/store/admin/smurfEvents/labels";
+import { unreviewedNeighbours } from "@/store/admin/smurfEvents/neighbours";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import EventBadge from "./EventBadge.vue";
+import EventFacts from "./EventFacts.vue";
+import EventHistory from "./EventHistory.vue";
+import IdentifierTable from "./IdentifierTable.vue";
 
-const TABLE_PAGE = 10;
 const LINKS_PAGE = 25;
 
 const props = defineProps<{
   eventId: string;
-  canAdminister: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -180,6 +156,10 @@ const emit = defineEmits<{
   (e: "review"): void;
   (e: "edit"): void;
   (e: "delete"): void;
+  (e: "rename"): void;
+  (e: "open-event", id: string): void;
+  (e: "retry-history"): void;
+  (e: "retry-identifiers"): void;
 }>();
 
 const { t } = useI18n();
@@ -187,7 +167,7 @@ const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 
 const event = computed(() => (store.detail?.id === props.eventId ? store.detail : null));
-const actions = computed(() => smurfEventActions(event.value ?? { origin: "detected" }, props.canAdminister));
+const actions = computed(() => smurfEventActions(event.value ?? { origin: "detected" }));
 const anchors = computed(() => new Set(event.value?.anchors ?? []));
 
 function spanText(from: string, to: string): string {
@@ -198,41 +178,37 @@ function hardwareLink(battleTag: string) {
   return { name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, query: { player: battleTag } };
 }
 
-const stats = computed(() => {
+/** The unreviewed events before and after this one in the server's queue order, placed by this event's own date and id. */
+const neighbours = computed(() => (event.value ? unreviewedNeighbours(store.events, event.value) : { previous: null, next: null }));
+
+function openNeighbour(id: string | null): void {
+  if (id !== null) emit("open-event", id);
+}
+
+/**
+ * The live links among the attendees, from the live list: all of them when the list is complete, "at least"
+ * the links shown when it is cut (the stored count may be stale, so it is not mixed in). The stored count (as of
+ * its own time) alone only when the list is absent; nothing when the event is too large to count.
+ */
+const consequence = computed(() => {
   const e = event.value;
-  if (!e) return [];
-  return [
-    { label: t(key("count_networks")), value: e.counts.networks },
-    { label: t(key("count_machines")), value: e.counts.machines },
-    { label: t(key("count_attendees")), value: e.counts.attendees },
-    { label: t(key("count_homes")), value: homesText(e.counts, tr) },
-    { label: t(key("count_ended_links")), value: e.endedLinks },
-  ];
+  const live = e?.liveLinks;
+  const stored = e?.facts?.liveLinks;
+  if (!live) {
+    // The read ran out of time: nothing is known this time, whatever the stored facts counted earlier.
+    if (e?.liveLinksTimedOut === true) return t(key("consequence_timed_out"));
+    if (stored === undefined) return null;
+    return t(key("consequence_live_count"), { count: factText(stored, e?.facts?.liveLinksCapped, tr), at: formatUtc(e?.facts?.at) });
+  }
+  if (live.links.length === 0 && live.truncated !== true) return t(key("consequence_none"));
+  const links = linkNames(live.links);
+  if (live.truncated) return t(key("consequence_live_at_least"), { count: live.links.length, links });
+  return t(key(`consequence_live_${live.links.length === 1 ? "one" : "other"}`), { count: live.links.length, links });
 });
 
-const evidenceRows = computed(() => {
-  const evidence = event.value?.evidence;
-  if (!evidence) return [];
-  const rows = [
-    { label: t(key("evidence_countries")), value: evidence.countries },
-    { label: t(key("evidence_days_before")), value: evidence.networkDaysBefore },
-    { label: t(key("evidence_days_after")), value: evidence.networkDaysAfter },
-    { label: t(key("evidence_returning")), value: evidence.returningAttendees },
-  ];
-  return evidence.pingClusters === undefined ? rows : [...rows, { label: t(key("evidence_ping_clusters")), value: evidence.pingClusters }];
-});
-
-const networkHeaders = computed<DataTableHeader[]>(() => [
-  { title: t(key("col_hash8")), key: "hash8", sortable: false },
-  { title: t(key("col_first")), key: "firstAt", sortable: false },
-  { title: t(key("col_last")), key: "lastAt", sortable: false },
-  { title: t(key("col_accounts")), key: "accounts", sortable: false, align: "end" },
-]);
-
-const machineHeaders = computed<DataTableHeader[]>(() => [
-  { title: t(key("col_hash8")), key: "hash8", sortable: false },
-  { title: t(key("col_accounts")), key: "accounts", sortable: false, align: "end" },
-]);
+function linkNames(links: SmurfEventLinkRef[]): string {
+  return links.map((l) => `${l.a} \u2013 ${l.b}`).join(", ");
+}
 
 const linkHeaders = computed<DataTableHeader[]>(() => [
   { title: t(key("col_link")), key: "link", sortable: false },
@@ -241,41 +217,6 @@ const linkHeaders = computed<DataTableHeader[]>(() => [
 </script>
 
 <style scoped>
-.event-header {
-  border-left: 4px solid rgb(var(--v-theme-primary));
-}
-
-.event-header--unreviewed {
-  border-left-color: rgb(var(--v-theme-warning));
-}
-
-.event-header--confirmed {
-  border-left-color: rgb(var(--v-theme-success));
-}
-
-.event-header--denied {
-  border-left-color: rgba(var(--v-theme-on-surface), 0.38);
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 8px;
-}
-
-.stat-tile {
-  padding: 10px 12px;
-  border-radius: 4px;
-  background: rgba(var(--v-theme-on-surface), 0.04);
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-}
-
 .account-link {
   color: rgb(var(--v-theme-primary));
   text-decoration: none;

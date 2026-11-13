@@ -6,12 +6,8 @@ export interface SmurfEventActions {
   delete: boolean;
 }
 
-/**
- * The writes a moderator may start on an event: none without SmurfCheckerAdministration; a review on
- * any event; edit and delete only on manual ones (the server refuses the others).
- */
-export function smurfEventActions(event: Pick<SmurfEventSummary, "origin">, canAdminister: boolean): SmurfEventActions {
-  if (!canAdminister) return { review: false, edit: false, delete: false };
+/** The writes a moderator may start on an event: a review on any event; edit and delete only on manual ones (the server refuses the others). */
+export function smurfEventActions(event: Pick<SmurfEventSummary, "origin">): SmurfEventActions {
   const manual = event.origin === "manual";
   return { review: true, edit: manual, delete: manual };
 }

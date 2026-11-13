@@ -35,9 +35,8 @@ export function isWideImpact(action: OverrideAction): boolean {
   return WIDE_IMPACT.has(action);
 }
 
-/** The verdict actions on a pair, for a moderator with SmurfCheckerAdministration (else none). */
-export function pairActions(link: Pick<HardwareLink, "verdict">, canAdminister: boolean): ActionOption<PairAction>[] {
-  if (!canAdminister) return [];
+/** The verdict actions on a pair (the page is shown to SmurfCheckerAdministration only). */
+export function pairActions(link: Pick<HardwareLink, "verdict">): ActionOption<PairAction>[] {
   switch (verdictKindOf(link.verdict)) {
     case "smurf":
       return [{ action: "revoke-smurf", replaces: null }, { action: "not-smurf", replaces: "smurf" }];
@@ -48,9 +47,8 @@ export function pairActions(link: Pick<HardwareLink, "verdict">, canAdminister: 
   }
 }
 
-/** The trust / ignore actions on an item, for a moderator with SmurfCheckerAdministration (else none). */
-export function itemActions(item: { trusted: boolean; ignored: boolean }, canAdminister: boolean): ActionOption<ItemAction>[] {
-  if (!canAdminister) return [];
+/** The trust / ignore actions on an item (the page is shown to SmurfCheckerAdministration only). */
+export function itemActions(item: { trusted: boolean; ignored: boolean }): ActionOption<ItemAction>[] {
   if (item.trusted && item.ignored) return [{ action: "revoke-trust", replaces: null }, { action: "revoke-ignore", replaces: null }];
   if (item.trusted) return [{ action: "revoke-trust", replaces: null }, { action: "ignore", replaces: "trust" }];
   if (item.ignored) return [{ action: "revoke-ignore", replaces: null }, { action: "trust", replaces: "ignore" }];

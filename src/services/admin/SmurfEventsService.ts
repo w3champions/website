@@ -1,6 +1,6 @@
 import { AuthorizedClient, type AuthorizedClientDeps, HttpError } from "@/services/http/AuthorizedClient";
 import { serverMessageOf } from "./HardwareSmurfService";
-import type { ManualEventRequest, ReviewRequest, SmurfEventCreateResult, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventPreview, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
+import type { ManualEventRequest, RenameRequest, ReviewRequest, SmurfEventCreateResult, SmurfEventDenyPreview, SmurfEventDetail, SmurfEventHistory, SmurfEventIdentifiers, SmurfEventPreview, SmurfEventPreviewRequest, SmurfEventsPage, SmurfEventsQuery, SmurfEventWriteResponse } from "./smurf-detection/SmurfEventsResponse";
 
 const BASE = "api/admin/smurf-detection/events";
 
@@ -114,6 +114,19 @@ export class SmurfEventsService {
 
   async review(token: string, id: string, request: ReviewRequest): Promise<SmurfEventWriteResponse> {
     return await this.call("POST", `/${segment(id)}/review`, token, request);
+  }
+
+  async rename(token: string, id: string, request: RenameRequest): Promise<SmurfEventDetail> {
+    return await this.call("POST", `/${segment(id)}/rename`, token, request);
+  }
+
+  /** No query: the server decides what the caller may see, so the page never asks to reveal anything. */
+  async identifiers(token: string, id: string): Promise<SmurfEventIdentifiers> {
+    return await this.call("GET", `/${segment(id)}/identifiers`, token);
+  }
+
+  async history(token: string, id: string): Promise<SmurfEventHistory> {
+    return await this.call("GET", `/${segment(id)}/history`, token);
   }
 }
 

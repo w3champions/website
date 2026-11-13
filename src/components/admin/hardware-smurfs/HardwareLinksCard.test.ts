@@ -40,7 +40,7 @@ async function show(link: HardwareLink): Promise<void> {
   const store = useHardwareSmurfsStore();
   store.battleTag = "Anchor#1001";
   store.links = [link];
-  wrapper = mount(HardwareLinksCard, { props: { canAdminister: false }, global: { plugins: [...plugins, router] } });
+  wrapper = mount(HardwareLinksCard, { global: { plugins: [...plugins, router] } });
   await flushPromises();
 }
 
@@ -56,4 +56,12 @@ test("a link ended for another reason, or by a venue window, shows no event link
   await show(tombstone({ invalidReason: "venue" }));
 
   expect(wrapper.findAll("a").filter((a) => a.attributes("href")?.includes("event="))).toHaveLength(0);
+});
+
+test("the shared items of a link render as identifier chips", async () => {
+  await show(tombstone({ invalidatedAt: undefined, invalidReason: undefined, evidence: { matched: [{ kind: "V:disk", tier: "strong", hash8: "9f8e7d6c" }] } as HardwareLink["evidence"] }));
+
+  const chip = wrapper.findComponent({ name: "IdentifierChip" });
+  expect(chip.exists()).toBe(true);
+  expect(chip.props()).toMatchObject({ kind: "V:disk", hash8: "9f8e7d6c" });
 });

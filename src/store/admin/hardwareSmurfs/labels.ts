@@ -55,7 +55,7 @@ export function itemFlagLabels(item: { stat: HardwareItemStat | null; trusted?: 
   if (item.stat?.common) flags.push({ id: "common", label: t(key("flag_common")), color: "grey" });
   if (item.stat?.overCap) flags.push({ id: "overCap", label: t(key("flag_over_cap")), color: "grey" });
   if (item.stat?.placeholder) flags.push({ id: "placeholder", label: t(key("flag_placeholder")), color: "grey" });
-  if (item.trusted) flags.push({ id: "trusted", label: t(key("flag_trusted")), color: "error" });
+  if (item.trusted) flags.push({ id: "trusted", label: t(key("flag_trusted")), color: "grey" });
   if (item.ignored) flags.push({ id: "ignored", label: t(key("flag_ignored")), color: "warning" });
   return flags;
 }

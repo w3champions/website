@@ -3,10 +3,10 @@
     <v-card-title class="pt-3">
       {{ t(key("title")) }}
     </v-card-title>
-    <v-container v-if="permissionsKnown && !canQuery" class="w3-container-width">
+    <v-container v-if="permissionsKnown && !canAdminister" class="w3-container-width">
       <v-alert type="warning" variant="tonal">{{ t(key("no_permission")) }}</v-alert>
     </v-container>
-    <v-container v-else-if="canQuery" class="w3-container-width">
+    <v-container v-else-if="canAdminister" class="w3-container-width">
       <v-card class="mb-4">
         <v-card-text>
           <v-row class="align-center">
@@ -53,8 +53,8 @@
           {{ errorText(store.actionError, tr) }}
         </v-alert>
 
-        <hardware-links-card :can-administer="canAdminister" @action="openPairAction" @open-account="openAccount" />
-        <hardware-items-card :can-administer="canAdminister" @action="openItemAction" />
+        <hardware-links-card @action="openPairAction" @open-account="openAccount" />
+        <hardware-items-card @action="openItemAction" />
         <hardware-audit-card />
       </template>
 
@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -103,7 +103,6 @@ const store = useHardwareSmurfsStore();
 
 const permissions = computed<string[]>(() => oauthStore.permissions);
 const permissionsKnown = computed(() => permissions.value.length > 0);
-const canQuery = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerQuery]));
 const canAdminister = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerAdministration]));
 
 type PlayerSearchType = InstanceType<typeof PlayerSearch>;
@@ -195,12 +194,23 @@ watch(dialogOpen, (open) => {
   }
 });
 
-onMounted(async () => {
+async function openPlayerFromUrl(): Promise<void> {
   const player = typeof route.query.player === "string" ? route.query.player : "";
   if (!player) return;
   selectedPlayer.value = player;
+  // The search box only exists once the permission is known: wait for it to render.
+  await nextTick();
   if (playerSearchRef.value) playerSearchRef.value.selected = player;
   await store.open(player);
+}
+
+onMounted(async () => {
+  if (canAdminister.value) await openPlayerFromUrl();
+});
+
+// Permissions can arrive after the page mounted (a direct load): open the player once they do.
+watch(canAdminister, (can, could) => {
+  if (can && !could) void openPlayerFromUrl();
 });
 
 onBeforeUnmount(() => store.clear());

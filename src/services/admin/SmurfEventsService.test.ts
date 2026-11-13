@@ -31,10 +31,10 @@ const REQUEST = { name: "LAN party", from: "2026-10-01T00:00:00.000Z", to: "2026
 test("list sends the filters and cursor as encoded query parameters, and nothing when unset", async () => {
   const { service, calls } = serviceWith({ status: 200, body: { events: [] } });
 
-  await service.list("tok", { review: "unreviewed", origin: "manual", cursor: "a b/c", limit: 50 });
+  await service.list("tok", { review: "unreviewed", origin: "manual", cursor: "a b/c", limit: 47 });
   await service.list("tok", {});
 
-  assert.equal(calls[0].url, `${BASE}?review=unreviewed&origin=manual&cursor=a%20b%2Fc&limit=50`);
+  assert.equal(calls[0].url, `${BASE}?review=unreviewed&origin=manual&cursor=a%20b%2Fc&limit=47`);
   assert.equal(calls[0].auth, "Bearer tok");
   assert.equal(calls[1].url, BASE);
 });
@@ -140,4 +140,28 @@ test("an absent, malformed or not positive Retry-After leaves the error without 
   for (const header of [null, "", "soon", "-5", "0", "1.5", "12 seconds", "Mon, 09 Nov 2026 12:00:00 GMT", "Tue, 10 Nov 2026 12:00:00 GMT"]) {
     assert.equal(await retryAfterOf(header), null, `header ${String(header)}`);
   }
+});
+
+test("rename, identifiers and history use their routes; identifiers never sends a reveal parameter", async () => {
+  const { service, calls } = serviceWith({ status: 200, body: {} });
+
+  await service.rename("tok", "ev/1", { name: "Sofia LAN", reason: "named by the venue" });
+  await service.identifiers("tok", "ev/1");
+  await service.history("tok", "ev/1");
+
+  assert.deepEqual(calls.map((c) => [c.method, c.url]), [
+    ["POST", `${BASE}/ev%2F1/rename`],
+    ["GET", `${BASE}/ev%2F1/identifiers`],
+    ["GET", `${BASE}/ev%2F1/history`],
+  ]);
+  assert.deepEqual(calls[0].body, { name: "Sofia LAN", reason: "named by the venue" });
+  assert.ok(!calls[1].url.includes("reveal"));
+});
+
+test("review sends the name when given", async () => {
+  const { service, calls } = serviceWith({ status: 200, body: {} });
+
+  await service.review("tok", "ev1", { decision: "confirmed", name: "Sofia LAN" });
+
+  assert.deepEqual(calls[0].body, { decision: "confirmed", name: "Sofia LAN" });
 });

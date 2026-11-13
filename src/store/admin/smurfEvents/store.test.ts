@@ -14,6 +14,9 @@ const service = vi.hoisted(() => ({
   update: vi.fn(),
   remove: vi.fn(),
   review: vi.fn(),
+  rename: vi.fn(),
+  identifiers: vi.fn(),
+  history: vi.fn(),
 }));
 
 vi.mock("./service", () => ({ smurfEventsService: () => service }));
@@ -26,6 +29,7 @@ function summary(id: string, review: SmurfEventSummary["review"] = "confirmed", 
   return {
     id,
     name: `Event ${id}`,
+    named: false,
     origin,
     review,
     from: "2026-10-01T00:00:00.000Z",
@@ -44,8 +48,11 @@ function detail(id: string, overrides: Partial<SmurfEventDetail> = {}): SmurfEve
     requested: { from: "2026-10-01T00:00:00.000Z", to: "2026-10-03T00:00:00.000Z" },
     networks: [{ hash8: "0a1b2c3d", firstAt: "2026-10-01T08:00:00.000Z", lastAt: "2026-10-02T20:00:00.000Z", accounts: 12 }],
     machines: [{ hash8: "9f8e7d6c", accounts: 3 }],
-    evidence: { countries: 1, networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 2 },
+    evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 2 },
     endedLinksList: [{ a: "Anchor#1001", b: "Guest#1003", source: "hardware" }],
+    notCounted: [],
+    recorded: {},
+    evidenceRecorded: true,
     ...overrides,
   };
 }
@@ -283,6 +290,51 @@ test("a refused review keeps the server's error and leaves the event as shown", 
   expect(service.review).toHaveBeenCalledWith("tok", "1", { decision: "denied", reason: "not an event" });
   expect(store.actionError).toBe(failure);
   expect(store.detail?.review).toBe("unreviewed");
+});
+
+test("a review that carried a name and failed reads the event and its record again, keeping the error", async () => {
+  const failure = new SmurfEventsApiError(429, "Busy", null);
+  service.review.mockRejectedValue(failure);
+  service.history.mockResolvedValue({ entries: [] });
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+  service.get.mockResolvedValue({ ...detail("1"), name: "Renamed by the review" });
+
+  await store.review("1", "confirmed", "", "Renamed by the review");
+  await flushPromises();
+
+  expect(service.get).toHaveBeenCalledTimes(2);
+  expect(service.history).toHaveBeenCalledWith("tok", "1");
+  expect(store.detail?.name).toBe("Renamed by the review");
+  expect(store.actionError).toBe(failure);
+});
+
+test("when the refresh after a failed named review fails too, the review's error stays and nothing is thrown", async () => {
+  const failure = new SmurfEventsApiError(429, "Busy", null);
+  service.review.mockRejectedValue(failure);
+  service.history.mockRejectedValue(new Error("history down"));
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+  service.get.mockRejectedValue(new Error("detail down"));
+
+  const reviewed = await store.review("1", "confirmed", "", "Renamed by the review");
+  await flushPromises();
+
+  expect(reviewed).toBeNull();
+  expect(store.actionError).toBe(failure);
+  expect(store.detail?.id).toBe("1");
+});
+
+test("a review without a name that failed reads nothing again", async () => {
+  service.review.mockRejectedValue(new SmurfEventsApiError(429, "Busy", null));
+  const store = useSmurfEventsStore();
+  await store.openDetail("1");
+
+  await store.review("1", "confirmed", "");
+  await flushPromises();
+
+  expect(service.get).toHaveBeenCalledTimes(1);
+  expect(service.history).not.toHaveBeenCalled();
 });
 
 test("clearActionError drops the last write error", async () => {
@@ -633,4 +685,149 @@ test("a deny preview answered applies: false is remembered; true or absent is no
   await store.loadDenyPreview("1");
   store.clearDenyPreview();
   expect(store.denyApplies).toBe(true);
+});
+
+test("review sends name only when given", async () => {
+  service.review.mockResolvedValue(detail("1", { review: "confirmed" }));
+  const store = useSmurfEventsStore();
+
+  await store.review("1", "confirmed", "");
+  await store.review("1", "confirmed", "", "Sofia LAN");
+
+  expect(service.review).toHaveBeenNthCalledWith(1, "tok", "1", { decision: "confirmed" });
+  expect(service.review).toHaveBeenNthCalledWith(2, "tok", "1", { decision: "confirmed", name: "Sofia LAN" });
+});
+
+test("rename replaces the list row and the open detail", async () => {
+  service.list.mockResolvedValue({ events: [summary("1"), summary("2")] });
+  service.get.mockResolvedValue(detail("1"));
+  service.rename.mockImplementation(() => {
+    // The server has the new name from now on, so the reload that follows shows it.
+    service.list.mockResolvedValue({ events: [{ ...summary("1"), name: "Sofia LAN", named: true }, summary("2")] });
+    return Promise.resolve(detail("1", { name: "Sofia LAN", named: true }));
+  });
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  await store.openDetail("1");
+
+  const outcome = await store.rename("1", " Sofia LAN ", " ");
+
+  expect(service.rename).toHaveBeenCalledWith("tok", "1", { name: "Sofia LAN" });
+  expect(outcome?.name).toBe("Sofia LAN");
+  expect(store.events.map((e) => e.name)).toEqual(["Sofia LAN", "Event 2"]);
+  expect(store.detail?.name).toBe("Sofia LAN");
+});
+
+test("a list request that started before a rename does not overwrite the renamed row", async () => {
+  let answerStale: (page: { events: SmurfEventSummary[] }) => void = () => undefined;
+  service.list.mockResolvedValueOnce({ events: [summary("1")] });
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  service.list.mockReturnValueOnce(new Promise((resolve) => (answerStale = resolve)));
+  const stale = store.loadList();
+  service.list.mockResolvedValue({ events: [{ ...summary("1"), name: "Sofia LAN", named: true }] });
+  service.rename.mockResolvedValue(detail("1", { name: "Sofia LAN", named: true }));
+
+  await store.rename("1", "Sofia LAN");
+  await flushPromises();
+  answerStale({ events: [summary("1")] });
+  await stale;
+
+  expect(store.events.map((e) => e.name)).toEqual(["Sofia LAN"]);
+});
+
+test("rename sends a reason when given and keeps the error when refused", async () => {
+  const store = useSmurfEventsStore();
+  service.rename.mockResolvedValue(detail("1"));
+  await store.rename("1", "Sofia LAN", "venue said so");
+  expect(service.rename).toHaveBeenCalledWith("tok", "1", { name: "Sofia LAN", reason: "venue said so" });
+
+  const refused = new SmurfEventsApiError(400, "bad name", null);
+  service.rename.mockRejectedValue(refused);
+  expect(await store.rename("1", "x")).toBeNull();
+  expect(store.actionError).toBe(refused);
+});
+
+test("loadIdentifiers and loadHistory keep the answer of the newest request only", async () => {
+  const store = useSmurfEventsStore();
+  let first!: (v: unknown) => void;
+  service.identifiers.mockImplementationOnce(() => new Promise((resolve) => (first = resolve)));
+  service.identifiers.mockResolvedValueOnce({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [] });
+  const stale = store.loadIdentifiers("1");
+  await store.loadIdentifiers("2");
+  first({ window: { fromDay: 9, toDay: 9, eventFromDay: 9, eventToDay: 9 }, rows: [{ hash8: "stale" }] });
+  await stale;
+
+  expect(store.identifiers?.rows).toEqual([]);
+  expect(store.identifiersLoading).toBe(false);
+
+  service.history.mockResolvedValue({ entries: [] });
+  await store.loadHistory("2");
+  expect(service.history).toHaveBeenCalledWith("tok", "2");
+  expect(store.history).toEqual({ entries: [] });
+
+  const failure = new Error("boom");
+  service.identifiers.mockRejectedValue(failure);
+  service.history.mockRejectedValue(failure);
+  await store.loadIdentifiers("2");
+  await store.loadHistory("2");
+  expect(store.identifiersError).toBe(failure);
+  expect(store.historyError).toBe(failure);
+  expect(store.identifiers).toBeNull();
+  expect(store.history).toBeNull();
+});
+
+test("a late identifiers answer for the event left behind is dropped when another event opens", async () => {
+  const store = useSmurfEventsStore();
+  let late!: (v: unknown) => void;
+  service.identifiers.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  service.get.mockResolvedValue(detail("2"));
+  const pending = store.loadIdentifiers("1");
+
+  await store.openDetail("2");
+  late({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [{ hash8: "ofA" }] });
+  await pending;
+
+  expect(store.identifiers).toBeNull();
+  expect(store.identifiersLoading).toBe(false);
+  expect(store.identifiersError).toBeNull();
+});
+
+test("a late history answer is dropped when the detail is closed, and the loaded state is cleared", async () => {
+  const store = useSmurfEventsStore();
+  service.identifiers.mockResolvedValue({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [] });
+  service.history.mockResolvedValueOnce({ entries: [] });
+  await store.loadIdentifiers("1");
+  await store.loadHistory("1");
+  expect(store.history).not.toBeNull();
+  let late!: (v: unknown) => void;
+  service.history.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  const pending = store.loadHistory("1");
+
+  store.closeDetail();
+  late({ entries: [{ id: "x" }] });
+  await pending;
+
+  expect(store.history).toBeNull();
+  expect(store.historyLoading).toBe(false);
+  expect(store.identifiers).toBeNull();
+});
+
+test("a late rename answer after clear() puts neither a row nor a detail back", async () => {
+  service.get.mockResolvedValue(detail("1"));
+  const store = useSmurfEventsStore();
+  await store.loadList();
+  await store.openDetail("1");
+  let late!: (v: unknown) => void;
+  service.rename.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  const pending = store.rename("1", "Sofia LAN");
+
+  store.clear();
+  late(detail("1", { name: "Sofia LAN", named: true }));
+  await pending;
+
+  expect(store.events).toEqual([]);
+  expect(store.detail).toBeNull();
+  expect(store.detailId).toBeNull();
+  expect(store.acting).toBe(false);
 });

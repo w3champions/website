@@ -303,14 +303,14 @@ export default defineComponent({
           {
             title: "Hardware Links",
             icon: mdiLanConnect,
-            permission: EPermission.SmurfCheckerQuery,
+            permission: EPermission.SmurfCheckerAdministration,
             component: "admin-hardware-smurfs",
             routeName: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS,
           },
           {
             title: "Smurf Events",
             icon: mdiCalendarAccount,
-            permission: EPermission.SmurfCheckerQuery,
+            permission: EPermission.SmurfCheckerAdministration,
             component: "admin-smurf-events",
             routeName: EAdminRouteName.SMURF_EVENTS,
           },

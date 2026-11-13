@@ -7,7 +7,7 @@ import { EAdminRouteName } from "@/router/types";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { inlineDialog, manualEvent, testPlugins } from "./smurf-events/setup.testing";
 
-const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn() }));
+const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn(), history: vi.fn(), identifiers: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));
 const oauth = vi.hoisted(() => ({ token: "tok", permissions: [] as string[] }));
 vi.mock("@/store/oauth/store", async () => {
@@ -19,10 +19,12 @@ vi.mock("@/store/oauth/store", async () => {
 
 import AdminSmurfEvents from "./AdminSmurfEvents.vue";
 
-const STUBS = { EventList: true, EventDetail: true, ManualEventDialog: true, ReviewDialog: true, DeleteEventDialog: true };
+const STUBS = { EventList: true, EventDetail: true, ManualEventDialog: true, ReviewDialog: true, RenameDialog: true, DeleteEventDialog: true };
+
+const DIALOGS = ["ManualEventDialog", "ReviewDialog", "RenameDialog", "DeleteEventDialog"];
 
 function dialogCount(): number {
-  return ["ManualEventDialog", "ReviewDialog", "DeleteEventDialog"].filter((name) => wrapper.findComponent({ name }).exists()).length;
+  return DIALOGS.filter((name) => wrapper.findComponent({ name }).exists()).length;
 }
 
 let wrapper: VueWrapper;
@@ -47,6 +49,8 @@ beforeEach(() => {
   oauth.permissions = ["SmurfCheckerQuery", "SmurfCheckerAdministration"];
   service.list.mockResolvedValue({ events: [] });
   service.get.mockResolvedValue(manualEvent());
+  service.history.mockResolvedValue({ entries: [] });
+  service.identifiers.mockResolvedValue({ window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, rows: [] });
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
@@ -65,6 +69,90 @@ test("a create shows the new event with its notice and loads it only once", asyn
   expect(wrapper.text()).toContain("Event saved.");
   expect(service.get).not.toHaveBeenCalled();
   expect(useSmurfEventsStore().detail?.id).toBe("ev-new");
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.identifiers).toHaveBeenLastCalledWith("tok", "ev-new");
+});
+
+test("a create that answered an existing event reads its identifiers once", async () => {
+  await open("/admin-smurf-events");
+  const existing = manualEvent({ id: "ev-old" });
+  useSmurfEventsStore().detail = existing;
+
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", existing, { applied: true, existing: true, needsReview: false });
+  await flushPromises();
+
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.identifiers).toHaveBeenLastCalledWith("tok", "ev-old");
+});
+
+test("an edit in place reads the record and the identifiers again", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.history).toHaveBeenCalledTimes(1);
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("edit");
+  await flushPromises();
+
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent({ id: "ev1" }), { applied: true, existing: false, needsReview: false });
+  await flushPromises();
+
+  expect(service.identifiers).toHaveBeenCalledTimes(2);
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(service.get).toHaveBeenCalledTimes(1);
+});
+
+test("the record is read after every load of an event, the same event again included", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.history).toHaveBeenCalledTimes(1);
+  expect(service.history).toHaveBeenLastCalledWith("tok", "ev1");
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("open-event", "ev1");
+  await flushPromises();
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(service.get).toHaveBeenCalledTimes(2);
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("open-event", "ev2");
+  await flushPromises();
+  expect(router.currentRoute.value.query.event).toBe("ev2");
+  expect(service.history).toHaveBeenLastCalledWith("tok", "ev2");
+});
+
+test("a retry of a failed record reads only the record again", async () => {
+  await open("/admin-smurf-events?event=ev1");
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("retry-history");
+  await flushPromises();
+
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(service.get).toHaveBeenCalledTimes(1);
+});
+
+test("the identifiers are read after every load of an event, and a retry reads only them", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.identifiers).toHaveBeenCalledTimes(1);
+  expect(service.identifiers).toHaveBeenLastCalledWith("tok", "ev1");
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("open-event", "ev1");
+  await flushPromises();
+  expect(service.identifiers).toHaveBeenCalledTimes(2);
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("retry-identifiers");
+  await flushPromises();
+  expect(service.identifiers).toHaveBeenCalledTimes(3);
+  expect(service.get).toHaveBeenCalledTimes(2);
+  expect(service.history).toHaveBeenCalledTimes(2);
+});
+
+test("a rename reads the record again and says so", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("rename");
+  await flushPromises();
+  expect(wrapper.findComponent({ name: "RenameDialog" }).props("modelValue")).toBe(true);
+
+  wrapper.findComponent({ name: "RenameDialog" }).vm.$emit("renamed");
+  await flushPromises();
+
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(wrapper.text()).toContain("Name saved.");
 });
 
 test("a delete returns to the list and shows its notice", async () => {
@@ -164,32 +252,29 @@ test("a save that finishes after the moderator went to another event does not na
   expect(wrapper.text()).not.toContain("Event saved.");
 });
 
-test("without the SmurfCheckerQuery permission the page says so and requests nothing", async () => {
+test("without the SmurfCheckerAdministration permission the page says so and requests nothing", async () => {
   oauth.permissions = ["Moderation"];
 
   await open("/admin-smurf-events?event=ev1");
 
-  expect(wrapper.text()).toContain("You don't have the SmurfCheckerQuery permission.");
+  expect(wrapper.text()).toContain("You don't have the SmurfCheckerAdministration permission.");
   expect(service.list).not.toHaveBeenCalled();
   expect(service.get).not.toHaveBeenCalled();
+  expect(service.history).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
   expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(false);
-});
 
-test("with Query only, the list is shown without write controls or dialogs", async () => {
-  oauth.permissions = ["SmurfCheckerQuery"];
-
-  await open("/admin-smurf-events");
-
-  expect(service.list).toHaveBeenCalledTimes(1);
-  expect(wrapper.findComponent({ name: "EventList" }).props("canAdminister")).toBe(false);
-  expect(dialogCount()).toBe(0);
+  await router.push("/admin-smurf-events?event=ev2");
+  await flushPromises();
+  expect(service.get).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
 });
 
 test("with Administration, the dialogs are there", async () => {
   await open("/admin-smurf-events");
 
-  expect(wrapper.findComponent({ name: "EventList" }).props("canAdminister")).toBe(true);
-  expect(dialogCount()).toBe(3);
+  expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(true);
+  expect(dialogCount()).toBe(DIALOGS.length);
 });
 
 test("permissions that arrive after the page mounted start the load", async () => {
@@ -198,7 +283,7 @@ test("permissions that arrive after the page mounted start the load", async () =
   expect(service.list).not.toHaveBeenCalled();
 
   // As the oauth store does when its permissions land: a new array.
-  (await import("@/store/oauth/store")).useOauthStore().permissions = ["SmurfCheckerQuery"];
+  (await import("@/store/oauth/store")).useOauthStore().permissions = ["SmurfCheckerAdministration"];
   await flushPromises();
 
   expect(service.list).toHaveBeenCalledTimes(1);
@@ -394,4 +479,31 @@ test("a create that answered an existing event keeps its text and adds the notic
 
   expect(wrapper.text()).toContain("already exists, so nothing was changed");
   expect(wrapper.text()).toContain(WRITE_NOTICE);
+});
+
+test("a moderator with SmurfCheckerQuery only sees the no_permission alert and no service call is made", async () => {
+  oauth.permissions = ["SmurfCheckerQuery"];
+  await open("/admin-smurf-events?event=ev1");
+
+  expect(wrapper.text()).toContain("SmurfCheckerAdministration");
+  expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(false);
+  expect(service.list).not.toHaveBeenCalled();
+  expect(service.get).not.toHaveBeenCalled();
+  expect(service.history).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
+
+  // Back and forward between event URLs asks for nothing either.
+  await router.push("/admin-smurf-events?event=ev2");
+  await flushPromises();
+  expect(service.get).not.toHaveBeenCalled();
+  expect(service.history).not.toHaveBeenCalled();
+  expect(service.identifiers).not.toHaveBeenCalled();
+});
+
+test("a holder of SmurfCheckerAdministration alone loads the page", async () => {
+  oauth.permissions = ["SmurfCheckerAdministration"];
+  await open("/admin-smurf-events");
+
+  expect(wrapper.findComponent({ name: "EventList" }).exists()).toBe(true);
+  expect(service.list).toHaveBeenCalled();
 });

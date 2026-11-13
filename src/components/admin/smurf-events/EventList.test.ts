@@ -1,0 +1,210 @@
+// @vitest-environment jsdom
+import { afterEach, expect, test, vi } from "vitest";
+import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
+import { createMemoryHistory, createRouter, type Router } from "vue-router";
+import type { SmurfEventFacts, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
+import { testPlugins } from "./setup.testing";
+
+vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => ({}) }));
+vi.mock("@/store/oauth/store", () => ({ useOauthStore: () => ({ token: "tok" }) }));
+
+import EventList from "./EventList.vue";
+
+let wrapper: VueWrapper;
+let router: Router;
+
+afterEach(() => wrapper.unmount());
+
+const FACTS: SmurfEventFacts = { at: "2026-10-05T00:00:00.000Z", networks: 2, identifiers: 5, attendees: 9, notCounted: 0, endedLinks: 4 };
+
+function row(id: string, facts?: Partial<SmurfEventFacts>, review: SmurfEventSummary["review"] = "unreviewed"): SmurfEventSummary {
+  const summary: SmurfEventSummary = {
+    id,
+    name: `Event ${id}`,
+    named: false,
+    origin: "detected",
+    review,
+    from: "2026-10-01T00:00:00.000Z",
+    to: "2026-10-03T00:00:00.000Z",
+    counts: { networks: 1, machines: 1, attendees: 1 },
+    endedLinks: 0,
+    createdAt: "2026-10-04T00:00:00.000Z",
+  };
+  return facts === undefined ? summary : { ...summary, facts: { ...FACTS, ...facts } };
+}
+
+async function show(events: SmurfEventSummary[], next: string | null = null, path = "/"): Promise<void> {
+  router = createRouter({ history: createMemoryHistory(), routes: [{ path: "/", component: { template: "<div />" } }] });
+  await router.push(path);
+  const plugins = testPlugins();
+  const store = useSmurfEventsStore();
+  store.events = events;
+  store.next = next;
+  wrapper = mount(EventList, {
+    props: { filters: { origin: null, review: null } },
+    global: { plugins: [...plugins, router] },
+  });
+  await flushPromises();
+}
+
+const bodyRows = () => wrapper.findAll("tbody tr");
+const cells = (index: number) => bodyRows()[index].findAll("td").map((c) => c.text());
+const names = () => bodyRows().map((r) => r.find("td").text());
+
+async function clickHeader(title: string): Promise<void> {
+  const header = wrapper.findAll("th").find((h) => h.text() === title);
+  expect(header, `header ${title}`).toBeDefined();
+  await header!.trigger("click");
+  await flushPromises();
+}
+
+test("columns come in the reading order of the queue", async () => {
+  await show([row("a", {})]);
+
+  expect(wrapper.findAll("th").map((h) => h.text())).toEqual([
+    "Event",
+    "Dates (UTC)",
+    "Review",
+    "Networks",
+    "Identifiers",
+    "Most accounts ever on one identifier",
+    "Attendees",
+    "Links ended",
+    "Links among attendees still live",
+  ]);
+});
+
+test("a row shows its facts; a row without facts shows a dash in every fact column", async () => {
+  await show([row("a", { maxAccountsEver: 12, liveLinks: 3 }), row("b")]);
+
+  expect(cells(0).slice(3)).toEqual(["2", "5", "12", "9", "4", "3"]);
+  expect(cells(1).slice(3)).toEqual(["—", "—", "—", "—", "—", "—"]);
+});
+
+test("a capped value reads at least N with N from the row", async () => {
+  await show([row("a", { maxAccountsEver: 31, maxAccountsEverCapped: true, liveLinks: 17, liveLinksCapped: true })]);
+
+  expect(cells(0)[5]).toBe("at least 31");
+  expect(cells(0)[8]).toBe("at least 17");
+});
+
+test("sorting by identifiers keeps rows without facts last in both directions", async () => {
+  await show([row("none"), row("mid", { identifiers: 5 }), row("high", { identifiers: 40 }), row("low", { identifiers: 1 })]);
+
+  await clickHeader("Identifiers");
+  const first = names();
+  await clickHeader("Identifiers");
+  const second = names();
+
+  expect([first, second].map((n) => n[n.length - 1])).toEqual(["Event none", "Event none"]);
+  expect(first.slice(0, 3)).toEqual(["Event high", "Event mid", "Event low"]);
+  expect(second.slice(0, 3)).toEqual(["Event low", "Event mid", "Event high"]);
+});
+
+test("the list is in the server's order until a header is clicked", async () => {
+  await show([row("b", { identifiers: 9 }), row("a", { identifiers: 1 })]);
+
+  expect(names()).toEqual(["Event b", "Event a"]);
+});
+
+test("the sort note shows only while more pages exist", async () => {
+  await show([row("a", {})], "cursor");
+  expect(wrapper.text()).toContain("Sorted within the events loaded so far.");
+  wrapper.unmount();
+
+  await show([row("a", {})], null);
+  expect(wrapper.text()).not.toContain("Sorted within the events loaded so far.");
+});
+
+test("the review badge uses no success or error colour", async () => {
+  await show([row("a", {}, "unreviewed"), row("b", {}, "confirmed"), row("c", {}, "denied")]);
+
+  const classes = bodyRows().map((r) => r.findAll(".v-chip")[0].classes().join(" "));
+  expect(classes).toHaveLength(3);
+  for (const c of classes) expect(c).not.toMatch(/success|error/);
+});
+
+test("a sort click puts the sort in the URL, keeping the other query values", async () => {
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })], null, "/?review=unreviewed");
+
+  await clickHeader("Identifiers");
+
+  expect(router.currentRoute.value.query).toEqual({ review: "unreviewed", sort: "facts.identifiers:desc" });
+});
+
+test("the sort in the URL is read back when the list is shown again", async () => {
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })], null, "/?sort=facts.identifiers:asc");
+
+  expect(names()).toEqual(["Event a", "Event b"]);
+  wrapper.unmount();
+
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })], null, "/?sort=facts.identifiers:desc");
+  expect(names()).toEqual(["Event b", "Event a"]);
+});
+
+test("a sort value that is missing, unparseable or names no sortable column means the server's order", async () => {
+  for (const sort of ["facts.identifiers", "facts.identifiers:sideways", "name:asc", "nothing:desc"]) {
+    await show([row("b", { identifiers: 9 }), row("a", { identifiers: 1 })], null, `/?sort=${encodeURIComponent(sort)}`);
+    expect(names()).toEqual(["Event b", "Event a"]);
+    wrapper.unmount();
+  }
+  await show([row("b", { identifiers: 9 }), row("a", { identifiers: 1 })]);
+});
+
+test("an unreviewed row's review chip carries the diamond mark", async () => {
+  await show([row("a", {}, "unreviewed"), row("b", {}, "confirmed")]);
+
+  expect(cells(0)[2]).toContain("\u25C6");
+  expect(cells(1)[2]).not.toContain("\u25C6");
+});
+
+test("a truncated identifier table makes the identifiers and most-accounts columns read at least N", async () => {
+  await show([row("a", { identifiers: 14, maxAccountsEver: 9, identifiersTruncated: true }), row("b", { identifiers: 14, maxAccountsEver: 9 })]);
+
+  expect(cells(0)[4]).toBe("at least 14");
+  expect(cells(0)[5]).toBe("at least 9");
+  expect(cells(1)[4]).toBe("14");
+  expect(cells(1)[5]).toBe("9");
+});
+
+test("a live-links column that ran out of time shows a short text with its tooltip, not the not-computed mark", async () => {
+  await show([row("a", { liveLinks: undefined, liveLinksTimedOut: true }), row("b", { liveLinks: undefined })]);
+
+  expect(cells(0)[8]).toBe("Not counted this time");
+  expect(wrapper.findAllComponents({ name: "VTooltip" }).some((t) => t.props("text") === "The live links could not be counted this time.")).toBe(true);
+  expect(cells(1)[8]).toBe("\u2014");
+});
+
+test("the fact column headers say the numbers are refreshed periodically", async () => {
+  await show([row("a", {})]);
+
+  expect(wrapper.findAllComponents({ name: "VTooltip" }).some((t) => String(t.props("text")).startsWith("Refreshed periodically"))).toBe(true);
+});
+
+test("the truncated flag does not change how the identifiers column sorts", async () => {
+  await show([row("none"), row("a", { identifiers: 5, identifiersTruncated: true }), row("b", { identifiers: 40 }), row("c", { identifiers: 1, identifiersTruncated: true })]);
+
+  await clickHeader("Identifiers");
+
+  expect(names()).toEqual(["Event b", "Event a", "Event c", "Event none"]);
+});
+
+test("a truncated table with no identifiers reads incomplete, not at least 0", async () => {
+  await show([row("a", { identifiers: 0, maxAccountsEver: undefined, identifiersTruncated: true })]);
+
+  expect(cells(0)[4]).toBe("Incomplete");
+});
+
+test("a fact column keeps its sort icon and a single tab stop, and a click still sorts", async () => {
+  await show([row("a", { identifiers: 1 }), row("b", { identifiers: 9 })]);
+  const header = () => wrapper.findAll("th").find((h) => h.text() === "Identifiers")!;
+
+  expect(header().find(".v-data-table-header__sort-icon").exists()).toBe(true);
+  expect(header().attributes("tabindex")).toBe("0");
+  expect(header().findAll("[tabindex]")).toHaveLength(0);
+
+  await header().trigger("click");
+  expect(names()).toEqual(["Event b", "Event a"]);
+  expect(header().find(".v-data-table-header__sort-icon").classes().join(" ")).toContain("mdi-arrow-down");
+});

@@ -34,7 +34,7 @@
           <v-btn variant="text" :prepend-icon="mdiRefresh" :disabled="store.listLoading" @click="store.loadList()">
             {{ t(key("refresh")) }}
           </v-btn>
-          <v-btn v-if="canAdminister" color="primary" variant="flat" :prepend-icon="mdiPlus" @click="emit('create')">
+          <v-btn color="primary" variant="flat" :prepend-icon="mdiPlus" @click="emit('create')">
             {{ t(key("new_manual")) }}
           </v-btn>
         </v-col>
@@ -49,7 +49,9 @@
     </v-alert>
 
     <v-data-table
+      v-model:sort-by="sortBy"
       :headers="headers"
+      initial-sort-order="desc"
       :items="store.events"
       :loading="store.listLoading"
       :items-per-page="-1"
@@ -64,16 +66,36 @@
       <template v-slot:[`item.name`]="{ item }">
         <router-link :to="detailLink(item.id)" class="event-link font-weight-medium">{{ item.name }}</router-link>
       </template>
-      <template v-slot:[`item.origin`]="{ item }">
-        <v-chip size="small" variant="outlined">{{ originLabel(item.origin, tr) }}</v-chip>
-      </template>
       <template v-slot:[`item.review`]="{ item }">
-        <v-chip size="small" variant="tonal" :color="reviewColor(item.review)">{{ reviewLabel(item.review, tr) }}</v-chip>
+        <event-badge kind="review" :value="item.review" />
       </template>
       <template v-slot:[`item.span`]="{ item }">
         <span class="text-no-wrap">{{ formatUtc(item.from) }}</span><br /><span class="text-no-wrap text-medium-emphasis">{{ formatUtc(item.to) }}</span>
       </template>
+      <template v-slot:[`item.facts.networks`]="{ item }">{{ factText(item.facts?.networks, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.identifiers`]="{ item }">{{ identifiersText(item.facts, tr) }}</template>
+      <template v-slot:[`item.facts.maxAccountsEver`]="{ item }">{{ factText(item.facts?.maxAccountsEver, maxAccountsCapped(item.facts), tr) }}</template>
+      <template v-slot:[`item.facts.attendees`]="{ item }">{{ factText(item.facts?.attendees, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.endedLinks`]="{ item }">{{ factText(item.facts?.endedLinks, undefined, tr) }}</template>
+      <template v-slot:[`item.facts.liveLinks`]="{ item }">
+        <v-tooltip v-if="item.facts?.liveLinks === undefined && item.facts?.liveLinksTimedOut === true" :text="t(key('fact_live_timed_out_hint'))" location="bottom">
+          <template v-slot:activator="{ props: activator }">
+            <span v-bind="activator" tabindex="0" class="text-medium-emphasis">{{ t(key("fact_live_timed_out")) }}</span>
+          </template>
+        </v-tooltip>
+        <template v-else>{{ factText(item.facts?.liveLinks, item.facts?.liveLinksCapped, tr) }}</template>
+      </template>
+      <!-- A header slot replaces the whole cell: the default title and sort icon are drawn again, and the tooltip hangs on the cell itself (already focusable), so there is one tab stop. -->
+      <template v-for="column in factColumns" :key="column" v-slot:[`header.${column}`]="{ column: header, getSortIcon }">
+        <div class="v-data-table-header__content">
+          <span>{{ header.title }}</span>
+          <v-icon class="v-data-table-header__sort-icon" :icon="getSortIcon(header)" />
+        </div>
+        <v-tooltip activator="parent" :text="t(key('facts_refreshed_hint'))" location="bottom" />
+      </template>
     </v-data-table>
+
+    <div v-if="store.next !== null" class="text-caption text-medium-emphasis px-4 pb-1">{{ t(key("sort_loaded_only")) }}</div>
 
     <div v-if="store.next !== null" class="d-flex justify-center pa-3">
       <v-btn variant="tonal" :loading="store.listLoading" @click="store.loadMore()">{{ t(key("load_more")) }}</v-btn>
@@ -82,19 +104,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { mdiPlus, mdiRefresh } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventOrigin, SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
-import { errorText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
+import { factSort, factSortSwapped, factText, identifiersText, maxAccountsCapped, type SortOrder, sortFromQuery, sortToQuery } from "@/store/admin/smurfEvents/facts";
+import { errorText, ORIGINS, originLabel, REVIEWS, reviewLabel } from "@/store/admin/smurfEvents/labels";
 import { type SmurfEventFilters, useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import EventBadge from "./EventBadge.vue";
 
 defineProps<{
-  canAdminister: boolean;
   filters: SmurfEventFilters;
 }>();
 
@@ -106,10 +129,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 const route = useRoute();
+const router = useRouter();
 const store = useSmurfEventsStore();
-
-const ORIGINS: SmurfEventOrigin[] = ["detected", "historical", "manual", "carried-over"];
-const REVIEWS: SmurfEventReview[] = ["unreviewed", "confirmed", "denied"];
 
 const originItems = computed(() => [{ title: t(key("filter_any")), value: null }, ...ORIGINS.map((o) => ({ title: originLabel(o, tr), value: o }))]);
 const reviewItems = computed(() => [{ title: t(key("filter_any")), value: null }, ...REVIEWS.map((r) => ({ title: reviewLabel(r, tr), value: r }))]);
@@ -123,17 +144,58 @@ function rowProps({ item }: { item: SmurfEventSummary }) {
   return { class: item.review === "unreviewed" ? "row-unreviewed" : "" };
 }
 
+const factColumns = ["facts.networks", "facts.identifiers", "facts.maxAccountsEver", "facts.attendees", "facts.endedLinks", "facts.liveLinks"];
+
+// Vuetify swaps the two values before it calls a header's `sort` when the order is descending.
+function sortFacts(a: number | undefined, b: number | undefined): number {
+  return sortBy.value[0]?.order === "desc" ? factSortSwapped(a, b) : factSort(a, b);
+}
+
 const headers = computed<DataTableHeader[]>(() => [
   { title: t(key("col_name")), key: "name", sortable: false },
-  { title: t(key("col_origin")), key: "origin", sortable: false },
-  { title: t(key("col_review")), key: "review", sortable: false },
   { title: t(key("col_span")), key: "span", sortable: false },
-  { title: t(key("col_networks")), key: "counts.networks", sortable: false, align: "end" },
-  { title: t(key("col_machines")), key: "counts.machines", sortable: false, align: "end" },
-  { title: t(key("col_attendees")), key: "counts.attendees", sortable: false, align: "end" },
-  { title: t(key("col_ended_links")), key: "endedLinks", sortable: false, align: "end" },
+  { title: t(key("col_review")), key: "review", sortable: false },
+  { title: t(key("col_networks")), key: "facts.networks", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_identifiers")), key: "facts.identifiers", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_max_accounts_ever")), key: "facts.maxAccountsEver", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_attendees")), key: "facts.attendees", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_ended_links")), key: "facts.endedLinks", sortable: true, sort: sortFacts, align: "end" },
+  { title: t(key("col_live_links")), key: "facts.liveLinks", sortable: true, sort: sortFacts, align: "end" },
 ]);
 
+// Empty: the server's order; the first click on a header sorts descending.
+// The sort lives in the URL next to the filters, so it is still there when an event is closed again.
+const sortColumns = computed(() => headers.value.filter((h) => h.sortable).map((h) => h.key as string));
+type SortItems = Array<{ key: string; order?: boolean | SortOrder }>;
+
+function sortFromRoute(): SortItems {
+  const sort = sortFromQuery(route.query.sort, sortColumns.value);
+  return sort === null ? [] : [sort];
+}
+
+const sortBy = ref<SortItems>(sortFromRoute());
+
+// The table's sort goes to the URL; an order Vuetify leaves out or sets to `false` is no sort.
+watch(sortBy, (items) => {
+  const first = items[0];
+  const sort = first !== undefined && (first.order === "asc" || first.order === "desc") ? sortToQuery({ key: first.key, order: first.order }) : undefined;
+  if (sort !== queryText(route.query.sort)) void router.replace({ query: { ...route.query, sort } }).catch(() => null);
+});
+
+// Browser back and forward bring another sort in the URL.
+watch(() => route.query.sort, () => {
+  const fromRoute = sortFromRoute();
+  if (sortToText(fromRoute) !== sortToText(sortBy.value)) sortBy.value = fromRoute;
+});
+
+function sortToText(items: SortItems): string {
+  const first = items[0];
+  return first === undefined || (first.order !== "asc" && first.order !== "desc") ? "" : sortToQuery({ key: first.key, order: first.order });
+}
+
+function queryText(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
 </script>
 
 <style scoped>

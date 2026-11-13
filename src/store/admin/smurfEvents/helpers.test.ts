@@ -4,8 +4,9 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventPreview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions";
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { countText, errorText, exclusionLabel, homesText, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewLabel } from "./labels";
+import { countText, errorText, exclusionLabel, factLabel, historyActionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewFactsText, reviewLabel } from "./labels";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
+import { factSort, factText, sortFromQuery, sortToQuery } from "./facts";
 import { translateEn as t } from "./translate.testing";
 
 const DRAFT: SmurfEventDraft = { name: "LAN party", from: "2026-10-01T00:00", to: "2026-10-03T00:00", anchors: ["Anchor#1001", "Anchor#1002"], reason: "" };
@@ -15,6 +16,7 @@ function summary(id: string, review: SmurfEventSummary["review"]): SmurfEventSum
   return {
     id,
     name: id,
+    named: false,
     origin: "detected",
     review,
     from: "2026-10-01T00:00:00.000Z",
@@ -93,10 +95,9 @@ test("saveBlocker allows Save only after a non-refused preview of the current dr
   assert.equal(saveBlocker(DRAFT, { ...current, preview: { ...PREVIEW, refused: "too-long" } }), "preview_refused");
 });
 
-test("moderators with administration may review any event and edit or delete only manual ones", () => {
-  assert.deepEqual(smurfEventActions({ origin: "manual" }, true), { review: true, edit: true, delete: true });
-  assert.deepEqual(smurfEventActions({ origin: "detected" }, true), { review: true, edit: false, delete: false });
-  assert.deepEqual(smurfEventActions({ origin: "manual" }, false), { review: false, edit: false, delete: false });
+test("any event may be reviewed and only manual ones edited or deleted", () => {
+  assert.deepEqual(smurfEventActions({ origin: "manual" }), { review: true, edit: true, delete: true });
+  assert.deepEqual(smurfEventActions({ origin: "detected" }), { review: true, edit: false, delete: false });
 });
 
 test("the review decisions offered are the ones other than the current review", () => {
@@ -116,7 +117,7 @@ test("origins, reviews, refusals and exclusions have labels; unknown values show
   assert.equal(originLabel("future" as never, t), "future");
   assert.equal(reviewLabel("unreviewed", t), "Unreviewed");
   assert.equal(reviewColor("unreviewed"), "warning");
-  assert.equal(reviewColor("confirmed"), "success");
+  assert.equal(reviewColor("confirmed"), "primary");
   assert.equal(refusalLabel("no-venue", t), "No shared location was found for these players in this span.");
   assert.equal(exclusionLabel("home", t), "Home network");
   assert.equal(exclusionLabel("other" as never, t), "other");
@@ -164,10 +165,16 @@ test("summaryOf keeps the list-row fields only, and outcomeOf separates the appl
     attendees: [],
     networks: [],
     machines: [],
-    evidence: { countries: 0, networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 },
+    evidence: { networkDaysBefore: 0, networkDaysAfter: 0, returningAttendees: 0 },
     endedLinksList: [],
+    notCounted: [],
+    recorded: {},
+    evidenceRecorded: true,
   };
-  assert.deepEqual(Object.keys(summaryOf(detail)).sort(), ["counts", "createdAt", "endedLinks", "from", "id", "name", "origin", "review", "reviewedBy", "to"]);
+  assert.deepEqual(Object.keys(summaryOf(detail)).sort(), ["counts", "createdAt", "endedLinks", "from", "id", "name", "named", "origin", "review", "reviewedBy", "to"]);
+  const facts = { at: "2026-10-05T00:00:00.000Z", networks: 1, identifiers: 2, attendees: 3, notCounted: 0, endedLinks: 0 };
+  assert.deepEqual(summaryOf({ ...detail, named: true, facts }).facts, facts);
+  assert.equal(summaryOf({ ...detail, named: true }).named, true);
   assert.equal(outcomeOf({ ...detail, applied: false }).applied, false);
   assert.equal(outcomeOf(detail).applied, true);
   assert.equal(outcomeOf(detail).applies, true);
@@ -187,12 +194,58 @@ test("a 422 preview is used only with the shape the dialog reads, and counts as 
   assert.equal(refusedPreviewFrom({ preview: PREVIEW })?.refused, "no-venue");
 });
 
-test("an absent homes count reads as not computed, never as 0", () => {
-  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 3 }, t), "3");
-  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 0 }, t), "0");
-  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1 }, t), "Not computed");
+test("history actions and facts read as labels, and an unknown one as sent", () => {
+  assert.equal(historyActionLabel("event-rename", t), "Renamed");
+  assert.equal(historyActionLabel("event-future", t), "event-future");
+  assert.equal(factLabel("maxAccountsEver", t), "Most accounts ever on one identifier");
+  assert.equal(factLabel("future", t), "future");
+});
+
+test("a review entry's facts read in a fixed order and an entry without facts reads as none", () => {
+  assert.equal(reviewFactsText({ factsEndedLinks: 4, factsNetworks: 2, factsLiveLinks: 0, reason: "x" }, t), "Networks 2, Links ended 4, Links among attendees still live 0");
+  assert.equal(reviewFactsText({ previousName: "A" }, t), null);
+});
+
+test("a review entry's fact numbers read through the same factText as the list: at least N when capped", () => {
+  assert.equal(
+    reviewFactsText({ factsNetworks: 2, factsMaxAccountsEver: 31, factsMaxAccountsEverCapped: true, factsLiveLinks: 12, factsLiveLinksCapped: true, factsEndedLinks: 4 }, t),
+    "Networks 2, Most accounts ever on one identifier at least 31, Links ended 4, Links among attendees still live at least 12",
+  );
+  assert.equal(reviewFactsText({ factsMaxAccountsEver: 31, factsMaxAccountsEverCapped: false }, t), "Most accounts ever on one identifier 31");
+});
+
+test("a review entry's truncated-table flag makes identifiers and most accounts read at least N, a timeout says so, and a number wins over the timeout flag", () => {
+  assert.equal(reviewFactsText({ factsIdentifiers: 14, factsMaxAccountsEver: 9, factsIdentifiersTruncated: true }, t), "Identifiers at least 14, Most accounts ever on one identifier at least 9");
+  assert.equal(reviewFactsText({ factsNetworks: 2, factsLiveLinksTimedOut: true }, t), "Networks 2, Links among attendees still live could not be counted");
+  assert.equal(reviewFactsText({ factsLiveLinks: 3, factsLiveLinksTimedOut: true }, t), "Links among attendees still live 3");
 });
 
 test("a 422 preview keeps its applies flag", () => {
   assert.equal(refusedPreviewFrom({ preview: { ...PREVIEW, applies: false } })?.applies, false);
+});
+
+test("factText shows a dash for an unknown value, the number, or the capped number as at least N", () => {
+  assert.equal(factText(undefined, undefined, t), "\u2014");
+  assert.equal(factText(12, undefined, t), "12");
+  assert.equal(factText(0, undefined, t), "0");
+  assert.equal(factText(7, true, t), "at least 7");
+  assert.equal(factText(undefined, true, t), "\u2014");
+});
+
+test("factSort puts an unknown value after every number", () => {
+  assert.ok(factSort(1, 2) < 0);
+  assert.ok(factSort(2, 1) > 0);
+  assert.equal(factSort(3, 3), 0);
+  assert.ok(factSort(undefined, 0) > 0);
+  assert.ok(factSort(0, undefined) < 0);
+  assert.equal(factSort(undefined, undefined), 0);
+});
+
+test("the sort round-trips through the URL value and an unknown or malformed value means the default order", () => {
+  const columns = ["facts.identifiers", "facts.networks"];
+
+  assert.equal(sortToQuery({ key: "facts.identifiers", order: "desc" }), "facts.identifiers:desc");
+  assert.deepEqual(sortFromQuery("facts.identifiers:desc", columns), { key: "facts.identifiers", order: "desc" });
+  assert.deepEqual(sortFromQuery("facts.networks:asc", columns), { key: "facts.networks", order: "asc" });
+  for (const bad of [undefined, "", "facts.identifiers", "facts.identifiers:up", "name:asc", ":asc", ["facts.networks:asc"], null]) assert.equal(sortFromQuery(bad, columns), null);
 });

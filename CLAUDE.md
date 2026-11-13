@@ -74,11 +74,19 @@ The "Commercial Events" admin section (permission `CommercialLicense`) has four 
 - How events, allocations, periods and event games work: `docs/commercial-events.md` in the matchmaking-service repository.
 
 #### Hardware Links (smurf moderation)
-The "Hardware Links" page (`admin-hardware-smurfs`, "Smurf Checker" group) shows one account's hardware links, ended links (tombstones), hardware items and the moderator override history. Reading needs `SmurfCheckerQuery`; every override button needs `SmurfCheckerAdministration`.
+The "Hardware Links" page (`admin-hardware-smurfs`, "Smurf Checker" group) shows one account's hardware links, ended links (tombstones), hardware items and the moderator override history. The page needs `SmurfCheckerAdministration` (reading and every override button).
 - Client: `src/services/admin/HardwareSmurfService.ts` (website-backend `api/admin/smurf-detection/...`, proxied to the matchmaking service, which sets the author). Response types: `src/services/admin/smurf-detection/HardwareSmurfResponse.ts`.
 - Store and pure helpers with tests (tombstone labels, available actions, dialog copy, results, audit paging): `src/store/admin/hardwareSmurfs/`. Page parts: `src/components/admin/hardware-smurfs/`. Copy: `views_admin.hardware_smurfs` in `src/locales/en.ts`.
 - Items are always selected as (battleTag, hash8). Trust and ignore show the holder count before confirming. Overrides queue a re-check, so the page says so and never shows the change as immediate.
 - The repo is public: show what the server returns (flags, outcomes, messages), never detection thresholds or rule details.
+
+#### Smurf Events (smurf moderation)
+The "Smurf Events" page (`admin-smurf-events`, "Smurf Checker" group) lists the events where many accounts played from the same place and shows one event: its facts, attendees, decision record, identifier table and the links it ended. Reviewing, renaming, editing and deleting need `SmurfCheckerAdministration`, as does the page itself and the links to and from Hardware Links.
+- Client: `src/services/admin/SmurfEventsService.ts` (website-backend `api/admin/smurf-detection/events`, proxied to the matchmaking service, which sets the author). Response types: `src/services/admin/smurf-detection/SmurfEventsResponse.ts`.
+- Store and pure helpers with tests (labels, fact text and sort, the next and previous unreviewed event, drafts): `src/store/admin/smurfEvents/`. Page parts: `src/components/admin/smurf-events/`. Parts Hardware Links shares (identifier chip, day lane, accounts dumbbell): `src/components/admin/smurf-detection/`.
+- The open event, the list filters and the list sort live in the URL (`event`, `origin`, `review`, `sort`). Next and previous unreviewed follow the server's queue order, not the list sort.
+- Copy is in `src/locales/en.ts` only, under `views_admin.smurf_events` (parts shared with Hardware Links under `views_admin.smurf_detection`); no smurf key is in `data.ts`.
+- The repo is public: show what the server returns ("at least N" with N from the response), never detection thresholds, caps or criteria, in code, tests or copy.
 
 #### Replay Export
 The "Replay Export" admin section (permission `Replays`) has two pages: `admin-replay-export` (search, list, ZIP download, own past downloads) and `admin-replay-downloads` (the downloads of all users).

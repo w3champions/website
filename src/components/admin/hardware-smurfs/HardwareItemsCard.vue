@@ -23,7 +23,7 @@
         :no-data-text="store.noProfile ? t(key('no_profile')) : t(key('no_items'))"
       >
         <template v-slot:[`item.hash8`]="{ item }">
-          <span class="font-monospace">{{ item.hash8 }}</span>
+          <identifier-chip :kind="item.kind" :hash8="item.hash8" hide-kind />
         </template>
         <template v-slot:[`item.sightings`]="{ item }">
           {{ t(key("sightings"), { first: formatUtc(item.first), last: formatUtc(item.last) }) }}
@@ -41,7 +41,7 @@
           </v-chip>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
-          <action-buttons :options="itemActions(item, canAdminister)" @select="(o) => emit('action', o, item)" />
+          <action-buttons :options="itemActions(item)" @select="(o) => emit('action', o, item)" />
         </template>
       </v-data-table>
     </v-card-text>
@@ -60,9 +60,8 @@ import { errorText } from "@/store/admin/hardwareSmurfs/errors";
 import { itemFlagLabels } from "@/store/admin/hardwareSmurfs/labels";
 import { useHardwareSmurfsStore } from "@/store/admin/hardwareSmurfs/store";
 import { key, type Translate } from "@/store/admin/hardwareSmurfs/translate";
+import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import ActionButtons from "./ActionButtons.vue";
-
-defineProps<{ canAdminister: boolean }>();
 
 const emit = defineEmits<{
   (e: "action", option: ActionOption<ItemAction>, item: HardwareProfileItemView): void;
