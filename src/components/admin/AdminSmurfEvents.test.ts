@@ -7,7 +7,7 @@ import { EAdminRouteName } from "@/router/types";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { inlineDialog, manualEvent, testPlugins } from "./smurf-events/setup.testing";
 
-const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn() }));
+const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn(), history: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));
 const oauth = vi.hoisted(() => ({ token: "tok", permissions: [] as string[] }));
 vi.mock("@/store/oauth/store", async () => {
@@ -19,7 +19,7 @@ vi.mock("@/store/oauth/store", async () => {
 
 import AdminSmurfEvents from "./AdminSmurfEvents.vue";
 
-const STUBS = { EventList: true, EventDetail: true, ManualEventDialog: true, ReviewDialog: true, DeleteEventDialog: true };
+const STUBS = { EventList: true, EventDetail: true, ManualEventDialog: true, ReviewDialog: true, RenameDialog: true, DeleteEventDialog: true };
 
 function dialogCount(): number {
   return ["ManualEventDialog", "ReviewDialog", "DeleteEventDialog"].filter((name) => wrapper.findComponent({ name }).exists()).length;
@@ -47,6 +47,7 @@ beforeEach(() => {
   oauth.permissions = ["SmurfCheckerQuery", "SmurfCheckerAdministration"];
   service.list.mockResolvedValue({ events: [] });
   service.get.mockResolvedValue(manualEvent());
+  service.history.mockResolvedValue({ entries: [] });
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
@@ -65,6 +66,35 @@ test("a create shows the new event with its notice and loads it only once", asyn
   expect(wrapper.text()).toContain("Event saved.");
   expect(service.get).not.toHaveBeenCalled();
   expect(useSmurfEventsStore().detail?.id).toBe("ev-new");
+});
+
+test("the record is read after every load of an event, the same event again included", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.history).toHaveBeenCalledTimes(1);
+  expect(service.history).toHaveBeenLastCalledWith("tok", "ev1");
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("open-event", "ev1");
+  await flushPromises();
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(service.get).toHaveBeenCalledTimes(2);
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("open-event", "ev2");
+  await flushPromises();
+  expect(router.currentRoute.value.query.event).toBe("ev2");
+  expect(service.history).toHaveBeenLastCalledWith("tok", "ev2");
+});
+
+test("a rename reads the record again and says so", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("rename");
+  await flushPromises();
+  expect(wrapper.findComponent({ name: "RenameDialog" }).props("modelValue")).toBe(true);
+
+  wrapper.findComponent({ name: "RenameDialog" }).vm.$emit("renamed");
+  await flushPromises();
+
+  expect(service.history).toHaveBeenCalledTimes(2);
+  expect(wrapper.text()).toContain("Name saved.");
 });
 
 test("a delete returns to the list and shows its notice", async () => {

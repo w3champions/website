@@ -4,7 +4,7 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventPreview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions";
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { countText, errorText, exclusionLabel, homesText, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewLabel } from "./labels";
+import { countText, errorText, exclusionLabel, factLabel, historyActionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewFactsText, reviewLabel } from "./labels";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
 import { factSort, factText } from "./facts";
 import { translateEn as t } from "./translate.testing";
@@ -95,10 +95,9 @@ test("saveBlocker allows Save only after a non-refused preview of the current dr
   assert.equal(saveBlocker(DRAFT, { ...current, preview: { ...PREVIEW, refused: "too-long" } }), "preview_refused");
 });
 
-test("moderators with administration may review any event and edit or delete only manual ones", () => {
-  assert.deepEqual(smurfEventActions({ origin: "manual" }, true), { review: true, edit: true, delete: true });
-  assert.deepEqual(smurfEventActions({ origin: "detected" }, true), { review: true, edit: false, delete: false });
-  assert.deepEqual(smurfEventActions({ origin: "manual" }, false), { review: false, edit: false, delete: false });
+test("any event may be reviewed and only manual ones edited or deleted", () => {
+  assert.deepEqual(smurfEventActions({ origin: "manual" }), { review: true, edit: true, delete: true });
+  assert.deepEqual(smurfEventActions({ origin: "detected" }), { review: true, edit: false, delete: false });
 });
 
 test("the review decisions offered are the ones other than the current review", () => {
@@ -195,10 +194,16 @@ test("a 422 preview is used only with the shape the dialog reads, and counts as 
   assert.equal(refusedPreviewFrom({ preview: PREVIEW })?.refused, "no-venue");
 });
 
-test("an absent homes count reads as not computed, never as 0", () => {
-  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 3 }, t), "3");
-  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1, homes: 0 }, t), "0");
-  assert.equal(homesText({ networks: 1, machines: 1, attendees: 1 }, t), "Not computed");
+test("history actions and facts read as labels, and an unknown one as sent", () => {
+  assert.equal(historyActionLabel("event-rename", t), "Renamed");
+  assert.equal(historyActionLabel("event-future", t), "event-future");
+  assert.equal(factLabel("maxAccountsEver", t), "Most accounts ever on one identifier");
+  assert.equal(factLabel("future", t), "future");
+});
+
+test("a review entry's facts read in a fixed order and an entry without facts reads as none", () => {
+  assert.equal(reviewFactsText({ factsEndedLinks: 4, factsNetworks: 2, factsLiveLinks: 0, reason: "x" }, t), "Networks 2, Links ended 4, Links among attendees still live 0");
+  assert.equal(reviewFactsText({ previousName: "A" }, t), null);
 });
 
 test("a 422 preview keeps its applies flag", () => {

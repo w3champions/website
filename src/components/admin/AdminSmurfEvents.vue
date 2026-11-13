@@ -24,9 +24,10 @@
       <event-detail
         v-if="eventId"
         :event-id="eventId"
-        :can-administer="canAdminister"
         @back="showList"
+        @open-event="openEvent"
         @review="openReview"
+        @rename="openRename"
         @edit="openManual(store.detail)"
         @delete="openDelete"
       />
@@ -41,6 +42,7 @@
       <template v-if="canAdminister">
         <manual-event-dialog v-model="manualOpen" :event="editing" @saved="onSaved" />
         <review-dialog v-model="reviewOpen" :event="store.detail" @reviewed="onReviewed" />
+        <rename-dialog v-model="renameOpen" :event="store.detail" @renamed="onRenamed" />
         <delete-event-dialog v-model="deleteOpen" :event="store.detail" @deleted="onDeleted" />
       </template>
     </v-container>
@@ -60,6 +62,7 @@ import DeleteEventDialog from "./smurf-events/DeleteEventDialog.vue";
 import EventDetail from "./smurf-events/EventDetail.vue";
 import EventList from "./smurf-events/EventList.vue";
 import ManualEventDialog from "./smurf-events/ManualEventDialog.vue";
+import RenameDialog from "./smurf-events/RenameDialog.vue";
 import ReviewDialog from "./smurf-events/ReviewDialog.vue";
 
 const ORIGINS: readonly string[] = ["detected", "historical", "manual", "carried-over"];
@@ -76,7 +79,7 @@ const permissionsKnown = computed(() => permissions.value.length > 0);
 const canAdminister = computed(() => permissions.value.includes(EPermission[EPermission.SmurfCheckerAdministration]));
 
 /** A write's success notice, shown while the view it belongs to (`view`: an event id, "" for the list) is shown. */
-type NoticeKind = "saved" | "saved_pending" | "existing" | "reviewed" | "reviewed_pending" | "deleted";
+type NoticeKind = "saved" | "saved_pending" | "existing" | "reviewed" | "reviewed_pending" | "renamed" | "deleted";
 interface Notice {
   kind: NoticeKind;
   view: string;
@@ -90,11 +93,13 @@ const notice = ref<Notice | null>(null);
 const noticeType = computed(() => (notice.value?.kind.endsWith("_pending") || notice.value?.kind === "existing" ? "info" : "success"));
 const manualOpen = ref(false);
 const reviewOpen = ref(false);
+const renameOpen = ref(false);
 const deleteOpen = ref(false);
 const editing = ref<SmurfEventDetail | null>(null);
 // The view the manual dialog was opened from (an event id, "" for the list).
 let manualOpenedFrom = "";
 let reviewOpenedFrom = "";
+let renameOpenedFrom = "";
 let deleteOpenedFrom = "";
 
 function queryText(value: LocationQuery[string]): string {
@@ -135,12 +140,19 @@ function onSaved(saved: SmurfEventDetail, flags: { applied: boolean; applies?: b
   // Without links changing, "the effect follows shortly" would mislead: the not-applying notice wins over the not-applied one.
   const kind: NoticeKind = !flags.applied && !notApplying ? "saved_pending" : flags.existing ? "existing" : "saved";
   notice.value = { kind, view: saved.id, ...(flags.needsReview ? { needsReview: true as const } : {}), ...(notApplying ? { notApplying: true as const } : {}) };
+  // An edit in place changes what the record shows; a create loads it when the new event's view opens.
+  if (saved.id === eventId.value) void store.loadHistory(saved.id);
   if (saved.id !== eventId.value) router.push({ query: { ...route.query, event: saved.id } }).catch(() => null);
 }
 
 function openReview(): void {
   reviewOpenedFrom = eventId.value;
   reviewOpen.value = true;
+}
+
+function openRename(): void {
+  renameOpenedFrom = eventId.value;
+  renameOpen.value = true;
 }
 
 function openDelete(): void {
@@ -151,8 +163,15 @@ function openDelete(): void {
 function onReviewed(applied: boolean, applies?: boolean): void {
   // A review that finishes after the moderator went to another view says nothing there and moves nothing.
   if (eventId.value !== reviewOpenedFrom) return;
+  void store.loadHistory(eventId.value);
   const notApplying = applies === false;
   notice.value = { kind: applied || notApplying ? "reviewed" : "reviewed_pending", view: eventId.value, ...(notApplying ? { notApplying: true as const } : {}) };
+}
+
+function onRenamed(): void {
+  if (eventId.value !== renameOpenedFrom) return;
+  void store.loadHistory(eventId.value);
+  notice.value = { kind: "renamed", view: eventId.value };
 }
 
 function onDeleted(): void {
@@ -161,12 +180,28 @@ function onDeleted(): void {
   showList();
 }
 
+/**
+ * The one place an event is loaded: openDetail drops the history (and the identifiers) of the event
+ * before it, so what belongs to the event page is asked for here, after every openDetail.
+ */
+function loadEvent(id: string): void {
+  void store.openDetail(id);
+  void store.loadHistory(id);
+}
+
+/** Shows another event; the same one is loaded again (a retry). */
+function openEvent(id: string): void {
+  if (id === eventId.value) loadEvent(id);
+  else router.push({ query: { ...route.query, event: id } }).catch(() => null);
+}
+
 watch(eventId, (id, previous) => {
   if (id === previous) return;
   if (notice.value !== null && notice.value.view !== id) notice.value = null;
-  // A create already put the saved event in the store: no second load.
-  if (id && store.detail?.id !== id) void store.openDetail(id);
-  else if (!id) store.closeDetail();
+  if (!id) store.closeDetail();
+  // A create already put the saved event in the store: no second load of it, but its history is still to be read.
+  else if (store.detail?.id !== id) loadEvent(id);
+  else void store.loadHistory(id);
 });
 
 const filterKey = computed(() => JSON.stringify(filtersFromQuery(route.query)));
@@ -178,7 +213,7 @@ watch(filterKey, () => {
 
 function loadPage(): void {
   void store.setFilters(filtersFromQuery(route.query));
-  if (eventId.value) void store.openDetail(eventId.value);
+  if (eventId.value) loadEvent(eventId.value);
 }
 
 onMounted(() => {

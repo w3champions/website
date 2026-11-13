@@ -1,5 +1,5 @@
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
-import type { SmurfEventCounts, SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventExclusion, SmurfEventOrigin, SmurfEventPreviewRefusal, SmurfEventReview } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { key, type Translate } from "./translate";
 
 const ORIGINS: ReadonlySet<string> = new Set<SmurfEventOrigin>(["detected", "historical", "manual", "carried-over"]);
@@ -74,9 +74,27 @@ export function countText(base: string, count: number, t: Translate): string {
   return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count });
 }
 
-/** The homes count of an event, or "not computed" when the server sent none (never 0). */
-export function homesText(counts: SmurfEventCounts, t: Translate): string {
-  return counts.homes === undefined ? t(key("count_homes_not_computed")) : String(counts.homes);
+const HISTORY_ACTIONS: ReadonlySet<string> = new Set(["event-create", "event-update", "event-delete", "event-confirm", "event-deny", "event-unreview", "event-rename"]);
+
+/** Fact names of a history entry's facts and of `changedSinceReview`, in the order they are shown. */
+const FACTS = ["networks", "identifiers", "maxAccountsEver", "attendees", "notCounted", "endedLinks", "liveLinks"] as const;
+
+export function historyActionLabel(action: string, t: Translate): string {
+  return known(HISTORY_ACTIONS, "history_action", action, t);
+}
+
+/** The label of a fact by the name the server sends, or the name as sent when the page does not know it. */
+export function factLabel(fact: string, t: Translate): string {
+  return known(new Set<string>(FACTS), "fact_label", fact, t);
+}
+
+/** "Networks 2, Identifiers 14": the facts a review entry recorded (`facts*` outcome fields), none when it recorded none. */
+export function reviewFactsText(outcome: Record<string, string | number | boolean | null>, t: Translate): string | null {
+  const parts = FACTS.flatMap((fact) => {
+    const value = outcome[`facts${fact[0].toUpperCase()}${fact.slice(1)}`];
+    return typeof value === "number" ? [`${factLabel(fact, t)} ${value}`] : [];
+  });
+  return parts.length === 0 ? null : parts.join(", ");
 }
 
 /** "N machines, M attendees" of a preview. */

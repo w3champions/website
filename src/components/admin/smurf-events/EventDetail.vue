@@ -10,22 +10,36 @@
     <v-alert v-else-if="store.detailError" type="error" variant="tonal" class="mb-4">
       {{ errorText(store.detailError, tr) }}
       <template v-slot:append>
-        <v-btn variant="text" size="small" @click="store.openDetail(eventId)">{{ t(key("retry")) }}</v-btn>
+        <v-btn variant="text" size="small" @click="emit('open-event', eventId)">{{ t(key("retry")) }}</v-btn>
       </template>
     </v-alert>
 
     <template v-else-if="event">
-      <v-card class="mb-4 event-header" :class="`event-header--${event.review}`">
+      <v-card class="mb-4">
         <v-card-text>
-          <div class="d-flex flex-wrap align-center ga-2">
-            <h2 class="text-h5 mr-2">{{ event.name }}</h2>
-            <v-chip size="small" variant="outlined">{{ originLabel(event.origin, tr) }}</v-chip>
-            <v-chip size="small" variant="tonal" :color="reviewColor(event.review)">{{ reviewLabel(event.review, tr) }}</v-chip>
+          <div class="d-flex flex-wrap align-center ga-2 mb-2">
+            <v-btn size="small" variant="text" :disabled="neighbours.previous === null" @click="openNeighbour(neighbours.previous)">{{ t(key("nav_previous")) }}</v-btn>
+            <v-btn size="small" variant="text" :disabled="neighbours.next === null" @click="openNeighbour(neighbours.next)">{{ t(key("nav_next")) }}</v-btn>
+          </div>
+          <div class="d-flex flex-wrap align-center ga-2 event-header">
+            <h2 class="text-h5">{{ event.name }}</h2>
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :aria-label="t(key('rename_action'))"
+              :title="t(key('rename_action'))"
+              @click="emit('rename')"
+            >
+              <v-icon :icon="mdiPencil" />
+            </v-btn>
+            <event-badge kind="origin" :value="event.origin" />
+            <event-badge kind="review" :value="event.review" />
             <v-spacer />
             <div class="d-flex flex-wrap ga-2">
               <v-btn v-if="actions.review" color="primary" variant="flat" :prepend-icon="mdiGavel" @click="emit('review')">{{ t(key("action_review")) }}</v-btn>
               <v-btn v-if="actions.edit" variant="tonal" :prepend-icon="mdiPencil" @click="emit('edit')">{{ t(key("action_edit")) }}</v-btn>
-              <v-btn v-if="actions.delete" variant="text" color="error" :prepend-icon="mdiDelete" @click="emit('delete')">{{ t(key("action_delete")) }}</v-btn>
+              <v-btn v-if="actions.delete" variant="text" :prepend-icon="mdiDelete" @click="emit('delete')">{{ t(key("action_delete")) }}</v-btn>
             </div>
           </div>
           <div class="text-body-1 mt-2">{{ spanText(event.from, event.to) }}</div>
@@ -34,30 +48,13 @@
             {{ t(key("created_at"), { at: formatUtc(event.createdAt) }) }}
             <span v-if="event.reviewedBy && event.reviewedAt"> · {{ t(key("reviewed_by"), { author: event.reviewedBy, at: formatUtc(event.reviewedAt) }) }}</span>
           </div>
-
-          <div class="stat-grid mt-4">
-            <div v-for="stat in stats" :key="stat.label" class="stat-tile">
-              <div class="stat-value">{{ stat.value }}</div>
-              <div class="text-caption text-medium-emphasis">{{ stat.label }}</div>
-            </div>
-          </div>
+          <div v-if="consequence" class="consequence text-body-2 mt-3">{{ consequence }}</div>
         </v-card-text>
       </v-card>
 
       <v-row>
         <v-col cols="12" md="5">
-          <v-card class="mb-4 h-100">
-            <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("evidence")) }}</v-card-title>
-            <v-card-subtitle class="pb-2">{{ t(key("evidence_hint")) }}</v-card-subtitle>
-            <v-table density="compact">
-              <tbody>
-                <tr v-for="row in evidenceRows" :key="row.label">
-                  <td>{{ row.label }}</td>
-                  <td class="text-right font-weight-bold">{{ row.value }}</td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-card>
+          <event-facts :event="event" />
         </v-col>
         <v-col cols="12" md="7">
           <v-card class="mb-4 h-100">
@@ -83,6 +80,8 @@
           </v-card>
         </v-col>
       </v-row>
+
+      <event-history :history="store.history" :loading="store.historyLoading" :error="store.historyError ? errorText(store.historyError, tr) : null" />
 
       <v-row>
         <v-col cols="12" md="7">
@@ -161,18 +160,21 @@ import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
 import { EAdminRouteName } from "@/router/types";
 import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
-import { errorText, homesText, originLabel, reviewColor, reviewLabel } from "@/store/admin/smurfEvents/labels";
+import { errorText } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import EventBadge from "./EventBadge.vue";
+import EventFacts from "./EventFacts.vue";
+import EventHistory from "./EventHistory.vue";
 
 const TABLE_PAGE = 10;
 const LINKS_PAGE = 25;
 
 const props = defineProps<{
   eventId: string;
-  canAdminister: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -180,6 +182,8 @@ const emit = defineEmits<{
   (e: "review"): void;
   (e: "edit"): void;
   (e: "delete"): void;
+  (e: "rename"): void;
+  (e: "open-event", id: string): void;
 }>();
 
 const { t } = useI18n();
@@ -187,7 +191,7 @@ const tr: Translate = (k, named) => t(k, named ?? {});
 const store = useSmurfEventsStore();
 
 const event = computed(() => (store.detail?.id === props.eventId ? store.detail : null));
-const actions = computed(() => smurfEventActions(event.value ?? { origin: "detected" }, props.canAdminister));
+const actions = computed(() => smurfEventActions(event.value ?? { origin: "detected" }));
 const anchors = computed(() => new Set(event.value?.anchors ?? []));
 
 function spanText(from: string, to: string): string {
@@ -198,26 +202,30 @@ function hardwareLink(battleTag: string) {
   return { name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, query: { player: battleTag } };
 }
 
-const stats = computed(() => {
-  const e = event.value;
-  if (!e) return [];
-  return [
-    { label: t(key("count_networks")), value: e.counts.networks },
-    { label: t(key("count_machines")), value: e.counts.machines },
-    { label: t(key("count_attendees")), value: e.counts.attendees },
-    { label: t(key("count_homes")), value: homesText(e.counts, tr) },
-    { label: t(key("count_ended_links")), value: e.endedLinks },
-  ];
+/** The unreviewed events before and after this one in the list as loaded; none when the event is not in it. */
+const neighbours = computed<{ previous: string | null; next: string | null }>(() => {
+  const events: SmurfEventSummary[] = store.events;
+  const at = events.findIndex((e) => e.id === props.eventId);
+  if (at < 0) return { previous: null, next: null };
+  const unreviewed = (e: SmurfEventSummary) => e.review === "unreviewed";
+  return {
+    previous: events.slice(0, at).reverse().find(unreviewed)?.id ?? null,
+    next: events.slice(at + 1).find(unreviewed)?.id ?? null,
+  };
 });
 
-const evidenceRows = computed(() => {
-  const evidence = event.value?.evidence;
-  if (!evidence) return [];
-  return [
-    { label: t(key("evidence_days_before")), value: evidence.networkDaysBefore },
-    { label: t(key("evidence_days_after")), value: evidence.networkDaysAfter },
-    { label: t(key("evidence_returning")), value: evidence.returningAttendees },
-  ];
+function openNeighbour(id: string | null): void {
+  if (id !== null) emit("open-event", id);
+}
+
+/** The live links among the attendees: what the event's effect on links comes down to; absent when the server did not count them. */
+const consequence = computed(() => {
+  const live = event.value?.liveLinks;
+  if (!live) return null;
+  if (live.links.length === 0) return t(key("consequence_none"));
+  const links = live.links.map((l) => `${l.a} – ${l.b}`).join(", ");
+  if (live.truncated) return t(key("consequence_live_at_least"), { count: live.links.length, links });
+  return t(key(`consequence_live_${live.links.length === 1 ? "one" : "other"}`), { count: live.links.length, links });
 });
 
 const networkHeaders = computed<DataTableHeader[]>(() => [
@@ -239,41 +247,6 @@ const linkHeaders = computed<DataTableHeader[]>(() => [
 </script>
 
 <style scoped>
-.event-header {
-  border-left: 4px solid rgb(var(--v-theme-primary));
-}
-
-.event-header--unreviewed {
-  border-left-color: rgb(var(--v-theme-warning));
-}
-
-.event-header--confirmed {
-  border-left-color: rgb(var(--v-theme-success));
-}
-
-.event-header--denied {
-  border-left-color: rgba(var(--v-theme-on-surface), 0.38);
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 8px;
-}
-
-.stat-tile {
-  padding: 10px 12px;
-  border-radius: 4px;
-  background: rgba(var(--v-theme-on-surface), 0.04);
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-}
-
 .account-link {
   color: rgb(var(--v-theme-primary));
   text-decoration: none;

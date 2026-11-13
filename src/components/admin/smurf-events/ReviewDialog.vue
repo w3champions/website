@@ -18,7 +18,6 @@
             v-for="d in reviewDecisions(shown.review)"
             :key="d"
             :value="d"
-            :color="DECISION_COLORS[d]"
             :aria-pressed="decision === d ? 'true' : 'false'"
           >
             {{ t(key(`decision_${d}`)) }}
@@ -53,6 +52,18 @@
           </v-alert>
         </template>
 
+        <v-text-field
+          v-model="name"
+          :label="t(key(nameRequired ? 'review_name_required' : 'review_name'))"
+          :hint="nameRequired && !nameChanged ? t(key('review_name_hint')) : undefined"
+          :persistent-hint="nameRequired && !nameChanged"
+          :error-messages="nameProblem ?? undefined"
+          :counter="NAME_MAX_LENGTH"
+          :maxlength="NAME_MAX_LENGTH"
+          variant="underlined"
+          color="primary"
+        />
+
         <v-textarea
           v-model="reason"
           :label="t(key(decision && reviewNeedsReason(decision) ? 'reason_required' : 'review_reason'))"
@@ -73,7 +84,7 @@
         <v-btn variant="text" :disabled="store.acting" @click="emit('update:modelValue', false)">
           {{ t("views_admin.cancel") }}
         </v-btn>
-        <v-btn :color="decision ? DECISION_COLORS[decision] : 'primary'" variant="flat" :disabled="!canSave" :loading="store.acting" @click="save">
+        <v-btn color="primary" variant="flat" :disabled="!canSave" :loading="store.acting" @click="save">
           {{ t(key("save_review")) }}
         </v-btn>
       </v-card-actions>
@@ -87,12 +98,11 @@ import { useI18n } from "vue-i18n";
 import type { SmurfEventReview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { useRestoreFocus } from "@/composables/useRestoreFocus";
 import { REASON_MAX_LENGTH } from "@/store/admin/hardwareSmurfs/actions";
+import { NAME_MAX_LENGTH } from "@/store/admin/smurfEvents/draft";
 import { reviewDecisions, reviewNeedsReason } from "@/store/admin/smurfEvents/actions";
 import { countText, errorText, manualEventErrorText } from "@/store/admin/smurfEvents/labels";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
-
-const DECISION_COLORS: Record<SmurfEventReview, string> = { confirmed: "success", denied: "error", unreviewed: "primary" };
 
 const props = defineProps<{
   modelValue: boolean;
@@ -113,13 +123,25 @@ const restoreFocus = useRestoreFocus(toRef(props, "modelValue"));
 // Clicking the chosen decision again clears the toggle, which then emits undefined: both mean "none chosen".
 const decision = ref<SmurfEventReview | null | undefined>(null);
 const reason = ref("");
+const name = ref("");
 // The event the dialog was opened for: it stays while a write is pending, even if the page moves on.
 const shown = ref<SmurfEventSummary | null>(props.event);
 const title = computed(() => t(key("review_title"), { name: shown.value?.name ?? "" }));
 
+const trimmedName = computed(() => name.value.trim());
+const nameChanged = computed(() => trimmedName.value !== shown.value?.name);
+// Confirming needs a name a moderator chose: the generated one does not count. A deny or going back accepts it.
+const nameRequired = computed(() => decision.value === "confirmed" && shown.value?.named === false);
+const nameProblem = computed(() => {
+  if (trimmedName.value === "") return t(key("problem_name"));
+  if (trimmedName.value.length > NAME_MAX_LENGTH) return t(key("problem_name_long"), { max: NAME_MAX_LENGTH });
+  return null;
+});
+
 // A deny is offered only once the moderator has seen which links it brings back and gave a reason.
 const canSave = computed(() => {
   if (!decision.value || store.acting) return false;
+  if (nameProblem.value !== null || (nameRequired.value && !nameChanged.value)) return false;
   if (reviewNeedsReason(decision.value) && reason.value.trim() === "") return false;
   return decision.value !== "denied" || (store.denyLinks !== null && !store.denyLoading);
 });
@@ -127,7 +149,7 @@ const canSave = computed(() => {
 async function save(): Promise<void> {
   const event = shown.value;
   if (!canSave.value || event === null || !decision.value) return;
-  const outcome = await store.review(event.id, decision.value, reason.value);
+  const outcome = await store.review(event.id, decision.value, reason.value, nameChanged.value ? trimmedName.value : undefined);
   if (outcome === null) return;
   emit("reviewed", outcome.applied, outcome.applies);
   emit("update:modelValue", false);
@@ -143,6 +165,7 @@ watch(() => props.modelValue, (open) => {
   shown.value = props.event;
   decision.value = null;
   reason.value = "";
+  name.value = props.event?.name ?? "";
   store.clearDenyPreview();
   store.clearActionError();
 }, { immediate: true });

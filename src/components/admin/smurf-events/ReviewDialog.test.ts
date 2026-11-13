@@ -31,6 +31,16 @@ beforeEach(() => {
 
 afterEach(() => wrapper.unmount());
 
+function mountWith(event: ReturnType<typeof manualEvent>): void {
+  wrapper.unmount();
+  wrapper = mount(ReviewDialog, {
+    props: { modelValue: true, event },
+    global: { plugins: testPlugins(), stubs: { VDialog: inlineDialog } },
+  });
+}
+
+const nameField = () => wrapper.find("input");
+
 function button(label: string): DOMWrapper<HTMLButtonElement> {
   const found = wrapper.findAll("button").find((b) => b.text().trim() === label);
   if (!found) throw new Error(`No button "${label}"`);
@@ -258,4 +268,80 @@ test("a busy review that carries a wait says how long to wait", async () => {
   await flushPromises();
 
   expect(wrapper.text()).toContain("The server is busy right now. Nothing was saved. Try again in 12 seconds.");
+});
+
+test("the name field is prefilled with the event's name", () => {
+  expect((nameField().element as HTMLInputElement).value).toBe("LAN party");
+});
+
+test("confirming a not yet named event needs a name that differs from the generated one", async () => {
+  mountWith(manualEvent({ named: false, name: "Generated name" }));
+  service.review.mockResolvedValue(manualEvent({ review: "confirmed" }));
+
+  await button("Confirm").trigger("click");
+  expect(button("Save review").element.disabled).toBe(true);
+  expect(wrapper.text()).toContain("Name (required to confirm)");
+
+  await nameField().setValue("Sofia LAN");
+  expect(button("Save review").element.disabled).toBe(false);
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(service.review).toHaveBeenCalledWith("tok", "ev1", { decision: "confirmed", name: "Sofia LAN" });
+});
+
+test("denying a not yet named event accepts the generated name and sends none", async () => {
+  mountWith(manualEvent({ named: false, name: "Generated name" }));
+  service.denyPreview.mockResolvedValue({ links: [], endedLinks: 0 });
+  service.review.mockResolvedValue(manualEvent({ review: "denied" }));
+
+  await button("Deny").trigger("click");
+  await flushPromises();
+  await wrapper.find("textarea").setValue("not an event");
+
+  expect(button("Save review").element.disabled).toBe(false);
+  await button("Save review").trigger("click");
+  await flushPromises();
+
+  expect(service.review).toHaveBeenCalledWith("tok", "ev1", { decision: "denied", reason: "not an event" });
+});
+
+test("going back to unreviewed accepts the generated name", async () => {
+  mountWith(manualEvent({ named: false, name: "Generated name", review: "confirmed" }));
+  service.review.mockResolvedValue(manualEvent({ review: "unreviewed" }));
+
+  await button("Back to unreviewed").trigger("click");
+
+  expect(button("Save review").element.disabled).toBe(false);
+});
+
+test("an already named event is confirmed without a name, and a changed name is sent", async () => {
+  service.review.mockResolvedValue(manualEvent({ review: "confirmed" }));
+
+  await button("Confirm").trigger("click");
+  await nameField().setValue("  LAN party  ");
+  await button("Save review").trigger("click");
+  await flushPromises();
+  expect(service.review).toHaveBeenLastCalledWith("tok", "ev1", { decision: "confirmed" });
+
+  await nameField().setValue("Renamed LAN");
+  await button("Save review").trigger("click");
+  await flushPromises();
+  expect(service.review).toHaveBeenLastCalledWith("tok", "ev1", { decision: "confirmed", name: "Renamed LAN" });
+});
+
+test("an empty or too long name cannot be saved", async () => {
+  await button("Confirm").trigger("click");
+
+  await nameField().setValue("  ");
+  expect(button("Save review").element.disabled).toBe(true);
+  await nameField().setValue("x".repeat(101));
+  expect(button("Save review").element.disabled).toBe(true);
+});
+
+test("the decision buttons use no success or error colour and the body names no verdict", () => {
+  const html = wrapper.find("[role='group']").html();
+
+  expect(html).not.toMatch(/success|error/);
+  expect(wrapper.text()).not.toContain("real event");
 });
