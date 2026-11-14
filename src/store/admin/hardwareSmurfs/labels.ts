@@ -1,5 +1,5 @@
 import { formatUtc } from "@/helpers/utc-dates";
-import type { HardwareItemStat, HardwareLink, HardwareLinkVerdict, ItemWeak, VerdictKind } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
+import type { HardwareLink, HardwareLinkVerdict, HardwareProfileItemView, VerdictKind } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
 import { key, type Translate } from "./translate";
 
 /** The tombstone reasons the page has a plain-language label for; any other shows as "Ended". */
@@ -49,7 +49,7 @@ export interface ItemFlag {
 }
 
 /** The flags the server set on an item, in a fixed order. Nothing is derived on the client. */
-export function itemFlagLabels(item: { stat: HardwareItemStat | null; trusted?: boolean; ignored?: boolean; weak?: ItemWeak }, t: Translate): ItemFlag[] {
+export function itemFlagLabels(item: Pick<HardwareProfileItemView, "stat" | "weak"> & Partial<Pick<HardwareProfileItemView, "trusted" | "ignored">>, t: Translate): ItemFlag[] {
   const flags: ItemFlag[] = [];
   if (item.stat === null) flags.push({ id: "noStat", label: t(key("flag_no_stat")), color: "grey" });
   if (item.stat?.common) flags.push({ id: "common", label: t(key("flag_common")), color: "grey" });

@@ -628,7 +628,7 @@ const en = {
       // Item flags
       flag_common: "Excluded: shared",
       flag_over_cap: "Over the account cap",
-      flag_placeholder: "Excluded: placeholder",
+      flag_placeholder: "Placeholder value",
       flag_weak: "Not one PC: {pcs} PCs on {networks} separate networks",
       flag_trusted: "Trusted",
       flag_ignored: "Ignored",
