@@ -334,3 +334,11 @@ test("a row that was not recorded stays out of the chart scale", () => {
 
   expect(wrapper.findAll(".identifier-row svg.dumbbell")).toHaveLength(1);
 });
+
+test("the identifier table shows the weak chip for a row with weak, and none otherwise", () => {
+  show([row({ hash8: "w0000001", weak: { pcs: 4, networks: 3 }, observed: ["after"] }), row({ hash8: "w0000002", observed: ["after"] })]);
+
+  const [weakRow, plainRow] = wrapper.findAll("tbody tr.identifier-row");
+  expect(weakRow.find(".weak-chip").text()).toBe("Not one PC (4 PCs, 3 networks)");
+  expect(plainRow.find(".weak-chip").exists()).toBe(false);
+});

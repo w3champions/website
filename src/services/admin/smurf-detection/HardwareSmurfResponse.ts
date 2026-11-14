@@ -20,6 +20,12 @@ export interface ItemSighting {
   n: number;
 }
 
+/** Present when the server marks an identifier as not one PC: the PCs and networks it was seen on. */
+export interface ItemWeak {
+  pcs: number;
+  networks: number;
+}
+
 /** The stat flags of an item as the server reports them (counts are not shown by the UI). */
 export interface HardwareItemStat {
   common: boolean;
@@ -37,6 +43,7 @@ export interface MatchedItemView {
   stat: HardwareItemStat | null;
   trusted?: boolean;
   ignored?: boolean;
+  weak?: ItemWeak;
 }
 
 /** One link document: live, or a tombstone when `invalidatedAt` is set. `a` sorts before `b`. */
@@ -75,6 +82,7 @@ export interface HardwareProfileItemView {
   stat: HardwareItemStat | null;
   trusted: boolean;
   ignored: boolean;
+  weak?: ItemWeak;
 }
 
 /** GET hardware/items/{battleTag}. */
@@ -106,6 +114,7 @@ export interface HardwareItemDetail {
   stat: HardwareItemStat | null;
   trusted: OverrideInfo | null;
   ignored: boolean;
+  weak?: ItemWeak;
 }
 
 export type AuditAction = "trust-add" | "trust-revoke" | "ignore-add" | "ignore-revoke" | "verdict-smurf" | "verdict-not-smurf" | "verdict-revoke" | "event-create" | "event-update" | "event-delete" | "event-confirm" | "event-deny" | "event-unreview";

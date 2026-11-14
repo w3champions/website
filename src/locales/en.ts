@@ -623,11 +623,13 @@ const en = {
       "reason_not-smurf": "Marked not a smurf by a moderator",
       "reason_verdict-revoked": "Moderator confirmation revoked",
       "reason_no-shared-internal": "Ruled out: different hardware",
+      "reason_weak-identifier": "Rested only on an identifier that is not one PC",
       reason_unknown: "Ended",
       // Item flags
       flag_common: "Excluded: shared",
-      flag_over_cap: "Excluded: over the account cap",
-      flag_placeholder: "Excluded: placeholder",
+      flag_over_cap: "Over the account cap",
+      flag_placeholder: "Placeholder value",
+      flag_weak: "Not one PC: {pcs} PCs on {networks} separate networks",
       flag_trusted: "Trusted",
       flag_ignored: "Ignored",
       flag_no_stat: "No stats yet",
@@ -708,6 +710,7 @@ const en = {
     // Texts of the parts smurf events and hardware links share.
     smurf_detection: {
       chip_keys: "({count} keys)",
+      chip_weak: "Not one PC ({pcs} PCs, {networks} networks)",
     },
     smurf_events: {
       title: "Smurf Events",

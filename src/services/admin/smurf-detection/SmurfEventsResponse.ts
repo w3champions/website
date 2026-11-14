@@ -2,7 +2,7 @@
 // under api/admin/smurf-detection/events), mirroring matchmaking's smurf-events.contract.ts. Networks and machines are hash8 values, never raw ones.
 // Dates arrive as ISO strings.
 
-import type { HardwareLinkSource } from "./HardwareSmurfResponse";
+import type { HardwareLinkSource, ItemWeak } from "./HardwareSmurfResponse";
 
 export type SmurfEventOrigin = "detected" | "historical" | "manual" | "carried-over";
 export type SmurfEventReview = "unreviewed" | "confirmed" | "denied";
@@ -129,6 +129,8 @@ export interface SmurfEventIdentifierRow {
   roles: Array<"machine" | "network" | "shared" | "attendee-key">;
   /** Stored keys merged into this row. */
   keys: number;
+  /** Present when the server marks the identifier as not one PC. */
+  weak?: ItemWeak;
   /**
    * Accounts that used it on a day of the event (a capped row: exact for the attendees, a lower bound in all).
    * Absent: not recorded for this network (a network stored as an IP hash that was not observed). An older server sends 0 with no `span`.
