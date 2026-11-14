@@ -1,9 +1,9 @@
 import { formatUtc } from "@/helpers/utc-dates";
-import type { HardwareItemStat, HardwareLink, HardwareLinkVerdict, VerdictKind } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
+import type { HardwareItemStat, HardwareLink, HardwareLinkVerdict, ItemWeak, VerdictKind } from "@/services/admin/smurf-detection/HardwareSmurfResponse";
 import { key, type Translate } from "./translate";
 
 /** The tombstone reasons the page has a plain-language label for; any other shows as "Ended". */
-const TOMBSTONE_REASONS: ReadonlySet<string> = new Set(["location-veto", "event", "venue", "rule-no-longer-met", "over-cap", "not-smurf", "verdict-revoked", "no-shared-internal"]);
+const TOMBSTONE_REASONS: ReadonlySet<string> = new Set(["location-veto", "event", "venue", "rule-no-longer-met", "over-cap", "not-smurf", "verdict-revoked", "no-shared-internal", "weak-identifier"]);
 
 export function tombstoneReasonLabel(reason: string | undefined, t: Translate): string {
   return t(key(reason !== undefined && TOMBSTONE_REASONS.has(reason) ? `reason_${reason}` : "reason_unknown"));
@@ -42,19 +42,20 @@ export function reportStatusLabel(link: Pick<HardwareLink, "reportPending" | "re
 }
 
 export interface ItemFlag {
-  id: "common" | "overCap" | "placeholder" | "trusted" | "ignored" | "noStat";
+  id: "common" | "overCap" | "placeholder" | "weak" | "trusted" | "ignored" | "noStat";
   label: string;
   /** Vuetify color of the chip. */
   color: string;
 }
 
 /** The flags the server set on an item, in a fixed order. Nothing is derived on the client. */
-export function itemFlagLabels(item: { stat: HardwareItemStat | null; trusted?: boolean; ignored?: boolean }, t: Translate): ItemFlag[] {
+export function itemFlagLabels(item: { stat: HardwareItemStat | null; trusted?: boolean; ignored?: boolean; weak?: ItemWeak }, t: Translate): ItemFlag[] {
   const flags: ItemFlag[] = [];
   if (item.stat === null) flags.push({ id: "noStat", label: t(key("flag_no_stat")), color: "grey" });
   if (item.stat?.common) flags.push({ id: "common", label: t(key("flag_common")), color: "grey" });
   if (item.stat?.overCap) flags.push({ id: "overCap", label: t(key("flag_over_cap")), color: "grey" });
   if (item.stat?.placeholder) flags.push({ id: "placeholder", label: t(key("flag_placeholder")), color: "grey" });
+  if (item.weak) flags.push({ id: "weak", label: t(key("flag_weak"), { pcs: item.weak.pcs, networks: item.weak.networks }), color: "grey" });
   if (item.trusted) flags.push({ id: "trusted", label: t(key("flag_trusted")), color: "grey" });
   if (item.ignored) flags.push({ id: "ignored", label: t(key("flag_ignored")), color: "warning" });
   return flags;

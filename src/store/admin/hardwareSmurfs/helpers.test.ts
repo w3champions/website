@@ -84,10 +84,26 @@ test("item flags show only what the server marked", () => {
   assert.deepEqual(none, []);
 
   const all = itemFlagLabels({ stat: { common: true, overCap: true, placeholder: true }, trusted: true, ignored: true }, t);
-  assert.deepEqual(all.map((f) => f.label), ["Excluded: shared", "Excluded: over the account cap", "Excluded: placeholder", "Trusted", "Ignored"]);
+  assert.deepEqual(all.map((f) => f.label), ["Excluded: shared", "Over the account cap", "Excluded: placeholder", "Trusted", "Ignored"]);
 
   assert.deepEqual(itemFlagLabels({ stat: null }, t).map((f) => f.label), ["No stats yet"]);
   assert.equal(all.find((f) => f.id === "trusted")?.color, "grey");
+});
+
+test("itemFlagLabels shows the weak flag with both numbers", () => {
+  const flags = itemFlagLabels({ stat: { common: false, overCap: false, placeholder: true }, weak: { pcs: 4, networks: 3 } }, t);
+
+  assert.deepEqual(flags.map((f) => f.id), ["placeholder", "weak"]);
+  assert.equal(flags.find((f) => f.id === "weak")?.label, "Not one PC: 4 PCs on 3 separate networks");
+  assert.equal(flags.find((f) => f.id === "weak")?.color, "grey");
+});
+
+test("no weak flag without the field", () => {
+  assert.deepEqual(itemFlagLabels({ stat: { common: false, overCap: false, placeholder: false } }, t), []);
+});
+
+test("tombstoneReasonLabel knows weak-identifier", () => {
+  assert.equal(tombstoneReasonLabel("weak-identifier", t), "Rested only on an identifier that is not one PC");
 });
 
 // --- actions ---

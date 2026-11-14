@@ -34,6 +34,9 @@
             <tr v-else class="identifier-row">
               <td>
                 <identifier-chip :kind="entry.row.kind" :hash8="entry.row.hash8" :keys="entry.row.keys" :values="entry.row.values" />
+                <v-chip v-if="entry.row.weak" class="weak-chip ml-1" size="x-small" variant="tonal">
+                  {{ t("views_admin.smurf_detection.chip_weak", { pcs: entry.row.weak.pcs, networks: entry.row.weak.networks }) }}
+                </v-chip>
                 <div v-if="entry.row.machineNames && entry.row.machineNames.length > 0" class="text-body-2 text-medium-emphasis">{{ t(key("machine_names"), { names: entry.row.machineNames.join(", ") }) }}</div>
                 <div v-if="entry.row.usernames && entry.row.usernames.length > 0" class="text-body-2 text-medium-emphasis">{{ t(key("usernames"), { names: entry.row.usernames.join(", ") }) }}</div>
               </td>
