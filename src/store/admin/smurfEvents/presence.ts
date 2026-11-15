@@ -17,9 +17,9 @@ export function venueRowId(v: VenueRow): string {
   return v.source === "ip" ? `ip:${v.network.hash8}` : `${v.row.kind}:${v.row.hash8}`;
 }
 
-/** Nothing is recorded for the network: the server sent its hash and no measurement at all (not even "not read"). */
+/** Nothing is recorded for the network: the server sent its hash and no measurement or context at all (not even "not read"). */
 export function isUnmeasured(n: SmurfEventNetworkPresence): boolean {
-  return n.notRead !== true && n.firstUseAt === undefined && n.lastUseAt === undefined && n.before === undefined && n.during === undefined && n.after === undefined;
+  return n.notRead !== true && n.firstUseAt === undefined && n.lastUseAt === undefined && n.before === undefined && n.during === undefined && n.after === undefined && n.days === undefined && n.provider === undefined && n.country === undefined;
 }
 
 /** "Before: 3 attendees, 2 other accounts, on 1 days"; every number reads "at least" when the side is capped. Null: the side is absent. */

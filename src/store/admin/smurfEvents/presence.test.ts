@@ -85,5 +85,8 @@ test("isUnmeasured is true only for a network with nothing recorded and not mark
   expect(isUnmeasured({ hash8: "a" })).toBe(true);
   expect(isUnmeasured({ hash8: "a", notRead: true })).toBe(false);
   expect(isUnmeasured({ hash8: "a", lastUseAt: "2026-10-01T00:00:00.000Z" })).toBe(false);
+  expect(isUnmeasured({ hash8: "a", provider: "Example Telecom" })).toBe(false);
+  expect(isUnmeasured({ hash8: "a", country: "DE" })).toBe(false);
+  expect(isUnmeasured({ hash8: "a", days: [[1, 2]] })).toBe(false);
   expect(isUnmeasured({ hash8: "a", before: { attendees: 0, others: 0, days: 0 } })).toBe(false);
 });

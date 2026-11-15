@@ -16,7 +16,7 @@
             <template v-if="isUnmeasured(venue.network)">
               <not-recorded class="ml-2" />
             </template>
-            <span v-else class="venue-context ml-2 text-medium-emphasis">
+            <span v-else-if="!venue.network.notRead || venue.network.provider !== undefined || venue.network.country !== undefined" class="venue-context ml-2 text-medium-emphasis">
               <not-recorded v-if="venue.network.provider === undefined && venue.network.country === undefined" />
               <i18n-t v-else :keypath="key('venue_context')" tag="span">
                 <template v-slot:provider>
@@ -54,7 +54,7 @@
           </div>
           <div class="venue-first-last">
             <not-recorded v-if="venue.row.firstDay === undefined && venue.row.lastDay === undefined" />
-            <i18n-t v-else :keypath="key(venue.row.accountsEver?.capped === true ? 'venue_first_last_partial' : 'venue_first_last')" tag="span">
+            <i18n-t v-else :keypath="key(isPartial(venue.row) ? 'venue_first_last_partial' : 'venue_first_last')" tag="span">
               <template v-slot:first>
                 <template v-if="venue.row.firstDay !== undefined">{{ dayText(venue.row.firstDay) }}</template>
                 <not-recorded v-else />
@@ -78,7 +78,7 @@
           />
         </template>
       </div>
-      <div v-if="rows.length === 0" class="px-4 pb-3"><not-recorded /></div>
+      <div v-if="rows.length === 0 && !routersPending" class="px-4 pb-3"><not-recorded /></div>
       <div v-if="routersPending" class="px-4 pb-3 text-body-2 text-medium-emphasis" role="status">{{ t(key("venue_routers_pending")) }}</div>
     </template>
   </v-card>
@@ -123,6 +123,11 @@ const routersPending = computed(() => props.presence !== null && props.identifie
 /** The day lane holds only what was read: a capped side, or a side that was not read, makes its numbers lower bounds. */
 function isLowerBound(network: SmurfEventNetworkPresence): boolean {
   return SIDES.some((side) => network[side] === undefined || network[side].capped === true);
+}
+
+/** The server read only part of the holders of the row: its first and last use are bounds of what was read. */
+function isPartial(row: SmurfEventIdentifierRow): boolean {
+  return row.accountsEver?.capped === true || row.holdersOutside?.capped === true;
 }
 
 /** The attendee count is exact even on a capped row; only the other accounts are a lower bound. */

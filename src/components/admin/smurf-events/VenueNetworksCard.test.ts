@@ -62,6 +62,16 @@ test("a network not read shows Not read and no figures", () => {
   expect(text).toContain("Not read");
   expect(text).not.toContain("First use");
   expect(text).not.toMatch(/\b0 attendees/);
+  expect(wrapper.find(".not-recorded").exists()).toBe(false);
+});
+
+test("a network with only a provider is measured: it shows the provider, not a blanket Not recorded", () => {
+  show(presence([{ hash8: "0a1b2c3d", provider: "Example Telecom" }]));
+
+  const item = wrapper.find(".venue-network");
+  expect(item.text()).toContain("Example Telecom");
+  expect(item.find(".venue-context .not-recorded").exists()).toBe(true);
+  expect(item.findAll(".not-recorded").length).toBeGreaterThan(1);
 });
 
 test("a side that was not read says so under its own label, and the lane reads as a lower bound", () => {
@@ -149,6 +159,20 @@ test("the card without rows shows its title and one Not recorded", () => {
 
   expect(wrapper.find(".v-card-title").text()).toBe("Venue networks");
   expect(wrapper.findAll(".not-recorded")).toHaveLength(1);
+});
+
+test("with no rows and router networks pending only the pending line shows", () => {
+  show(presence([]), null, { networkCount: 1 });
+
+  expect(wrapper.text()).toContain("Router networks appear once the identifier table has loaded.");
+  expect(wrapper.find(".not-recorded").exists()).toBe(false);
+});
+
+test("a capped holdersOutside also gives the partial first and last wording", () => {
+  const day = Date.UTC(2026, 8, 1) / 86_400_000;
+  show(presence([]), { window: WINDOW, rows: [{ hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [], firstDay: day, lastDay: day + 1, holdersOutside: { attendees: 1, others: 2, capped: true } }] });
+
+  expect(wrapper.find(".venue-network").text()).toContain("(among the holders read)");
 });
 
 test("router networks of the event that are not in yet are announced under the IP rows", () => {
