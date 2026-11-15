@@ -21,4 +21,9 @@ describe("mapNameFromMatch", () => {
   it("resolves |n and || escapes on the way through", () => {
     expect(mapNameFromMatch(matchWith("A || B"))).toBe("A | B");
   });
+
+  it("falls back to the map file name when there is no name", () => {
+    const match = { mapName: "", map: "w3c_250622_1057_ShallowGrave_v1.5.w3x" } as Match;
+    expect(mapNameFromMatch(match)).toBe("w3c_250622_1057_ShallowGrave_v1.5.w3x");
+  });
 });

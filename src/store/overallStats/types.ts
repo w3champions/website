@@ -89,6 +89,8 @@ export type Ratio = {
 };
 
 export type StatsPerMapAndRace = {
+  map?: string | null;
+  mapId?: number | null;
   mapName: string;
   ratio: Ratio[];
 };
@@ -164,7 +166,8 @@ export interface Timeslot {
 
 export interface MapCount {
   map: string;
-  mapName: string;
+  mapId?: number | null;
+  mapName?: string | null;
   count: number;
 }
 

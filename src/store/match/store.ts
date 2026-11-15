@@ -143,14 +143,14 @@ export const useMatchStore = defineStore("match", {
         }
       }
     },
-    async loadAllOngoingMatches(gameMode?: EGameMode, map?: string) {
+    async loadAllOngoingMatches(gameMode?: EGameMode, mapName?: string) {
       const rootStateStore = useRootStateStore();
       const response = await MatchService.retrieveOnGoingMatches(
         0,
         200,
         rootStateStore.gateway,
         gameMode || this.gameMode,
-        map || this.map,
+        mapName || this.map,
         this.mmr,
         this.duration,
         this.sort,

@@ -75,6 +75,7 @@ import type { RaceWinLoss, Ratio, StatsPerMapAndRace, StatsPerWinrate } from "@/
 import { ERaceEnum } from "@/store/types";
 import { useOverallStatsStore } from "@/store/overallStats/store";
 import type { Mmr } from "@/store/match/types";
+import { mapGroupKey, mapGroupKeys, OVERALL_MAP } from "@/helpers/mapGrouping";
 import type { DataTableHeader } from "vuetify";
 
 export default defineComponent({
@@ -89,7 +90,7 @@ export default defineComponent({
     const raceEnums = ERaceEnum;
     const selectedPatch = ref<string>("All");
     const selectedMmrRange = ref<Mmr>({ min: 0, max: 3000 });
-    const selectedMap = ref<string>(t("common.overall"));
+    const selectedMap = ref<string>(OVERALL_MAP);
     const hasAutoSelectedPatch = ref(false);
     const hasAutoSelectedMmrRange = ref(false);
     const hasAutoSelectedMap = ref(false);
@@ -172,9 +173,10 @@ export default defineComponent({
       const patchStats = stats.patchToStatsPerModes[selectedPatch.value];
       if (!patchStats) return [];
 
-      return patchStats.map((r) => {
-        return { mapId: r.mapName, mapName: t("mapNames." + r.mapName) };
-      });
+      return mapGroupKeys(patchStats).map((key) => ({
+        mapId: key,
+        mapName: key === OVERALL_MAP ? t("mapNames.Overall") : key,
+      }));
     });
 
     const sortByRaceWithRandomLast = (a: { race: ERaceEnum }, b: { race: ERaceEnum }): number => {
@@ -230,12 +232,12 @@ export default defineComponent({
           continue;
         }
 
-        const statsPerMapAndRace = patchStats.find((mapStats) => mapStats.mapName === selectedMap.value);
-        if (!statsPerMapAndRace) {
-          continue;
-        }
+        // One map can have several entries (one per map file); they all count.
+        const ratios = patchStats
+          .filter((mapStats) => mapGroupKey(mapStats) === selectedMap.value)
+          .flatMap((mapStats) => mapStats.ratio);
 
-        for (const ratio of statsPerMapAndRace.ratio) {
+        for (const ratio of ratios) {
           if (!ratioByRace.has(ratio.race)) {
             ratioByRace.set(ratio.race, new Map<ERaceEnum, RaceWinLoss>());
           }

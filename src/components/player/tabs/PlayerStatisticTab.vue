@@ -153,7 +153,7 @@ import PlayerHeroStatistics from "@/components/player/PlayerHeroStatistics.vue";
 import PlayerHeroWinRate from "@/components/player/PlayerHeroWinRate.vue";
 import PlayerGameLengthStats from "@/components/player/PlayerGameLengthStats.vue";
 import { races } from "@/helpers/general";
-import { useOverallStatsStore } from "@/store/overallStats/store";
+import { mapGroupKeys } from "@/helpers/mapGrouping";
 import { usePlayerStore } from "@/store/player/store";
 import { Season } from "@/store/ranking/types";
 import isEmpty from "lodash/isEmpty";
@@ -175,7 +175,6 @@ export default defineComponent({
   setup() {
     const { t } = useI18n();
     const playerStore = usePlayerStore();
-    const overallStatsStore = useOverallStatsStore();
 
     const selectedMap = ref<string>("Overall");
     const selectedMapHeroWinRate = ref<string>("Overall");
@@ -214,7 +213,6 @@ export default defineComponent({
     }
 
     onMounted(async (): Promise<void> => {
-      await overallStatsStore.loadMatchesOnMapsPerSeason();
       await loadActiveGameModes();
     });
 
@@ -245,21 +243,12 @@ export default defineComponent({
         .filter((r: { race: ERaceEnum }) => r.race !== ERaceEnum.RANDOM);
     });
 
+    // One option per map name; the files of a map are merged by the hero statistics.
     const maps = computed<mapNameAndId[]>(() => {
-      const maps: mapNameAndId[] = [];
-      const mapsList: string[] = [];
-      playerStore.playerStatsHeroVersusRaceOnMap.heroStatsItemList?.map((heroItemList) => {
-        heroItemList.stats.map((stats) => {
-          stats.winLossesOnMap.map((winLossOnMap) => {
-            const map = winLossOnMap.map;
-            if (!mapsList.includes(map)) {
-              mapsList.push(map);
-            }
-          });
-        });
-      });
-      mapsList.forEach((map) => maps.push({ mapName: map, mapId: map }));
-      return maps;
+      const entries = (playerStore.playerStatsHeroVersusRaceOnMap.heroStatsItemList ?? [])
+        .flatMap((heroItemList) => heroItemList.stats)
+        .flatMap((stats) => stats.winLossesOnMap);
+      return mapGroupKeys(entries).map((key) => ({ mapName: key, mapId: key }));
     });
 
     const gameLengthOpponentRaces = [

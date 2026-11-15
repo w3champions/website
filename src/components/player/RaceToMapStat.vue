@@ -10,8 +10,8 @@
       :header-props="{ class: ['text-medium-emphasis', 'font-weight-bold'] }"
     >
       <template v-slot:body>
-        <tr v-for="item in sortedStats" :key="item.mapName || item.map">
-          <td>{{ item.mapName || item.map }}</td>
+        <tr v-for="item in sortedStats" :key="item.map">
+          <td>{{ item.map }}</td>
           <player-stats-race-versus-race-on-map-table-cell
             :stats="totalWins(item.winLosses)"
           />
@@ -36,6 +36,7 @@ import { RaceStat, WinLossesOnMap } from "@/store/player/types";
 import PlayerStatsRaceVersusRaceOnMapTableCell from "@/components/player/PlayerStatsRaceVersusRaceOnMapTableCell.vue";
 import { ERaceEnum } from "@/store/types";
 import { DataTableHeader } from "vuetify";
+import { groupWinLossesOnMap } from "@/helpers/mapGrouping";
 
 export default defineComponent({
   name: "RaceToMapStat",
@@ -67,7 +68,8 @@ export default defineComponent({
     }
 
     const sortedStats = computed(() => {
-      return [...props.stats]
+      // One row per map name: the files of a map are merged.
+      return groupWinLossesOnMap(props.stats)
         // Sort the maps by total games played, descending.
         .sort((a, b) => {
           const totalGamesA = a.winLosses.reduce((sum, current) => sum + current.games, 0);

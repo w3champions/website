@@ -1,6 +1,8 @@
 import { ERaceEnum } from "@/store/types";
 import { RaceStat, RaceWinsOnMap, WinLossesOnMap } from "@/store/player/types";
+import { groupWinLossesOnMap } from "@/helpers/mapGrouping";
 
+/** The tab of the race with the most games on one map; the files of a map count together. */
 export function defaultStatsTab(raceWinsOnMap: RaceWinsOnMap[]): string {
   let maxRace = ERaceEnum.TOTAL;
   let maxGames = 0;
@@ -10,7 +12,7 @@ export function defaultStatsTab(raceWinsOnMap: RaceWinsOnMap[]): string {
   raceWinsOnMap
     .filter((s: RaceWinsOnMap) => s.race !== ERaceEnum.TOTAL)
     .forEach((s: RaceWinsOnMap) =>
-      s.winLossesOnMap.forEach((w: WinLossesOnMap) => {
+      groupWinLossesOnMap(s.winLossesOnMap).forEach((w: WinLossesOnMap) => {
         const gamesOfRace = w.winLosses
           .map((wl: RaceStat) => wl.games)
           .reduce((a: number, b: number) => a + b, 0);

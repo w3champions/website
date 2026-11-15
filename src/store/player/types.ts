@@ -80,7 +80,8 @@ export type ModeStat = {
 
 export interface WinLossesOnMap {
   map: string;
-  mapName?: string;
+  mapId?: number | null;
+  mapName?: string | null;
   winLosses: RaceStat[];
 }
 
