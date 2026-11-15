@@ -7,9 +7,21 @@ import { toGameMapPath } from "./mapFilePath";
 // is being changed.
 //
 // That makes "copy everything, then override" the only safe shape here, and it
-// is why these builders spread rather than listing the fields of `Map`. A field
-// the backend stores but this app's types do not know about still round-trips;
-// rebuilding the object from the type would erase it.
+// is why these builders spread rather than listing the fields of `Map`: they sit
+// upstream of the wire and hand a whole map to the editor or to
+// MapsService.createMap/updateMap, and rebuilding the object from the type would
+// silently drop whatever the caller had not looked at yet.
+//
+// What actually goes on the wire is narrowed at a single choke point instead:
+// `toMapWriteContract` in @/services/maps/mapsRequest, which MapsService applies
+// to every create and update. The read side now also carries server-owned fields
+// (`temporary`, `fileState`, `lastHostedAt`, `uploader`), and an editor working
+// on `cloneMapForEdit`'s deep clone would otherwise echo them straight back. So
+// the rule here is not "a field this app does not know about round-trips to the
+// backend" - it is "nothing is lost between the store and the choke point".
+// Adding a field the backend must receive means adding it to
+// `MapWriteContract` as well; that whitelist, not this file, is what the
+// matchmaking service sees.
 
 /**
  * The map as it should be sent to the editor, detached from the store.

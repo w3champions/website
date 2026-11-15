@@ -1,4 +1,5 @@
 import { API_URL, LAUNCHER_UPDATE_URL } from "@/config/env";
+import { buildMapsQuery, errorFromBody, parseErrorBody, toMapWriteContract } from "@/services/maps/mapsRequest";
 import type { GetMapsResponse, Map, MapFileData } from "@/store/admin/mapsManagement/types";
 import { fetchWithTimeout, timeoutError } from "./http/fetchWithTimeout";
 
@@ -39,33 +40,18 @@ const UPLOAD_OUTCOME_UNKNOWN = "It is not known whether the file was stored; "
   + "the map's file list shows whether it was.";
 
 export default class MapsService {
-  // The backend returns either a bare string (its own HttpRequestException message,
-  // which already carries the matchmaking service's joined errors) or the raw
-  // { errors: [{ msg }] } envelope. Passing the parsed body to new Error() yields
-  // "[object Object]", so pull a readable message out of both shapes.
+  // Read as text rather than with response.json(): a bare text/plain message is
+  // a real error body here, and json() would reject it.
   private static async errorFromResponse(response: Response): Promise<Error> {
-    let body: unknown;
+    let text: string;
     try {
-      body = await response.json();
+      text = await response.text();
     } catch {
-      return new Error(`Request failed with status ${response.status}.`);
+      // The body could not be read at all; errorFromBody names the status.
+      return errorFromBody(undefined, response.status);
     }
 
-    return MapsService.errorFromBody(body, response.status);
-  }
-
-  private static errorFromBody(body: unknown, status: number): Error {
-    const fallback = `Request failed with status ${status}.`;
-
-    if (typeof body === "string" && body.trim()) return new Error(body);
-
-    const errors = (body as { errors?: { msg?: string }[] })?.errors;
-    if (Array.isArray(errors)) {
-      const messages = errors.map((error) => error?.msg).filter((msg): msg is string => !!msg);
-      if (messages.length) return new Error(messages.join(", "));
-    }
-
-    return new Error(fallback);
+    return errorFromBody(parseErrorBody(text), response.status);
   }
 
   // Reading the body is part of the request, not something that happens after
@@ -88,10 +74,10 @@ export default class MapsService {
     }
   }
 
-  public static async getAllMaps(token: string, filter?: string): Promise<GetMapsResponse> {
-    const filterParam = filter ? `&filter=${filter}` : "";
+  public static async getAllMaps(token: string, filter?: string, includeTemporary?: boolean): Promise<GetMapsResponse> {
+    const query = buildMapsQuery(filter, includeTemporary);
 
-    const url = `${API_URL}api/maps?${filterParam}`;
+    const url = `${API_URL}api/maps${query ? `?${query}` : ""}`;
     // An error body has no `items`, which would read as "there are no maps". That
     // is indistinguishable from a real empty list, and the bulk upload verifies
     // its own writes against this list - a swallowed 401 would report every map as
@@ -114,7 +100,7 @@ export default class MapsService {
   public static async createMap(token: string, map: Map): Promise<Map> {
     const url = `${API_URL}api/maps`;
 
-    const data = JSON.stringify(map);
+    const data = JSON.stringify(toMapWriteContract(map));
     return await fetchWithTimeout<Map>(url, {
       method: "POST",
       headers: {
@@ -135,7 +121,7 @@ export default class MapsService {
   public static async updateMap(token: string, mapId: number, map: Map): Promise<Map> {
     const url = `${API_URL}api/maps/${mapId}`;
 
-    const data = JSON.stringify(map);
+    const data = JSON.stringify(toMapWriteContract(map));
     return await fetchWithTimeout<Map>(url, {
       method: "PUT",
       headers: {
@@ -205,13 +191,7 @@ export default class MapsService {
           return;
         }
 
-        let body: unknown = request.responseText;
-        try {
-          body = JSON.parse(request.responseText);
-        } catch {
-          // Keep the raw text; errorFromBody handles both shapes.
-        }
-        reject(MapsService.errorFromBody(body, request.status));
+        reject(errorFromBody(parseErrorBody(request.responseText), request.status));
       };
 
       request.onerror = (): void => reject(new Error("Network error while uploading the map file."));

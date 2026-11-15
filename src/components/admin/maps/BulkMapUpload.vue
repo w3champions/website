@@ -198,7 +198,14 @@
               </v-col>
             </v-row>
 
-            <div class="text-caption text-medium-emphasis mt-2">
+            <!-- A fixable row (bad filename, or a target that turned out unknown or
+                 temporary) has no confirmed map to report a file for - showing
+                 "no file yet" there would contradict a temporary target's own
+                 message, which says its file belongs to the uploader. `row.map`
+                 as well as the status: while the batch is being hashed there is
+                 no plan yet, so nothing is fixable yet either, and a row with no
+                 map would flash "This map has no file yet" until it lands. -->
+            <div v-if="row.map && !isFixable(row)" class="text-caption text-medium-emphasis mt-2">
               <template v-if="row.currentFileName">Current file: {{ row.currentFileName }}</template>
               <template v-else>This map has no file yet</template>
             </div>
@@ -234,6 +241,7 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import { useMapsManagementStore } from "@/store/admin/mapsManagement/store";
 import { Map, MapFileData } from "@/store/admin/mapsManagement/types";
+import { isTemporaryMap } from "@/services/maps/mapsRequest";
 import { mdiAlertCircleOutline, mdiAlertOutline, mdiCheckCircle, mdiCloudCheckOutline, mdiContentCopy, mdiFileQuestionOutline, mdiMinusCircleOutline, mdiProgressClock, mdiProgressUpload } from "@mdi/js";
 import MapFileDropZone from "./MapFileDropZone.vue";
 import { mapFileName, toStoredFileName } from "./mapFilePath";
@@ -242,6 +250,7 @@ import { BulkSelectItem, BulkUploadItem, reconcileFailedUpload, selectMapFiles, 
 import {
   BulkRowState,
   BulkRowStatus,
+  freshMapsOrThrow,
   gatingFor,
   RunAction,
   RunTally,
@@ -338,6 +347,7 @@ export default defineComponent({
           storeAs: row.storeAs,
           mapId: row.mapId,
           mapExists: !!row.map,
+          mapTemporary: isTemporaryTarget(row.mapId),
           sha1: row.sha1,
           state: row.state,
         })),
@@ -415,7 +425,10 @@ export default defineComponent({
       // Note: `Map` is the imported map type here, not the JS global.
       const counts: Record<number, number> = {};
       for (const row of rows.value) {
-        if (row.mapId === null || ["duplicate", "skipped", "error"].includes(statusOf(row))) continue;
+        // A row with no confirmed map targets nothing, whatever its id says. That
+        // is structural, so it also holds while the batch is being hashed, when
+        // there is no plan yet and the status of every row is still "preparing".
+        if (!row.map || row.mapId === null || ["duplicate", "skipped", "error"].includes(statusOf(row))) continue;
         counts[row.mapId] = (counts[row.mapId] ?? 0) + 1;
       }
       return Object.keys(counts).map(Number).filter((mapId) => counts[mapId] > 1);
@@ -423,6 +436,7 @@ export default defineComponent({
 
     const mapOptions = computed(() =>
       [...mapsManagementStore.maps]
+        .filter((map) => !isTemporaryMap(map))
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((map) => ({ title: `${map.name} (${map.id})`, value: map.id }))
     );
@@ -474,7 +488,10 @@ export default defineComponent({
     }
 
     async function prepareRows(): Promise<void> {
-      const mapIds = [...new Set(rows.value.map((row) => row.mapId).filter((id): id is number => id !== null))];
+      // Only rows with a map that can actually take a file: an id that names no
+      // map, or one that names a temporary map, has no stored file list worth
+      // asking for, and the plan refuses those rows before it ever looks at one.
+      const mapIds = [...new Set(rows.value.filter((row) => row.map).map((row) => row.mapId as number))];
       await Promise.all([hashPickedFiles(), ...mapIds.map((mapId) => loadStoredFiles(mapId))]);
     }
 
@@ -500,7 +517,7 @@ export default defineComponent({
     }
 
     function assignMap(row: BulkRow, mapId: number | null): void {
-      const map = mapsManagementStore.maps.find((m) => m.id === mapId);
+      const map = targetMapFor(mapId);
       if (!map) return;
 
       row.mapId = map.id;
@@ -522,11 +539,33 @@ export default defineComponent({
       return null;
     }
 
+    // The map a file aimed at this id may be uploaded to - shared by filename
+    // detection and the "Pick a map" fix, so both treat a map that cannot take a
+    // file the same way. A temporary (self-provided) map is not a target: its
+    // file belongs to the uploader and the matchmaking service rejects
+    // PUT api/maps/:id for it, so the row is left without one and planBulkUpload
+    // says why (see `mapTemporary` in bulkUploadPlan.ts).
+    function targetMapFor(mapId: number | null): Map | undefined {
+      const map = mapById(mapId);
+      return map && !isTemporaryMap(map) ? map : undefined;
+    }
+
+    // True when the file's id names a map that exists but cannot take a file, so
+    // the row can be told that rather than that its map is missing.
+    function isTemporaryTarget(mapId: number | null): boolean {
+      const map = mapById(mapId);
+      return !!map && isTemporaryMap(map);
+    }
+
+    function mapById(mapId: number | null): Map | undefined {
+      return mapId === null ? undefined : mapsManagementStore.maps.find((m) => m.id === mapId);
+    }
+
     // Detection runs as soon as files are picked, so the map each file targets and
     // what will happen to it are visible before anything is uploaded.
     function detectRow(file: File): BulkRow {
       const mapId = extractMapIdFromFilename(file.name);
-      const map = mapId === null ? undefined : mapsManagementStore.maps.find((m) => m.id === mapId);
+      const map = targetMapFor(mapId);
       return {
         key: `row-${nextRowKey++}`,
         file,
@@ -804,11 +843,11 @@ export default defineComponent({
         updateMap: (map) => mapsManagementStore.updateMap(map),
         // Read once to build each update from the map as it is now, and once
         // afterwards to turn "the PUT answered 200" into "the map really points at
-        // the new file".
-        reloadMaps: async () => {
-          await mapsManagementStore.loadMaps();
-          return mapsManagementStore.maps;
-        },
+        // the new file". Both reads have to be this run's own: loadMaps() reports
+        // whether the rows are, and freshMapsOrThrow turns a superseded failure
+        // into the "could not be read" outcome instead of a silent stale read.
+        reloadMaps: async () =>
+          freshMapsOrThrow(await mapsManagementStore.loadMaps(), mapsManagementStore.maps),
       });
 
       for (const result of results) {
