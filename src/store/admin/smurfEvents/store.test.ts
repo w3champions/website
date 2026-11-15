@@ -827,6 +827,20 @@ test("a late presence answer for the event left behind is dropped when another e
   expect(store.presenceError).toBeNull();
 });
 
+test("a late presence answer after clear() is not shown on the next visit", async () => {
+  const store = useSmurfEventsStore();
+  let late!: (v: unknown) => void;
+  service.presence.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  const pending = store.loadPresence("1");
+
+  store.clear();
+  late({ ...PRESENCE, networks: [{ hash8: "ofA" }] });
+  await pending;
+
+  expect(store.presence).toBeNull();
+  expect(store.presenceLoading).toBe(false);
+});
+
 test("a failed presence load keeps the error and no answer", async () => {
   const store = useSmurfEventsStore();
   const failure = new Error("boom");

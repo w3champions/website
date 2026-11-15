@@ -500,6 +500,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       denyLoads.invalidate();
       identifierLoads.invalidate();
       historyLoads.invalidate();
+      presenceLoads.invalidate();
       this.$reset();
     },
   },
