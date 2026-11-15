@@ -12,6 +12,7 @@
     "**/package-lock.json",
     "**/*.js",
     "src/locales/data.ts",
+    "src/lib/chart-timestack",
     "components.d.ts",
     ".eslintrc.cjs",
     "scripts/key.ts"
