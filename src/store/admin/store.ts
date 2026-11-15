@@ -1,16 +1,14 @@
-import type { AdminState, BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, BattleTagModerationMap, CreateBanReasonTranslationRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData, UpdateBanReasonTranslationRequest } from "./types";
+import type { AdminState, BanReasonTranslation, BattleTagModerationMap, CreateBanReasonTranslationRequest, GloballyMutedPlayer, GlobalMute, OverridesList, Proxy, ProxySettings, QueueData, UpdateBanReasonTranslationRequest } from "./types";
 import { useOauthStore } from "@/store/oauth/store";
+import { sameTag } from "@/store/admin/bans/tags";
 import AdminService from "@/services/admin/AdminService";
 import ModerationService from "@/services/admin/ModerationService";
 import { defineStore } from "pinia";
-import { formatTimestampString } from "@/helpers/date-functions";
 import type { SmurfDetectionResult } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 
 export const useAdminStore = defineStore("admin", {
   state: (): AdminState => ({
     total: 0,
-    bannedPlayers: [],
-    bannedPlayersCount: 0,
     queuedata: [],
     availableProxies: [],
     proxiesSetForSearchedPlayer: {} as ProxySettings,
@@ -22,31 +20,11 @@ export const useAdminStore = defineStore("admin", {
     proxyModified: false,
     globallyMutedPlayers: [] as GloballyMutedPlayer[],
     mutesNextId: null,
-    banValidationError: "",
     showJwtExpiredDialog: false,
     battleTagModerationStatus: {},
     banReasonTranslations: [] as BanReasonTranslation[],
   }),
   actions: {
-    async loadBannedPlayers(req: BannedPlayersGetRequest) {
-      const oauthStore = useOauthStore();
-      const bannedPlayers = await AdminService.getBannedPlayers(oauthStore.token, req);
-
-      bannedPlayers.players.forEach((bannedPlayer) => {
-        bannedPlayer.endDate = formatTimestampString(bannedPlayer.endDate, "yyyy-MM-dd HH:mm:ss");
-        bannedPlayer.banInsertDate = formatTimestampString(bannedPlayer.banInsertDate, "yyyy-MM-dd HH:mm:ss");
-      });
-
-      this.SET_BANNED_PLAYERS(bannedPlayers);
-    },
-    async postBan(bannedPlayer: BannedPlayer) {
-      const oauthStore = useOauthStore();
-      const response = await AdminService.postBan(bannedPlayer, oauthStore.token);
-      this.SET_BAN_VALIDATION_ERROR(response);
-    },
-    resetBanValidationMessage() {
-      this.SET_BAN_VALIDATION_ERROR("");
-    },
     async loadQueueData(token: string) {
       const queuedata = await AdminService.getQueueData(token);
       if (queuedata) {
@@ -73,7 +51,7 @@ export const useAdminStore = defineStore("admin", {
       this.SET_MODIFIED_PROXIES(overrides);
     },
     async putNewProxies(proxies: ProxySettings): Promise<void> {
-      if (this.proxiesSetForSearchedPlayer._id === undefined || null) {
+      if (this.proxiesSetForSearchedPlayer._id == null) {
         return;
       }
       const oauthStore = useOauthStore();
@@ -144,13 +122,6 @@ export const useAdminStore = defineStore("admin", {
       await AdminService.deleteBanReasonTranslation(id, oauthStore.token);
       await this.loadBanReasonTranslations();
     },
-    SET_BANNED_PLAYERS(bannedPlayers: BannedPlayersResponse): void {
-      this.bannedPlayers = bannedPlayers.players;
-      this.bannedPlayersCount = bannedPlayers.total;
-    },
-    SET_BAN_VALIDATION_ERROR(error: string): void {
-      this.banValidationError = error;
-    },
     SET_QUEUEDATA(queueData: QueueData[]): void {
       this.queuedata = queueData;
     },
@@ -177,23 +148,20 @@ export const useAdminStore = defineStore("admin", {
 
       const oauthStore = useOauthStore();
 
-      // Fetch all three types in parallel
-      const [bannedPlayers, globalMutes, loungeMutes] = await Promise.all([
-        AdminService.getBannedPlayersByBattleTags(battleTags, oauthStore.token),
+      // Bans have their own badge (useBanStatusStore); the two mutes are loaded here in parallel
+      const [globalMutes, loungeMutes] = await Promise.all([
         AdminService.getGlobalMutesByBattleTags(battleTags, oauthStore.token),
         ModerationService.getLoungeMutesByBattleTags(battleTags, oauthStore.token),
       ]);
 
-      // Build lookup map with case-insensitive matching
+      // Build lookup map, tags compared with sameTag
       const statusMap: BattleTagModerationMap = {};
 
       for (const bTag of battleTags) {
-        const ban = bannedPlayers.find((b) => b.battleTag.toLowerCase() === bTag.toLowerCase());
-        const globalMute = globalMutes.find((m) => m.battleTag.toLowerCase() === bTag.toLowerCase());
-        const loungeMute = loungeMutes.find((m) => m.battleTag.toLowerCase() === bTag.toLowerCase());
+        const globalMute = globalMutes.find((m) => sameTag(m.battleTag, bTag));
+        const loungeMute = loungeMutes.find((m) => sameTag(m.battleTag, bTag));
 
         statusMap[bTag] = {
-          ban: ban,
           globalMute: globalMute,
           loungeMute: loungeMute,
         };

@@ -136,6 +136,7 @@ import SeasonBadge from "@/components/player/SeasonBadge.vue";
 import { mapNameFromMatch } from "@/composables/MatchMixin";
 import ModerationStatusBadges from "@/components/admin/smurf-detection/ModerationStatusBadges.vue";
 import { usePlayerStore } from "@/store/player/store";
+import { useBanStatusStore } from "@/store/admin/bans/statusStore";
 import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { useRootStateStore } from "@/store/rootState/store";
@@ -296,7 +297,8 @@ export default defineComponent({
       if (hasModerationPermission.value) {
         loadingModerationStatus.value = true;
         try {
-          await adminStore.loadModerationStatusForBattleTags([battleTag.value]);
+          const tags = [battleTag.value];
+          await Promise.all([adminStore.loadModerationStatusForBattleTags(tags), useBanStatusStore().load(tags)]);
         } finally {
           loadingModerationStatus.value = false;
         }

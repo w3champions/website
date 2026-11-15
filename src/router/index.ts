@@ -33,7 +33,7 @@ import WinrateTab from "@/components/overall-statistics/tabs/WinratesTab.vue";
 import HeroTab from "@/components/overall-statistics/tabs/HeroTab.vue";
 import Admin from "@/views/Admin.vue";
 import AdminQueueData from "@/components/admin/AdminQueueData.vue";
-import AdminBannedPlayers from "@/components/admin/AdminBannedPlayers.vue";
+import AdminBans from "@/components/admin/AdminBans.vue";
 import AdminBanReasonTranslations from "@/components/admin/AdminBanReasonTranslations.vue";
 import AdminSmurfs from "@/components/admin/AdminSmurfs.vue";
 import AdminSmurfManageIdentifiers from "@/components/admin/AdminSmurfManageIdentifiers.vue";
@@ -279,7 +279,7 @@ const routes: RouteRecordRaw[] = [
     component: Admin,
     children: [
       { path: "admin-queue-data", name: EAdminRouteName.LIVE_QUEUE_DATA, component: AdminQueueData },
-      { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBannedPlayers },
+      { path: "admin-banned-players", name: EAdminRouteName.BANNED_PLAYERS, component: AdminBans },
       { path: "admin-ban-reason-translations", name: EAdminRouteName.BAN_REASON_TRANSLATIONS, component: AdminBanReasonTranslations },
       { path: "admin-smurfs", name: EAdminRouteName.SMURF_CHECKER_QUERY, component: AdminSmurfs },
       { path: "admin-smurfs-manage-identifiers", name: EAdminRouteName.SMURF_CHECKER_MANAGE_IDENTIFIERS, component: AdminSmurfManageIdentifiers },

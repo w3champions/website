@@ -1,29 +1,38 @@
 <template>
   <div v-if="hasModerationPermission" class="d-inline-flex align-center">
     <!-- Ban badge -->
-    <v-tooltip v-if="moderationStatus?.ban" location="top" content-class="w3-tooltip elevation-1">
+    <v-tooltip v-if="banBadge" location="top" content-class="w3-tooltip elevation-1">
       <template v-slot:activator="{ props }">
-        <v-chip
-          :size="compact ? 'x-small' : 'small'"
-          :color="isBanExpired(moderationStatus.ban.endDate) ? 'grey' : 'error'"
-          class="px-3"
-          :class="{ 'mr-1': !compact || hasMultipleBadges }"
-          v-bind="props"
-          variant="flat"
-        >
-          <v-icon size="default" :start="!compact">{{ mdiCancel }}</v-icon>
-          <span v-if="!compact" class="ml-1">
-            Banned{{ isBanExpired(moderationStatus.ban.endDate) ? ' (Expired)' : '' }}
-          </span>
-        </v-chip>
+        <span class="d-inline-flex" v-bind="props">
+          <v-chip
+            :size="compact ? 'x-small' : 'small'"
+            :color="banBadge.inEffect ? 'error' : 'grey'"
+            class="px-3"
+            :class="{ 'mr-1': !compact || hasMultipleBadges }"
+            variant="flat"
+          >
+            <v-icon size="default" :start="!compact">{{ mdiCancel }}</v-icon>
+            <span v-if="!compact" class="ml-1">{{ banBadge.label }}</span>
+          </v-chip>
+          <v-chip
+            v-if="banBadge.machine"
+            :size="compact ? 'x-small' : 'small'"
+            color="error"
+            variant="outlined"
+            class="px-3"
+            :class="{ 'mr-1': !compact || hasMultipleBadges }"
+          >
+            {{ t(key("badge_machine")) }}
+          </v-chip>
+        </span>
       </template>
       <div>
-        <div><strong>Reason:</strong> {{ moderationStatus.ban.banReason }}</div>
-        <div><strong>Until:</strong> {{ moderationStatus.ban.endDate }}</div>
-        <div><strong>By:</strong> {{ moderationStatus.ban.author }}</div>
-        <div v-if="isBanExpired(moderationStatus.ban.endDate)" class="text-warning">
-          <strong>Status:</strong> Expired
-        </div>
+        <div><strong>{{ t(key("badge_reason")) }}:</strong> {{ banBadge.reason }}</div>
+        <div><strong>{{ t(key("badge_until")) }}:</strong> {{ banBadge.until }}</div>
+        <div><strong>{{ t(key("badge_by")) }}:</strong> {{ banBadge.by }}</div>
+        <div><strong>{{ t(key("badge_modes")) }}:</strong> {{ banBadge.modes }}</div>
+        <div><strong>{{ t(key("badge_status")) }}:</strong> {{ banBadge.status }}</div>
+        <div v-if="banBadge.machine"><strong>{{ t(key("badge_machine_line")) }}</strong></div>
       </div>
     </v-tooltip>
 
@@ -87,6 +96,12 @@ import { useAdminStore } from "@/store/admin/store";
 import { useOauthStore } from "@/store/oauth/store";
 import { mdiCancel, mdiVolumeOff, mdiMessageOff } from "@mdi/js";
 import { EPermission } from "@/store/admin/permission/types";
+import { useI18n } from "vue-i18n";
+import { useBanPermissions } from "@/composables/useBanPermissions";
+import { useBanStatusStore } from "@/store/admin/bans/statusStore";
+import { banBadgeOf } from "@/store/admin/bans/badge";
+import { key } from "@/store/admin/bans/translate";
+import { EGameMode } from "@/store/types";
 
 export default defineComponent({
   name: "ModerationStatusBadges",
@@ -101,8 +116,11 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n();
     const adminStore = useAdminStore();
+    const banStatusStore = useBanStatusStore();
     const oauthStore = useOauthStore();
+    const { hasMachineAccess } = useBanPermissions();
 
     const permissions = computed<string[]>(() => oauthStore.permissions);
     const hasModerationPermission = computed(() =>
@@ -113,21 +131,23 @@ export default defineComponent({
       return adminStore.battleTagModerationStatus[props.battleTag];
     });
 
+    const banBadge = computed(() =>
+      banBadgeOf(banStatusStore.statuses[props.battleTag], {
+        t,
+        modeName: (m) => t(`gameModes.${EGameMode[m]}`),
+        hasMachineAccess: hasMachineAccess.value,
+      })
+    );
+
     const hasMultipleBadges = computed(() => {
       if (!moderationStatus.value) return false;
       const count = [
-        moderationStatus.value.ban,
+        banBadge.value,
         moderationStatus.value.globalMute,
         moderationStatus.value.loungeMute,
       ].filter(Boolean).length;
       return count > 1;
     });
-
-    function isBanExpired(endDate: string): boolean {
-      if (!endDate) return false;
-      const endDateTime = new Date(endDate);
-      return endDateTime < new Date();
-    }
 
     function isMuteExpired(expiresAt: string | null | undefined): boolean {
       if (!expiresAt) return false; // If no expiry, it never expires
@@ -141,8 +161,10 @@ export default defineComponent({
       mdiMessageOff,
       hasModerationPermission,
       moderationStatus,
+      banBadge,
+      t,
+      key,
       hasMultipleBadges,
-      isBanExpired,
       isMuteExpired,
     };
   },

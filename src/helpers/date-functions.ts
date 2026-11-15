@@ -49,14 +49,15 @@ export const formatTimestampString = (str: timestampString | Date, formatting: s
   return format(parseJSON(str), formatting);
 };
 
-// Converts a date string formatted as "yyyy-MM-dd" to 'yyyy-MM-ddTHH:mm:ss.SSSZ", where the time is the current UTC time.
-// Example: "2023-05-15" becomes "2023-05-15T19:39:49.603Z"
-export const dateToCurrentTimeDate = (endDateString: string): string => {
-  if (!endDateString) return "";
-  const endDate = new Date(endDateString);
-  const now = new Date();
-  now.setDate(endDate.getDate());
-  now.setMonth(endDate.getMonth());
-  now.setFullYear(endDate.getFullYear());
-  return now.toISOString();
+// Converts a date string formatted as "yyyy-MM-dd" to "yyyy-MM-ddTHH:mm:ss.SSSZ", where the day is the one in the text
+// and the time of day is the UTC time of `now`. Answers "" for an empty, malformed or impossible date.
+// Example: "2023-05-15" at 19:39:49.603 UTC becomes "2023-05-15T19:39:49.603Z"
+export const dateToCurrentTimeDate = (endDateString: string, now: Date = new Date()): string => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(endDateString);
+  if (!match) return "";
+  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const result = new Date(
+    Date.UTC(year, month - 1, day, now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds()),
+  );
+  return result.toISOString().slice(0, 10) === endDateString ? result.toISOString() : "";
 };

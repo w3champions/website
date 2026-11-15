@@ -1,5 +1,5 @@
 import { API_URL } from "@/config/env";
-import { BannedPlayer, BannedPlayersGetRequest, BannedPlayersResponse, BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreatePlayerWarningRequest, CreatePlayerWarningResponse, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PatreonMemberDetails, PlayerWarning, PlayerWarningDefinition, PlayerWarningDefinitionRequest, PlayerWarningsGetRequest, PlayerWarningsResponse, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
+import { BanReasonTranslation, ChangePortraitsCommand, ChangePortraitsDto, CreateBanReasonTranslationRequest, CreatePlayerWarningRequest, CreatePlayerWarningResponse, CreateRewardRequest, DriftDetectionResult, DriftSyncResult, GlobalChatBanResponse, GloballyMutedPlayer, GlobalMute, ModuleDefinition, PaginatedAssignments, PatreonAccountLink, PatreonMemberDetails, PlayerWarning, PlayerWarningDefinition, PlayerWarningDefinitionRequest, PlayerWarningsGetRequest, PlayerWarningsResponse, PortraitDefinition, PortraitDefinitionDTO, PortraitDefinitionGroup, ProductMapping, ProductMappingUsersResponse, ProviderConfiguration, Proxy, ProxySettings, QueueData, ReconciliationResult, ReplayChatLog, Reward, RewardAssignment, SearchedPlayer, UpdateBanReasonTranslationRequest, UpdateRewardRequest } from "@/store/admin/types";
 import { authorizedFetch } from "@/helpers/general";
 import { SmurfDetectionResult } from "./smurf-detection/SmurfDetectionResponse";
 
@@ -48,27 +48,6 @@ export interface PortraitOwnersResponse {
 }
 
 export default class AdminService {
-  public static async getBannedPlayers(token: string, req: BannedPlayersGetRequest): Promise<BannedPlayersResponse> {
-    let url = `${API_URL}api/admin/bannedPlayers?page=${req.page}&itemsPerPage=${req.itemsPerPage}`;
-
-    if (req.sortBy) {
-      url += `&sortBy=${req.sortBy}`;
-      url += `&sortDirection=${req.sortDirection}`;
-    }
-    if (req.search) {
-      url += `&search=${encodeURIComponent(req.search)}`;
-    }
-
-    const response = await authorizedFetch("GET", url, token);
-    return await response.json();
-  }
-
-  public static async postBan(bannedPlayer: BannedPlayer, token: string): Promise<string> {
-    const url = `${API_URL}api/admin/bannedPlayers`;
-    const response = await authorizedFetch("POST", url, token, JSON.stringify(bannedPlayer));
-    return response.ok ? "" : await response.json();
-  }
-
   public static async getWarnings(token: string, req: PlayerWarningsGetRequest): Promise<PlayerWarningsResponse> {
     let url = `${API_URL}api/admin/warnings?page=${req.page}&itemsPerPage=${req.itemsPerPage}`;
 
@@ -549,13 +528,6 @@ export default class AdminService {
   }
 
   // Batch moderation status methods
-  public static async getBannedPlayersByBattleTags(battleTags: string[], token: string): Promise<BannedPlayer[]> {
-    const url = `${API_URL}api/admin/bannedPlayers/batch`;
-    const response = await authorizedFetch("POST", url, token, JSON.stringify({ battleTags }));
-    const data = await response.json();
-    return data.players || [];
-  }
-
   public static async getGlobalMutesByBattleTags(battleTags: string[], token: string): Promise<GloballyMutedPlayer[]> {
     const url = `${API_URL}api/admin/globalChatBans/batch`;
     const response = await authorizedFetch("POST", url, token, JSON.stringify({ battleTags }));
