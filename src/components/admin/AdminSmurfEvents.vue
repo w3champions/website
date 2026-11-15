@@ -177,9 +177,10 @@ function onDeleted(): void {
   showList();
 }
 
-/** The tables of the event page: its decision record and its identifiers. */
+/** The tables of the event page: its decision record, its identifiers and where its attendees were. */
 function loadEventTables(id: string): void {
   void store.loadHistory(id);
+  void store.loadPresence(id);
   void store.loadIdentifiers(id);
 }
 

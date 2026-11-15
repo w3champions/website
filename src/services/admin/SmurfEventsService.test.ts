@@ -142,6 +142,14 @@ test("an absent, malformed or not positive Retry-After leaves the error without 
   }
 });
 
+test("presence uses its route", async () => {
+  const { service, calls } = serviceWith({ status: 200, body: {} });
+
+  await service.presence("tok", "ev/1");
+
+  assert.deepEqual(calls.map((c) => [c.method, c.url]), [["GET", `${BASE}/ev%2F1/presence`]]);
+});
+
 test("rename, identifiers and history use their routes; identifiers never sends a reveal parameter", async () => {
   const { service, calls } = serviceWith({ status: 200, body: {} });
 
