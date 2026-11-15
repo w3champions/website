@@ -1,0 +1,11 @@
+/* Mirrors Chart.js' own tooltip so canvas and DOM tooltips read as one thing.
+   Not scoped: v-tooltip and the activity tooltip render outside the component. */
+.chartlike-tooltip {
+  background: rgba(0, 0, 0, 0.85) !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  padding: 7px 10px !important;
+  font-size: 13px !important;
+  line-height: 1.4;
+  opacity: 1 !important;
+}

@@ -112,6 +112,9 @@
             <v-tab :to="`/player/${encodeURIComponent(battleTag)}/statistics`">
               {{ $t("views_player.statistics") }}
             </v-tab>
+            <v-tab :to="`/player/${encodeURIComponent(battleTag)}/lifetime`">
+              Lifetime
+            </v-tab>
             <v-tab :to="`/player/${encodeURIComponent(battleTag)}/clan`">
               {{ $t("views_player.clan") }}
             </v-tab>
