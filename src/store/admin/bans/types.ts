@@ -156,6 +156,7 @@ export interface MachineIdAccountsResponse {
 export interface MachineImpactResponse {
   otherAccounts: number;
   capped: boolean;
+  counted: number;
 }
 export interface TagStatus {
   battleTag: string;

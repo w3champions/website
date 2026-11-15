@@ -67,25 +67,25 @@ test("a failed account view is the open result and the context error", async () 
 });
 test("an empty selection has no collateral and sends nothing", async () => {
   await dialog.loadImpact([]);
-  expect(dialog.impact).toEqual({ otherAccounts: 0, capped: false });
+  expect(dialog.impact).toEqual({ otherAccounts: 0, capped: false, counted: 0 });
   expect(service.machineImpact).not.toHaveBeenCalled();
 });
 test("the newest impact answer wins", async () => {
   service.account.mockResolvedValue(accountView());
   await dialog.open("1001", { machineAccess: false });
   const first = deferred();
-  service.machineImpact.mockReturnValueOnce(first.promise).mockResolvedValueOnce({ otherAccounts: 2, capped: false });
+  service.machineImpact.mockReturnValueOnce(first.promise).mockResolvedValueOnce({ otherAccounts: 2, capped: false, counted: 1 });
   const a = dialog.loadImpact(["a"]);
   await dialog.loadImpact(["a", "c"]);
-  first.resolve({ otherAccounts: 1, capped: false });
+  first.resolve({ otherAccounts: 1, capped: false, counted: 1 });
   await a;
-  expect(dialog.impact).toEqual({ otherAccounts: 2, capped: false });
+  expect(dialog.impact).toEqual({ otherAccounts: 2, capped: false, counted: 1 });
   expect(service.machineImpact).toHaveBeenLastCalledWith("1001", ["a", "c"], "tok");
 });
 test("a new selection drops the previous impact at once; only the newest selection's answer makes it ready", async () => {
   service.account.mockResolvedValue(accountView());
   await dialog.open("1001", { machineAccess: false });
-  service.machineImpact.mockResolvedValueOnce({ otherAccounts: 1, capped: false });
+  service.machineImpact.mockResolvedValueOnce({ otherAccounts: 1, capped: false, counted: 1 });
   await dialog.loadImpact(["a"]);
   expect(dialog.impactReadyFor(["a"])).toBe(true);
   const second = deferred();
@@ -94,7 +94,7 @@ test("a new selection drops the previous impact at once; only the newest selecti
   expect(dialog.impact).toBeNull();
   expect(dialog.impactReadyFor(["a"])).toBe(false);
   expect(dialog.impactReadyFor(["a", "c"])).toBe(false);
-  second.resolve({ otherAccounts: 2, capped: false });
+  second.resolve({ otherAccounts: 2, capped: false, counted: 1 });
   await pending;
   expect(dialog.impactReadyFor(["a", "c"])).toBe(true);
 });
@@ -102,7 +102,7 @@ test("a failed impact is not ready, and a retry that succeeds is", async () => {
   service.account.mockResolvedValue(accountView());
   await dialog.open("1001", { machineAccess: false });
   const failure = new BanApiError(503, "MACHINE_DATA_UNAVAILABLE", "");
-  service.machineImpact.mockRejectedValueOnce(failure).mockResolvedValueOnce({ otherAccounts: 0, capped: false });
+  service.machineImpact.mockRejectedValueOnce(failure).mockResolvedValueOnce({ otherAccounts: 0, capped: false, counted: 0 });
   const logged = vi.spyOn(console, "error").mockImplementation(() => {});
   expect(await dialog.loadImpact(["a"])).toBe(false);
   expect(logged).toHaveBeenCalledExactlyOnceWith("Failed to load machine ban impact:", failure);

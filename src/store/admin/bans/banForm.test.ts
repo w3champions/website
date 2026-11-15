@@ -47,7 +47,7 @@ test("create sends the contract's pairs and a trimmed reason", () => {
   const perm = toCreateRequest({ ...filled, scope: "all", duration: "permanent", freeText: "Shown text one" }, ctx);
   assert.deepEqual([perm.allGameModes, perm.gameModes, perm.permanent, perm.endDate, perm.userVisibleBanReason], [true, [], true, null, { freeText: "Shown text one" }]);
 });
-test("a machine ban is global and carries every ticked ID, the 'Not one PC' ones too", () => {
+test("a machine ban is global and carries every ticked ID as it is", () => {
   const request = toCreateRequest(withKind(filled, "machine"), { ...ctx, picker: machinePicker(["a", "b"]) });
   assert.deepEqual([request.type, request.allGameModes, request.gameModes, request.machineIds], ["machine", true, [], ["a", "b"]]);
 });
