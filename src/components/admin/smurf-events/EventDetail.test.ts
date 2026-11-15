@@ -3,7 +3,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { EAdminRouteName } from "@/router/types";
-import type { SmurfEventDetail, SmurfEventFacts } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { SmurfEventDetail, SmurfEventFacts, SmurfEventPresence } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { manualEvent, testPlugins } from "./setup.testing";
 
@@ -276,4 +276,53 @@ test("a failed identifiers load can be retried and shows the table in the page",
   await wrapper.findComponent({ name: "IdentifierTable" }).vm.$emit("retry");
 
   expect(wrapper.emitted("retry-identifiers")).toHaveLength(1);
+});
+
+const PRESENCE: SmurfEventPresence = {
+  at: "2026-10-05T00:00:00.000Z",
+  window: { fromDay: 1, toDay: 20, eventFromDay: 5, eventToDay: 7 },
+  networks: [{ hash8: "0a1b2c3d" }],
+  attendees: [{ battleTag: "Anchor#1001", entry: "network" }, { battleTag: "Guest#1003", notRead: true }],
+};
+
+test("EventDetail shows the chips until presence is loaded", async () => {
+  await show(manualEvent());
+  expect(wrapper.findComponent({ name: "AttendeePresenceTable" }).exists()).toBe(false);
+  expect(wrapper.findAll(".v-chip").some((c) => c.text().includes("Guest#1003"))).toBe(true);
+
+  useSmurfEventsStore().presence = PRESENCE;
+  await flushPromises();
+
+  expect(wrapper.findComponent({ name: "AttendeePresenceTable" }).exists()).toBe(true);
+  expect(wrapper.find("thead").text()).toContain("How they got in");
+});
+
+test("EventDetail shows the venue card above the identifiers for an event with venue networks", async () => {
+  await show(manualEvent());
+
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).exists()).toBe(true);
+  expect(wrapper.findComponent({ name: "AttendeeSpread" }).exists()).toBe(false);
+});
+
+test("EventDetail shows the spread instead of the venue card for an event without venue networks", async () => {
+  await show(manualEvent({ networks: [] }));
+  useSmurfEventsStore().presence = { ...PRESENCE, networks: [], spread: { countries: ["DE"], sharedInSpan: [], sharedUsual: [] } };
+  await flushPromises();
+
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).exists()).toBe(false);
+  expect(wrapper.findComponent({ name: "AttendeeSpread" }).exists()).toBe(true);
+});
+
+test("an event without venue networks shows the venue card's loading and failure while the spread is not there", async () => {
+  await show(manualEvent({ networks: [] }));
+  useSmurfEventsStore().presenceLoading = true;
+  await flushPromises();
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).exists()).toBe(true);
+
+  useSmurfEventsStore().presenceLoading = false;
+  useSmurfEventsStore().presenceError = new Error("down");
+  await flushPromises();
+  await wrapper.findComponent({ name: "VenueNetworksCard" }).vm.$emit("retry");
+
+  expect(wrapper.emitted("retry-presence")).toHaveLength(1);
 });

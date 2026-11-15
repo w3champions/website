@@ -63,19 +63,22 @@
               <v-chip size="small" class="ml-2" variant="tonal">{{ event.attendees.length }}</v-chip>
             </v-card-title>
             <v-card-text>
-              <v-chip
-                v-for="tag in event.attendees"
-                :key="tag"
-                size="small"
-                class="mr-1 my-1"
-                :variant="anchors.has(tag) ? 'flat' : 'tonal'"
-                :color="anchors.has(tag) ? 'primary' : undefined"
-                :to="hardwareLink(tag)"
-                :prepend-icon="anchors.has(tag) ? mdiAnchor : undefined"
-                :title="anchors.has(tag) ? t(key('anchor')) : undefined"
-              >
-                <span v-if="anchors.has(tag)" class="d-sr-only">{{ t(key("anchor")) }}: </span>{{ tag }}
-              </v-chip>
+              <attendee-presence-table v-if="store.presence" :presence="store.presence" :anchors="anchors" />
+              <template v-else>
+                <v-chip
+                  v-for="tag in event.attendees"
+                  :key="tag"
+                  size="small"
+                  class="mr-1 my-1"
+                  :variant="anchors.has(tag) ? 'flat' : 'tonal'"
+                  :color="anchors.has(tag) ? 'primary' : undefined"
+                  :to="hardwareLink(tag)"
+                  :prepend-icon="anchors.has(tag) ? mdiAnchor : undefined"
+                  :title="anchors.has(tag) ? t(key('anchor')) : undefined"
+                >
+                  <span v-if="anchors.has(tag)" class="d-sr-only">{{ t(key("anchor")) }}: </span>{{ tag }}
+                </v-chip>
+              </template>
             </v-card-text>
           </v-card>
         </v-col>
@@ -87,6 +90,16 @@
         :error="store.historyError ? errorText(store.historyError, tr) : null"
         @retry="emit('retry-history')"
       />
+
+      <venue-networks-card
+        v-if="event.networks.length > 0 || store.presenceLoading || store.presenceError"
+        :presence="store.presence"
+        :identifiers="store.identifiers"
+        :loading="store.presenceLoading"
+        :error="store.presenceError ? presenceErrorText(store.presenceError, tr) : null"
+        @retry="emit('retry-presence')"
+      />
+      <attendee-spread v-else-if="store.presence?.spread" :spread="store.presence.spread" />
 
       <identifier-table
         :identifiers="store.identifiers"
@@ -131,19 +144,22 @@ import { useI18n } from "vue-i18n";
 import { mdiAnchor, mdiArrowLeft, mdiDelete, mdiGavel, mdiPencil, mdiRenameBox } from "@mdi/js";
 import type { DataTableHeader } from "vuetify";
 import { formatUtc } from "@/helpers/utc-dates";
-import { EAdminRouteName } from "@/router/types";
 import type { SmurfEventLinkRef } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { sourceLabel } from "@/store/admin/hardwareSmurfs/labels";
 import { factText } from "@/store/admin/smurfEvents/facts";
 import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
-import { errorText } from "@/store/admin/smurfEvents/labels";
+import { errorText, presenceErrorText } from "@/store/admin/smurfEvents/labels";
 import { unreviewedNeighbours } from "@/store/admin/smurfEvents/neighbours";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
+import { hardwareLink } from "@/store/admin/smurfEvents/presence";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import AttendeePresenceTable from "./AttendeePresenceTable.vue";
+import AttendeeSpread from "./AttendeeSpread.vue";
 import EventBadge from "./EventBadge.vue";
 import EventFacts from "./EventFacts.vue";
 import EventHistory from "./EventHistory.vue";
 import IdentifierTable from "./IdentifierTable.vue";
+import VenueNetworksCard from "./VenueNetworksCard.vue";
 
 const LINKS_PAGE = 25;
 
@@ -160,6 +176,7 @@ const emit = defineEmits<{
   (e: "open-event", id: string): void;
   (e: "retry-history"): void;
   (e: "retry-identifiers"): void;
+  (e: "retry-presence"): void;
 }>();
 
 const { t } = useI18n();
@@ -172,10 +189,6 @@ const anchors = computed(() => new Set(event.value?.anchors ?? []));
 
 function spanText(from: string, to: string): string {
   return t(key("span"), { from: formatUtc(from), to: formatUtc(to) });
-}
-
-function hardwareLink(battleTag: string) {
-  return { name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, query: { player: battleTag } };
 }
 
 /** The unreviewed events before and after this one in the server's queue order, placed by this event's own date and id. */

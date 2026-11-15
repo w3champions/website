@@ -28,6 +28,7 @@
         @open-event="openEvent"
         @retry-history="store.loadHistory(eventId)"
         @retry-identifiers="store.loadIdentifiers(eventId)"
+        @retry-presence="store.loadPresence(eventId)"
         @review="openReview"
         @rename="openRename"
         @edit="openManual(store.detail)"

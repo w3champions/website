@@ -41,7 +41,7 @@
                 <div v-if="entry.row.usernames && entry.row.usernames.length > 0" class="text-body-2 text-medium-emphasis">{{ t(key("usernames"), { names: entry.row.usernames.join(", ") }) }}</div>
               </td>
               <td class="text-no-wrap">
-                <span v-if="isNotRecorded(entry.row)" class="not-recorded text-medium-emphasis">{{ t(key("facts_not_recorded")) }}</span>
+                <not-recorded v-if="isNotRecorded(entry.row)" />
                 <template v-else>
                   <div>{{ accountsText(entry.row) }}</div>
                   <accounts-dumbbell :during="entry.row.accountsDuring ?? 0" :ever="entry.row.accountsEver" :scale="scale" />
@@ -95,6 +95,7 @@ import AccountsDumbbell from "../smurf-detection/AccountsDumbbell.vue";
 import DayLane from "../smurf-detection/DayLane.vue";
 import { logAxis } from "../smurf-detection/day-lane";
 import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
+import NotRecorded from "./NotRecorded.vue";
 
 const props = defineProps<{
   identifiers: SmurfEventIdentifiers | null;
@@ -175,12 +176,3 @@ const foldText = computed(() => {
   return `${t(key(`fold_summary_${total === 1 ? "one" : "other"}`), { count: total })} (${groups.join(", ")})`;
 });
 </script>
-
-<style scoped>
-.not-recorded {
-  display: inline-block;
-  padding: 0 8px;
-  border-radius: 2px;
-  background: repeating-linear-gradient(135deg, transparent 0 4px, rgba(var(--v-theme-on-surface), 0.12) 4px 6px);
-}
-</style>

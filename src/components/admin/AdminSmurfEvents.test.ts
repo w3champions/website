@@ -155,6 +155,18 @@ test("the identifiers are read after every load of an event, and a retry reads o
   expect(service.history).toHaveBeenCalledTimes(2);
 });
 
+test("a presence retry reads only the presence", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  const before = service.presence.mock.calls.length;
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("retry-presence");
+  await flushPromises();
+
+  expect(service.presence).toHaveBeenCalledTimes(before + 1);
+  expect(service.presence).toHaveBeenLastCalledWith("tok", "ev1");
+  expect(service.get).toHaveBeenCalledTimes(1);
+});
+
 test("a rename reads the record again and says so", async () => {
   await open("/admin-smurf-events?event=ev1");
   wrapper.findComponent({ name: "EventDetail" }).vm.$emit("rename");
