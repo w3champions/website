@@ -261,6 +261,8 @@ const data = {
       picker_col_note: "Note",
       picker_include: "Include {id}",
       picker_others_loading: "Loading accounts…",
+      picker_impact_loading: "Checking which other accounts use the selected IDs…",
+      picker_impact_error: "Could not check which other accounts use the selected IDs. Save waits for this check.",
       revoke_title: "Revoke ban",
       revoke_confirm: "Revoke ban",
       revoke_note: "Why is this ban revoked? (required)",

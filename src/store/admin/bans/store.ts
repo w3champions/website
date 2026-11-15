@@ -122,8 +122,14 @@ async function applyChanged(store: BansStore, view: BanView): Promise<void> {
 export const useBansStore = defineStore("bans", {
   state: initialState,
   actions: {
-    /** Loads the list, and the account view when query.account is set (cleared when null). */
+    /** Loads the list, and the account view when query.account is set (cleared when null). Another account (or the log) drops the rows first. */
     async setQuery(query: BanPageQuery): Promise<boolean> {
+      // Rows belong to the query's account (or the log): another one never shows them, even when its list fails.
+      if (query.account !== this.query.account) {
+        this.bans = [];
+        this.total = 0;
+        this.listError = null;
+      }
       this.query = { ...query };
       const [listed, account] = await Promise.all([this.loadList(), this.loadAccount()]);
       return listed && account;

@@ -82,6 +82,35 @@ test("the newest impact answer wins", async () => {
   expect(dialog.impact).toEqual({ otherAccounts: 2, capped: false });
   expect(service.machineImpact).toHaveBeenLastCalledWith("1001", ["a", "c"], "tok");
 });
+test("a new selection drops the previous impact at once; only the newest selection's answer makes it ready", async () => {
+  service.account.mockResolvedValue(accountView());
+  await dialog.open("1001", { machineAccess: false });
+  service.machineImpact.mockResolvedValueOnce({ otherAccounts: 1, capped: false });
+  await dialog.loadImpact(["a"]);
+  expect(dialog.impactReadyFor(["a"])).toBe(true);
+  const second = deferred();
+  service.machineImpact.mockReturnValueOnce(second.promise);
+  const pending = dialog.loadImpact(["c", "a"]);
+  expect(dialog.impact).toBeNull();
+  expect(dialog.impactReadyFor(["a"])).toBe(false);
+  expect(dialog.impactReadyFor(["a", "c"])).toBe(false);
+  second.resolve({ otherAccounts: 2, capped: false });
+  await pending;
+  expect(dialog.impactReadyFor(["a", "c"])).toBe(true);
+});
+test("a failed impact is not ready, and a retry that succeeds is", async () => {
+  service.account.mockResolvedValue(accountView());
+  await dialog.open("1001", { machineAccess: false });
+  const failure = new BanApiError(503, "MACHINE_DATA_UNAVAILABLE", "");
+  service.machineImpact.mockRejectedValueOnce(failure).mockResolvedValueOnce({ otherAccounts: 0, capped: false });
+  const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+  expect(await dialog.loadImpact(["a"])).toBe(false);
+  expect(logged).toHaveBeenCalledExactlyOnceWith("Failed to load machine ban impact:", failure);
+  logged.mockRestore();
+  expect([dialog.impact, dialog.impactError, dialog.impactReadyFor(["a"])]).toEqual([null, failure, false]);
+  expect(await dialog.loadImpact(["a"])).toBe(true);
+  expect(dialog.impactReadyFor(["a"])).toBe(true);
+});
 test("other accounts are loaded per machine ID, excluding the dialog's account", async () => {
   service.account.mockResolvedValue(accountView());
   await dialog.open("1001", { machineAccess: false });

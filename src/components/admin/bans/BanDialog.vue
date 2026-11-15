@@ -165,7 +165,7 @@ import {
   editProblems,
   withKind,
 } from "@/store/admin/bans/banForm";
-import { initialPicker, machineSaveLabel, pickerSummary, type PickerState } from "@/store/admin/bans/machinePicker";
+import { impactIds, impactNeeded, initialPicker, machineSaveLabel, pickerSummary, type PickerState } from "@/store/admin/bans/machinePicker";
 import { useBanDialogStore } from "@/store/admin/bans/dialogStore";
 import { banErrorText, blocksRetry } from "@/store/admin/bans/errors";
 import { overlapNotice } from "@/store/admin/bans/inEffect";
@@ -252,7 +252,12 @@ const saveLabel = computed(() =>
 
 const editRequest = computed(() => (props.mode === "edit" && props.ban ? toEditRequest(draft.value, props.ban, activePicker.value) : null));
 const blocked = computed(() => store.actionError !== null && blocksRetry(store.actionError));
-const saveDisabled = computed(() => store.acting || blocked.value || (props.mode === "edit" && editRequest.value === null));
+/** Machine IDs save only once the impact of exactly the ticked ones is known, so the collateral warning is never missing. */
+const impactMissing = computed(() => {
+  const state = activePicker.value;
+  return state !== null && impactNeeded(state) && !dialogStore.impactReadyFor(impactIds(state));
+});
+const saveDisabled = computed(() => store.acting || blocked.value || impactMissing.value || (props.mode === "edit" && editRequest.value === null));
 const errorText = computed(() => {
   if (store.actionError === null) return "";
   return store.maybeSaved ? t(key("error_maybe_saved")) : banErrorText(store.actionError, tr);

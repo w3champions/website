@@ -13,7 +13,10 @@ export interface BanDialogState {
   machineRows: MachineIdRow[];
   machineRowsLoading: boolean;
   machineRowsError: unknown;
+  /** The impact of the selection in `impactFor`; null while that one loads or after it failed. */
   impact: MachineImpactResponse | null;
+  /** The selection (see {@link selectionKey}) the impact, its loading and its error belong to; null before the first. */
+  impactFor: string | null;
   impactLoading: boolean;
   impactError: unknown;
   otherAccounts: Record<string, MachineIdAccountsResponse>;
@@ -31,6 +34,9 @@ const NO_IMPACT = { otherAccounts: 0, capped: false } as const;
 
 const token = (): string => useOauthStore().token;
 
+/** One key per set of machine IDs, whatever their order. */
+const selectionKey = (machineIds: readonly string[]): string => [...machineIds].sort().join(" ");
+
 function initialState(): BanDialogState {
   return {
     accountKey: null,
@@ -41,6 +47,7 @@ function initialState(): BanDialogState {
     machineRowsLoading: false,
     machineRowsError: null,
     impact: null,
+    impactFor: null,
     impactLoading: false,
     impactError: null,
     otherAccounts: {},
@@ -87,6 +94,10 @@ function loadMachineRows(store: BanDialogStore, accountKey: string): Promise<boo
 
 export const useBanDialogStore = defineStore("banDialog", {
   state: initialState,
+  getters: {
+    /** The impact of exactly these IDs has arrived: nothing older, pending or failed. */
+    impactReadyFor: (state) => (machineIds: readonly string[]): boolean => state.impactFor === selectionKey(machineIds) && state.impact !== null && !state.impactLoading && state.impactError === null,
+  },
   actions: {
     /** The account view; with machine access also the machine IDs (in parallel). The result is the account view's outcome. */
     async open(accountKey: string, options: { machineAccess: boolean }): Promise<boolean> {
@@ -95,9 +106,15 @@ export const useBanDialogStore = defineStore("banDialog", {
       const [account] = await Promise.all([loadContext(this, accountKey), options.machineAccess ? loadMachineRows(this, accountKey) : Promise.resolve(true)]);
       return account;
     },
-    /** [] gives impact { otherAccounts: 0, capped: false } without a request. */
+    /**
+     * The impact of a new selection; the previous selection's impact is dropped at once, and only the newest request writes.
+     * [] gives impact { otherAccounts: 0, capped: false } without a request.
+     */
     async loadImpact(machineIds: string[]): Promise<boolean> {
       const accountKey = this.accountKey;
+      this.impactFor = selectionKey(machineIds);
+      this.impact = null;
+      this.impactError = null;
       if (machineIds.length === 0) {
         impactLoads.invalidate();
         this.impact = { ...NO_IMPACT };
@@ -105,7 +122,11 @@ export const useBanDialogStore = defineStore("banDialog", {
         this.impactError = null;
         return true;
       }
-      if (accountKey === null) return false; // open() comes first: without an account there is nothing to ask about
+      if (accountKey === null) {
+        impactLoads.invalidate(); // open() comes first: without an account there is nothing to ask about
+        this.impactLoading = false;
+        return false;
+      }
       return await loadLatest(impactLoads, {
         what: "machine ban impact",
         setLoading: (loading) => {

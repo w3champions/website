@@ -26,6 +26,7 @@
           :query="store.query"
           :loading="store.listLoading"
           :matched-tag="matchedTag"
+          :list-failed="store.listError !== null"
           @update:query="replaceQuery"
           @back="openAccount(null)"
           @add="openAdd(store.query.account, null)"
@@ -33,7 +34,16 @@
           @edit="openEdit"
           @revoke="openRevoke"
           @ban-again="banAgain"
-        />
+        >
+          <template v-slot:list-error>
+            <v-alert type="error" variant="tonal" density="compact" class="bans-list-error">
+              {{ banErrorText(store.listError, tr) }}
+              <template v-slot:append>
+                <v-btn variant="text" @click="store.loadList()">{{ t(key("retry")) }}</v-btn>
+              </template>
+            </v-alert>
+          </template>
+        </ban-account-view>
         <v-progress-linear v-else indeterminate />
       </template>
 

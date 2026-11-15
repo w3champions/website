@@ -62,6 +62,16 @@
         {{ t(key("picker_none")) }}
       </v-btn>
     </div>
+    <div v-if="dialogStore.impactLoading" class="picker-impact-loading d-flex align-center ga-2 mt-1 text-body-2 text-medium-emphasis" role="status">
+      <v-progress-circular indeterminate size="16" width="2" />
+      {{ t(key("picker_impact_loading")) }}
+    </div>
+    <v-alert v-else-if="dialogStore.impactError" type="error" variant="tonal" density="compact" class="picker-impact-error mt-2">
+      {{ t(key("picker_impact_error")) }} {{ banErrorText(dialogStore.impactError, tr) }}
+      <template v-slot:append>
+        <v-btn variant="text" @click="loadImpact">{{ t(key("retry")) }}</v-btn>
+      </template>
+    </v-alert>
   </div>
 </template>
 
@@ -70,6 +80,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBanFormat } from "@/composables/useBanFormat";
 import { useBanDialogStore } from "@/store/admin/bans/dialogStore";
+import { banErrorText } from "@/store/admin/bans/errors";
 import {
   hiddenOlderCount,
   impactIds,
@@ -118,9 +129,12 @@ function toggleOthers(machineId: string): void {
   }
 }
 
-watch(() => impactIds(props.modelValue).join(" "), () => {
+function loadImpact(): void {
   void dialogStore.loadImpact(impactIds(props.modelValue));
-}, { immediate: true });
+}
+
+// Every change of the counted IDs asks again; the store drops the previous selection's impact at once.
+watch(() => impactIds(props.modelValue).join(" "), loadImpact, { immediate: true });
 </script>
 
 <style scoped>

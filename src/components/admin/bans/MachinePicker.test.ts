@@ -161,6 +161,85 @@ test("Machine ban: the picker replaces the game modes right under the type, with
   expect(order(".machine-reasons-hint", ".ban-field-reason")).toBe(true);
 });
 
+function deferred<T = unknown>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+/** A machine ban drafted up to Save, its impact answered by `impact`. */
+async function machineDraft(impact: () => Promise<unknown>) {
+  service.account.mockResolvedValue(accountView({ accountKey: "1001" }));
+  service.machineIds.mockResolvedValue(rows);
+  service.machineImpact.mockImplementation(impact);
+  service.create.mockResolvedValue(machineBanView({ id: "new" }));
+  openAdd({ accountKey: "1001" });
+  await flushPromises();
+  await chooseType(txt("type_machine"));
+  await flushPromises();
+  await chooseDuration(7);
+  await reason().setValue("grief");
+}
+
+test("while the impact of the ticked IDs loads, the picker says so and Save stays disabled", async () => {
+  const answer = deferred();
+  await machineDraft(() => answer.promise);
+  expect(wrapper.find(".picker-impact-loading").text()).toBe(txt("picker_impact_loading"));
+  expect(saveButton().element.disabled).toBe(true);
+  await save();
+  await flushPromises();
+  expect(service.create).not.toHaveBeenCalled();
+  answer.resolve({ otherAccounts: 2, capped: false });
+  await flushPromises();
+  expect(wrapper.find(".picker-impact-loading").exists()).toBe(false);
+  expect(saveButton().element.disabled).toBe(false);
+  expect(saveButton().text()).toBe("Ban account + 1 machine · locks out at least 2 other accounts");
+});
+
+test("a failed impact shows the error with Retry and keeps Save disabled; a retry that succeeds enables it", async () => {
+  const failure = new BanApiError(503, "MACHINE_DATA_UNAVAILABLE", "");
+  const logged = expectMachineLoadLogged();
+  let calls = 0;
+  await machineDraft(() => (++calls === 1 ? Promise.reject(failure) : Promise.resolve({ otherAccounts: 2, capped: false })));
+  expect(logged).toHaveBeenCalledExactlyOnceWith("Failed to load machine ban impact:", failure);
+  const error = wrapper.find(".picker-impact-error");
+  expect(error.text()).toContain(txt("picker_impact_error"));
+  expect(error.text()).toContain(MACHINE_DATA_UNAVAILABLE);
+  expect(saveButton().element.disabled).toBe(true);
+  await save();
+  await flushPromises();
+  expect(service.create).not.toHaveBeenCalled();
+  await error.findAll("button").find((b) => b.text() === txt("retry"))!.trigger("click");
+  await flushPromises();
+  expect(service.machineImpact).toHaveBeenCalledTimes(2);
+  expect(wrapper.find(".picker-impact-error").exists()).toBe(false);
+  expect(saveButton().element.disabled).toBe(false);
+  expect(saveButton().text()).toBe("Ban account + 1 machine · locks out at least 2 other accounts");
+});
+
+test("an impact answer for an earlier selection is ignored: Save waits for the current one", async () => {
+  const earlier = deferred();
+  const current = deferred();
+  await machineDraft(() => (service.machineImpact.mock.calls.length === 1 ? earlier.promise : current.promise));
+  await button("Show 1 older ID").trigger("click");
+  await tick("cc33dd44");
+  expect(service.machineImpact).toHaveBeenLastCalledWith("1001", ["aa11bb22", "cc33dd44"], "tok");
+  earlier.resolve({ otherAccounts: 5, capped: false });
+  await flushPromises();
+  expect(saveButton().element.disabled).toBe(true);
+  expect(saveButton().text()).toBe("Ban account + 2 machines");
+  current.resolve({ otherAccounts: 0, capped: false });
+  await flushPromises();
+  expect(saveButton().element.disabled).toBe(false);
+  expect(saveButton().text()).toBe("Ban account + 2 machines");
+  await save();
+  await flushPromises();
+  expect(service.create).toHaveBeenCalledWith(expect.objectContaining({ machineIds: ["aa11bb22", "cc33dd44"] }), "tok");
+});
+
 test("a machine ban saves the ticked IDs as a global ban", async () => {
   await machineAdd();
   service.create.mockResolvedValue(machineBanView({ id: "new" }));

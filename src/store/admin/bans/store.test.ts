@@ -70,6 +70,19 @@ test("a failed list load is kept as the list error", async () => {
   expect(store.listError).toBe(failure);
   expect(store.listLoading).toBe(false);
 });
+test("another account drops the rows before its list loads, so a failed list shows none of them", async () => {
+  const failure = new BanApiError(503, "BANS_UNAVAILABLE", "");
+  service.account.mockResolvedValue(accountView({ accountKey: "1001" }));
+  service.list.mockResolvedValueOnce({ total: 1, bans: [banView({ id: "b2", accountKey: "1002" })] }).mockRejectedValueOnce(failure);
+  await store.setQuery(DEFAULT_PAGE_QUERY);
+  const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+  expect(await store.setQuery(withAccount(DEFAULT_PAGE_QUERY, "1001"))).toBe(false);
+  expect(logged).toHaveBeenCalledExactlyOnceWith("Failed to load bans:", failure);
+  logged.mockRestore();
+  expect(store.bans).toEqual([]);
+  expect(store.total).toBe(0);
+  expect(store.listError).toBe(failure);
+});
 test("the machine filter is sent only while switched on", async () => {
   service.list.mockResolvedValue({ total: 0, bans: [] });
   await store.setMachineOnly(true);

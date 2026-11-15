@@ -17,7 +17,8 @@
         @update:model-value="(value: BanStatus | null) => emit('update:query', { ...query, status: value, page: 1 })"
       />
     </div>
-    <p v-if="noneWithStatus" class="text-medium-emphasis account-none">{{ t(key("no_bans_with_status")) }}</p>
+    <slot v-if="listFailed" name="list-error"></slot>
+    <p v-else-if="noneWithStatus" class="text-medium-emphasis account-none">{{ t(key("no_bans_with_status")) }}</p>
     <ban-table
       v-else
       :bans="bans"
@@ -53,7 +54,17 @@ import { statusLabel } from "@/store/admin/bans/wording";
 import AccountHeader from "./AccountHeader.vue";
 import BanTable from "./BanTable.vue";
 
-const props = defineProps<{ account: AccountView; bans: BanView[]; total: number; query: BanPageQuery; loading: boolean; matchedTag: string | null }>();
+const props = defineProps<{
+  account: AccountView;
+  bans: BanView[];
+  total: number;
+  query: BanPageQuery;
+  loading: boolean;
+  matchedTag: string | null;
+  /** The list failed: the `list-error` slot replaces the table, so no row is there to act on. */
+  listFailed?: boolean;
+}>();
+defineSlots<{ "list-error"(): unknown }>();
 const emit = defineEmits<{
   (e: "update:query", query: BanPageQuery): void;
   (e: "back"): void;

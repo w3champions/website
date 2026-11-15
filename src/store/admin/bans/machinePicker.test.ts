@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { banSummary, FIXTURE_NOW, fixtureModeName, machineIdRow } from "./fixtures.testing";
-import { hiddenOlderCount, impactIds, initialPicker, lastUsedText, machineIdsChanged, machineSaveLabel, otherAccountBanText, otherAccountsMoreText, otherAccountsText, pickerFooterText, pickerProblem, pickerSummary, resetToSaved, revealOlder, rowNote, selectNone, selectRecommended, toggleId, visibleRows } from "./machinePicker";
+import { hiddenOlderCount, impactIds, impactNeeded, initialPicker, lastUsedText, machineIdsChanged, machineSaveLabel, otherAccountBanText, otherAccountsMoreText, otherAccountsText, pickerFooterText, pickerProblem, pickerSummary, resetToSaved, revealOlder, rowNote, selectNone, selectRecommended, toggleId, visibleRows } from "./machinePicker";
 import { translateEn as t } from "./translate.testing";
 import type { BanSummary, OtherAccount } from "./types";
 
@@ -113,4 +113,13 @@ test("cells", () => {
   assert.equal(lastUsedText(rows[0], now, t), "2026-11-13 (2 days ago)");
   assert.equal(lastUsedText(machineIdRow({ lastUsed: "2026-11-15T01:00:00.000Z" }), now, t), "2026-11-15 (today)");
   assert.equal(lastUsedText(rows[3], now, t), "No date known");
+});
+test("Save needs the impact in Add whenever IDs are counted, in Edit only once they differ from the ban's", () => {
+  assert.equal(impactNeeded(initialPicker(rows)), true);
+  assert.equal(impactNeeded(selectNone(initialPicker(rows))), false);
+  const edit = initialPicker(rows, ["a", "c"], issued);
+  assert.equal(impactNeeded(edit), false);
+  assert.equal(impactNeeded(toggleId(edit, "c")), true);
+  assert.equal(impactNeeded(toggleId(edit, "d")), true);
+  assert.equal(impactNeeded(selectNone(edit)), false);
 });

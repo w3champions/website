@@ -148,6 +148,18 @@ export function impactIds(state: PickerState): string[] {
   return state.rows.filter((row) => state.ticked.includes(row.machineId) && !row.shared).map((row) => row.machineId);
 }
 
+/**
+ * Save waits for the impact of the counted IDs: in Add whenever there are any, in Edit once they differ from the ban's.
+ * An empty or unchanged counted selection has nothing new to warn about.
+ */
+export function impactNeeded(state: PickerState): boolean {
+  const counted = impactIds(state);
+  if (counted.length === 0) return false;
+  if (state.mode === "add") return true;
+  const saved = new Set(impactIds({ ...state, ticked: state.saved }));
+  return counted.length !== saved.size || counted.some((id) => !saved.has(id));
+}
+
 /** The ticked set differs from the saved set (edit). */
 export function machineIdsChanged(state: PickerState): boolean {
   if (state.mode !== "edit") return false;

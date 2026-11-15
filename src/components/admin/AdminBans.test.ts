@@ -56,7 +56,7 @@ function plugins(): Plugin[] {
   return [...banTestPlugins().filter((plugin) => !("currentRoute" in plugin)), router];
 }
 
-async function open(path: string): Promise<void> {
+async function open(path: string, stubs: Record<string, boolean> = STUBS): Promise<void> {
   router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -68,7 +68,7 @@ async function open(path: string): Promise<void> {
   await router.isReady();
   replace = vi.spyOn(router, "replace");
   push = vi.spyOn(router, "push");
-  wrapper = mount(AdminBans, { global: { plugins: plugins(), stubs: STUBS } });
+  wrapper = mount(AdminBans, { global: { plugins: plugins(), stubs } });
   await flushPromises();
 }
 
@@ -280,6 +280,26 @@ test("a failed account view says why and retries", async () => {
   await wrapper.findAll("button").find((b) => b.text() === txt("retry"))!.trigger("click");
   await flushPromises();
   expect(stub("BanAccountView").exists()).toBe(true);
+});
+
+test("an account opened from the log whose list fails shows the error and retry, and none of the log's rows", async () => {
+  const failure = new BanApiError(503, "BANS_UNAVAILABLE", "");
+  service.account.mockResolvedValue(accountView({ accountKey: "1001", currentBattleTag: "Tester#1001" }));
+  service.list.mockResolvedValueOnce({ total: 1, bans: [banView({ id: "b2", accountKey: "1002" })] }).mockRejectedValueOnce(failure);
+  const logged = vi.spyOn(console, "error").mockImplementation(() => undefined);
+  // The real account view, so its table (still a stub) shows which rows it gets.
+  await open("/admin-banned-players", { ...STUBS, BanAccountView: false });
+  stub("BanTable").vm.$emit("openAccount", "1001");
+  await flushPromises();
+  expect(logged).toHaveBeenCalledExactlyOnceWith("Failed to load bans:", failure);
+  expect(wrapper.find(".bans-list-error").text()).toContain("Bans are not available right now. Please tell an administrator.");
+  expect(stub("BanTable").exists()).toBe(false);
+
+  service.list.mockResolvedValueOnce({ total: 1, bans: [banView({ id: "b1", accountKey: "1001" })] });
+  await wrapper.findAll("button").find((b) => b.text() === txt("retry"))!.trigger("click");
+  await flushPromises();
+  expect(wrapper.find(".bans-list-error").exists()).toBe(false);
+  expect(stub("BanTable").props("bans")).toEqual([banView({ id: "b1", accountKey: "1001" })]);
 });
 
 test("a filtered log without bans says so", async () => {
