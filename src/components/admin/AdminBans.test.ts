@@ -332,3 +332,54 @@ test("?player= whose lookup fails says so and still puts the name into the looku
   expect(router.currentRoute.value.query).toEqual({});
   expect(stub("BanToolbar").props("lookupText")).toBe("tester");
 });
+
+/** A lookup the test settles itself. */
+function deferredEntry(): { resolve: (entry: unknown) => void } {
+  let resolve: (entry: unknown) => void = () => undefined;
+  resolvePlayerEntry.mockReturnValue(new Promise((r) => (resolve = r)));
+  return { resolve };
+}
+
+test("?player= resolving after the page was left leaves the new page's query and loads nothing", async () => {
+  const entry = deferredEntry();
+  await open("/admin-banned-players?player=tester");
+  await router.push("/player/1?depth=2&explain=1");
+  replace.mockClear();
+  entry.resolve({ kind: "account", accountKey: "1001", matchedBattleTag: "Tester#1001" });
+  await flushPromises();
+  expect(replace).not.toHaveBeenCalled();
+  expect(router.currentRoute.value.query).toEqual({ depth: "2", explain: "1" });
+  expect(service.list).not.toHaveBeenCalled();
+  expect(service.account).not.toHaveBeenCalled();
+});
+
+test("?player= resolving after the page unmounted does not replace the route nor load", async () => {
+  const entry = deferredEntry();
+  await open("/admin-banned-players?player=tester");
+  wrapper.unmount();
+  entry.resolve({ kind: "noSingleMatch", lookupText: "tester" });
+  await flushPromises();
+  expect(replace).not.toHaveBeenCalled();
+  expect(service.list).not.toHaveBeenCalled();
+});
+
+test("?player= failing after the page unmounted does not replace the route nor load", async () => {
+  let reject: (e: unknown) => void = () => undefined;
+  resolvePlayerEntry.mockReturnValue(new Promise((_, r) => (reject = r)));
+  await open("/admin-banned-players?player=tester");
+  wrapper.unmount();
+  reject(new BanApiError(503, "BANS_UNAVAILABLE", ""));
+  await flushPromises();
+  expect(replace).not.toHaveBeenCalled();
+  expect(service.list).not.toHaveBeenCalled();
+});
+
+test("?player= still replaces the query when the page is still there", async () => {
+  const entry = deferredEntry();
+  await open("/admin-banned-players?player=tester");
+  expect(service.list).not.toHaveBeenCalled();
+  entry.resolve({ kind: "account", accountKey: "1001", matchedBattleTag: "Tester#1001" });
+  await flushPromises();
+  expect(replace).toHaveBeenCalledWith({ query: { account: "1001" } });
+  expect(service.list).toHaveBeenCalledTimes(1);
+});

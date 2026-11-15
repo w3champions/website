@@ -117,6 +117,7 @@ import { useBansStore } from "@/store/admin/bans/store";
 import { key } from "@/store/admin/bans/translate";
 import type { BanView } from "@/store/admin/bans/types";
 import { revokedNoticeText } from "@/store/admin/bans/wording";
+import { EAdminRouteName } from "@/router/types";
 import { useAdminStore } from "@/store/admin/store";
 import AccountLookup from "./bans/AccountLookup.vue";
 import BanAccountView from "./bans/BanAccountView.vue";
@@ -241,10 +242,17 @@ function onRevoked(view: BanView): void {
   notice.value = { type: "info", text: revokedNoticeText(view, tr) };
 }
 
+let unmounted = false;
+/** Still the bans page: an entry lookup that outlives it must neither touch another page's query nor load anything. */
+function onThisPage(): boolean {
+  return !unmounted && route.name === EAdminRouteName.BANNED_PLAYERS;
+}
+
 /** `?player=<name>`: opens that player's account, or hands the name to the lookup; the parameter goes without a history entry. */
 async function resolveEntry(name: string): Promise<void> {
   try {
     const entry = await resolvePlayerEntry(name);
+    if (!onThisPage()) return;
     if (entry.kind === "account") {
       pendingPick = { accountKey: entry.accountKey, tag: entry.matchedBattleTag };
       await router.replace({ query: pageQueryToRoute(withAccount(DEFAULT_PAGE_QUERY, entry.accountKey)) });
@@ -252,21 +260,24 @@ async function resolveEntry(name: string): Promise<void> {
     }
     lookupText.value = entry.lookupText;
   } catch (e) {
+    if (!onThisPage()) return;
     notice.value = { type: "error", text: banErrorText(e, tr) };
     lookupText.value = name;
   }
+  if (!onThisPage()) return;
   await router.replace({ query: pageQueryToRoute(pageQueryFromRoute(route.query)) });
 }
 
 let started = false;
 async function start(): Promise<void> {
-  if (started) return;
+  if (started || !onThisPage()) return;
   started = true;
   void loadActiveGameModes();
   void adminStore.loadBanReasonTranslations();
   void store.loadAuthors();
   const name = entryPlayerFromRoute(route.query);
   if (name !== null) await resolveEntry(name);
+  if (!onThisPage()) return;
   ready.value = true;
   applyRoute(route.query);
 }
@@ -287,7 +298,10 @@ watch(canModerate, (can) => {
   if (can) void start();
 });
 
-onBeforeUnmount(() => store.clear());
+onBeforeUnmount(() => {
+  unmounted = true;
+  store.clear();
+});
 </script>
 
 <style scoped>
