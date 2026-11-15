@@ -32,16 +32,10 @@
           </div>
           <div v-if="venue.network.notRead" class="text-medium-emphasis">{{ t(key("presence_not_read")) }}</div>
           <template v-else-if="!isUnmeasured(venue.network)">
-            <div>
+            <div class="venue-first-last">
               <i18n-t :keypath="key('venue_first_last')" tag="span">
-                <template v-slot:first>
-                  <template v-if="venue.network.firstUseAt">{{ formatUtc(venue.network.firstUseAt) }}</template>
-                  <not-recorded v-else />
-                </template>
-                <template v-slot:last>
-                  <template v-if="venue.network.lastUseAt">{{ formatUtc(venue.network.lastUseAt) }}</template>
-                  <not-recorded v-else />
-                </template>
+                <template v-slot:first>{{ venue.network.firstUseAt ? formatUtc(venue.network.firstUseAt) : t(key("presence_not_read")) }}</template>
+                <template v-slot:last>{{ venue.network.lastUseAt ? formatUtc(venue.network.lastUseAt) : t(key("presence_not_read")) }}</template>
               </i18n-t>
             </div>
             <div v-for="side in SIDES" :key="side">{{ sideText(venue.network[side], side, tr) ?? t(key(`venue_side_not_read_${side}`)) }}</div>

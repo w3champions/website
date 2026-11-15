@@ -71,7 +71,16 @@ test("a network with only a provider is measured: it shows the provider, not a b
   const item = wrapper.find(".venue-network");
   expect(item.text()).toContain("Example Telecom");
   expect(item.find(".venue-context .not-recorded").exists()).toBe(true);
-  expect(item.findAll(".not-recorded").length).toBeGreaterThan(1);
+  expect(item.find(".venue-first-last").text()).toBe("First use Not read · last use Not read");
+});
+
+test("a measured network without first and last use says Not read in that line, not Not recorded", () => {
+  const { firstUseAt: _f, lastUseAt: _l, ...noUse } = FULL;
+  show(presence([noUse]));
+
+  const line = wrapper.find(".venue-network .venue-first-last");
+  expect(line.text()).toBe("First use Not read · last use Not read");
+  expect(line.find(".not-recorded").exists()).toBe(false);
 });
 
 test("a side that was not read says so under its own label, and the lane reads as a lower bound", () => {
