@@ -1,4 +1,4 @@
-import type { EGameMode } from "@/store/types";
+import type { EGameMode, ERaceEnum } from "@/store/types";
 import type { Match, MatchDetail } from "../types";
 import type { Season } from "@/store/ranking/types";
 
@@ -16,6 +16,8 @@ export type MatchState = {
   status: MatchStatus;
   gameMode: EGameMode;
   map: string;
+  race: ERaceEnum;
+  raceIncludeRandom: boolean;
   mmr: Mmr;
   duration: { min: number; max: number };
   sort: string;
