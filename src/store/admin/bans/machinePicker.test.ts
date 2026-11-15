@@ -55,23 +55,28 @@ test("an ID first used before the ban, or without a date, is not new", () => {
 });
 test("removed and added are counted against the ban", () => {
   const s = toggleId(toggleId(initialPicker(rows, ["a", "c"], issued), "c"), "b");
-  assert.deepEqual(pickerSummary(s), { selected: 2, total: 4, counted: 1, removed: 1, added: 1 });
+  assert.deepEqual(pickerSummary(s), { selected: 2, total: 4, removed: 1, added: 1 });
   assert.equal(pickerFooterText(pickerSummary(s), null, "edit", t), "2 of 4 selected · 1 removed, 1 added");
   assert.equal(machineIdsChanged(resetToSaved(s)), false);
 });
-test("IDs labelled 'Not one PC': the same label ticked or not, counted apart, kept on the ban", () => {
+test("IDs labelled 'Not one PC' are ticked, listed and sent like any other, and carry their note", () => {
   const s = toggleId(initialPicker(rows), "b");
-  assert.deepEqual(impactIds(s), ["a"]);
+  assert.deepEqual(impactIds(s), ["a", "b"]);
   assert.deepEqual(s.ticked, ["a", "b"]);
-  assert.equal(machineSaveLabel(pickerSummary(s), null, "add", t), "Ban account + 1 machine");
+  assert.equal(machineSaveLabel(pickerSummary(s), null, "add", t), "Ban account + 2 machines");
   assert.equal(rowNote(visibleRows(s, now)[1], t), "Not one PC");
   assert.equal(rowNote(visibleRows(initialPicker(rows), now)[1], t), "Not one PC");
 });
+test("the Add save label uses the server's count once an impact is present", () => {
+  const s = toggleId(initialPicker(rows), "b");
+  assert.equal(machineSaveLabel(pickerSummary(s), { otherAccounts: 0, capped: false, counted: 1 }, "add", t), "Ban account + 1 machine");
+  assert.equal(machineSaveLabel(pickerSummary(s), { otherAccounts: 2, capped: false, counted: 3 }, "add", t), "Ban account + 3 machines · locks out at least 2 other accounts");
+});
 test("Save label and footer repeat the collateral count", () => {
   const s = toggleId(initialPicker(rows), "c");
-  assert.equal(machineSaveLabel(pickerSummary(s), { otherAccounts: 2, capped: false }, "add", t), "Ban account + 2 machines · locks out at least 2 other accounts");
-  assert.equal(pickerFooterText(pickerSummary(s), { otherAccounts: 1, capped: false }, "add", t), "2 of 4 selected · at least 1 other account uses the selected IDs and will be locked out too");
-  assert.equal(machineSaveLabel(pickerSummary(s), { otherAccounts: 0, capped: false }, "edit", t), "Save");
+  assert.equal(machineSaveLabel(pickerSummary(s), { otherAccounts: 2, capped: false, counted: 2 }, "add", t), "Ban account + 2 machines · locks out at least 2 other accounts");
+  assert.equal(pickerFooterText(pickerSummary(s), { otherAccounts: 1, capped: false, counted: 1 }, "add", t), "2 of 4 selected · at least 1 other account uses the selected IDs and will be locked out too");
+  assert.equal(machineSaveLabel(pickerSummary(s), { otherAccounts: 0, capped: false, counted: 0 }, "edit", t), "Save");
 });
 test("Recommended, Reset and None", () => {
   const add = selectNone(initialPicker(rows));
@@ -114,7 +119,7 @@ test("cells", () => {
   assert.equal(lastUsedText(machineIdRow({ lastUsed: "2026-11-15T01:00:00.000Z" }), now, t), "2026-11-15 (today)");
   assert.equal(lastUsedText(rows[3], now, t), "No date known");
 });
-test("Save needs the impact in Add whenever IDs are counted, in Edit only once they differ from the ban's", () => {
+test("Save needs the impact in Add whenever IDs are ticked, in Edit only once they differ from the ban's", () => {
   assert.equal(impactNeeded(initialPicker(rows)), true);
   assert.equal(impactNeeded(selectNone(initialPicker(rows))), false);
   const edit = initialPicker(rows, ["a", "c"], issued);
@@ -122,4 +127,6 @@ test("Save needs the impact in Add whenever IDs are counted, in Edit only once t
   assert.equal(impactNeeded(toggleId(edit, "c")), true);
   assert.equal(impactNeeded(toggleId(edit, "d")), true);
   assert.equal(impactNeeded(selectNone(edit)), false);
+  assert.equal(impactNeeded(toggleId(edit, "b")), true);
+  assert.equal(impactNeeded(toggleId(initialPicker(rows, ["a", "b"], issued), "b")), true);
 });

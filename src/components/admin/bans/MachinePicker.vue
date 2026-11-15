@@ -133,7 +133,7 @@ function loadImpact(): void {
   void dialogStore.loadImpact(impactIds(props.modelValue));
 }
 
-// Every change of the counted IDs asks again; the store drops the previous selection's impact at once.
+// Every change of the ticked IDs asks again; the store drops the previous selection's impact at once.
 watch(() => impactIds(props.modelValue).join(" "), loadImpact, { immediate: true });
 </script>
 

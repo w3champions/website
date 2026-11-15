@@ -79,7 +79,7 @@ const openEdit = (ban: BanView) => mountDialog({ mode: "edit", ban });
 async function mountPicker(state: PickerState) {
   service.account.mockResolvedValue(accountView({ accountKey: "1001" }));
   service.machineIds.mockResolvedValue(rows);
-  service.machineImpact.mockResolvedValue({ otherAccounts: 0, capped: false });
+  service.machineImpact.mockResolvedValue({ otherAccounts: 0, capped: false, counted: 0 });
   await useBanDialogStore().open("1001", { machineAccess: true });
   track(mount(MachinePicker, { props: { modelValue: state }, global: { plugins } }));
   await flushPromises();
@@ -144,7 +144,7 @@ const twoBansAccount = () =>
 async function machineAdd(account: AccountView = accountView({ accountKey: "1001" })) {
   service.account.mockResolvedValue(account);
   service.machineIds.mockResolvedValue(rows);
-  service.machineImpact.mockResolvedValue({ otherAccounts: 2, capped: false });
+  service.machineImpact.mockResolvedValue({ otherAccounts: 2, capped: false, counted: 1 });
   openAdd({ accountKey: "1001" });
   await flushPromises();
   await chooseType(txt("type_machine"));
@@ -192,7 +192,7 @@ test("while the impact of the ticked IDs loads, the picker says so and Save stay
   await save();
   await flushPromises();
   expect(service.create).not.toHaveBeenCalled();
-  answer.resolve({ otherAccounts: 2, capped: false });
+  answer.resolve({ otherAccounts: 2, capped: false, counted: 1 });
   await flushPromises();
   expect(wrapper.find(".picker-impact-loading").exists()).toBe(false);
   expect(saveButton().element.disabled).toBe(false);
@@ -203,7 +203,7 @@ test("a failed impact shows the error with Retry and keeps Save disabled; a retr
   const failure = new BanApiError(503, "MACHINE_DATA_UNAVAILABLE", "");
   const logged = expectMachineLoadLogged();
   let calls = 0;
-  await machineDraft(() => (++calls === 1 ? Promise.reject(failure) : Promise.resolve({ otherAccounts: 2, capped: false })));
+  await machineDraft(() => (++calls === 1 ? Promise.reject(failure) : Promise.resolve({ otherAccounts: 2, capped: false, counted: 1 })));
   expect(logged).toHaveBeenCalledExactlyOnceWith("Failed to load machine ban impact:", failure);
   const error = wrapper.find(".picker-impact-error");
   expect(error.text()).toContain(txt("picker_impact_error"));
@@ -227,11 +227,11 @@ test("an impact answer for an earlier selection is ignored: Save waits for the c
   await button("Show 1 older ID").trigger("click");
   await tick("cc33dd44");
   expect(service.machineImpact).toHaveBeenLastCalledWith("1001", ["aa11bb22", "cc33dd44"], "tok");
-  earlier.resolve({ otherAccounts: 5, capped: false });
+  earlier.resolve({ otherAccounts: 5, capped: false, counted: 1 });
   await flushPromises();
   expect(saveButton().element.disabled).toBe(true);
   expect(saveButton().text()).toBe("Ban account + 2 machines");
-  current.resolve({ otherAccounts: 0, capped: false });
+  current.resolve({ otherAccounts: 0, capped: false, counted: 2 });
   await flushPromises();
   expect(saveButton().element.disabled).toBe(false);
   expect(saveButton().text()).toBe("Ban account + 2 machines");
@@ -312,7 +312,7 @@ test("an admin's Add shows no ban type before a player is picked", async () => {
 test("picking another player while a machine ban is drafted starts over with a regular ban", async () => {
   service.account.mockResolvedValue(accountView({ accountKey: "1001" }));
   service.machineIds.mockResolvedValue(rows);
-  service.machineImpact.mockResolvedValue({ otherAccounts: 0, capped: false });
+  service.machineImpact.mockResolvedValue({ otherAccounts: 0, capped: false, counted: 0 });
   track(mount(BanDialog, {
     props: { modelValue: true, mode: "add", ban: null, accountKey: null, initialDraft: null },
     slots: { player: PICK_SLOT },
@@ -381,18 +381,25 @@ test("an ID first used after the ban is marked new and is not ticked", async () 
   expect((rowOf("ee55ff66").find("input[type='checkbox']").element as HTMLInputElement).checked).toBe(false);
 });
 
-test("a labelled ID shows the data lane's note; IDs carry their full value and an include label", async () => {
+test("a labelled ID shows its note; IDs carry their full value and an include label", async () => {
   const labelled = machineIdRow({ machineId: "ee55ff66", lastUsed: "2026-11-14T00:00:00.000Z", recommended: false, shared: true });
-  service.machineImpact.mockResolvedValue({ otherAccounts: 3, capped: false });
+  service.machineImpact.mockResolvedValue({ otherAccounts: 3, capped: false, counted: 1 });
   await mountPicker(initialPicker([...rows, labelled]));
   expect(rowOf("ee55ff66").text()).toContain(txt("picker_shared"));
   expect(rowOf("aa11bb22").find("code").attributes("title")).toBe("aa11bb22");
   expect(rowOf("aa11bb22").find("input[type='checkbox']").attributes("aria-label")).toBe(txt("picker_include", { id: "aa11bb22" }));
 });
 
+test("a ticked labelled ID is asked about and shown like any other", async () => {
+  const labelled = machineIdRow({ machineId: "ee55ff66", lastUsed: "2026-11-14T00:00:00.000Z", recommended: true, shared: true });
+  await mountPicker(initialPicker([...rows, labelled]));
+  expect(service.machineImpact).toHaveBeenLastCalledWith("1001", ["aa11bb22", "ee55ff66"], "tok");
+  expect(wrapper.find(".picker-footer-text").text()).toContain("2 of 3 selected");
+});
+
 test("the footer's collateral line is a warning", async () => {
   await mountPicker(initialPicker(rows));
-  service.machineImpact.mockResolvedValue({ otherAccounts: 3, capped: false });
+  service.machineImpact.mockResolvedValue({ otherAccounts: 3, capped: false, counted: 1 });
   await useBanDialogStore().loadImpact(["aa11bb22"]);
   await flushPromises();
   const footerText = wrapper.find(".picker-footer-text");
@@ -459,7 +466,7 @@ test("Edit of a machine ban: changing only the IDs sends only the machine part",
   });
   service.account.mockResolvedValue(accountView({ accountKey: "1001" }));
   service.machineIds.mockResolvedValue(rows);
-  service.machineImpact.mockResolvedValue({ otherAccounts: 0, capped: false });
+  service.machineImpact.mockResolvedValue({ otherAccounts: 0, capped: false, counted: 0 });
   service.edit.mockResolvedValue(ban);
   openEdit(ban);
   await flushPromises();

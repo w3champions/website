@@ -28,11 +28,9 @@ export interface PickerRowView {
   willBeRemoved: boolean;
   newSinceBan: boolean;
 }
-/** counted = ticked and without the "Not one PC" label; the Add save label shows this number. */
 export interface PickerSummary {
   selected: number;
   total: number;
-  counted: number;
   removed: number;
   added: number;
 }
@@ -133,31 +131,29 @@ export function hiddenOlderCount(state: PickerState, now: Date): number {
 export function pickerSummary(state: PickerState): PickerSummary {
   const ticked = new Set(state.ticked);
   const saved = new Set(state.saved);
-  const counted = state.rows.filter((row) => ticked.has(row.machineId) && !row.shared).length;
   return {
     selected: state.ticked.length,
     total: state.rows.length,
-    counted,
     removed: state.saved.filter((id) => !ticked.has(id)).length,
     added: state.ticked.filter((id) => !saved.has(id)).length,
   };
 }
 
-/** The counted IDs (see PickerSummary), in row order: the body of machineImpact. */
+/** Every ticked ID, in row order: the body of machineImpact. */
 export function impactIds(state: PickerState): string[] {
-  return state.rows.filter((row) => state.ticked.includes(row.machineId) && !row.shared).map((row) => row.machineId);
+  return state.rows.filter((row) => state.ticked.includes(row.machineId)).map((row) => row.machineId);
 }
 
 /**
- * Save waits for the impact of the counted IDs: in Add whenever there are any, in Edit once they differ from the ban's.
- * An empty or unchanged counted selection has nothing new to warn about.
+ * Save waits for the impact of the ticked IDs: in Add whenever there are any, in Edit once they differ from the ban's.
+ * An empty or unchanged selection has nothing new to warn about.
  */
 export function impactNeeded(state: PickerState): boolean {
-  const counted = impactIds(state);
-  if (counted.length === 0) return false;
+  const ids = impactIds(state);
+  if (ids.length === 0) return false;
   if (state.mode === "add") return true;
   const saved = new Set(impactIds({ ...state, ticked: state.saved }));
-  return counted.length !== saved.size || counted.some((id) => !saved.has(id));
+  return ids.length !== saved.size || ids.some((id) => !saved.has(id));
 }
 
 /** The ticked set differs from the saved set (edit). */
@@ -201,7 +197,7 @@ export function pickerFooterText(summary: PickerSummary, impact: MachineImpactRe
 }
 
 export function machineSaveLabel(summary: PickerSummary, impact: MachineImpactResponse | null, mode: "add" | "edit", t: Translate): string {
-  const label = mode === "add" ? countText("save_machine", summary.counted, t) : t(key("save"));
+  const label = mode === "add" ? countText("save_machine", impact ? impact.counted : summary.selected, t) : t(key("save"));
   return impact && impact.otherAccounts > 0 ? countText("save_collateral", impact.otherAccounts, t, { label }) : label;
 }
 

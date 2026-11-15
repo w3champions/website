@@ -30,7 +30,7 @@ const machineLoads = requestSequence();
 const impactLoads = requestSequence();
 const otherLoads = keyedRequestSequence();
 
-const NO_IMPACT = { otherAccounts: 0, capped: false } as const;
+const NO_IMPACT = { otherAccounts: 0, capped: false, counted: 0 } as const;
 
 const token = (): string => useOauthStore().token;
 
@@ -108,7 +108,7 @@ export const useBanDialogStore = defineStore("banDialog", {
     },
     /**
      * The impact of a new selection; the previous selection's impact is dropped at once, and only the newest request writes.
-     * [] gives impact { otherAccounts: 0, capped: false } without a request.
+     * [] gives impact { otherAccounts: 0, capped: false, counted: 0 } without a request.
      */
     async loadImpact(machineIds: string[]): Promise<boolean> {
       const accountKey = this.accountKey;
