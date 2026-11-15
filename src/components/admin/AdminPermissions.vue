@@ -162,6 +162,7 @@ export default defineComponent({
       { name: EPermission[EPermission.Jobs], value: EPermission.Jobs },
       { name: EPermission[EPermission.CommercialLicense], value: EPermission.CommercialLicense },
       { name: EPermission[EPermission.Replays], value: EPermission.Replays },
+      { name: EPermission[EPermission.AdminModeration], value: EPermission.AdminModeration },
     ];
 
     const defaultItem: IPermission = {

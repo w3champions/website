@@ -88,6 +88,14 @@ The "Smurf Events" page (`admin-smurf-events`, "Smurf Checker" group) lists the 
 - Copy is in `src/locales/en.ts` only, under `views_admin.smurf_events` (parts shared with Hardware Links under `views_admin.smurf_detection`); no smurf key is in `data.ts`.
 - The repo is public: show what the server returns ("at least N" with N from the response), never detection thresholds, caps or criteria, in code, tests or copy.
 
+#### Bans
+The "Banned Players" page (`admin-banned-players`, "Moderation" group) is a log of account bans, an account view (`?account=<key>`) and the add, edit and revoke dialogs. Bans belong to the Battle.net account, not the BattleTag; each ban stands on its own and is in effect until it ends or is revoked. The page needs `Moderation`; machine bans (seeing, issuing, editing, revoking) also need `AdminModeration`.
+- Client: `src/services/admin/BanAdminService.ts` (website-backend `api/admin/bans...`: website-backend sets the author from the verified token and the machine access from the caller's `AdminModeration`, and proxies to the matchmaking service, which removes machine data for callers without machine access).
+- Types, pure helpers with tests (in-effect statement, overlap notice, row wording, error texts, form and picker state, URL query) and the stores: `src/store/admin/bans/`. Page parts: `src/components/admin/bans/`; the page is `src/components/admin/AdminBans.vue`.
+- Copy is in `src/locales/data.ts` under `views_admin_bans` (and in the sheet), not in `en.ts`.
+- Status, moderator, sort, page and account live in the URL; the machine filter never does. Edit and revoke of a machine ban by a user without `AdminModeration` are refused by the server; the dialog then shows "Permission denied, please contact an Administrator". Nothing else on the page may differ for such a user.
+- Tags are compared with `sameTag` (ignoring case, Unicode-aware) and never stored lower-cased. Authors are free text and shown as sent.
+
 #### Replay Export
 The "Replay Export" admin section (permission `Replays`) has two pages: `admin-replay-export` (search, list, ZIP download, own past downloads) and `admin-replay-downloads` (the downloads of all users).
 - Client: `src/services/admin/ReplayExportService.ts`; the backend is `Admin/ReplayExport/` in website-backend.

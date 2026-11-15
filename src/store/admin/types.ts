@@ -6,8 +6,6 @@ import { LoungeMuteResponse } from "./loungeMute/types";
 
 export type AdminState = {
   total: number;
-  bannedPlayers: BannedPlayer[];
-  bannedPlayersCount: number;
   queuedata: QueueData[];
   availableProxies: Proxy[];
   proxiesSetForSearchedPlayer: ProxySettings;
@@ -16,7 +14,6 @@ export type AdminState = {
   proxyModified: boolean;
   globallyMutedPlayers: GloballyMutedPlayer[];
   mutesNextId: number | null;
-  banValidationError: string;
   showJwtExpiredDialog: boolean;
   battleTagModerationStatus: BattleTagModerationMap;
   banReasonTranslations: BanReasonTranslation[];
@@ -56,23 +53,6 @@ export interface BanReasonTranslations {
   es: string;
 }
 
-export interface BannedPlayer {
-  battleTag: string;
-  endDate: string;
-  gameModes: number[];
-  isIpBan: boolean;
-  banReason: string;
-  banInsertDate: string;
-  author: string;
-  userVisibleBanReason?: UserVisibleBanReason;
-}
-
-export interface BanReasonTranslations {
-  en: string;
-  cn: string;
-  es: string;
-}
-
 export interface BanReasonTranslation {
   _id: string;
   translations: BanReasonTranslations;
@@ -89,19 +69,6 @@ export interface CreateBanReasonTranslationRequest {
 export interface UpdateBanReasonTranslationRequest {
   translations: BanReasonTranslations;
   author: string;
-}
-
-export interface BannedPlayersGetRequest {
-  page: number;
-  itemsPerPage: number;
-  sortBy: string;
-  sortDirection: boolean | "asc" | "desc" | undefined;
-  search: string;
-}
-
-export interface BannedPlayersResponse {
-  total: number;
-  players: BannedPlayer[];
 }
 
 export enum EPlayerWarningStatus {
@@ -644,7 +611,6 @@ export interface ProductMappingReconciliationResult {
 
 // Moderation Status Types
 export interface ModerationStatus {
-  ban?: BannedPlayer;
   globalMute?: GloballyMutedPlayer;
   loungeMute?: LoungeMuteResponse;
 }

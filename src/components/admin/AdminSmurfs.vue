@@ -187,6 +187,7 @@ import { useRouter, useRoute } from "vue-router";
 import type { SmurfDetectionResult, BattleTagLoginCount } from "@/services/admin/smurf-detection/SmurfDetectionResponse";
 import SmurfBattleTagDetailsTable from "./smurf-detection/SmurfBattleTagDetailsTable.vue";
 import ModerationStatusBadges from "./smurf-detection/ModerationStatusBadges.vue";
+import { useBanStatusStore } from "@/store/admin/bans/statusStore";
 import { useOauthStore } from "@/store/oauth/store";
 import { EPermission } from "@/store/admin/permission/types";
 import PlayerSearch from "@/components/common/PlayerSearch.vue";
@@ -258,12 +259,13 @@ export default defineComponent({
 
       smurfResults.value = await adminStore.querySmurfsForIdentifier(selectedIdentifierType.value, selectedPlayer.value, searchDepth.value, generateExplanation.value);
 
-      if ((smurfResults.value != null || undefined) && smurfResults.value.connectedBattleTags.length > 0) {
+      if (smurfResults.value != null && smurfResults.value.connectedBattleTags.length > 0) {
         // Load moderation data if user has permission
         if (hasModerationPermission.value) {
           loadingModerationStatus.value = true;
           try {
-            await adminStore.loadModerationStatusForBattleTags(smurfResults.value.connectedBattleTags);
+            const tags = smurfResults.value.connectedBattleTags;
+            await Promise.all([adminStore.loadModerationStatusForBattleTags(tags), useBanStatusStore().load(tags)]);
           } finally {
             loadingModerationStatus.value = false;
           }
