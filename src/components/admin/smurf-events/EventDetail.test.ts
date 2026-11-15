@@ -295,13 +295,19 @@ test("EventDetail shows the chips until presence is loaded", async () => {
 
   expect(wrapper.findComponent({ name: "AttendeePresenceTable" }).exists()).toBe(true);
   expect(wrapper.find("thead").text()).toContain("How they got in");
+  expect(wrapper.findAll(".v-chip").some((c) => c.text().includes("Guest#1003"))).toBe(false);
 });
 
 test("EventDetail shows the venue card above the identifiers for an event with venue networks", async () => {
   await show(manualEvent());
+  useSmurfEventsStore().presence = PRESENCE;
+  await flushPromises();
 
   expect(wrapper.findComponent({ name: "VenueNetworksCard" }).exists()).toBe(true);
   expect(wrapper.findComponent({ name: "AttendeeSpread" }).exists()).toBe(false);
+  const titles = wrapper.findAll(".v-card-title").map((c) => c.text());
+  expect(titles.indexOf("Venue networks")).toBeGreaterThan(-1);
+  expect(titles.indexOf("Venue networks")).toBeLessThan(titles.indexOf("Identifiers"));
 });
 
 test("EventDetail shows the spread instead of the venue card for an event without venue networks", async () => {
@@ -313,16 +319,17 @@ test("EventDetail shows the spread instead of the venue card for an event withou
   expect(wrapper.findComponent({ name: "AttendeeSpread" }).exists()).toBe(true);
 });
 
-test("an event without venue networks shows the venue card's loading and failure while the spread is not there", async () => {
+test("an event without venue networks shows the spread's loading and failure while the spread is not there", async () => {
   await show(manualEvent({ networks: [] }));
   useSmurfEventsStore().presenceLoading = true;
   await flushPromises();
-  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).exists()).toBe(true);
+  expect(wrapper.findComponent({ name: "AttendeeSpread" }).exists()).toBe(true);
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).exists()).toBe(false);
 
   useSmurfEventsStore().presenceLoading = false;
   useSmurfEventsStore().presenceError = new Error("down");
   await flushPromises();
-  await wrapper.findComponent({ name: "VenueNetworksCard" }).vm.$emit("retry");
+  await wrapper.findComponent({ name: "AttendeeSpread" }).vm.$emit("retry");
 
   expect(wrapper.emitted("retry-presence")).toHaveLength(1);
 });

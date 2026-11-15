@@ -12,13 +12,19 @@ export function venueRows(presence: SmurfEventPresence | null, identifiers: Smur
   return [...ip, ...items];
 }
 
-function notRecorded(tr: Translate): string {
-  return tr(key("facts_not_recorded"));
+/** Stable key of a venue row: an IP network and an item of another kind may share a hash. */
+export function venueRowId(v: VenueRow): string {
+  return v.source === "ip" ? `ip:${v.network.hash8}` : `${v.row.kind}:${v.row.hash8}`;
 }
 
-/** "Before: 3 attendees, 2 other accounts, on 1 days"; every number reads "at least" when the side is capped. */
-export function sideText(side: SmurfEventSideUse | undefined, sideKey: "before" | "during" | "after", tr: Translate): string {
-  if (side === undefined) return notRecorded(tr);
+/** Nothing is recorded for the network: the server sent its hash and no measurement at all (not even "not read"). */
+export function isUnmeasured(n: SmurfEventNetworkPresence): boolean {
+  return n.notRead !== true && n.firstUseAt === undefined && n.lastUseAt === undefined && n.before === undefined && n.during === undefined && n.after === undefined;
+}
+
+/** "Before: 3 attendees, 2 other accounts, on 1 days"; every number reads "at least" when the side is capped. Null: the side is absent. */
+export function sideText(side: SmurfEventSideUse | undefined, sideKey: "before" | "during" | "after", tr: Translate): string | null {
+  if (side === undefined) return null;
   return tr(key(`venue_side_${sideKey}`), {
     attendees: factText(side.attendees, side.capped, tr),
     others: factText(side.others, side.capped, tr),
@@ -26,20 +32,27 @@ export function sideText(side: SmurfEventSideUse | undefined, sideKey: "before" 
   });
 }
 
-export function entryText(a: SmurfEventAttendeePresence, tr: Translate): string {
-  return a.entry === undefined ? notRecorded(tr) : tr(key(`entry_${a.entry}`));
+/** How the attendee got in; null: not recorded. */
+export function entryText(a: SmurfEventAttendeePresence, tr: Translate): string | null {
+  return a.entry === undefined ? null : tr(key(`entry_${a.entry}`));
 }
 
-/** "venue / elsewhere (at home)"; not recorded unless both parts were read. */
-export function loginsText(a: SmurfEventAttendeePresence, tr: Translate): string {
-  if (a.venueLogins === undefined || a.elsewhere === undefined) return notRecorded(tr);
+/** "venue / elsewhere (at home)"; null unless both parts were read. */
+export function loginsText(a: SmurfEventAttendeePresence, tr: Translate): string | null {
+  if (a.venueLogins === undefined || a.elsewhere === undefined) return null;
   return tr(key("logins_split"), { venue: a.venueLogins, elsewhere: a.elsewhere.logins, home: a.elsewhere.homeLogins });
 }
 
-export function switchText(a: SmurfEventAttendeePresence, tr: Translate): string {
+/** The nearest switch on one PC, or why there is none; null: not recorded. */
+export function switchText(a: SmurfEventAttendeePresence, tr: Translate): string | null {
   if (a.nearestSwitchMinutes !== undefined) return tr(key("switch_minutes"), { minutes: a.nearestSwitchMinutes });
-  if (a.samePcRecorded === undefined) return notRecorded(tr);
+  if (a.samePcRecorded === undefined) return null;
   return tr(key(a.samePcRecorded ? "switch_none" : "switch_no_pc"));
+}
+
+/** A recorded list: its items, or "None" when the server recorded it empty. */
+export function listText(values: readonly string[], tr: Translate): string {
+  return values.length === 0 ? tr(key("spread_none")) : values.join(", ");
 }
 
 /** The hardware page of an account. */

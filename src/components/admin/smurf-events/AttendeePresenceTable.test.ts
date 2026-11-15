@@ -26,7 +26,7 @@ const rows = () => wrapper.findAll("tbody tr");
 test("the attendee table shows how each attendee got in and No PC recorded for an attendee whose logins name no PC", async () => {
   await show([
     {
-      battleTag: "Anchor#1001",
+      battleTag: "Host#1001",
       entry: "network",
       venueLogins: 4,
       elsewhere: { logins: 9, networks: 2, homeLogins: 7 },
@@ -36,7 +36,7 @@ test("the attendee table shows how each attendee got in and No PC recorded for a
       providers: ["Example Telecom"],
     },
     { battleTag: "Guest#1003", entry: "pc", venueLogins: 1, elsewhere: { logins: 0, networks: 0, homeLogins: 0 }, samePcRecorded: false, countries: [], providers: [] },
-  ], ["Anchor#1001"]);
+  ], ["Host#1001"]);
 
   expect(wrapper.findAll("thead th[scope='col']").map((h) => h.text())).toEqual([
     "Attendee",
@@ -47,8 +47,9 @@ test("the attendee table shows how each attendee got in and No PC recorded for a
   ]);
   expect(rows()).toHaveLength(2);
   const first = rows()[0].text();
-  expect(first).toContain("Anchor#1001");
-  expect(first).toContain("Anchor");
+  expect(first).toContain("Host#1001");
+  expect(rows()[0].find(".v-chip").text()).toBe("Anchor");
+  expect(rows()[1].find(".v-chip").exists()).toBe(false);
   expect(first).toContain("On a venue network");
   expect(first).toContain("4 / 9 (7)");
   expect(first).toContain("12 min");

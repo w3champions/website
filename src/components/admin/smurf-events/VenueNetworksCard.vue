@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="loading || error || rows.length > 0" class="mb-4">
+  <v-card class="mb-4">
     <v-card-title class="text-subtitle-1 font-weight-bold">{{ t(key("venue_title")) }}</v-card-title>
     <v-card-text v-if="loading" class="text-medium-emphasis" role="status">{{ t(key("venue_loading")) }}</v-card-text>
     <v-alert v-else-if="error" type="error" variant="tonal" density="compact" class="mx-4 mb-4">
@@ -9,63 +9,77 @@
       </template>
     </v-alert>
     <template v-else>
-      <div v-for="entry in rows" :key="entry.id" class="venue-network px-4 py-3 border-t">
-        <template v-if="entry.venue.source === 'ip'">
+      <div v-for="venue in rows" :key="venueRowId(venue)" class="venue-network px-4 py-3 border-t">
+        <template v-if="venue.source === 'ip'">
           <div class="mb-1">
-            <identifier-chip kind="ip" :hash8="entry.venue.network.hash8" />
-            <span v-if="entry.venue.network.provider !== undefined || entry.venue.network.country !== undefined" class="ml-2 text-medium-emphasis">
-              <i18n-t :keypath="key('venue_context')" tag="span">
+            <identifier-chip kind="ip" :hash8="venue.network.hash8" />
+            <template v-if="isUnmeasured(venue.network)">
+              <not-recorded class="ml-2" />
+            </template>
+            <span v-else class="venue-context ml-2 text-medium-emphasis">
+              <not-recorded v-if="venue.network.provider === undefined && venue.network.country === undefined" />
+              <i18n-t v-else :keypath="key('venue_context')" tag="span">
                 <template v-slot:provider>
-                  <template v-if="entry.venue.network.provider !== undefined">{{ entry.venue.network.provider }}</template>
+                  <template v-if="venue.network.provider !== undefined">{{ venue.network.provider }}</template>
                   <not-recorded v-else />
                 </template>
                 <template v-slot:country>
-                  <template v-if="entry.venue.network.country !== undefined">{{ entry.venue.network.country }}</template>
+                  <template v-if="venue.network.country !== undefined">{{ venue.network.country }}</template>
                   <not-recorded v-else />
                 </template>
               </i18n-t>
             </span>
           </div>
-          <div v-if="entry.venue.network.notRead" class="text-medium-emphasis">{{ t(key("presence_not_read")) }}</div>
-          <template v-else>
+          <div v-if="venue.network.notRead" class="text-medium-emphasis">{{ t(key("presence_not_read")) }}</div>
+          <template v-else-if="!isUnmeasured(venue.network)">
             <div>
               <i18n-t :keypath="key('venue_first_last')" tag="span">
                 <template v-slot:first>
-                  <template v-if="entry.venue.network.firstUseAt">{{ formatUtc(entry.venue.network.firstUseAt) }}</template>
+                  <template v-if="venue.network.firstUseAt">{{ formatUtc(venue.network.firstUseAt) }}</template>
                   <not-recorded v-else />
                 </template>
                 <template v-slot:last>
-                  <template v-if="entry.venue.network.lastUseAt">{{ formatUtc(entry.venue.network.lastUseAt) }}</template>
+                  <template v-if="venue.network.lastUseAt">{{ formatUtc(venue.network.lastUseAt) }}</template>
                   <not-recorded v-else />
                 </template>
               </i18n-t>
             </div>
-            <div v-for="side in SIDES" :key="side">
-              <template v-if="entry.venue.network[side]">{{ sideText(entry.venue.network[side], side, tr) }}</template>
-              <not-recorded v-else />
-            </div>
-            <day-lane v-if="entry.venue.network.days && presence" :days="entry.venue.network.days" :window="presence.window" :lower-bound="anyCapped(entry.venue.network)" class="mt-1" />
+            <div v-for="side in SIDES" :key="side">{{ sideText(venue.network[side], side, tr) ?? t(key(`venue_side_not_read_${side}`)) }}</div>
+            <day-lane v-if="venue.network.days && presence" :days="venue.network.days" :window="presence.window" :lower-bound="isLowerBound(venue.network)" class="mt-1" />
           </template>
         </template>
         <template v-else>
           <div class="mb-1">
-            <identifier-chip :kind="entry.venue.row.kind" :hash8="entry.venue.row.hash8" :keys="entry.venue.row.keys" :values="entry.venue.row.values" />
+            <identifier-chip :kind="venue.row.kind" :hash8="venue.row.hash8" :keys="venue.row.keys" :values="venue.row.values" />
+          </div>
+          <div class="venue-first-last">
+            <not-recorded v-if="venue.row.firstDay === undefined && venue.row.lastDay === undefined" />
+            <i18n-t v-else :keypath="key(venue.row.accountsEver?.capped === true ? 'venue_first_last_partial' : 'venue_first_last')" tag="span">
+              <template v-slot:first>
+                <template v-if="venue.row.firstDay !== undefined">{{ dayText(venue.row.firstDay) }}</template>
+                <not-recorded v-else />
+              </template>
+              <template v-slot:last>
+                <template v-if="venue.row.lastDay !== undefined">{{ dayText(venue.row.lastDay) }}</template>
+                <not-recorded v-else />
+              </template>
+            </i18n-t>
           </div>
           <div>
-            <template v-if="entry.venue.row.holdersOutside">
-              {{ t(key("venue_outside"), outsideCounts(entry.venue.row.holdersOutside)) }}
-            </template>
+            <template v-if="venue.row.holdersOutside">{{ t(key("venue_outside"), outsideCounts(venue.row.holdersOutside)) }}</template>
             <not-recorded v-else />
           </div>
           <day-lane
-            v-if="entry.venue.row.days && entry.venue.row.accountsEver && identifiers"
-            :days="entry.venue.row.days"
+            v-if="venue.row.days && venue.row.accountsEver && identifiers"
+            :days="venue.row.days"
             :window="identifiers.window"
-            :lower-bound="entry.venue.row.accountsEver.capped === true"
+            :lower-bound="venue.row.accountsEver.capped === true"
             class="mt-1"
           />
         </template>
       </div>
+      <div v-if="rows.length === 0" class="px-4 pb-3"><not-recorded /></div>
+      <div v-if="routersPending" class="px-4 pb-3 text-body-2 text-medium-emphasis" role="status">{{ t(key("venue_routers_pending")) }}</div>
     </template>
   </v-card>
 </template>
@@ -76,8 +90,9 @@ import { useI18n } from "vue-i18n";
 import { formatUtc } from "@/helpers/utc-dates";
 import type { SmurfEventIdentifierRow, SmurfEventIdentifiers, SmurfEventNetworkPresence, SmurfEventPresence } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { factText } from "@/store/admin/smurfEvents/facts";
-import { sideText, venueRows, type VenueRow } from "@/store/admin/smurfEvents/presence";
+import { isUnmeasured, sideText, venueRowId, venueRows } from "@/store/admin/smurfEvents/presence";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import { dayText } from "../smurf-detection/day-lane";
 import DayLane from "../smurf-detection/DayLane.vue";
 import IdentifierChip from "../smurf-detection/IdentifierChip.vue";
 import NotRecorded from "./NotRecorded.vue";
@@ -87,6 +102,8 @@ const SIDES = ["before", "during", "after"] as const;
 const props = defineProps<{
   presence: SmurfEventPresence | null;
   identifiers: SmurfEventIdentifiers | null;
+  /** The event's venue networks of every kind: more than the IP rows means router networks that come with the identifier table. */
+  networkCount: number;
   loading: boolean;
   error: string | null;
 }>();
@@ -98,13 +115,18 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
 
-const rows = computed(() => venueRows(props.presence, props.identifiers).map((venue: VenueRow) => ({ id: `${venue.source === "ip" ? "ip" : venue.row.kind}:${venue.source === "ip" ? venue.network.hash8 : venue.row.hash8}`, venue })));
+const rows = computed(() => venueRows(props.presence, props.identifiers));
 
-function anyCapped(network: SmurfEventNetworkPresence): boolean {
-  return SIDES.some((side) => network[side]?.capped === true);
+/** The presence is in but the identifier table is not: the router networks cannot be listed yet. */
+const routersPending = computed(() => props.presence !== null && props.identifiers === null && props.networkCount > props.presence.networks.length);
+
+/** The day lane holds only what was read: a capped side, or a side that was not read, makes its numbers lower bounds. */
+function isLowerBound(network: SmurfEventNetworkPresence): boolean {
+  return SIDES.some((side) => network[side] === undefined || network[side].capped === true);
 }
 
+/** The attendee count is exact even on a capped row; only the other accounts are a lower bound. */
 function outsideCounts(holders: NonNullable<SmurfEventIdentifierRow["holdersOutside"]>): Record<string, string> {
-  return { attendees: factText(holders.attendees, holders.capped, tr), others: factText(holders.others, holders.capped, tr) };
+  return { attendees: String(holders.attendees), others: factText(holders.others, holders.capped, tr) };
 }
 </script>

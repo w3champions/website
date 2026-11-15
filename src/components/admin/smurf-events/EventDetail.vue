@@ -92,14 +92,21 @@
       />
 
       <venue-networks-card
-        v-if="event.networks.length > 0 || store.presenceLoading || store.presenceError"
+        v-if="event.networks.length > 0"
         :presence="store.presence"
         :identifiers="store.identifiers"
+        :network-count="event.networks.length"
         :loading="store.presenceLoading"
-        :error="store.presenceError ? presenceErrorText(store.presenceError, tr) : null"
+        :error="presenceError"
         @retry="emit('retry-presence')"
       />
-      <attendee-spread v-else-if="store.presence?.spread" :spread="store.presence.spread" />
+      <attendee-spread
+        v-else-if="store.presence?.spread || store.presenceLoading || store.presenceError"
+        :spread="store.presence?.spread ?? null"
+        :loading="store.presenceLoading"
+        :error="presenceError"
+        @retry="emit('retry-presence')"
+      />
 
       <identifier-table
         :identifiers="store.identifiers"
@@ -125,9 +132,9 @@
           :no-data-text="t(key('no_ended_links'))"
         >
           <template v-slot:[`item.link`]="{ item }">
-            <router-link :to="hardwareLink(item.a)" class="account-link">{{ item.a }}</router-link>
+            <account-link :battle-tag="item.a" />
             <span class="text-medium-emphasis mx-2">–</span>
-            <router-link :to="hardwareLink(item.b)" class="account-link">{{ item.b }}</router-link>
+            <account-link :battle-tag="item.b" />
           </template>
           <template v-slot:[`item.source`]="{ item }">
             <v-chip size="small" variant="outlined">{{ sourceLabel(item.source, tr) }}</v-chip>
@@ -153,6 +160,7 @@ import { unreviewedNeighbours } from "@/store/admin/smurfEvents/neighbours";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { hardwareLink } from "@/store/admin/smurfEvents/presence";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import AccountLink from "./AccountLink.vue";
 import AttendeePresenceTable from "./AttendeePresenceTable.vue";
 import AttendeeSpread from "./AttendeeSpread.vue";
 import EventBadge from "./EventBadge.vue";
@@ -185,6 +193,7 @@ const store = useSmurfEventsStore();
 
 const event = computed(() => (store.detail?.id === props.eventId ? store.detail : null));
 const actions = computed(() => smurfEventActions(event.value ?? { origin: "detected" }));
+const presenceError = computed(() => (store.presenceError ? presenceErrorText(store.presenceError, tr) : null));
 const anchors = computed(() => new Set(event.value?.anchors ?? []));
 
 function spanText(from: string, to: string): string {
@@ -228,19 +237,3 @@ const linkHeaders = computed<DataTableHeader[]>(() => [
   { title: t(key("col_source")), key: "source", sortable: false },
 ]);
 </script>
-
-<style scoped>
-.account-link {
-  color: rgb(var(--v-theme-primary));
-  text-decoration: none;
-}
-
-.account-link:hover {
-  text-decoration: underline;
-}
-
-.account-link:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: 2px;
-}
-</style>

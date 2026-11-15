@@ -8,8 +8,8 @@ import AttendeeSpread from "./AttendeeSpread.vue";
 let wrapper: VueWrapper;
 afterEach(() => wrapper.unmount());
 
-function show(spread: SmurfEventSpread): void {
-  wrapper = mount(AttendeeSpread, { props: { spread }, global: { plugins: testPlugins() } });
+function show(spread: SmurfEventSpread | null, state: { loading?: boolean; error?: string | null } = {}): void {
+  wrapper = mount(AttendeeSpread, { props: { spread, loading: state.loading ?? false, error: state.error ?? null }, global: { plugins: testPlugins() } });
 }
 
 test("the spread lists shared networks under their neutral headings", () => {
@@ -46,4 +46,18 @@ test("no count, provider or country carries a colour class", () => {
   show({ countries: ["DE"], providers: ["Example Telecom"], sharedInSpan: [{ hash8: "0a1b2c3d", accounts: ["A#1", "B#2"] }], sharedUsual: [] });
 
   expect(wrapper.html()).not.toMatch(/text-(warning|error|success)|bg-[a-z]/);
+});
+
+test("loading and failure talk about the attendees, under the spread heading, and the retry is a button", async () => {
+  show(null, { loading: true });
+  expect(wrapper.find(".v-card-title").text()).toBe("Where the attendees were");
+  expect(wrapper.text()).toContain("Loading where the attendees were");
+  expect(wrapper.text()).not.toContain("venue");
+  wrapper.unmount();
+
+  show(null, { error: "Boom" });
+  expect(wrapper.text()).toContain("Where the attendees were couldn't be loaded: Boom");
+  expect(wrapper.text()).not.toContain("venue");
+  await wrapper.find("button.retry").trigger("click");
+  expect(wrapper.emitted("retry")).toHaveLength(1);
 });

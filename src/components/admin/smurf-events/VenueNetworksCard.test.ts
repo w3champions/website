@@ -27,8 +27,11 @@ const FULL: SmurfEventNetworkPresence = {
   country: "DE",
 };
 
-function show(p: SmurfEventPresence | null, identifiers: SmurfEventIdentifiers | null = null, state: { loading?: boolean; error?: string | null } = {}): void {
-  wrapper = mount(VenueNetworksCard, { props: { presence: p, identifiers, loading: state.loading ?? false, error: state.error ?? null }, global: { plugins: testPlugins() } });
+function show(p: SmurfEventPresence | null, identifiers: SmurfEventIdentifiers | null = null, state: { loading?: boolean; error?: string | null; networkCount?: number } = {}): void {
+  wrapper = mount(VenueNetworksCard, {
+    props: { presence: p, identifiers, networkCount: state.networkCount ?? p?.networks.length ?? 0, loading: state.loading ?? false, error: state.error ?? null },
+    global: { plugins: testPlugins() },
+  });
 }
 
 test("the venue card shows first and last use, the three sides and the day lane of an IP network", () => {
@@ -44,16 +47,57 @@ test("the venue card shows first and last use, the three sides and the day lane 
   expect(wrapper.find("svg.day-lane").exists()).toBe(true);
 });
 
-test("a network without first use shows Not recorded and one not read shows Not read", () => {
-  show(presence([{ hash8: "0a1b2c3d" }, { hash8: "0a1b2c3e", notRead: true }]));
+test("a network nobody measured shows its chip and exactly one Not recorded", () => {
+  show(presence([{ hash8: "0a1b2c3d" }]));
 
-  const items = wrapper.findAll(".venue-network");
-  expect(items).toHaveLength(2);
-  expect(items[0].findAll(".not-recorded").length).toBeGreaterThan(0);
-  expect(items[0].text()).not.toContain("Not read");
-  expect(items[1].text()).toContain("Not read");
-  expect(items[1].text()).not.toContain("First use");
-  expect(items[1].text()).not.toMatch(/\b0 attendees/);
+  const item = wrapper.find(".venue-network");
+  expect(item.text()).toContain("0a1b2c3d");
+  expect(item.findAll(".not-recorded")).toHaveLength(1);
+});
+
+test("a network not read shows Not read and no figures", () => {
+  show(presence([{ hash8: "0a1b2c3e", notRead: true }]));
+
+  const text = wrapper.find(".venue-network").text();
+  expect(text).toContain("Not read");
+  expect(text).not.toContain("First use");
+  expect(text).not.toMatch(/\b0 attendees/);
+});
+
+test("a side that was not read says so under its own label, and the lane reads as a lower bound", () => {
+  const { after: _after, ...partial } = FULL;
+  show(presence([partial]));
+
+  const text = wrapper.find(".venue-network").text();
+  expect(text).toContain("Before: 1 attendees");
+  expect(text).toContain("After: Not read");
+  expect(text).not.toContain("During: Not read");
+  expect(wrapper.findComponent({ name: "DayLane" }).props("lowerBound")).toBe(true);
+});
+
+test("the lane is a lower bound when a side is capped, and exact when every side was read in full", () => {
+  show(presence([FULL]));
+  expect(wrapper.findComponent({ name: "DayLane" }).props("lowerBound")).toBe(true);
+  wrapper.unmount();
+
+  show(presence([{ ...FULL, after: { attendees: 0, others: 2, days: 1 } }]));
+  expect(wrapper.findComponent({ name: "DayLane" }).props("lowerBound")).toBe(false);
+});
+
+test("a measured network without provider and country shows Not recorded in that spot", () => {
+  const { provider: _p, country: _c, ...bare } = FULL;
+  show(presence([bare]));
+
+  expect(wrapper.find(".venue-context .not-recorded").exists()).toBe(true);
+});
+
+test("with a provider and no country the country shows Not recorded", () => {
+  const { country: _c, ...noCountry } = FULL;
+  show(presence([noCountry]));
+
+  const context = wrapper.find(".venue-context");
+  expect(context.text()).toContain("Example Telecom");
+  expect(context.find(".not-recorded").exists()).toBe(true);
 });
 
 test("a router venue network reads from its identifier row", () => {
@@ -72,14 +116,52 @@ test("a router venue network reads from its identifier row", () => {
 
   const item = wrapper.find(".venue-network");
   expect(item.text()).toContain("cccc0003");
-  expect(item.text()).toContain("Outside the event: at least 1 attendees, at least 6 other accounts");
+  expect(item.text()).toContain("Outside the event: 1 attendees, at least 6 other accounts");
   expect(item.find("svg.day-lane").exists()).toBe(true);
+});
+
+test("a router row shows its first and last use from its days, partial on a capped row, Not recorded without them", () => {
+  const base: SmurfEventIdentifierRow = { hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [] };
+  const first = Date.UTC(2026, 8, 1) / 86_400_000;
+  const last = Date.UTC(2026, 9, 4) / 86_400_000;
+
+  show(presence([]), { window: WINDOW, rows: [{ ...base, firstDay: first, lastDay: last, accountsEver: { count: 4 } }] });
+  expect(wrapper.find(".venue-network").text()).toContain("First use 2026-09-01 · last use 2026-10-04");
+  expect(wrapper.find(".venue-network").text()).not.toContain("among the holders read");
+  wrapper.unmount();
+
+  show(presence([]), { window: WINDOW, rows: [{ ...base, firstDay: first, lastDay: last, accountsEver: { count: 4, capped: true } }] });
+  expect(wrapper.find(".venue-network").text()).toContain("First use 2026-09-01 · last use 2026-10-04 (among the holders read)");
+  wrapper.unmount();
+
+  show(presence([]), { window: WINDOW, rows: [base] });
+  expect(wrapper.find(".venue-first-last .not-recorded").exists()).toBe(true);
 });
 
 test("a router venue network without holders outside shows Not recorded", () => {
   show(presence([]), { window: WINDOW, rows: [{ hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [] }] });
 
   expect(wrapper.find(".venue-network .not-recorded").exists()).toBe(true);
+});
+
+test("the card without rows shows its title and one Not recorded", () => {
+  show(presence([]), { window: WINDOW, rows: [] });
+
+  expect(wrapper.find(".v-card-title").text()).toBe("Venue networks");
+  expect(wrapper.findAll(".not-recorded")).toHaveLength(1);
+});
+
+test("router networks of the event that are not in yet are announced under the IP rows", () => {
+  show(presence([FULL]), null, { networkCount: 2 });
+  expect(wrapper.text()).toContain("Router networks appear once the identifier table has loaded.");
+  wrapper.unmount();
+
+  show(presence([FULL]), { window: WINDOW, rows: [] }, { networkCount: 2 });
+  expect(wrapper.text()).not.toContain("Router networks appear");
+  wrapper.unmount();
+
+  show(presence([FULL]), null, { networkCount: 1 });
+  expect(wrapper.text()).not.toContain("Router networks appear");
 });
 
 test("loading and a failure with a retry button replace the networks", async () => {
