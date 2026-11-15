@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useOauthStore } from "@/store/oauth/store";
 import { loadLatest, requestSequence } from "@/store/admin/latest";
 import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
-import type { RenameRequest, ReviewRequest, SmurfEventDetail, SmurfEventHistory, SmurfEventIdentifiers, SmurfEventLinkRef, SmurfEventOrigin, SmurfEventPreview, SmurfEventReview, SmurfEventsQuery, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
+import type { RenameRequest, ReviewRequest, SmurfEventDetail, SmurfEventHistory, SmurfEventIdentifiers, SmurfEventLinkRef, SmurfEventOrigin, SmurfEventPresence, SmurfEventPreview, SmurfEventReview, SmurfEventsQuery, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
 import { reviewNeedsReason } from "./actions";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf, type WriteOutcome } from "./events";
@@ -53,6 +53,10 @@ interface SmurfEventsState {
   identifiers: SmurfEventIdentifiers | null;
   identifiersLoading: boolean;
   identifiersError: unknown;
+  /** Where the venue networks and attendees of the event last asked for were; null until loaded. */
+  presence: SmurfEventPresence | null;
+  presenceLoading: boolean;
+  presenceError: unknown;
   /** The history of the event last asked for; null until loaded. */
   history: SmurfEventHistory | null;
   historyLoading: boolean;
@@ -84,6 +88,7 @@ const detailLoads = requestSequence();
 const previewLoads = requestSequence();
 const denyLoads = requestSequence();
 const identifierLoads = requestSequence();
+const presenceLoads = requestSequence();
 const historyLoads = requestSequence();
 // One visit of the page; `clear()` ends it. A write that settles after that changes nothing.
 const visits = requestSequence();
@@ -112,6 +117,9 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
     identifiers: null,
     identifiersLoading: false,
     identifiersError: null,
+    presence: null,
+    presenceLoading: false,
+    presenceError: null,
     history: null,
     historyLoading: false,
     historyError: null,
@@ -163,10 +171,14 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
-    /** Drops the identifier table and history of the event left behind, and any answer still on its way. */
+    /** Drops the identifier table, history and presence of the event left behind, and any answer still on its way. */
     dropEventTables(): void {
       identifierLoads.invalidate();
       historyLoads.invalidate();
+      presenceLoads.invalidate();
+      this.presence = null;
+      this.presenceLoading = false;
+      this.presenceError = null;
       this.identifiers = null;
       this.identifiersLoading = false;
       this.identifiersError = null;
@@ -422,6 +434,18 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
+    async loadPresence(id: string): Promise<boolean> {
+      this.presence = null;
+      this.presenceError = null;
+      return await loadLatest(presenceLoads, {
+        what: "the smurf event presence",
+        setLoading: (loading) => (this.presenceLoading = loading),
+        fetch: () => smurfEventsService().presence(token(), id),
+        apply: (presence) => (this.presence = presence),
+        fail: (e) => (this.presenceError = e),
+      });
+    },
+
     async loadHistory(id: string): Promise<boolean> {
       this.history = null;
       this.historyError = null;
@@ -476,6 +500,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       denyLoads.invalidate();
       identifierLoads.invalidate();
       historyLoads.invalidate();
+      presenceLoads.invalidate();
       this.$reset();
     },
   },

@@ -75,15 +75,22 @@ export function manualEventErrorText(e: unknown, t: Translate): string {
   return errorText(e, t);
 }
 
-/** The busy notice, with how long to wait when the server said. */
-function busyText(seconds: number | null, t: Translate): string {
-  if (seconds === null) return t(key("manual_busy"));
-  return t(key(`manual_busy_wait_${seconds === 1 ? "one" : "other"}`), { seconds });
+/** Like {@link manualEventErrorText} for the presence route, a read: the texts do not say anything was saved. */
+export function presenceErrorText(e: unknown, t: Translate): string {
+  if (e instanceof SmurfEventsApiError && e.status === NOT_READY) return t(key("presence_not_ready"));
+  if (e instanceof SmurfEventsApiError && e.status === TOO_BUSY) return busyText(e.retryAfterSeconds, t, "presence_busy");
+  return errorText(e, t);
 }
 
-/** "1 link" / "N links": the `_one` or `_other` form of the text `base`, as the hardware page does. */
-export function countText(base: string, count: number, t: Translate): string {
-  return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count });
+/** The busy notice, with how long to wait when the server said. */
+function busyText(seconds: number | null, t: Translate, base = "manual_busy"): string {
+  if (seconds === null) return t(key(base));
+  return t(key(`${base}_wait_${seconds === 1 ? "one" : "other"}`), { seconds });
+}
+
+/** "1 link" / "N links": the `_one` or `_other` form of the text `base`, as the hardware page does. `shown` replaces the number in the text (for example "at least 3"); the form still follows `count`. */
+export function countText(base: string, count: number, t: Translate, shown: string | number = count): string {
+  return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count: shown });
 }
 
 const HISTORY_ACTIONS: ReadonlySet<string> = new Set(["event-create", "event-update", "event-delete", "event-confirm", "event-deny", "event-unreview", "event-rename"]);

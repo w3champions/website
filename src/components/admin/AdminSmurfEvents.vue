@@ -28,6 +28,7 @@
         @open-event="openEvent"
         @retry-history="store.loadHistory(eventId)"
         @retry-identifiers="store.loadIdentifiers(eventId)"
+        @retry-presence="store.loadPresence(eventId)"
         @review="openReview"
         @rename="openRename"
         @edit="openManual(store.detail)"
@@ -177,15 +178,16 @@ function onDeleted(): void {
   showList();
 }
 
-/** The tables of the event page: its decision record and its identifiers. */
+/** The tables of the event page: its decision record, its identifiers and where its attendees were. */
 function loadEventTables(id: string): void {
   void store.loadHistory(id);
+  void store.loadPresence(id);
   void store.loadIdentifiers(id);
 }
 
 /**
- * The one place an event is fetched: openDetail drops the history and the identifiers of the event
- * before it, so what belongs to the event page is asked for here, after every openDetail.
+ * The one place an event is fetched: openDetail drops the history, the identifiers and the presence
+ * of the event before it, so what belongs to the event page is asked for here, after every openDetail.
  */
 function loadEvent(id: string): void {
   void store.openDetail(id);

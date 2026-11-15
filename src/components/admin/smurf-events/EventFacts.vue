@@ -6,7 +6,7 @@
         <tr v-for="row in rows" :key="row.label">
           <td>{{ row.label }}</td>
           <td class="text-right font-weight-bold">
-            <span v-if="row.notRecorded" class="not-recorded text-medium-emphasis">{{ t(key("facts_not_recorded")) }}</span>
+            <not-recorded v-if="row.notRecorded" />
             <template v-else>{{ row.value }}</template>
             <div v-if="row.names && row.names.length > 0" class="text-body-2 font-weight-regular">{{ row.names.join(", ") }}</div>
           </td>
@@ -27,6 +27,7 @@ import type { SmurfEventDetail } from "@/services/admin/smurf-detection/SmurfEve
 import { factText, identifiersText, maxAccountsCapped } from "@/store/admin/smurfEvents/facts";
 import { countText } from "@/store/admin/smurfEvents/labels";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
+import NotRecorded from "./NotRecorded.vue";
 
 const props = defineProps<{
   event: SmurfEventDetail;
@@ -92,13 +93,3 @@ const recordedLines = computed(() => {
   ];
 });
 </script>
-
-<style scoped>
-.not-recorded {
-  display: inline-block;
-  padding: 0 8px;
-  border-radius: 2px;
-  font-weight: 400;
-  background: repeating-linear-gradient(135deg, transparent 0 4px, rgba(var(--v-theme-on-surface), 0.12) 4px 6px);
-}
-</style>

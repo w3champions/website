@@ -7,7 +7,7 @@ import { EAdminRouteName } from "@/router/types";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
 import { inlineDialog, manualEvent, testPlugins } from "./smurf-events/setup.testing";
 
-const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn(), history: vi.fn(), identifiers: vi.fn() }));
+const service = vi.hoisted(() => ({ list: vi.fn(), get: vi.fn(), review: vi.fn(), remove: vi.fn(), denyPreview: vi.fn(), history: vi.fn(), identifiers: vi.fn(), presence: vi.fn() }));
 vi.mock("@/store/admin/smurfEvents/service", () => ({ smurfEventsService: () => service }));
 const oauth = vi.hoisted(() => ({ token: "tok", permissions: [] as string[] }));
 vi.mock("@/store/oauth/store", async () => {
@@ -100,6 +100,19 @@ test("an edit in place reads the record and the identifiers again", async () => 
   expect(service.get).toHaveBeenCalledTimes(1);
 });
 
+test("opening an event and an edit in place read the presence once each", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  expect(service.presence).toHaveBeenCalledTimes(1);
+  expect(service.presence).toHaveBeenLastCalledWith("tok", "ev1");
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("edit");
+  await flushPromises();
+
+  wrapper.findComponent({ name: "ManualEventDialog" }).vm.$emit("saved", manualEvent({ id: "ev1" }), { applied: true, existing: false, needsReview: false });
+  await flushPromises();
+
+  expect(service.presence).toHaveBeenCalledTimes(2);
+});
+
 test("the record is read after every load of an event, the same event again included", async () => {
   await open("/admin-smurf-events?event=ev1");
   expect(service.history).toHaveBeenCalledTimes(1);
@@ -140,6 +153,18 @@ test("the identifiers are read after every load of an event, and a retry reads o
   expect(service.identifiers).toHaveBeenCalledTimes(3);
   expect(service.get).toHaveBeenCalledTimes(2);
   expect(service.history).toHaveBeenCalledTimes(2);
+});
+
+test("a presence retry reads only the presence", async () => {
+  await open("/admin-smurf-events?event=ev1");
+  const before = service.presence.mock.calls.length;
+
+  wrapper.findComponent({ name: "EventDetail" }).vm.$emit("retry-presence");
+  await flushPromises();
+
+  expect(service.presence).toHaveBeenCalledTimes(before + 1);
+  expect(service.presence).toHaveBeenLastCalledWith("tok", "ev1");
+  expect(service.get).toHaveBeenCalledTimes(1);
 });
 
 test("a rename reads the record again and says so", async () => {

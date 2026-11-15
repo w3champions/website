@@ -17,6 +17,7 @@ const service = vi.hoisted(() => ({
   rename: vi.fn(),
   identifiers: vi.fn(),
   history: vi.fn(),
+  presence: vi.fn(),
 }));
 
 vi.mock("./service", () => ({ smurfEventsService: () => service }));
@@ -791,6 +792,81 @@ test("a late identifiers answer for the event left behind is dropped when anothe
   expect(store.identifiers).toBeNull();
   expect(store.identifiersLoading).toBe(false);
   expect(store.identifiersError).toBeNull();
+});
+
+const PRESENCE = { at: "2026-11-15T00:00:00.000Z", window: { fromDay: 1, toDay: 2, eventFromDay: 1, eventToDay: 2 }, networks: [], attendees: [] };
+
+test("loadPresence keeps the answer of the newest request only", async () => {
+  const store = useSmurfEventsStore();
+  let first!: (v: unknown) => void;
+  service.presence.mockImplementationOnce(() => new Promise((resolve) => (first = resolve)));
+  service.presence.mockResolvedValueOnce(PRESENCE);
+  const stale = store.loadPresence("1");
+  await store.loadPresence("2");
+  first({ ...PRESENCE, networks: [{ hash8: "stale" }] });
+  await stale;
+
+  expect(service.presence).toHaveBeenLastCalledWith("tok", "2");
+  expect(store.presence).toEqual(PRESENCE);
+  expect(store.presenceLoading).toBe(false);
+});
+
+test("a late presence answer for the event left behind is dropped when another event opens", async () => {
+  const store = useSmurfEventsStore();
+  let late!: (v: unknown) => void;
+  service.presence.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  service.get.mockResolvedValue(detail("2"));
+  const pending = store.loadPresence("1");
+
+  await store.openDetail("2");
+  late({ ...PRESENCE, networks: [{ hash8: "ofA" }] });
+  await pending;
+
+  expect(store.presence).toBeNull();
+  expect(store.presenceLoading).toBe(false);
+  expect(store.presenceError).toBeNull();
+});
+
+test("a late presence failure for the event left behind is not shown when another event opens", async () => {
+  const store = useSmurfEventsStore();
+  let fail!: (e: unknown) => void;
+  service.presence.mockImplementationOnce(() => new Promise((_resolve, reject) => (fail = reject)));
+  service.get.mockResolvedValue(detail("2"));
+  const pending = store.loadPresence("1");
+
+  await store.openDetail("2");
+  fail(new Error("late"));
+  await pending;
+
+  expect(store.presenceError).toBeNull();
+  expect(store.presence).toBeNull();
+  expect(store.presenceLoading).toBe(false);
+});
+
+test("a late presence answer after clear() is not shown on the next visit", async () => {
+  const store = useSmurfEventsStore();
+  let late!: (v: unknown) => void;
+  service.presence.mockImplementationOnce(() => new Promise((resolve) => (late = resolve)));
+  const pending = store.loadPresence("1");
+
+  store.clear();
+  late({ ...PRESENCE, networks: [{ hash8: "ofA" }] });
+  await pending;
+
+  expect(store.presence).toBeNull();
+  expect(store.presenceLoading).toBe(false);
+});
+
+test("a failed presence load keeps the error and no answer", async () => {
+  const store = useSmurfEventsStore();
+  const failure = new Error("boom");
+  service.presence.mockRejectedValue(failure);
+
+  expect(await store.loadPresence("2")).toBe(false);
+
+  expect(store.presenceError).toBe(failure);
+  expect(store.presence).toBeNull();
+  expect(store.presenceLoading).toBe(false);
 });
 
 test("a late history answer is dropped when the detail is closed, and the loaded state is cleared", async () => {

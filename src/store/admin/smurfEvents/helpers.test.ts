@@ -4,7 +4,7 @@ import { SmurfEventsApiError } from "@/services/admin/SmurfEventsService";
 import type { SmurfEventDetail, SmurfEventPreview, SmurfEventSummary } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { reviewDecisions, reviewNeedsReason, smurfEventActions } from "./actions";
 import { draftFromEvent, draftProblem, emptyDraft, previewKey, saveBlocker, type SmurfEventDraft, toManualRequest, toPreviewRequest } from "./draft";
-import { countText, errorText, exclusionLabel, factLabel, historyActionLabel, manualEventErrorText, originLabel, previewCountsText, refusalLabel, reviewColor, reviewFactsText, reviewLabel } from "./labels";
+import { countText, errorText, exclusionLabel, factLabel, historyActionLabel, manualEventErrorText, originLabel, presenceErrorText, previewCountsText, refusalLabel, reviewColor, reviewFactsText, reviewLabel } from "./labels";
 import { mergeEvents, outcomeOf, refusedPreviewFrom, summaryOf } from "./events";
 import { factSort, factText, sortFromQuery, sortToQuery } from "./facts";
 import { translateEn as t } from "./translate.testing";
@@ -142,6 +142,20 @@ test("a busy answer says how long to wait when the server gave a wait, else the 
   assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null, null), t), usual);
   assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null, 30), t), "The server is busy right now. Nothing was saved. Try again in 30 seconds.");
   assert.equal(manualEventErrorText(new SmurfEventsApiError(429, null, null, 1), t), "The server is busy right now. Nothing was saved. Try again in 1 second.");
+});
+
+test("presenceErrorText: 503 says not ready, 429 says busy with the wait the server gave, otherwise the server message", () => {
+  assert.equal(presenceErrorText(new SmurfEventsApiError(503, "Index still building", null), t), "The server is still preparing the data this needs. Try again later.");
+  assert.equal(presenceErrorText(new SmurfEventsApiError(429, null, null), t), "The server is busy right now. Try again in a moment.");
+  assert.equal(presenceErrorText(new SmurfEventsApiError(429, null, null, 30), t), "The server is busy right now. Try again in 30 seconds.");
+  assert.equal(presenceErrorText(new SmurfEventsApiError(429, null, null, 1), t), "The server is busy right now. Try again in 1 second.");
+  assert.equal(presenceErrorText(new SmurfEventsApiError(400, "Bad id", null), t), "Bad id");
+  assert.equal(presenceErrorText(new Error("network"), t), "The request failed. Please try again.");
+});
+
+test("countText picks the form from the count and shows another value when given", () => {
+  assert.equal(countText("preview_anchors", 1, t, "at least 1"), "at least 1 anchor");
+  assert.equal(countText("preview_anchors", 2, t, "at least 2"), "at least 2 anchors");
 });
 
 test("counts use the singular form for one", () => {
