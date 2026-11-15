@@ -171,7 +171,7 @@ export const useSmurfEventsStore = defineStore("smurfEvents", {
       });
     },
 
-    /** Drops the identifier table and history of the event left behind, and any answer still on its way. */
+    /** Drops the identifier table, history and presence of the event left behind, and any answer still on its way. */
     dropEventTables(): void {
       identifierLoads.invalidate();
       historyLoads.invalidate();

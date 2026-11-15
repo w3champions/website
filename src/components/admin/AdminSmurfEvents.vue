@@ -186,8 +186,8 @@ function loadEventTables(id: string): void {
 }
 
 /**
- * The one place an event is fetched: openDetail drops the history and the identifiers of the event
- * before it, so what belongs to the event page is asked for here, after every openDetail.
+ * The one place an event is fetched: openDetail drops the history, the identifiers and the presence
+ * of the event before it, so what belongs to the event page is asked for here, after every openDetail.
  */
 function loadEvent(id: string): void {
   void store.openDetail(id);

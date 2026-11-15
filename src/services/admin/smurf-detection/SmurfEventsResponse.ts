@@ -148,9 +148,15 @@ export interface SmurfEventIdentifierRow {
   observed?: Array<"before" | "after">;
   /** Networks stored as an IP hash, when observed: first and last use inside the event (absent: not observed). */
   span?: { firstAt: string; lastAt: string };
-  /** Accounts with a day of use outside the event's days, split by the event's attendees. `capped`: the attendee part is exact, `others` is a lower bound. */
+  /**
+   * Item rows only. Accounts with a day of use outside the event's days, split by the event's attendees.
+   * Absent: nothing was read for the item (not recorded). `capped`: the attendee part is exact, `others` is a lower bound.
+   */
   holdersOutside?: { attendees: number; others: number; capped?: true };
-  /** UTC day numbers of the earliest and the latest day of use read (a capped row: bounds of what was read). */
+  /**
+   * Item rows only. UTC day numbers of the earliest and the latest day of use, over every run read; on a partial row
+   * (`accountsEver.capped` or `holdersOutside.capped`) over the accounts read only. Absent: no run was read.
+   */
   firstDay?: number;
   lastDay?: number;
   alsoIn: Array<{ id: string; name: string }>;
@@ -168,7 +174,7 @@ export interface SmurfEventIdentifiers {
 
 /** Where the venue networks and the attendees were, around the event. */
 export interface SmurfEventPresence {
-  /** ISO, when read. */
+  /** ISO, when read. Not shown on the page. */
   at: string;
   /** The identifier table's window. */
   window: SmurfEventIdentifiers["window"];
@@ -178,24 +184,31 @@ export interface SmurfEventPresence {
   attendees: SmurfEventAttendeePresence[];
   /** Only for an event without venue networks. */
   spread?: SmurfEventSpread;
-  /** Some item is `notRead` or capped. */
+  /**
+   * Some part of the answer is partial: a network or an attendee was not read, a side is capped or was not read,
+   * or a first or last use was not read in time.
+   */
   truncated?: true;
 }
 
 export interface SmurfEventNetworkPresence {
   hash8: string;
-  /** Ever; absent without `notRead`: not recorded. */
+  /**
+   * Ever. Absent: no use found, or not read in time (the answer is then `truncated`).
+   * A network with only `hash8` was not measured by anyone: not recorded.
+   */
   firstUseAt?: string;
   lastUseAt?: string;
+  /** On a measured network a side that is absent was not read. */
   before?: SmurfEventSideUse;
   during?: SmurfEventSideUse;
   after?: SmurfEventSideUse;
-  /** Inside the window, days with use only. */
+  /** Inside the window, days with use only; holds only the sides read. */
   days?: Array<[day: number, accounts: number]>;
   /** Context only. */
   provider?: string;
   country?: string;
-  /** Not measured in this request. */
+  /** Not read at all in this request. */
   notRead?: true;
 }
 
@@ -203,6 +216,7 @@ export interface SmurfEventSideUse {
   attendees: number;
   others: number;
   days: number;
+  /** Not shown on the page. */
   firstAt?: string;
   lastAt?: string;
   /** At least these numbers. */
@@ -211,7 +225,9 @@ export interface SmurfEventSideUse {
 
 export interface SmurfEventAttendeePresence {
   battleTag: string;
+  /** `other`: got in by neither a venue network nor a venue PC, or no login was read in the event's span (`logins` is 0). */
   entry?: "network" | "pc" | "other";
+  /** The total of logins in the event's span; not shown on the page (only a 0 changes the entry text). */
   logins?: number;
   venueLogins?: number;
   elsewhere?: { logins: number; networks: number; homeLogins: number };
