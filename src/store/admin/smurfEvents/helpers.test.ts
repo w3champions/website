@@ -153,6 +153,11 @@ test("presenceErrorText: 503 says not ready, 429 says busy with the wait the ser
   assert.equal(presenceErrorText(new Error("network"), t), "The request failed. Please try again.");
 });
 
+test("countText picks the form from the count and shows another value when given", () => {
+  assert.equal(countText("preview_anchors", 1, t, "at least 1"), "at least 1 anchor");
+  assert.equal(countText("preview_anchors", 2, t, "at least 2"), "at least 2 anchors");
+});
+
 test("counts use the singular form for one", () => {
   assert.equal(countText("preview_ends_links", 1, t), "Saving ends 1 link");
   assert.equal(countText("preview_ends_links", 2, t), "Saving ends 2 links");

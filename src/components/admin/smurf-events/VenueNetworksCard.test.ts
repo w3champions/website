@@ -74,22 +74,22 @@ test("a partial answer is announced once, right under the title, and a complete 
 
   const notice = wrapper.findAll("[role='status']");
   expect(notice).toHaveLength(1);
-  expect(notice[0].text()).toBe("Part of this was not read: rows marked Not read and numbers marked at least are incomplete.");
+  expect(notice[0].text()).toBe("Part of this answer was not read: what says Not read is missing, and numbers marked at least or among those read are incomplete.");
   expect(notice[0].classes()).toContain("text-medium-emphasis");
   expect(wrapper.find(".v-card-title").element.nextElementSibling).toBe(notice[0].element);
   wrapper.unmount();
 
   show(presence([FULL]));
-  expect(wrapper.text()).not.toContain("Part of this was not read");
+  expect(wrapper.text()).not.toContain("Part of this answer was not read");
 });
 
 test("a partial answer is not announced while loading or after a failure", () => {
   show(null, null, { loading: true });
-  expect(wrapper.text()).not.toContain("Part of this was not read");
+  expect(wrapper.text()).not.toContain("Part of this answer was not read");
   wrapper.unmount();
 
   show(null, null, { error: "Boom" });
-  expect(wrapper.text()).not.toContain("Part of this was not read");
+  expect(wrapper.text()).not.toContain("Part of this answer was not read");
 });
 
 test("a network not read shows Not read and no figures", () => {

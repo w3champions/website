@@ -47,7 +47,7 @@ test("sideText uses the singular for exactly one and the plural for zero", () =>
 });
 
 test("sideText never reads at least 0: a capped zero says none among those read", () => {
-  expect(sideText({ attendees: 0, others: 2, days: 0, capped: true }, "after", tr)).toBe("After: no attendee among those read, at least 2 other accounts, on no day among those read");
+  expect(sideText({ attendees: 0, others: 2, days: 0, capped: true }, "after", tr)).toBe("After: no attendee among those read, at least 2 other accounts, on no day among the logins read");
   expect(sideText({ attendees: 1, others: 0, days: 1, capped: true }, "after", tr)).toBe("After: at least 1 attendee, no other account among those read, on at least 1 day");
 });
 
@@ -99,6 +99,8 @@ test("listText joins a list, says None for an empty one", () => {
   expect(listText([], tr)).toBe("None");
   expect(listText([], tr, true)).toBe("None among the attendees read");
   expect(listText(["DE"], tr, true)).toBe("DE");
+  expect(listText(undefined, tr)).toBeNull();
+  expect(listText(undefined, tr, true)).toBe("None among the attendees read");
 });
 
 test("venueRowId tells an IP network from an item of another kind with the same hash", () => {

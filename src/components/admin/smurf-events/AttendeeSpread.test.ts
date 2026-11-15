@@ -56,7 +56,7 @@ test("the partial notice follows the presence answer and sits right under the ti
 
   const notice = wrapper.findAll("[role='status']");
   expect(notice).toHaveLength(1);
-  expect(notice[0].text()).toBe("Part of this was not read: rows marked Not read and numbers marked at least are incomplete.");
+  expect(notice[0].text()).toBe("Part of this answer was not read: what says Not read is missing, and numbers marked at least or among those read are incomplete.");
   expect(wrapper.find(".v-card-title").element.nextElementSibling).toBe(notice[0].element);
 });
 
@@ -92,7 +92,7 @@ test("a spread that is not capped keeps None and Not recorded even when the answ
 test("a complete answer has no partial notice", () => {
   show({ countries: [], sharedInSpan: [], sharedUsual: [] });
 
-  expect(wrapper.text()).not.toContain("Part of this was not read");
+  expect(wrapper.text()).not.toContain("Part of this answer was not read");
 });
 
 test("countries and providers that are not recorded show Not recorded, an empty list shows None", () => {

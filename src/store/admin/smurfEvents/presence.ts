@@ -28,7 +28,7 @@ export function isUnmeasured(n: SmurfEventNetworkPresence): boolean {
  */
 function countedText(base: string, count: number, capped: true | undefined, tr: Translate): string {
   if (capped === true && count === 0) return tr(key(`${base}_none_read`));
-  return tr(key(`${base}_${count === 1 ? "one" : "other"}`), { count: factText(count, capped, tr) });
+  return countText(base, count, tr, factText(count, capped, tr));
 }
 
 /** "Before: 3 attendees, 2 other accounts, on 1 day"; every number reads "at least" when the side is capped. Null: the side is absent. */
@@ -69,8 +69,12 @@ export function switchText(a: SmurfEventAttendeePresence, tr: Translate): string
   return tr(key(a.samePcRecorded ? "switch_none" : "switch_no_pc"));
 }
 
-/** A recorded list: its items, or "None" when the server recorded it empty; "None among the attendees read" for an empty one when the spread covers only the attendees read. */
-export function listText(values: readonly string[], tr: Translate, capped = false): string {
-  if (values.length === 0) return tr(key(capped ? "spread_none_among_read" : "spread_none"));
+/**
+ * A recorded list: its items, or "None" when the server recorded it empty. When the spread covers only the
+ * attendees read (`capped`), an empty or absent list reads "None among the attendees read". Null: not recorded.
+ */
+export function listText(values: readonly string[] | undefined, tr: Translate, capped = false): string | null {
+  if (values === undefined && !capped) return null;
+  if (values === undefined || values.length === 0) return tr(key(capped ? "spread_none_among_read" : "spread_none"));
   return values.join(", ");
 }

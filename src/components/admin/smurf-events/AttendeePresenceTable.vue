@@ -10,19 +10,34 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="a in presence.attendees" :key="a.battleTag">
-        <th scope="row" class="font-weight-regular">
-          <account-link :battle-tag="a.battleTag" />
-          <v-chip v-if="anchors.has(a.battleTag)" size="x-small" variant="tonal" class="ml-1" :prepend-icon="mdiAnchor">{{ t(key("anchor")) }}</v-chip>
-        </th>
-        <td v-if="a.notRead" colspan="4" class="text-medium-emphasis">{{ t(key("presence_not_read")) }}</td>
+      <tr v-for="row in rows" :key="row.battleTag">
+        <td>
+          <account-link :battle-tag="row.battleTag" />
+          <v-chip v-if="row.anchor" size="x-small" variant="tonal" class="ml-1" :prepend-icon="mdiAnchor">{{ t(key("anchor")) }}</v-chip>
+        </td>
+        <td v-if="row.notRead" colspan="4" class="text-medium-emphasis">{{ t(key("presence_not_read")) }}</td>
         <template v-else>
-          <td>{{ entryText(a, tr) }}<not-recorded v-if="entryText(a, tr) === null" /></td>
-          <td class="text-no-wrap">{{ loginsText(a, tr) }}<not-recorded v-if="loginsText(a, tr) === null" /></td>
-          <td class="text-no-wrap">{{ switchText(a, tr) }}<not-recorded v-if="switchText(a, tr) === null" /></td>
+          <td>
+            <template v-if="row.entry !== null">{{ row.entry }}</template>
+            <not-recorded v-else />
+          </td>
+          <td class="text-no-wrap">
+            <template v-if="row.logins !== null">{{ row.logins }}</template>
+            <not-recorded v-else />
+          </td>
+          <td class="text-no-wrap">
+            <template v-if="row.switch !== null">{{ row.switch }}</template>
+            <not-recorded v-else />
+          </td>
           <td class="text-medium-emphasis">
-            <div><not-recorded v-if="a.countries === undefined" /><template v-else>{{ listText(a.countries, tr) }}</template></div>
-            <div><not-recorded v-if="a.providers === undefined" /><template v-else>{{ listText(a.providers, tr) }}</template></div>
+            <div>
+              <template v-if="row.countries !== null">{{ row.countries }}</template>
+              <not-recorded v-else />
+            </div>
+            <div>
+              <template v-if="row.providers !== null">{{ row.providers }}</template>
+              <not-recorded v-else />
+            </div>
           </td>
         </template>
       </tr>
@@ -31,6 +46,7 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiAnchor } from "@mdi/js";
 import type { SmurfEventPresence } from "@/services/admin/smurf-detection/SmurfEventsResponse";
@@ -39,11 +55,25 @@ import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 import AccountLink from "./AccountLink.vue";
 import NotRecorded from "./NotRecorded.vue";
 
-defineProps<{
+const props = defineProps<{
   presence: SmurfEventPresence;
   anchors: ReadonlySet<string>;
 }>();
 
 const { t } = useI18n();
 const tr: Translate = (k, named) => t(k, named ?? {});
+
+/** Each attendee's cell texts, worked out once; null: not recorded. */
+const rows = computed(() =>
+  props.presence.attendees.map((a) => ({
+    battleTag: a.battleTag,
+    anchor: props.anchors.has(a.battleTag),
+    notRead: a.notRead === true,
+    entry: entryText(a, tr),
+    logins: loginsText(a, tr),
+    switch: switchText(a, tr),
+    countries: a.countries === undefined ? null : listText(a.countries, tr),
+    providers: a.providers === undefined ? null : listText(a.providers, tr),
+  }))
+);
 </script>

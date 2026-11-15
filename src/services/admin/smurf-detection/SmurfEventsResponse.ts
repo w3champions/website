@@ -243,7 +243,7 @@ export interface SmurfEventAttendeePresence {
 }
 
 export interface SmurfEventSpread {
-  /** Set when any attendee was not read (also when none was): the spread then covers only the attendees read. */
+  /** Set when any attendee was not read (including when no attendee was read at all): the spread then covers only the attendees read. */
   capped?: true;
   /** Absent: not recorded. */
   countries?: string[];

@@ -372,5 +372,5 @@ test("a partial presence answer reaches the spread card of an event without venu
   useSmurfEventsStore().presence = { ...PRESENCE, networks: [], truncated: true, spread: { countries: [], sharedInSpan: [], sharedUsual: [] } };
   await flushPromises();
 
-  expect(wrapper.findComponent({ name: "AttendeeSpread" }).text()).toContain("Part of this was not read");
+  expect(wrapper.findComponent({ name: "AttendeeSpread" }).text()).toContain("Part of this answer was not read");
 });

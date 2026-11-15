@@ -88,9 +88,9 @@ function busyText(seconds: number | null, t: Translate, base = "manual_busy"): s
   return t(key(`${base}_wait_${seconds === 1 ? "one" : "other"}`), { seconds });
 }
 
-/** "1 link" / "N links": the `_one` or `_other` form of the text `base`, as the hardware page does. */
-export function countText(base: string, count: number, t: Translate): string {
-  return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count });
+/** "1 link" / "N links": the `_one` or `_other` form of the text `base`, as the hardware page does. `shown` replaces the number in the text (for example "at least 3"); the form still follows `count`. */
+export function countText(base: string, count: number, t: Translate, shown: string | number = count): string {
+  return t(key(`${base}_${count === 1 ? "one" : "other"}`), { count: shown });
 }
 
 const HISTORY_ACTIONS: ReadonlySet<string> = new Set(["event-create", "event-update", "event-delete", "event-confirm", "event-deny", "event-unreview", "event-rename"]);

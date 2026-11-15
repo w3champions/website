@@ -13,16 +13,13 @@
       <div v-for="group in plainGroups" :key="group.id" class="spread-group mb-2">
         <div class="font-weight-bold">{{ group.title }}</div>
         <div class="text-medium-emphasis">
-          <template v-if="group.values === undefined">
-            <template v-if="spread?.capped">{{ t(key("spread_none_among_read")) }}</template>
-            <not-recorded v-else />
-          </template>
-          <template v-else>{{ listText(group.values, tr, spread?.capped === true) }}</template>
+          <template v-if="group.text !== null">{{ group.text }}</template>
+          <not-recorded v-else />
         </div>
       </div>
       <div v-for="group in sharedGroups" :key="group.id" class="spread-group mb-2">
         <div class="font-weight-bold">{{ group.title }}</div>
-        <div v-if="group.networks.length === 0" class="text-medium-emphasis">{{ t(key(spread?.capped ? "spread_none_among_read" : "spread_none")) }}</div>
+        <div v-if="group.networks.length === 0" class="text-medium-emphasis">{{ noneText }}</div>
         <div v-for="network in group.networks" :key="network.hash8">
           <identifier-chip kind="ip" :hash8="network.hash8" />
           <span class="ml-2">
@@ -62,9 +59,13 @@ const tr: Translate = (k, named) => t(k, named ?? {});
 /** Said once, under the title, once the answer is in. */
 const partialAnswer = computed(() => !props.loading && props.error === null && props.spread !== null && props.truncated);
 
+/** The spread covers only the attendees read: an empty or absent list says so (the one place that rule lives is `listText`). */
+const capped = computed(() => props.spread?.capped === true);
+const noneText = computed(() => listText([], tr, capped.value));
+
 const plainGroups = computed(() => [
-  { id: "countries", title: t(key("spread_countries")), values: props.spread?.countries },
-  { id: "providers", title: t(key("spread_providers")), values: props.spread?.providers },
+  { id: "countries", title: t(key("spread_countries")), text: listText(props.spread?.countries, tr, capped.value) },
+  { id: "providers", title: t(key("spread_providers")), text: listText(props.spread?.providers, tr, capped.value) },
 ]);
 
 const sharedGroups = computed(() => [
