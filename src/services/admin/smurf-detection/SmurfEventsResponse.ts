@@ -194,8 +194,8 @@ export interface SmurfEventPresence {
 export interface SmurfEventNetworkPresence {
   hash8: string;
   /**
-   * Ever. Absent: no use found, or not read in time (the answer is then `truncated`).
-   * A network with only `hash8` was not measured by anyone: not recorded.
+   * Ever. Absent on a measured network: not read in time (the answer is then `truncated`).
+   * Absent on a network that carries only its hash: not recorded.
    */
   firstUseAt?: string;
   lastUseAt?: string;
@@ -243,6 +243,8 @@ export interface SmurfEventAttendeePresence {
 }
 
 export interface SmurfEventSpread {
+  /** Set when any attendee was not read (also when none was): the spread then covers only the attendees read. */
+  capped?: true;
   /** Absent: not recorded. */
   countries?: string[];
   providers?: string[];

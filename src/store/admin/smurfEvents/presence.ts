@@ -69,8 +69,8 @@ export function switchText(a: SmurfEventAttendeePresence, tr: Translate): string
   return tr(key(a.samePcRecorded ? "switch_none" : "switch_no_pc"));
 }
 
-/** A recorded list: its items, or "None" when the server recorded it empty; "Not read" for an empty one in a partial answer (the items may be among what was not read). */
-export function listText(values: readonly string[], tr: Translate, partial = false): string {
-  if (values.length === 0) return tr(key(partial ? "presence_not_read" : "spread_none"));
+/** A recorded list: its items, or "None" when the server recorded it empty; "None among the attendees read" for an empty one when the spread covers only the attendees read. */
+export function listText(values: readonly string[], tr: Translate, capped = false): string {
+  if (values.length === 0) return tr(key(capped ? "spread_none_among_read" : "spread_none"));
   return values.join(", ");
 }

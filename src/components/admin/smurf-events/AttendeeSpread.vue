@@ -13,13 +13,16 @@
       <div v-for="group in plainGroups" :key="group.id" class="spread-group mb-2">
         <div class="font-weight-bold">{{ group.title }}</div>
         <div class="text-medium-emphasis">
-          <not-recorded v-if="group.values === undefined" />
-          <template v-else>{{ listText(group.values, tr, truncated) }}</template>
+          <template v-if="group.values === undefined">
+            <template v-if="spread?.capped">{{ t(key("spread_none_among_read")) }}</template>
+            <not-recorded v-else />
+          </template>
+          <template v-else>{{ listText(group.values, tr, spread?.capped === true) }}</template>
         </div>
       </div>
       <div v-for="group in sharedGroups" :key="group.id" class="spread-group mb-2">
         <div class="font-weight-bold">{{ group.title }}</div>
-        <div v-if="group.networks.length === 0" class="text-medium-emphasis">{{ t(key(truncated ? "presence_not_read" : "spread_none")) }}</div>
+        <div v-if="group.networks.length === 0" class="text-medium-emphasis">{{ t(key(spread?.capped ? "spread_none_among_read" : "spread_none")) }}</div>
         <div v-for="network in group.networks" :key="network.hash8">
           <identifier-chip kind="ip" :hash8="network.hash8" />
           <span class="ml-2">
@@ -43,7 +46,7 @@ import NotRecorded from "./NotRecorded.vue";
 
 const props = defineProps<{
   spread: SmurfEventSpread | null;
-  /** Part of the presence answer was not read: an empty list may only be the part that was not read. */
+  /** Part of the presence answer was not read: the one-line notice under the title. */
   truncated: boolean;
   loading: boolean;
   error: string | null;

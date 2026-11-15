@@ -97,7 +97,7 @@ test("switchText gives the minutes, or why there is none", () => {
 test("listText joins a list, says None for an empty one", () => {
   expect(listText(["DE", "PL"], tr)).toBe("DE, PL");
   expect(listText([], tr)).toBe("None");
-  expect(listText([], tr, true)).toBe("Not read");
+  expect(listText([], tr, true)).toBe("None among the attendees read");
   expect(listText(["DE"], tr, true)).toBe("DE");
 });
 

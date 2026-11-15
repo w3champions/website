@@ -51,20 +51,42 @@ test("the accounts of a shared network link to their hardware page", () => {
   expect(links[0].attributes("href")).toContain("player=Anchor%231001");
 });
 
-test("a partial answer is announced once under the title, and an empty list then reads Not read, not None", () => {
-  show({ countries: [], providers: ["Example Telecom"], sharedInSpan: [], sharedUsual: [] }, { truncated: true });
+test("the partial notice follows the presence answer and sits right under the title", () => {
+  show({ countries: ["DE"], providers: ["Example Telecom"], sharedInSpan: [], sharedUsual: [] }, { truncated: true });
 
   const notice = wrapper.findAll("[role='status']");
   expect(notice).toHaveLength(1);
   expect(notice[0].text()).toBe("Part of this was not read: rows marked Not read and numbers marked at least are incomplete.");
   expect(wrapper.find(".v-card-title").element.nextElementSibling).toBe(notice[0].element);
+});
+
+test("a capped spread says what an empty list covers: None among the attendees read", () => {
+  show({ capped: true, countries: [], providers: ["Example Telecom"], sharedInSpan: [], sharedUsual: [] });
+
   const groups = wrapper.findAll(".spread-group");
-  expect(groups[0].text()).toContain("Not read");
-  expect(groups[0].text()).not.toContain("None");
+  expect(groups[0].text()).toContain("None among the attendees read");
+  expect(groups[0].text()).not.toMatch(/Not read|None$/);
   expect(groups[1].text()).toContain("Example Telecom");
-  expect(groups[2].text()).toContain("Not read");
-  expect(groups[3].text()).toContain("Not read");
-  expect(wrapper.text()).not.toContain("None");
+  expect(groups[2].text()).toContain("None among the attendees read");
+  expect(groups[3].text()).toContain("None among the attendees read");
+});
+
+test("a capped spread with absent countries says the same, not the Not recorded hatch", () => {
+  show({ capped: true, providers: [], sharedInSpan: [], sharedUsual: [] });
+
+  const groups = wrapper.findAll(".spread-group");
+  expect(groups[0].text()).toContain("None among the attendees read");
+  expect(groups[0].find(".not-recorded").exists()).toBe(false);
+  expect(groups[1].text()).toContain("None among the attendees read");
+});
+
+test("a spread that is not capped keeps None and Not recorded even when the answer is partial", () => {
+  show({ providers: [], sharedInSpan: [], sharedUsual: [] }, { truncated: true });
+
+  const groups = wrapper.findAll(".spread-group");
+  expect(groups[0].find(".not-recorded").exists()).toBe(true);
+  expect(groups[1].text()).toContain("None");
+  expect(wrapper.text()).not.toContain("among the attendees read");
 });
 
 test("a complete answer has no partial notice", () => {

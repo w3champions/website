@@ -933,6 +933,7 @@ const en = {
       spread_shared_span: "Same address during the event",
       spread_shared_usual: "Same usual network",
       spread_none: "None",
+      spread_none_among_read: "None among the attendees read",
       spread_loading: "Loading where the attendees were\u2026",
       spread_failed: "Where the attendees were couldn't be loaded:",
       // Manual dialog
