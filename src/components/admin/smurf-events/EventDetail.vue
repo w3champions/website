@@ -62,23 +62,21 @@
               {{ t(key("attendees")) }}
               <v-chip size="small" class="ml-2" variant="tonal">{{ event.attendees.length }}</v-chip>
             </v-card-title>
-            <v-card-text>
-              <attendee-presence-table v-if="store.presence" :presence="store.presence" :anchors="anchors" />
-              <template v-else>
-                <v-chip
-                  v-for="tag in event.attendees"
-                  :key="tag"
-                  size="small"
-                  class="mr-1 my-1"
-                  :variant="anchors.has(tag) ? 'flat' : 'tonal'"
-                  :color="anchors.has(tag) ? 'primary' : undefined"
-                  :to="hardwareLink(tag)"
-                  :prepend-icon="anchors.has(tag) ? mdiAnchor : undefined"
-                  :title="anchors.has(tag) ? t(key('anchor')) : undefined"
-                >
-                  <span v-if="anchors.has(tag)" class="d-sr-only">{{ t(key("anchor")) }}: </span>{{ tag }}
-                </v-chip>
-              </template>
+            <attendee-presence-table v-if="store.presence" :presence="store.presence" :anchors="anchors" />
+            <v-card-text v-else>
+              <v-chip
+                v-for="tag in event.attendees"
+                :key="tag"
+                size="small"
+                class="mr-1 my-1"
+                :variant="anchors.has(tag) ? 'flat' : 'tonal'"
+                :color="anchors.has(tag) ? 'primary' : undefined"
+                :to="hardwareLink(tag)"
+                :prepend-icon="anchors.has(tag) ? mdiAnchor : undefined"
+                :title="anchors.has(tag) ? t(key('anchor')) : undefined"
+              >
+                <span v-if="anchors.has(tag)" class="d-sr-only">{{ t(key("anchor")) }}: </span>{{ tag }}
+              </v-chip>
             </v-card-text>
           </v-card>
         </v-col>
@@ -103,6 +101,7 @@
       <attendee-spread
         v-else-if="store.presence?.spread || store.presenceLoading || store.presenceError"
         :spread="store.presence?.spread ?? null"
+        :truncated="store.presence?.truncated === true"
         :loading="store.presenceLoading"
         :error="presenceError"
         @retry="emit('retry-presence')"
@@ -158,7 +157,7 @@ import { smurfEventActions } from "@/store/admin/smurfEvents/actions";
 import { errorText, presenceErrorText } from "@/store/admin/smurfEvents/labels";
 import { unreviewedNeighbours } from "@/store/admin/smurfEvents/neighbours";
 import { useSmurfEventsStore } from "@/store/admin/smurfEvents/store";
-import { hardwareLink } from "@/store/admin/smurfEvents/presence";
+import { hardwareLink } from "@/store/admin/smurfEvents/links";
 import { key, type Translate } from "@/store/admin/smurfEvents/translate";
 import AccountLink from "./AccountLink.vue";
 import AttendeePresenceTable from "./AttendeePresenceTable.vue";

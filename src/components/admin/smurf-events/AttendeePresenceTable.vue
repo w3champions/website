@@ -11,10 +11,10 @@
     </thead>
     <tbody>
       <tr v-for="a in presence.attendees" :key="a.battleTag">
-        <td>
+        <th scope="row" class="font-weight-regular">
           <account-link :battle-tag="a.battleTag" />
           <v-chip v-if="anchors.has(a.battleTag)" size="x-small" variant="tonal" class="ml-1" :prepend-icon="mdiAnchor">{{ t(key("anchor")) }}</v-chip>
-        </td>
+        </th>
         <td v-if="a.notRead" colspan="4" class="text-medium-emphasis">{{ t(key("presence_not_read")) }}</td>
         <template v-else>
           <td>{{ entryText(a, tr) }}<not-recorded v-if="entryText(a, tr) === null" /></td>

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { hardwareLink } from "@/store/admin/smurfEvents/presence";
+import { hardwareLink } from "@/store/admin/smurfEvents/links";
 
 defineProps<{
   battleTag: string;

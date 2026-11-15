@@ -40,19 +40,56 @@ test("the venue card shows first and last use, the three sides and the day lane 
   const text = wrapper.text();
   expect(wrapper.find("h3, h2, .v-card-title").text()).toContain("Venue networks");
   expect(text).toContain("First use 2026-09-01 08:00 UTC · last use 2026-10-04 20:00 UTC");
-  expect(text).toContain("Before: 1 attendees, 4 other accounts, on 2 days");
+  expect(text).toContain("Before: 1 attendee, 4 other accounts, on 2 days");
   expect(text).toContain("During: 3 attendees, 0 other accounts, on 2 days");
-  expect(text).toContain("After: at least 0 attendees, at least 2 other accounts, on at least 1 days");
+  expect(text).toContain("After: no attendee among those read, at least 2 other accounts, on at least 1 day");
   expect(text).toContain("Example Telecom · DE");
   expect(wrapper.find("svg.day-lane").exists()).toBe(true);
 });
 
-test("a network nobody measured shows its chip and exactly one Not recorded", () => {
+test("a network nobody measured shows its chip and a labelled Not recorded", () => {
   show(presence([{ hash8: "0a1b2c3d" }]));
 
   const item = wrapper.find(".venue-network");
   expect(item.text()).toContain("0a1b2c3d");
+  expect(item.text()).toContain("Use around the event: Not recorded");
   expect(item.findAll(".not-recorded")).toHaveLength(1);
+});
+
+test("the venue networks are a list", () => {
+  show(presence([FULL, { hash8: "0a1b2c3e", notRead: true }]));
+
+  expect(wrapper.findAll("ul > li.venue-network")).toHaveLength(2);
+});
+
+test("with no presence, not loading and no error nothing shows under the title", () => {
+  show(null);
+
+  expect(wrapper.find(".v-card-title").text()).toBe("Venue networks");
+  expect(wrapper.find(".v-card").text()).toBe("Venue networks");
+});
+
+test("a partial answer is announced once, right under the title, and a complete one says nothing", () => {
+  show({ ...presence([FULL, { hash8: "0a1b2c3e", notRead: true }]), truncated: true });
+
+  const notice = wrapper.findAll("[role='status']");
+  expect(notice).toHaveLength(1);
+  expect(notice[0].text()).toBe("Part of this was not read: rows marked Not read and numbers marked at least are incomplete.");
+  expect(notice[0].classes()).toContain("text-medium-emphasis");
+  expect(wrapper.find(".v-card-title").element.nextElementSibling).toBe(notice[0].element);
+  wrapper.unmount();
+
+  show(presence([FULL]));
+  expect(wrapper.text()).not.toContain("Part of this was not read");
+});
+
+test("a partial answer is not announced while loading or after a failure", () => {
+  show(null, null, { loading: true });
+  expect(wrapper.text()).not.toContain("Part of this was not read");
+  wrapper.unmount();
+
+  show(null, null, { error: "Boom" });
+  expect(wrapper.text()).not.toContain("Part of this was not read");
 });
 
 test("a network not read shows Not read and no figures", () => {
@@ -70,7 +107,7 @@ test("a network with only a provider is measured: it shows the provider, not a b
 
   const item = wrapper.find(".venue-network");
   expect(item.text()).toContain("Example Telecom");
-  expect(item.find(".venue-context .not-recorded").exists()).toBe(true);
+  expect(item.find(".venue-context").text()).toBe("Example Telecom · Not recorded");
   expect(item.find(".venue-first-last").text()).toBe("First use Not read · last use Not read");
 });
 
@@ -88,7 +125,7 @@ test("a side that was not read says so under its own label, and the lane reads a
   show(presence([partial]));
 
   const text = wrapper.find(".venue-network").text();
-  expect(text).toContain("Before: 1 attendees");
+  expect(text).toContain("Before: 1 attendee");
   expect(text).toContain("After: Not read");
   expect(text).not.toContain("During: Not read");
   expect(wrapper.findComponent({ name: "DayLane" }).props("lowerBound")).toBe(true);
@@ -107,7 +144,7 @@ test("a measured network without provider and country shows Not recorded in that
   const { provider: _p, country: _c, ...bare } = FULL;
   show(presence([bare]));
 
-  expect(wrapper.find(".venue-context .not-recorded").exists()).toBe(true);
+  expect(wrapper.find(".venue-context").text()).toBe("Provider · country: Not recorded");
 });
 
 test("with a provider and no country the country shows Not recorded", () => {
@@ -115,8 +152,7 @@ test("with a provider and no country the country shows Not recorded", () => {
   show(presence([noCountry]));
 
   const context = wrapper.find(".venue-context");
-  expect(context.text()).toContain("Example Telecom");
-  expect(context.find(".not-recorded").exists()).toBe(true);
+  expect(context.text()).toBe("Example Telecom · Not recorded");
 });
 
 test("a router venue network reads from its identifier row", () => {
@@ -135,7 +171,7 @@ test("a router venue network reads from its identifier row", () => {
 
   const item = wrapper.find(".venue-network");
   expect(item.text()).toContain("cccc0003");
-  expect(item.text()).toContain("Outside the event: 1 attendees, at least 6 other accounts");
+  expect(item.text()).toContain("On days outside the event: 1 attendee, at least 6 other accounts");
   expect(item.find("svg.day-lane").exists()).toBe(true);
 });
 
@@ -146,34 +182,68 @@ test("a router row shows its first and last use from its days, partial on a capp
 
   show(presence([]), { window: WINDOW, rows: [{ ...base, firstDay: first, lastDay: last, accountsEver: { count: 4 } }] });
   expect(wrapper.find(".venue-network").text()).toContain("First use 2026-09-01 · last use 2026-10-04");
-  expect(wrapper.find(".venue-network").text()).not.toContain("among the holders read");
+  expect(wrapper.find(".venue-network").text()).not.toContain("among the accounts read");
   wrapper.unmount();
 
   show(presence([]), { window: WINDOW, rows: [{ ...base, firstDay: first, lastDay: last, accountsEver: { count: 4, capped: true } }] });
-  expect(wrapper.find(".venue-network").text()).toContain("First use 2026-09-01 · last use 2026-10-04 (among the holders read)");
+  expect(wrapper.find(".venue-network").text()).toContain("First use 2026-09-01 · last use 2026-10-04 (among the accounts read)");
   wrapper.unmount();
 
   show(presence([]), { window: WINDOW, rows: [base] });
-  expect(wrapper.find(".venue-first-last .not-recorded").exists()).toBe(true);
+  expect(wrapper.find(".venue-first-last").text()).toBe("First use Not recorded · last use Not recorded");
 });
 
-test("a router venue network without holders outside shows Not recorded", () => {
+test("a router row with only one end of its use read says Not recorded for the other, in the partial wording on a capped row", () => {
+  const day = Date.UTC(2026, 8, 1) / 86_400_000;
+  show(presence([]), { window: WINDOW, rows: [{ hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [], firstDay: day, accountsEver: { count: 4, capped: true } }] });
+
+  expect(wrapper.find(".venue-first-last").text()).toBe("First use 2026-09-01 · last use Not recorded (among the accounts read)");
+});
+
+test("a router venue network without holders outside says so under its label", () => {
   show(presence([]), { window: WINDOW, rows: [{ hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [] }] });
 
-  expect(wrapper.find(".venue-network .not-recorded").exists()).toBe(true);
+  expect(wrapper.find(".venue-network").text()).toContain("On days outside the event: Not recorded");
 });
 
-test("the card without rows shows its title and one Not recorded", () => {
+test("the card without rows shows its title and one Not recorded when the identifier table is complete", () => {
   show(presence([]), { window: WINDOW, rows: [] });
 
   expect(wrapper.find(".v-card-title").text()).toBe("Venue networks");
   expect(wrapper.findAll(".not-recorded")).toHaveLength(1);
 });
 
+test("a partial identifier table that leaves router networks out says so under the rows", () => {
+  show(presence([FULL]), { window: WINDOW, rows: [], truncated: true }, { networkCount: 2 });
+  expect(wrapper.text()).toContain("The identifier table is partial: some router networks may not be listed here.");
+  wrapper.unmount();
+
+  show(presence([FULL]), { window: WINDOW, rows: [] }, { networkCount: 2 });
+  expect(wrapper.text()).not.toContain("The identifier table is partial");
+  wrapper.unmount();
+
+  show(presence([FULL]), { window: WINDOW, rows: [], truncated: true }, { networkCount: 1 });
+  expect(wrapper.text()).not.toContain("The identifier table is partial");
+});
+
+test("a card without rows and a partial identifier table says it is partial, not a bare Not recorded", () => {
+  show(presence([]), { window: WINDOW, rows: [], truncated: true }, { networkCount: 1 });
+
+  expect(wrapper.text()).toContain("The identifier table is partial: some router networks may not be listed here.");
+  expect(wrapper.find(".not-recorded").exists()).toBe(false);
+});
+
+test("router rows count as listed when comparing with the event's networks", () => {
+  const row: SmurfEventIdentifierRow = { hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [] };
+  show(presence([FULL]), { window: WINDOW, rows: [row], truncated: true }, { networkCount: 2 });
+
+  expect(wrapper.text()).not.toContain("The identifier table is partial");
+});
+
 test("with no rows and router networks pending only the pending line shows", () => {
   show(presence([]), null, { networkCount: 1 });
 
-  expect(wrapper.text()).toContain("Router networks appear once the identifier table has loaded.");
+  expect(wrapper.text()).toContain("Router networks are listed from the identifier table below.");
   expect(wrapper.find(".not-recorded").exists()).toBe(false);
 });
 
@@ -181,29 +251,29 @@ test("a capped holdersOutside also gives the partial first and last wording", ()
   const day = Date.UTC(2026, 8, 1) / 86_400_000;
   show(presence([]), { window: WINDOW, rows: [{ hash8: "cccc0003", kind: "router", roles: ["network"], keys: 1, alsoIn: [], firstDay: day, lastDay: day + 1, holdersOutside: { attendees: 1, others: 2, capped: true } }] });
 
-  expect(wrapper.find(".venue-network").text()).toContain("(among the holders read)");
+  expect(wrapper.find(".venue-network").text()).toContain("(among the accounts read)");
 });
 
 test("router networks of the event that are not in yet are announced under the IP rows", () => {
   show(presence([FULL]), null, { networkCount: 2 });
-  expect(wrapper.text()).toContain("Router networks appear once the identifier table has loaded.");
+  expect(wrapper.text()).toContain("Router networks are listed from the identifier table below.");
   wrapper.unmount();
 
   show(presence([FULL]), { window: WINDOW, rows: [] }, { networkCount: 2 });
-  expect(wrapper.text()).not.toContain("Router networks appear");
+  expect(wrapper.text()).not.toContain("Router networks are listed");
   wrapper.unmount();
 
   show(presence([FULL]), null, { networkCount: 1 });
-  expect(wrapper.text()).not.toContain("Router networks appear");
+  expect(wrapper.text()).not.toContain("Router networks are listed");
 });
 
 test("loading and a failure with a retry button replace the networks", async () => {
   show(null, null, { loading: true });
-  expect(wrapper.text()).toContain("Loading where the venue networks were used");
+  expect(wrapper.text()).toContain("Loading where the venue networks and the attendees were");
   wrapper.unmount();
 
   show(null, null, { error: "Boom" });
-  expect(wrapper.text()).toContain("Where the venue networks were used couldn't be loaded: Boom");
+  expect(wrapper.text()).toContain("Where the venue networks and the attendees were couldn't be loaded: Boom");
   const retry = wrapper.find("button.retry");
   expect(retry.exists()).toBe(true);
   await retry.trigger("click");

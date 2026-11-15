@@ -1,6 +1,6 @@
-import { EAdminRouteName } from "@/router/types";
 import type { SmurfEventAttendeePresence, SmurfEventIdentifierRow, SmurfEventIdentifiers, SmurfEventNetworkPresence, SmurfEventPresence, SmurfEventSideUse } from "@/services/admin/smurf-detection/SmurfEventsResponse";
 import { factText } from "./facts";
+import { countText } from "./labels";
 import { key, type Translate } from "./translate";
 
 export type VenueRow = { source: "ip"; network: SmurfEventNetworkPresence } | { source: "item"; row: SmurfEventIdentifierRow };
@@ -22,25 +22,44 @@ export function isUnmeasured(n: SmurfEventNetworkPresence): boolean {
   return n.notRead !== true && n.firstUseAt === undefined && n.lastUseAt === undefined && n.before === undefined && n.during === undefined && n.after === undefined && n.days === undefined && n.provider === undefined && n.country === undefined;
 }
 
-/** "Before: 3 attendees, 2 other accounts, on 1 days"; every number reads "at least" when the side is capped. Null: the side is absent. */
+/**
+ * One counted thing: "3 attendees" / "1 other account", "at least N" when `capped`, and, since "at least 0"
+ * says nothing, "no attendee among those read" for a capped zero. `base` names the `_one` / `_other` / `_none_read` texts.
+ */
+function countedText(base: string, count: number, capped: true | undefined, tr: Translate): string {
+  if (capped === true && count === 0) return tr(key(`${base}_none_read`));
+  return tr(key(`${base}_${count === 1 ? "one" : "other"}`), { count: factText(count, capped, tr) });
+}
+
+/** "Before: 3 attendees, 2 other accounts, on 1 day"; every number reads "at least" when the side is capped. Null: the side is absent. */
 export function sideText(side: SmurfEventSideUse | undefined, sideKey: "before" | "during" | "after", tr: Translate): string | null {
   if (side === undefined) return null;
   return tr(key(`venue_side_${sideKey}`), {
-    attendees: factText(side.attendees, side.capped, tr),
-    others: factText(side.others, side.capped, tr),
-    days: factText(side.days, side.capped, tr),
+    attendees: countedText("venue_attendees", side.attendees, side.capped, tr),
+    others: countedText("venue_others", side.others, side.capped, tr),
+    days: countedText("venue_days", side.days, side.capped, tr),
   });
 }
 
-/** How the attendee got in; null: not recorded. */
-export function entryText(a: SmurfEventAttendeePresence, tr: Translate): string | null {
-  return a.entry === undefined ? null : tr(key(`entry_${a.entry}`));
+/** "On days outside the event: 1 attendee, at least 6 other accounts"; the attendee count is exact even on a capped row, only the other accounts are a lower bound. */
+export function outsideText(holders: NonNullable<SmurfEventIdentifierRow["holdersOutside"]>, tr: Translate): string {
+  return tr(key("venue_outside"), {
+    attendees: countedText("venue_attendees", holders.attendees, undefined, tr),
+    others: countedText("venue_others", holders.others, holders.capped, tr),
+  });
 }
 
-/** "venue / elsewhere (at home)"; null unless both parts were read. */
+/** How the attendee got in; null: not recorded. "Other" with no login read in the event's span says that instead of "neither". */
+export function entryText(a: SmurfEventAttendeePresence, tr: Translate): string | null {
+  if (a.entry === undefined) return null;
+  if (a.entry === "other" && a.logins === 0) return tr(key("entry_no_login"));
+  return tr(key(`entry_${a.entry}`));
+}
+
+/** "venue / elsewhere (on their usual network) · N other networks"; null unless both parts were read. */
 export function loginsText(a: SmurfEventAttendeePresence, tr: Translate): string | null {
   if (a.venueLogins === undefined || a.elsewhere === undefined) return null;
-  return tr(key("logins_split"), { venue: a.venueLogins, elsewhere: a.elsewhere.logins, home: a.elsewhere.homeLogins });
+  return tr(key("logins_split"), { venue: a.venueLogins, elsewhere: a.elsewhere.logins, home: a.elsewhere.homeLogins, networks: countText("logins_networks", a.elsewhere.networks, tr) });
 }
 
 /** The nearest switch on one PC, or why there is none; null: not recorded. */
@@ -50,12 +69,8 @@ export function switchText(a: SmurfEventAttendeePresence, tr: Translate): string
   return tr(key(a.samePcRecorded ? "switch_none" : "switch_no_pc"));
 }
 
-/** A recorded list: its items, or "None" when the server recorded it empty. */
-export function listText(values: readonly string[], tr: Translate): string {
-  return values.length === 0 ? tr(key("spread_none")) : values.join(", ");
-}
-
-/** The hardware page of an account. */
-export function hardwareLink(battleTag: string): { name: EAdminRouteName; query: { player: string } } {
-  return { name: EAdminRouteName.SMURF_CHECKER_HARDWARE_LINKS, query: { player: battleTag } };
+/** A recorded list: its items, or "None" when the server recorded it empty; "Not read" for an empty one in a partial answer (the items may be among what was not read). */
+export function listText(values: readonly string[], tr: Translate, partial = false): string {
+  if (values.length === 0) return tr(key(partial ? "presence_not_read" : "spread_none"));
+  return values.join(", ");
 }

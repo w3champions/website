@@ -41,8 +41,8 @@ test("the attendee table shows how each attendee got in and No PC recorded for a
   expect(wrapper.findAll("thead th[scope='col']").map((h) => h.text())).toEqual([
     "Attendee",
     "How they got in (as the logins show)",
-    "Logins: venue / elsewhere (at home)",
-    "Nearest switch on one PC",
+    "Logins: venue / elsewhere (on their usual network)",
+    "Nearest switch between a venue network and another network on one PC",
     "Countries · providers",
   ]);
   expect(rows()).toHaveLength(2);
@@ -51,7 +51,7 @@ test("the attendee table shows how each attendee got in and No PC recorded for a
   expect(rows()[0].find(".v-chip").text()).toBe("Anchor");
   expect(rows()[1].find(".v-chip").exists()).toBe(false);
   expect(first).toContain("On a venue network");
-  expect(first).toContain("4 / 9 (7)");
+  expect(first).toContain("4 / 9 (7) · 2 other networks");
   expect(first).toContain("12 min");
   expect(first).toContain("DE");
   expect(first).toContain("Example Telecom");
@@ -59,6 +59,21 @@ test("the attendee table shows how each attendee got in and No PC recorded for a
   expect(second).toContain("On a venue PC only");
   expect(second).toContain("No PC recorded");
   expect(second).toContain("None");
+});
+
+test("the attendee is the row header of its row", async () => {
+  await show([{ battleTag: "Guest#1003", entry: "pc" }]);
+
+  expect(rows()[0].find("th[scope='row']").text()).toBe("Guest#1003");
+});
+
+test("an attendee who got in by neither says so, and one with no login in the event says that instead", async () => {
+  await show([{ battleTag: "Zed#2", entry: "other", logins: 5 }, { battleTag: "Abe#1", entry: "other", logins: 0 }]);
+
+  expect(rows()[0].text()).toContain("Neither a venue network nor a venue PC");
+  expect(rows()[0].text()).not.toContain("No login during the event");
+  expect(rows()[1].text()).toContain("No login during the event");
+  expect(rows()[1].text()).not.toContain("Neither a venue network");
 });
 
 test("an attendee not read shows Not read, never 0", async () => {
@@ -73,7 +88,7 @@ test("an attendee not read shows Not read, never 0", async () => {
 test("absent facts of an attendee show Not recorded, never an empty cell", async () => {
   await show([{ battleTag: "Guest#1003" }]);
 
-  expect(rows()[0].findAll("td").slice(1).every((td) => td.find(".not-recorded").exists())).toBe(true);
+  expect(rows()[0].findAll("td").every((td) => td.find(".not-recorded").exists())).toBe(true);
 });
 
 test("the rows keep the server's order and no count carries a colour class", async () => {

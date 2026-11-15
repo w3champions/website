@@ -333,3 +333,44 @@ test("an event without venue networks shows the spread's loading and failure whi
 
   expect(wrapper.emitted("retry-presence")).toHaveLength(1);
 });
+
+test("after a presence failure the attendees stay as chips and the venue card carries the failure", async () => {
+  await show(manualEvent());
+  useSmurfEventsStore().presenceError = new Error("down");
+  await flushPromises();
+
+  expect(wrapper.findComponent({ name: "AttendeePresenceTable" }).exists()).toBe(false);
+  expect(wrapper.findAll(".v-chip").some((c) => c.text().includes("Guest#1003"))).toBe(true);
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).text()).toContain("Where the venue networks and the attendees were couldn't be loaded:");
+});
+
+test("the attendee table sits directly in its card, like the identifier table", async () => {
+  await show(manualEvent());
+  useSmurfEventsStore().presence = PRESENCE;
+  await flushPromises();
+
+  const table = wrapper.findComponent({ name: "AttendeePresenceTable" }).element;
+  expect(table.closest(".v-card-text")).toBeNull();
+  expect(table.closest(".v-card")?.querySelector(".v-card-title")?.textContent).toContain("Attendees");
+});
+
+test("router networks are announced as listed from the identifier table below while it loads and when it failed", async () => {
+  await show(manualEvent({ networks: [{ hash8: "0a1b2c3d", firstAt: "2026-10-01T08:00:00.000Z", lastAt: "2026-10-02T20:00:00.000Z", accounts: 3 }, { hash8: "cccc0003", firstAt: "2026-10-01T08:00:00.000Z", lastAt: "2026-10-02T20:00:00.000Z", accounts: 3 }] }));
+  useSmurfEventsStore().presence = PRESENCE;
+  useSmurfEventsStore().identifiersLoading = true;
+  await flushPromises();
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).text()).toContain("Router networks are listed from the identifier table below.");
+
+  useSmurfEventsStore().identifiersLoading = false;
+  useSmurfEventsStore().identifiersError = new Error("down");
+  await flushPromises();
+  expect(wrapper.findComponent({ name: "VenueNetworksCard" }).text()).toContain("Router networks are listed from the identifier table below.");
+});
+
+test("a partial presence answer reaches the spread card of an event without venue networks", async () => {
+  await show(manualEvent({ networks: [] }));
+  useSmurfEventsStore().presence = { ...PRESENCE, networks: [], truncated: true, spread: { countries: [], sharedInSpan: [], sharedUsual: [] } };
+  await flushPromises();
+
+  expect(wrapper.findComponent({ name: "AttendeeSpread" }).text()).toContain("Part of this was not read");
+});
